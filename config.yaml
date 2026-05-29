@@ -25,3 +25,65 @@ subscriptions:
     stage: A
     diff_threshold_pct: 15
   keyword_recall_mode: or
+  intent_profiles:
+    - tag: genmod-fluid
+      description: 生成式模型与流体力学交叉研究
+      enabled: true
+      paper_sources:
+        - arxiv
+      keywords:
+        - keyword: generative model fluid dynamics
+          keyword_cn: 生成模型流体动力学
+          query: generative models applied to fluid dynamics problems
+        - keyword: diffusion model fluid
+          keyword_cn: 扩散模型流体
+          query: diffusion models for fluid flow simulation
+        - keyword: score-based model flow
+          keyword_cn: 基于分数的模型流动
+          query: score-based generative models for fluid flow
+        - keyword: flow matching fluid
+          keyword_cn: 流匹配流体
+          query: flow matching methods in fluid dynamics
+        - keyword: generative ai mechanics
+          keyword_cn: 生成式人工智能力学
+          query: generative artificial intelligence in fluid mechanics
+        - keyword: probabilistic flow fluid
+          keyword_cn: 概率流流体
+          query: probabilistic flow models for fluid dynamics
+      intent_queries:
+        - query: generative models for fluid dynamics research papers
+          query_cn: 生成式模型在流体动力学中的研究论文
+          enabled: true
+          source: manual
+          note: ''
+        - query: diffusion model applications in computational fluid dynamics
+          query_cn: 扩散模型在计算流体力学中的应用
+          enabled: true
+          source: manual
+          note: ''
+        - query: flow matching for fluid flow simulation
+          query_cn: 流匹配在流体流动模拟中的应用
+          enabled: true
+          source: manual
+          note: ''
+        - query: score based generative models for fluid mechanics
+          query_cn: 基于分数的生成模型在流体力学中的应用
+          enabled: true
+          source: manual
+          note: ''
+      updated_at: '2026-05-29T10:30:43.872Z'
+source_backends:
+  arxiv:
+    papers_table: arxiv_papers
+    use_vector_rpc: true
+    vector_rpc: match_arxiv_papers
+    vector_rpc_exact: match_arxiv_papers_exact
+    use_bm25_rpc: true
+    bm25_rpc: match_arxiv_papers_bm25
+    sync_table: arxiv_sync_status
+    sync_success_value: success
+    schema: public
+    kind: supabase
+    enabled: true
+    url: https://lyucdwgefyfbmaiopjbk.supabase.co
+    anon_key: sb_publishable_lX-oi64Uxyd7SIVv3_w2Uw_MTOojeKq
