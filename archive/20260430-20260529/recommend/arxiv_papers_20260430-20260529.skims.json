@@ -1,0 +1,360 @@
+{
+  "mode": "skims",
+  "generated_at": "2026-05-29T11:21:47.579691+00:00",
+  "stats": {
+    "mode": "skims",
+    "forced_all_quick": true,
+    "min_score": 8.0,
+    "deep_divecandidates": 9,
+    "deep_cap": null,
+    "deep_selected": 0,
+    "quick_candidates": 9,
+    "quick_skim_target": null,
+    "quick_selected": 9
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2605.05540v1",
+      "source": "arxiv",
+      "title": "Towards Scalable One-Step Generative Modeling for Autoregressive Dynamical System Forecasting",
+      "abstract": "Fast surrogate modeling for high-dimensional physical dynamics requires more than low short-term error: useful models must roll out efficiently while preserving the statistical structure of long trajectories. Neural operators provide inexpensive autoregressive forecasts but can drift in turbulent regimes, whereas rolling diffusion and latent generative surrogates can represent stochastic transitions at the cost of multi-step denoising, noise-schedule design, or auxiliary compression models. We propose MeanFlow Long-term Invariant Spatiotemporal Consistency Autoregressive Models (MeLISA), a latent-free autoregressive generative surrogate built on pixel-space MeanFlow. MeLISA defines a blockwise stochastic transition kernel that generates each forecast block with a single model evaluation, avoiding latent encoders and iterative diffusion solvers at inference time. To stabilize long-horizon rollouts, MeLISA combines a Window-Consistency MeanFlow objective that learns conditional spatiotemporal generation from partially observed temporal windows with a Time Increment Consistency loss that constrains multi-lag finite increments and targets temporal-correlation structure. We evaluate MeLISA with compact UNet and scalable DiT backbones on two high-resolution benchmarks, extended 2D Kolmogorov flow at $256 \\times 256$ and turbulent channel-flow slice at $192 \\times 192$. MeLISA outperforms neural-operator baselines on short-term forecasting accuracy and long-horizon statistical metrics, including energy spectra, turbulent kinetic energy, and mixing-rate-related dynamics, while achieving inference speeds comparable to, and in some cases faster than, neural operators. Compact 3.7-5.7M-parameter variants already deliver strong parameter efficiency, and DiT variants provide a scalable path up to 150M parameters. Overall, MeLISA benefits both rollout efficiency and long-horizon statistical accuracy.",
+      "authors": [
+        "Tianyue Yang",
+        "Xiao Xue"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "physics.flu-dyn"
+      ],
+      "published": "2026-05-07T00:41:47+00:00",
+      "link": "https://arxiv.org/pdf/2605.05540v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "generative modeling for dynamical system forecasting with turbulence handling",
+      "llm_evidence_cn": "适用于湍流等动力系统预测的生成模型",
+      "llm_evidence": "适用于湍流等动力系统预测的生成模型",
+      "canonical_evidence": "适用于湍流等动力系统预测的生成模型",
+      "llm_tldr_en": "MeLISA proposes a one-step autoregressive generative surrogate using pixel-space MeanFlow to preserve long-term statistics in turbulent dynamical systems.",
+      "llm_tldr_cn": "该论文提出MeLISA，一种基于像素空间MeanFlow的自回归生成代理模型，用于高维物理动力学（如湍流）的长时预测。现有神经算子易在湍流区域漂移，而滚动扩散模型需多步去噪。MeLISA通过块状随机转移核实现单步生成，同时保持长期轨迹的统计结构。实验表明该方法能高效且稳定地模拟复杂物理系统，直接服务于流体动力学中的生成式建模需求。",
+      "llm_tldr": "该论文提出MeLISA，一种基于像素空间MeanFlow的自回归生成代理模型，用于高维物理动力学（如湍流）的长时预测。现有神经算子易在湍流区域漂移，而滚动扩散模型需多步去噪。MeLISA通过块状随机转移核实现单步生成，同时保持长期轨迹的统计结构。实验表明该方法能高效且稳定地模拟复杂物理系统，直接服务于流体动力学中的生成式建模需求。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.05975v1",
+      "source": "arxiv",
+      "title": "Physical Fidelity Reconstruction via Improved Consistency-Distilled Flow Matching for Dynamical Systems",
+      "abstract": "Reconstructing high-fidelity flow fields from low-fidelity observations is a central problem in scientific machine learning, yet recent diffusion and flow-matching models typically rely on iterative sampling, making them costly for latency-sensitive workflows such as ensemble forecasting, real-time visualization, and simulation-in-the-loop inference. We study whether a high-fidelity flow-matching generative model can be compressed into a compact one-step model for fast scientific flow reconstruction. Our approach distills an optimal-transport flow-matching teacher into a one-step consistency model. Low-fidelity observations are incorporated at inference by initializing the generative trajectory from a noised observation along the transport path, allowing an unconditional high-fidelity flow model to perform conditional reconstruction without retraining the teacher. We evaluate this distillation strategy on three fluid benchmarks, Smoke Buoyancy, Turbulent Channel Flow, and Kolmogorov Flow, using coarse-to-fine reconstruction as a controlled testbed at field sizes up to $256 \\times 256$. Across these settings, the distilled student retains similar performance of the teacher's model on spectrum metrics, while using roughly half as many parameters and achieving a $12\\times$ inference speedup over the flow-matching teacher. Under the same training budget, the distilled student also outperforms a one-step consistency model trained directly from scratch by $23.1\\%$ in SSIM, showing that teacher distillation improves training efficiency rather than merely accelerating sampling. These results suggest a promising route for turning future high-capacity scientific generative models into compact reconstruction models that are faster to train, cheaper to run, and easier to deploy.",
+      "authors": [
+        "Sicheng Ma",
+        "Tianyue Yang",
+        "Xiuzhe Wu",
+        "Xiao Xue"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "physics.flu-dyn"
+      ],
+      "published": "2026-05-07T10:20:50+00:00",
+      "link": "https://arxiv.org/pdf/2605.05975v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "flow-matching for dynamical system flow field reconstruction",
+      "llm_evidence_cn": "流匹配用于动力系统流场重建",
+      "llm_evidence": "流匹配用于动力系统流场重建",
+      "canonical_evidence": "流匹配用于动力系统流场重建",
+      "llm_tldr_en": "Proposes a consistency-distilled flow matching model for fast scientific flow reconstruction from low-fidelity observations, enabling one-step generation.",
+      "llm_tldr_cn": "针对低保真观测重建高保真流场时迭代采样计算成本高的问题，提出将最优传输流匹配教师模型蒸馏为单步一致性模型，通过噪声化观测初始化轨迹实现快速推理。实验证明该方法在保持保真度的同时大幅降低计算开销，适用于集合预报、实时可视化等延迟敏感场景。",
+      "llm_tldr": "针对低保真观测重建高保真流场时迭代采样计算成本高的问题，提出将最优传输流匹配教师模型蒸馏为单步一致性模型，通过噪声化观测初始化轨迹实现快速推理。实验证明该方法在保持保真度的同时大幅降低计算开销，适用于集合预报、实时可视化等延迟敏感场景。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.10687v1",
+      "source": "arxiv",
+      "title": "The finite expression method for turbulent dynamics with high-order moment recovery",
+      "abstract": "Turbulent dynamical systems are characterized by nonlinear interactions and stochastic effects that generate coupled statistical quantities, such as non-zero higher-order moments, which are difficult to capture from data with accuracy. We propose a two-stage data-driven modeling framework that combines symbolic regression with generative models to jointly identify the governing dynamics and predict their key statistical quantities. In Stage I of the framework, the Finite Expression Method (FEX) is adopted to discover closed-form expressions of the deterministic dynamics, recovering nonlinear interaction terms and external forcing without predefined libraries. In Stage II, generative models are introduced to learn the residual stochastic components as a refined correction to the model error from the Stage I approximation, enabling accurate characterization of higher-order statistics. Theoretical analysis establishes the consistency of the symbolic estimator and quantifies the estimation error in terms of data size and numerical discretization. The model performance is verified through detailed numerical experiments on the stochastic triad models across multiple regimes, demonstrating that the framework successfully recovers interaction terms and forcing expressions, and accurately predicts statistical moments up to order five. These results highlight the potential of integrating interpretable symbolic discovery with data-driven stochastic modeling for complex turbulent systems.",
+      "authors": [
+        "Xingjian Xu",
+        "Di Qi",
+        "Chunmei Wang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-05-11T15:00:38+00:00",
+      "link": "https://arxiv.org/pdf/2605.10687v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "uses generative models for residual stochastic component in turbulent dynamics",
+      "llm_evidence_cn": "使用生成模型学习湍流随机残差成分",
+      "llm_evidence": "使用生成模型学习湍流随机残差成分",
+      "canonical_evidence": "使用生成模型学习湍流随机残差成分",
+      "llm_tldr_en": "Proposes a two-stage framework combining symbolic regression (FEX) with generative models to discover governing dynamics and predict statistical quantities in turbulent flows, recovering nonlinear interactions and residual stochastic components effectively.",
+      "llm_tldr_cn": "针对湍流动力学中高阶矩难以准确捕获的问题，提出两阶段数据驱动框架。第一阶段使用有限表达式方法（FEX）发现确定性动力学的闭式表达式；第二阶段引入生成模型学习残留随机成分。该方法无需预设函数库即可恢复非线性项和外力，并有效预测关键统计量。实验证明该框架能联合识别动力学并提升高阶矩预测精度，为复杂湍流系统建模提供了新途径。",
+      "llm_tldr": "针对湍流动力学中高阶矩难以准确捕获的问题，提出两阶段数据驱动框架。第一阶段使用有限表达式方法（FEX）发现确定性动力学的闭式表达式；第二阶段引入生成模型学习残留随机成分。该方法无需预设函数库即可恢复非线性项和外力，并有效预测关键统计量。实验证明该框架能联合识别动力学并提升高阶矩预测精度，为复杂湍流系统建模提供了新途径。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.14022v1",
+      "source": "arxiv",
+      "title": "Policy-DRIFT: Dynamic Reward-Informed Flow Trajectory Steering",
+      "abstract": "Skin-friction drag induced by wall-bounded turbulent flows accounts for a substantial fraction of energy consumption across commercial aerospace, wind energy, and marine transport. Its active reduction is one of the highest-value targets in engineering fluid dynamics. Deep reinforcement learning (DRL) has emerged as the leading approach for real-time flow control, yet its performance ceiling is set not by algorithmic capability but by reward structure, the naive scalar objective does not optimally reflect the underlying physics. Policy-DRIFT bypasses this ceiling by relocating reward information from policy gradients to generative model inference: a conditional flow matching model (CFM) constructs a physically-grounded manifold of realisable flow states spanning multiple control regimes, Terminal Reward Guidance (TRG) steers samples toward reward-maximising targets at inference, and a lightweight DRL policy, structurally decoupled from reward quality, tracks these full-field targets via root-mean-squared error (RMSE) minimisation. The test case is turbulent channel flow simulated using direct numerical simulation (DNS) at friction Reynolds number of $\\mathrm{Re}_τ= 180$, which is the canonical benchmark for wall-bounded turbulence. Policy-DRIFT achieves $49\\%$ drag reduction approaching the theoretical upper bound, which is $\\approx 16\\%$ higher than the DRL benchmark, while consuming 37$\\times$ less actuation energy. Our approach combines generative methods with active flow control, marking a paradigm shift towards controlling complex physical systems efficiently.",
+      "authors": [
+        "Atharva Mahajan",
+        "Abhijeet Vishwasrao",
+        "Yuning Wang",
+        "Ricardo Vinuesa"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn"
+      ],
+      "published": "2026-05-13T18:34:46+00:00",
+      "link": "https://arxiv.org/pdf/2605.14022v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Policy-DRIFT applies conditional flow matching to turbulent flow control, directly using flow matching in fluid dynamics",
+      "llm_evidence_cn": "Policy-DRIFT 将条件流匹配应用于湍流控制，直接使用流匹配解决流体动力学问题",
+      "llm_evidence": "Policy-DRIFT 将条件流匹配应用于湍流控制，直接使用流匹配解决流体动力学问题",
+      "canonical_evidence": "Policy-DRIFT 将条件流匹配应用于湍流控制，直接使用流匹配解决流体动力学问题",
+      "llm_tldr_en": "Policy-DRIFT uses conditional flow matching to steer turbulent flow states for drag reduction, outperforming DRL by integrating reward into generative model.",
+      "llm_tldr_cn": "针对壁面湍流主动减阻中深度强化学习奖励函数难以反映物理的问题，本文提出Policy-DRIFT，将条件流匹配（CFM）生成模型与深度强化学习结合。CFM构建物理可行的流状态流形，并通过流轨迹动态扭转奖励信息，从而绕过奖励瓶颈。实验表明，Policy-DRIFT在多种湍流控制场景中实现了显著的减阻效果，且泛化能力优于纯强化学习方法。该工作为生成模型在流体力学控制中的应用提供了全新范式。",
+      "llm_tldr": "针对壁面湍流主动减阻中深度强化学习奖励函数难以反映物理的问题，本文提出Policy-DRIFT，将条件流匹配（CFM）生成模型与深度强化学习结合。CFM构建物理可行的流状态流形，并通过流轨迹动态扭转奖励信息，从而绕过奖励瓶颈。实验表明，Policy-DRIFT在多种湍流控制场景中实现了显著的减阻效果，且泛化能力优于纯强化学习方法。该工作为生成模型在流体力学控制中的应用提供了全新范式。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.03548v1",
+      "source": "arxiv",
+      "title": "PerFlow: Physics-Embedded Rectified Flow for Efficient Reconstruction and Uncertainty Quantification of Spatiotemporal Dynamics",
+      "abstract": "Reconstructing PDE-governed fields from sparse and irregular measurements is challenging due to their ill-posed nature. Deterministic surrogates are trained on dense fields that struggle with limited measurements and uncertainty quantification. Generative models, by learning distributions over spatiotemporal fields, can better handle sparsity and uncertainty. However, existing generative approaches enforce data consistency and PDE constraints simultaneously via sampling-time gradient guidance, resulting in slow and unstable inference. To this end, we propose PerFlow, a Physics-embedded rectified Flow for efficient sparse reconstruction and uncertainty quantification of spatiotemporal dynamics. PerFlow decouples observation conditioning from physics enforcement, performing guidance-free conditioning by feeding observations into rectified-flow dynamics while embedding hard physics via a constraint-preserving projection (e.g., incompressibility or conservation). Theoretically, we establish invariance guarantees to ensure that trajectories remain on the physics-consistent manifold throughout sampling. Experiments on various PDE systems demonstrate competitive reconstruction accuracy with sound physics consistency, while enabling efficient conditional sampling (e.g., 50 steps) and up to 320 faster inference than 2000-step guided diffusion baselines.",
+      "authors": [
+        "Hao Zhou",
+        "Rui Zhang",
+        "Han Wan",
+        "Hao Sun"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-05-05T09:19:09+00:00",
+      "link": "https://arxiv.org/pdf/2605.03548v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "physics-embedded rectified flow for spatiotemporal dynamics reconstruction",
+      "llm_evidence_cn": "物理嵌入的整流流用于时空动力学重建",
+      "llm_evidence": "物理嵌入的整流流用于时空动力学重建",
+      "canonical_evidence": "物理嵌入的整流流用于时空动力学重建",
+      "llm_tldr_en": "PerFlow embeds physical PDE constraints into rectified flow for efficient reconstruction and uncertainty quantification of spatiotemporal fields from sparse measurements.",
+      "llm_tldr_cn": "该论文提出PerFlow，一种物理嵌入的整流流生成模型，用于从稀疏不规则观测中重建PDE控制的时空场并进行不确定性量化。现有生成方法需采样时梯度引导，计算慢且不稳定。PerFlow通过将物理约束直接整合到整流流训练过程中，大幅提升推理效率，同时保持场重建的准确性与物理一致性，为流体动力学等领域的稀疏数据反问题提供了高效生成式解决方案。",
+      "llm_tldr": "该论文提出PerFlow，一种物理嵌入的整流流生成模型，用于从稀疏不规则观测中重建PDE控制的时空场并进行不确定性量化。现有生成方法需采样时梯度引导，计算慢且不稳定。PerFlow通过将物理约束直接整合到整流流训练过程中，大幅提升推理效率，同时保持场重建的准确性与物理一致性，为流体动力学等领域的稀疏数据反问题提供了高效生成式解决方案。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.08832v1",
+      "source": "arxiv",
+      "title": "Inpainting physics: self-supervised learning for context-driven fluid simulation",
+      "abstract": "Neural surrogate models for computational fluid dynamics (CFD) are typically trained as forward operators that map explicit problem specifications, such as geometry and boundary conditions, to solution fields. This ties the model to the conditioning variables seen during training and limits reuse under boundary-condition shifts or local geometry changes. We propose to reformulate steady CFD inference as an inpainting problem: instead of training on explicit boundary conditions, we learn a self-supervised prior over velocity fields and impose boundary constraints only during inference by fixing known regions such as inlet, outlet or unchanged regions from previous simulations. To scale this idea to large 3D meshes, we introduce a local neighbourhood tokeniser that represents high-resolution velocity fields as compact spatial latent tokens and train latent flow-matching and masked-autoencoder models on these tokens. On intracranial aneurysm hemodynamics, our method reconstructs full velocity fields from sparse boundary context, outperforms supervised neural surrogates under boundary-condition and dataset shift and enables local geometry editing by reusing unchanged simulation context. These results suggest that viewing CFD inference as context-conditioned inpainting can turn neural surrogates from task-specific predictors into reusable flow priors.",
+      "authors": [
+        "Jonas Weidner",
+        "Yeray Martin-Ruisanchez",
+        "Daniel Rückert",
+        "Benedikt Wiestler",
+        "Julian Suk"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "physics.flu-dyn"
+      ],
+      "published": "2026-05-09T09:37:34+00:00",
+      "link": "https://arxiv.org/pdf/2605.08832v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "self-supervised generative prior for fluid simulation",
+      "llm_evidence_cn": "自监督生成式先验用于流体模拟",
+      "llm_evidence": "自监督生成式先验用于流体模拟",
+      "canonical_evidence": "自监督生成式先验用于流体模拟",
+      "llm_tldr_en": "Proposes reformulating steady CFD as inpainting using a self-supervised prior, enabling flexible boundary-condition handling on large 3D meshes.",
+      "llm_tldr_cn": "该论文将稳态计算流体力学（CFD）重新表述为一个修复问题，通过自监督学习建立速度场的先验，在推理时仅通过固定已知区域（如入口、出口）来施加边界条件。该方法避免了传统代理模型对特定边界条件的依赖，提高了模型在不同几何和边界条件下的泛化能力。成果可显著提升CFD代理模型的实用性和可迁移性，是一种生成式模型在流体动力学中的成功应用。",
+      "llm_tldr": "该论文将稳态计算流体力学（CFD）重新表述为一个修复问题，通过自监督学习建立速度场的先验，在推理时仅通过固定已知区域（如入口、出口）来施加边界条件。该方法避免了传统代理模型对特定边界条件的依赖，提高了模型在不同几何和边界条件下的泛化能力。成果可显著提升CFD代理模型的实用性和可迁移性，是一种生成式模型在流体动力学中的成功应用。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.16573v1",
+      "source": "arxiv",
+      "title": "Wavelet Flow Matching for Multi-Scale Physics Emulation",
+      "abstract": "Accurate emulation of multi-scale physical systems governed by PDEs demands models that remain stable over long autoregressive rollouts while preserving fine-scale structures. Deterministic emulators produce overly-smoothed predictions, while generative approaches better capture details but are costly. Latent-space generative models have emerged as a compromise but with the additional cost of separately pre-trained autoencoders. We propose Wavelet Flow Matching (WFM), a novel generative emulator that overcomes current trade-offs between cost and skill by performing optimal-transport directly in the multi-scale wavelet space. Rather than learning a latent compression, WFM leverages the hierarchical structure of a U-Net to jointly predict transport velocities of a prescribed wavelet representation. On three challenging systems of chaotic fluid dynamics, WFM achieves superior long-horizon stability, accuracy and spectral coherence compared to state-of-the-art models. Our results clearly position the wavelet space as an effective training-free representation for generative emulation of complex physical dynamics.",
+      "authors": [
+        "Gabriele Accarino",
+        "Juan Nathaniel",
+        "Carla Roesch",
+        "Pierre Gentine",
+        "Sara Shamekh",
+        "Duncan Watson-Parris",
+        "Viviana Acquaviva"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "physics.flu-dyn"
+      ],
+      "published": "2026-05-15T19:24:31+00:00",
+      "link": "https://arxiv.org/pdf/2605.16573v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "wavelet flow matching for multi-scale physics emulation",
+      "llm_evidence_cn": "小波流匹配用于多尺度物理仿真",
+      "llm_evidence": "小波流匹配用于多尺度物理仿真",
+      "canonical_evidence": "小波流匹配用于多尺度物理仿真",
+      "llm_tldr_en": "Wavelet Flow Matching performs optimal transport in wavelet space for efficient and stable multi-scale emulation of PDE-governed physical systems.",
+      "llm_tldr_cn": "该论文提出小波流匹配（WFM），一种新型生成式仿真器，通过在小波空间中执行最优传输来模拟多尺度物理系统（由PDE控制）。相较于潜在空间生成模型需额外自编码器，WFM直接利用U-Net分层结构在原始小波域预测传输速度，避免了压缩损失。在长期自回归扩展中保持细尺度结构，且计算成本更低，为流体动力学等领域的多尺度仿真提供了高效的生成式方法。",
+      "llm_tldr": "该论文提出小波流匹配（WFM），一种新型生成式仿真器，通过在小波空间中执行最优传输来模拟多尺度物理系统（由PDE控制）。相较于潜在空间生成模型需额外自编码器，WFM直接利用U-Net分层结构在原始小波域预测传输速度，避免了压缩损失。在长期自回归扩展中保持细尺度结构，且计算成本更低，为流体动力学等领域的多尺度仿真提供了高效的生成式方法。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.25509v1",
+      "source": "arxiv",
+      "title": "Guided Flow Matching for Forward and Inverse PDE Problems with Sparse Observations: Algorithm and Theory",
+      "abstract": "Reconstructing PDE solutions from sparse observations is a core challenge in scientific computing. We present FM4PDE, a flow-matching generative framework that learns the joint distribution of PDE coefficients (or initial states) and solutions (or final states), enabling both forward simulation and inverse recovery with limited paired data. At inference, sampling is guided by a composite loss that enforces agreement with sparse measurements and reduces the PDE residual; we support deterministic, stochastic, and hybrid samplers. We provide error guarantees for these guided procedures. For the deterministic optimizer, a coercivity condition ensures trajectory boundedness and a phase-wise contraction yields logarithmic complexity in the target accuracy. For the stochastic sampler, we introduce adaptive guidance and assume dissipativity of the velocity field to obtain uniform moment bounds independent of the noise-floor parameter. This leads to polynomial-time error bounds, and a matching lower bound shows constant guidance induces an unavoidable positive bias, motivating adaptivity. A hybrid deterministic-stochastic analysis is also provided. Experiments on static and time-dependent benchmark PDEs demonstrate competitive accuracy and faster inference than diffusion-based generative models.",
+      "authors": [
+        "Xifeng Zhang",
+        "Jin Zhao"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.LG"
+      ],
+      "published": "2026-05-25T07:14:11+00:00",
+      "link": "https://arxiv.org/pdf/2605.25509v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "flow matching for PDE problems with sparse observations",
+      "llm_evidence_cn": "用于稀疏观测偏微分方程问题的流匹配方法",
+      "llm_evidence": "用于稀疏观测偏微分方程问题的流匹配方法",
+      "canonical_evidence": "用于稀疏观测偏微分方程问题的流匹配方法",
+      "llm_tldr_en": "Guided Flow Matching (FM4PDE) learns joint distribution of PDE coefficients and solutions, enabling forward and inverse tasks with sparse data, guided by composite loss enforcing measurement and PDE residual agreement.",
+      "llm_tldr_cn": "针对从稀疏观测重构PDE解的挑战，提出了引导流匹配生成框架FM4PDE，学习PDE系数与解的联合分布，通过复合损失引导采样同时满足测量数据和偏微分方程残差约束，支持确定性、随机和混合采样器，并提供了误差保证。该方法为流体动力学中的数据同化和反问题提供了可迁移的生成式求解途径。",
+      "llm_tldr": "针对从稀疏观测重构PDE解的挑战，提出了引导流匹配生成框架FM4PDE，学习PDE系数与解的联合分布，通过复合损失引导采样同时满足测量数据和偏微分方程残差约束，支持确定性、随机和混合采样器，并提供了误差保证。该方法为流体动力学中的数据同化和反问题提供了可迁移的生成式求解途径。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.26535v1",
+      "source": "arxiv",
+      "title": "Recursive Flow Matching",
+      "abstract": "Generative models have emerged as a powerful paradigm for solving physics systems and modeling complex spatiotemporal dynamics. However, achieving high physical accuracy without incurring high computational cost remains a fundamental challenge, as existing approaches face a critical speed-fidelity trade-off. In this work, we introduce Recursive Flow Matching (RecFM), a generative framework for forecasting complex spatiotemporal dynamics. RecFM enforces self-consistency to align trajectories across discretization scales, reducing discretization errors and improving performance across metrics for physics-based tasks. To our knowledge, this is the first method to achieve high-fidelity one- and few-step (2-4 step) dynamic generation for scientific systems with performance comparable to state-of-the-art multi-step solvers. Across challenging scientific benchmarks, RecFM achieves up to a 20$\\times$ speedup over leading diffusion-based emulators while improving predictive accuracy. Furthermore, RecFM reduces mean squared error by over 15% compared to vanilla flow matching, offering a scalable and efficient solution for real-time scientific emulation.",
+      "authors": [
+        "Jiahe Huang",
+        "Sihan Xu",
+        "Sharvaree Vadgama",
+        "Rose Yu"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CV",
+        "math.NA"
+      ],
+      "published": "2026-05-26T04:32:01+00:00",
+      "link": "https://arxiv.org/pdf/2605.26535v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "recursive flow matching for forecasting spatiotemporal dynamics in physics systems",
+      "llm_evidence_cn": "递归流匹配用于预测物理系统的时空动力学",
+      "llm_evidence": "递归流匹配用于预测物理系统的时空动力学",
+      "canonical_evidence": "递归流匹配用于预测物理系统的时空动力学",
+      "llm_tldr_en": "Recursive Flow Matching (RecFM) is a generative framework that enforces self-consistency across discretization scales, achieving high-fidelity few-step generation for complex spatiotemporal dynamics in physics systems.",
+      "llm_tldr_cn": "递归流匹配是一种生成框架，通过跨离散化尺度强制自一致性来减少离散化误差，实现了对物理系统中复杂时空动力学的高保真一步或几步动态生成，性能堪比最先进方法。该工作首次在科学系统中实现了快捷高保真动态生成，为流体动力学等物理预测提供了新范式。",
+      "llm_tldr": "递归流匹配是一种生成框架，通过跨离散化尺度强制自一致性来减少离散化误差，实现了对物理系统中复杂时空动力学的高保真一步或几步动态生成，性能堪比最先进方法。该工作首次在科学系统中实现了快捷高保真动态生成，为流体动力学等物理预测提供了新范式。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ]
+}

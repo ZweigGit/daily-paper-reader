@@ -1,0 +1,1001 @@
+Title: Wavelet Flow Matching for Multi-Scale Physics Emulation
+
+URL Source: https://arxiv.org/pdf/2605.16573v1
+
+Published Time: Tue, 19 May 2026 00:23:24 GMT
+
+Number of Pages: 35
+
+Markdown Content:
+# Wavelet Flow Matching for Multi-Scale Physics Emulation 
+
+Gabriele Accarino ∗
+
+Department of Earth and Environmental Engineering Columbia University, NY, USA 
+
+Juan Nathaniel 
+
+Department of Earth and Environmental Engineering Columbia University, NY, USA 
+
+Carla Roesch 
+
+University of Edinburgh Edinburgh, Scotland, UK 
+
+Pierre Gentine 
+
+Department of Earth and Environmental Engineering Columbia University, NY, USA 
+
+Sara Shamekh 
+
+Courant Institute of Mathematical Sciences New York University, NY, USA 
+
+Duncan Watson-Parris 
+
+Scripps Institution of Oceanography & Halıcıo˘ glu Data Science Institute University of California San Diego, CA, USA 
+
+Viviana Acquaviva 
+
+CUNY New York City College of Technology, Brooklyn, NY, USA & Lamont-Doherty Earth Observatory, Columbia University, Palisades, NY, USA 
+
+## Abstract 
+
+Accurate emulation of multi-scale physical systems governed by PDEs demands models that remain stable over long autoregressive rollouts while preserving fine-scale structures. Deterministic emulators produce overly-smoothed predictions, while generative approaches better capture details but are costly. Latent-space generative models have emerged as a compromise but with the additional cost of separately pre-trained autoencoders. We propose Wavelet Flow Matching 
+
+(WFM), a novel generative emulator that overcomes current trade-offs between cost and skill by performing optimal-transport directly in the multi-scale wavelet space. Rather than learning a latent compression, WFM leverages the hierarchical structure of a U-Net to jointly predict transport velocities of a prescribed wavelet representation. On three challenging systems of chaotic fluid dynamics, WFM achieves superior long-horizon stability, accuracy and spectral coherence compared to state-of-the-art models. Our results clearly position the wavelet space as an effective training-free representation for generative emulation of complex physical dynamics. 
+
+## 1 Introduction 
+
+Simulating complex physical systems governed by partial differential equations (PDEs) lies at the heart of scientific computing, with applications spanning turbulence modeling [1], weather and climate prediction [ 2– 4], and astrophysics [ 5 ]. Classical numerical solvers are accurate but   
+
+> * Correspondence to: ga2673@columbia.edu .
+> arXiv:2605.16573v1 [cs.LG] 15 May 2026 DWT
+> DWT
+> PDE constants
+> Multi-scale Optimal
+> Transport Paths
+> DWT
+> Channel-wise concatenation
+> Learnable Embedding
+> Discrete Wavelet Transform
+
+Figure 1: Illustration of the Wavelet Flow Matching architecture. During training, Gaussian noise is sampled to match the shape of wavelet coefficients at each scale. OT-CFM interpolation is applied between the next-state wavelet coefficients wt+1  
+
+> j
+
+and noise to obtain wτj , independently across scales, yielding j multi-scale flows. The velocity-predicting U-Net uθ (purple box) is conditioned on the interpolation step τ , the channel-wise concatenation zτj of wτj and the current-state coefficients wtj ,PDE constants κ, and embedding of past L frames. The illustration of uθ is shown in Figure S1. computationally prohibitive when thousands of trajectories need to be generated [ 6 , 7]. This has motivated a growing body of work on data-driven emulators trained to predict future system states from past ones at a fraction of the cost of high-fidelity simulations [8, 9]. The canonical formulation treats emulation as an autoregressive prediction task: given the current state xt (and optionally a context window L of past states xt−l:t−1, l ∈ L), a neural network 
+
+fθ is trained to predict the next state xt+1 . Deterministic emulators such as variants of Neural Operators (NOs) [ 8, 10 , 11 ], U-Nets [ 12 ], and transformers [ 13 ], are trained by regression loss and are extraordinarily fast at inference. However, squared-error training encourages over-smoothed predictions, and, crucially, small errors compound over autoregressive rollouts. At each rollout step, the model receives input that can be out of the data manifold on which it has been trained, progressively drifting from the true dynamics [ 14 , 15 ]. This effect is especially severe for chaotic systems, where trajectories diverge exponentially [16]. Generative models address this failure mode by learning the full conditional distribution p(xt+1 | xt)
+
+rather than its mean. Sampling from it introduces structured stochasticity that keeps predictions on the data manifold and mitigate rollout drift [ 17 , 15 , 16 , 18 –21 ]. Among generative frameworks, Flow Matching (FM) [ 22 –25 ] is particularly attractive, as it learns a continuous flow by regressing a conditional vector field. This approach achieves high sample quality on turbulent PDE systems while maintaining high inference efficiency [ 26 ], making it a competitive approach for generative modeling [27]. Recent works on representation-based FM for physics emulation have shown great success. Latent-space formulations apply FM in the space of learned autoencoders [ 28 ], reducing computational cost but introducing additional training overhead and are less interpretable. This has motivated the use of physics-based representations, most prominently Fourier approaches [ 10 , 29 ], where FM is performed in a fixed spectral basis that can generalize across resolutions. However, such representations are inherently global and do not explicitly capture localized multi-scale structure, which is central to many physical systems. As such, we ask the following question: 
+
+Are there representations in which the generative process can be carried out naturally across multiple scales, while preserving accuracy, spectral coherence, and physical plausibility of the emulated dynamics? 
+
+As an answer to this question, in this work we present Wavelet Flow Matching (WFM), a framework that performs physical emulation in the wavelet space. WFM leverages Optimal-Transport Conditional Flow Matching (OT-CFM) [ 25 ] that performs autoregressive rollouts on the multi-scale wavelet representation of physical fields. Discrete Wavelet Transform (DWT) representations are grounded in 2classical harmonic analysis, require no training, and are simultaneously localized in space (or time) and scale [ 30 ], i.e., capturing both where frequencies occur and at what resolution. Each scale of the DWT reduces the spatial resolution, so that coarser coefficient maps live on progressively smaller grids. Training and sampling are carried out entirely in wavelet space, while an Inverse DWT (IDWT) is applied to the generated coefficients only at the end of the sampling procedure to reconstruct the next physical state (Figure 1). The framework is highly configurable, for instance users can choose the desired number of scales, as well as different types prescribed wavelet representations. Our main contributions are (Figure 1): • We introduce WFM, a framework performing autoregressive emulation in the wavelet space, leveraging the hierarchical structure of U-Nets to predict multi-scale flow velocities. • We benchmark WFM on three challenging PDE datasets, showing that WFM outperforms other baselines in terms of spectral coherence RMSE and overall long-range skill. The advantage of multi-scale wavelet representation is especially evident in the most chaotic regimes. • WFM shows favorable speedup with no extra cost of a prior learned compression. 
+
+## 2 Background 
+
+2.1 Optimal-Transport Conditional Flow Matching 
+
+Let p0 = N (0 , I d) denote a simple source distribution and let p1 be the target distribution on Rd,accessed through n samples x(1) 1 , . . . , x (n)1 ∼ p1. The goal of FM is to learn a time-dependent velocity field u : Rd × [0 , 1] → Rd that transports samples from p0 to p1.This transport is defined through the ordinary differential equation (ODE): 
+
+x(0) = x0 ∼ p0
+
+˙x(τ ) = u x(τ ), τ  τ ∈ [0 , 1] . (1) whose solution induces a trajectory x(τ ) starting from p0. For every τ in [0, 1], the intermediate marginals of x(τ ) trace a probability path p(· | τ ) that continuously deforms p0 into p1. Once u is learned, sampling reduces to drawing x0 ∼ p0 and numerically integrating Equation (1) (e.g., via Euler method). 
+
+Conditional Flow Matching. Rather than learning u directly, conditional flow matching (CFM) conditions on a target sample x1 ∼ p1 (independent of τ ), and introduces a conditional probability path 
+
+p(· | x1) = N  τ x 1, (1 − τ )2Id
+
+, xτ = τ x 1 + (1 − τ )ϵ, ϵ ∼ N  0, I d
+
+
+
+As τ moves from 0 to 1, the mean E[xτ | x1] = τ x 1 drifts linearly from the origin to x1 while the covariance (1 − τ )2Id contracts to zero, so that the path collapses to the point mass δx1 at τ = 1 .However, other choices of conditional path are possible and we refer the reader to [ 23 , 31 , 32 ]. Given the continuity equation [ 23 , Section 3.5], this construction induces a conditional velocity field with the closed-form expression, whose conditional expectation recovers the optimal velocity field 
+
+u⋆(x, τ ) [22, Theorem 1]: 
+
+ucond (x, x 1, τ ) = x1 − x
+
+1 − τ . (2) 
+
+Training Objective. The optimal velocity can be approximated by a neural network 
+
+uθ : Rd × [0 , 1] → Rd with parameters θ minimizing 
+
+LFM (θ) = Eτ ∼U ([0 ,1])   
+
+> xτ∼p(·| τ)
+
+uθ (xτ , τ ) − u⋆(xτ , τ ) 2
+
+. (3) A direct regression onto u⋆ would require evaluating the conditional expectation in Equation (2) ,which is generally intractable. The key observation of Lipman et al. [22] is that regressing against u⋆
+
+3is equivalent, up to an additive constant, to minimizing 
+
+LCFM (θ) = E τ ∼U ([0 ,1]) 
+
+> x0∼p0, x 1∼p1
+
+ uθ (xτ , τ ) − x1 − xτ
+
+1 − τ
+
+| {z }
+
+> =x1−x0
+> 2
+
+ , xτ := τ x 1 + (1 − τ )x0 . (4) This objective is straightforward to estimate: τ and x0 are sampled directly, and p1 is replaced by the empirical distribution over the training set. When pairs (x0, x 1) are drawn from an optimal-transport coupling between p0 and p1, the same linear interpolant xτ defines the displacement interpolation underlying OT-CFM [ 25 ]. Under the independent sampling x0 ∼ p0, x1 ∼ p1 used above, the objective remains a valid CFM loss but the coupling is not optimal. 
+
+2.2 Discrete Wavelet Transform 
+
+The DWT decomposes a signal into components simultaneously localized in space (or time) and scale [ 33 , 34 ]. Formally, for a one-dimensional signal f ∈ L2(R), a family of discrete wavelets is generated from a single function ψ ∈ L2(R), called the mother wavelet , through dyadic dilations and discrete translations: 
+
+ψj,n (x) = 2 −j/ 2 ψ 2−j x − n , (j, n ) ∈ Z2 . (5) where j controls the scale (fine-to-coarse) and n the spatial location. For suitably constructed ψ,the family {ψj,n }j,n forms an orthonormal basis of L2(R), so that x admits the unique multi-scale expansion: 
+
+f = X
+
+> n
+
+aJ [n] ϕJ,n +
+
+> J
+
+X
+
+> j=1
+
+X
+
+> n
+
+dj [n] ψj,n . (6) where aJ [n] are coarse-scale approximation coefficients , dj [n] are detail coefficients at scale 2j , and 
+
+ϕ is the scaling function associated to the mother wavelet [ 33 , 35 , 36 ]. For a signal x ∈ RC×H×W ,where C is the number of channels (or physical variables) and H × W is the spatial grid, the 2-dimensional DWT is applied separately along rows and columns. We indicate the DWT of the signal 
+
+x across scales j ∈ { 1, . . . , J }, induced by a mother wavelet ψ as: 
+
+wj = Wj (x) ∈ RC×4×Hj ×Wj , Hj ≈ H
+
+2j , Wj ≈ W
+
+2j . (7) At each scale, the DWT produces four coefficient maps (or sub-bands), one approximation (LL) and three oriented detail matrices (LH (horizontal), HL (vertical), HH (diagonal)), computed on a progressively down-sampled grid of size Hj × Wj , where j = 1 corresponds to the finest resolution. The full multi-scale representation is the collection w = W(x) = {wj }Jj=1 , and exact reconstruction is guaranteed by the inverse DWT (IDWT) by x = W−1(w). Different mother wavelets exist, and in this work we consider four db1 (haar), db2 , db4 , and db6 , with filter lengths 2, 4, 8, and 12, respectively (refer to Appendix D and Table S8 for additional details). 
+
+## 3 Wavelet Flow Matching for Physics Emulation 
+
+Rather than learning the conditional distribution p(xt+1 | xt) directly in pixel space, Wavelet Flow Matching (WFM) re-frames the OT-CFM problem (Section 2.1) in the wavelet domain and learn 
+
+p(wt+1 | wt), where w(·) = W(x(·)) denotes the multi-scale wavelet representation of the state of the system at a specific point in time (·) (Section 2.2). This yields J independent, scale-specific flows that together define the generative task over the full wavelet representation of the target field. The illustration of the wavelet-space emulation process is depicted in Figure 1. 
+
+Problem statement. Let xt ∈ RC×H×W denote the state of the system at time t. The goal is to learn the conditional distribution p(wt+1 | wt, {xt−l}Ll=1 , κ ), where {xt−l}Ll=1 is a context window of L past states and κ is a set of scalar variables encoding static physical properties of the system. We distinguish throughout between physical time t and the OT-CFM interpolation time τ ∈ [0 , 1] .4Multi-scale Optimal Transport Paths. Rather than constructing a single flow in pixel space, we define J independent flows, one per wavelet scale, each transporting scale-matched Gaussian noise to the corresponding four wavelet sub-bands (see Section 2.2) of the target state: 
+
+wτj = τ w t+1  
+
+> j
+
++ (1 − τ ) εj , τ ∼ U ([0 , 1]) , εj ∼ N (0 , I dj ), (8) where wt+1  
+
+> j
+
+= Wj (xt+1 ) ∈ RC×4×Hj ×Wj are the wavelet coefficients of the target state at scale j,and εj is Gaussian noise drawn independently at each scale. This is merely a practical design choice: since the wavelet families used in this work are orthonormal, applying the DWT to Gaussian noise sampled in pixel space yields independent standard Gaussian coefficients at each scale, so the two sampling procedures are equivalent in distribution, Wj (ε) d
+
+= εj [ 37 , 38 ]. In both cases, the condition on the source distribution in OT-CFM [ 22 , 23 , 25 ] is satisfied. Therefore, we draw εj directly in wavelet space for sake of simplicity and to avoid additional DWT for the noise. 
+
+Velocity-predicting Neural Network. The velocity network uθ is a U-Net [ 12 ] whose encoder– decoder hierarchy naturally mirrors the multi-scale structure of the DWT (see Figure S1). At each scale j, it receives as input the channel-wise concatenation of the wavelet coefficients of the current state wtj = Wj (xt) and the noisy interpolant wτj , obtained by intepolating between Gaussian noise and the wavelet coefficients of the subsequent state: 
+
+zτj =  wtj , wτj
+
+ 
+
+> C
+
+∈ R2C×4×Hj ×Wj , (9) where the current-state coefficients wtj serve as a static, scale-consistent conditioning signal through-out integration. Note that this concatenation does not violate the FM framework: at τ = 0 the interpolated coefficients wτj coincide with pure Gaussian noise εj , meaning the model always begins from an unstructured noise field at sampling time. The concatenated wavelet coefficients zτj at each scale j are injected directly into the corresponding encoder level via a dedicated stem convolution, so that each resolution stage of the U-Net processes the frequency sub-bands it is spatially matched to, as illustrated in Figure S1. Starting from a shared backbone, the decoder employs J prediction heads, one per scale, each producing the corresponding velocity estimate ˆuj at the appropriate spatial resolution and for all the four sub-bands. Beyond the input in Equation (9) , the U-Net is conditioned on three sources of information, fused into a single vector c ∈ Rd and injected into every residual block [ 39 ] via Feature-wise Linear Modulation (FiLM) [ 40 ]: (i) the FM interpolation time τ embed-ded via a sinusoidal Fourier encoding followed by a small MLP; (ii) the static physical parameters κ,embedded linearly; and (iii) the temporal context {xt−l}Ll=1 , embedded via cross-attention over the 
+
+L frames prior to xt.
+
+Formulation of Training Objective in Wavelet Space. As introduced in Section 2.1 Equation (2) ,the target velocity at scale j along the straight path connecting εj to wt+1  
+
+> j
+
+is constant and is obtained by differentiating the interpolant in Equation (8) with respect to τ :
+
+uj = d w j,τ 
+
+dτ = wt+1  
+
+> j
+
+− εj , uj ∈ RC×4×Hj ×Wj . (10) We train a velocity-predicting neural network uθ to match Equation (10) at every scale simultaneously, where ˆuj denotes the network prediction at scale j. To account for the large differences in energy across scales, we extend Equation (4) by normalizing the per-scale loss by the spatial variance of the target velocity: 
+
+ℓj (θ) = E τ ∼U [0 , 1] (xt,x t+1 )∼q, ε j ∼N (0 ,I dj )
+
+ 1
+
+BC 
+
+X
+
+> b,c
+
+ ˆuj − uj
+
+2
+
+ uj − ⟨ uj ⟩2 + ϵ
+
+ , (11) where q denotes the data distribution, B and C are the batch size and number of channels respectively, 
+
+⟨·⟩ denotes spatial averaging over the Hj × Wj grid, and ϵ = 10 −4 is a small constant for numerical stability. The denominator is the per-sample, per-channel spatial variance of the target velocity. This normalization ensures that all scales contribute equally to the gradient, preventing the energy-dominant LL sub-band from overwhelming the loss contribution of the detail sub-bands. The total training objective is then a weighted sum across all J scales: 
+
+L(θ) = 
+
+> J
+
+X
+
+> j=1
+
+λj
+
+P 
+
+> j
+
+λj
+
+ℓj (θ), (12) In all experiments we use uniform weighting, setting λj = 1 for all j, so that each scale contributes equally to L(θ).5Inference and Autoregressive Rollout. At inference time, sampling is performed entirely in the wavelet space. Given the current physical state xt, we first compute the multi-scale wavelet representation W(xt) and independently sample a noise field at each scale εj ∼ N (0 , I dj ) directly in wavelet space. Starting from wτ =0  
+
+> j
+
+= εj at each scale, the predicted wavelet coefficients of the next state are obtained by integrating the learned velocity field via an Euler solver with uniform step size ∆τ = 1 /N over τ ∈ [0 , 1] :
+
+wτn+1  
+
+> j
+
+= wτn 
+
+> j
+
++ ∆ τ · uθ
+
+  wtj , w τn
+
+> j
+
+ 
+
+> C
+
+, τ n, κ, {xt−l}Ll=1 
+
+ , n = 0 , . . . , N − 1, (13) where at each step the network uθ produces multi-scale velocity estimates that are scaled by ∆τ and accumulated into the current wavelet state. After N steps, wτN 
+
+> j
+
+= ˆ wt+1  
+
+> j
+
+gives the multi-scale wavelet representation of the next state at physical time t + 1 . The corresponding pixel space state is then recovered in a single call to the IDWT: ˆxt+1 = W−1 { ˆwt+1  
+
+> j
+
+}Jj=1 
+
+ (Section 2.2). For autoregressive rollout, ˆxt+1 is fed back as the new current state, its wavelet coefficients {wt+1  
+
+> j
+
+} are recomputed via the DWT, the context window is updated, and the procedure repeated across many steps. 
+
+## 4 Results 
+
+4.1 Experimental Setup 
+
+In this section, we empirically evaluate WFM ’s performance and its ability to accurately emulate complex physical systems across a range of dynamical regimes. We compare WFM against a representation-based suite of baselines. The only exception is FM pixel , which operates directly in pixel space and therefore serves as a control reference of generation quality in the original data space. Unless otherwise stated, at inference time, generative models produce M = 8 ensemble members. 
+
+Datasets. To study the effect of the generation across multiple levels of decomposition in wavelet space, we select three PDE datasets with different dynamical characteristics from The Well [ 5], including Turbulent Radiative Layer 2D (TRL) [ 41 ], Rayleigh–Bénard (RB) convection [ 42 ], and Active Matter (AM) [ 43 ]. These datasets represent distinct fluid regimes that cover many key challenges in dynamical systems emulation, including non-linearities, multi-scale interactions, and complex spatio-temporal patterns. Additional details are provided in Appendix A. 
+
+WFM variants. WFM is built on a U-Net encoder–decoder [ 12 ] that operates across wavelet scales (Section 3). To isolate the effect of multi-scale generation, we train both a 1-scale (J = 1) and 3-scale WFM (J = 3) for each PDE system. We set the maximum number of wavelet scales to 
+
+J = 3 , as this is the largest value compatible with all grid resolutions considered. For grids with a minimum spatial dimension of 128 (i.e., TRL and RB), the coarsest approximation sub-band at J = 3 
+
+has size (·) × 16 ; increasing to J = 4 would reduce the bottleneck dimension in the U-Net to 8, which is insufficient for meaningful convolutional feature extraction. WFM conditions on L = 3 past frames, alongside the current state xt, yielding a total temporal context of four states, consistent with baseline models in The Well [ 5 ]. Past frames are provided in pixel space, as they serve only to inform the temporal context and need not be decomposed into frequency sub-bands. We fix the embedding dimension to d = 256 throughout all experiments. Additional information is provided in Appendix B 
+
+Baselines. To assess the quality of WFM’s wavelet-space generation, we compare against flow matching in pixel space (FM pixel ), flow matching in Fourier space (FM f ourier ) as described in [ 44 ], Wavelet Diffusion Neural Operator (WDNO) [ 45 ], Fourier Neural Operator (FNO) [ 46 ], a Tensorized FNO (TFNO) [ 10 ], and a Wavelet Neural Operator (WNO) [ 47 ], which represent the main families of generative and deterministic PDE surrogates. Additional information is provided in Appendix B. 
+
+Metrics. To guarantee a comprehensive comparison of WFM across scales we consider multiple metrics. Similar to [ 5 , 20 ], our analysis is either performed at a lead time τ = i × ∆ or averaged across lead times a : b. Specifically, we include the variance-normalized root mean squared error (VRMSE) as it compares better across scales and for low-variance regions, the continuous ranked probability score (CRPS) [ 48 ], which generalizes the mean absolute error to probabilistic forecasts, and the spectral coherence RMSE [ 20 ], to assess the spectral error across frequency bands. Full definitions of these metrics are provided in Appendix C. 6τ = 192 τ = 96 τ = 32 τ = 1 Ground-truth FM pixel WFM 3-scale WFM 1-scale FM f ourier (a) Rayleigh–Bénard Convection τ = 96 τ = 64 τ = 32 τ = 1 Ground-truth FM pixel WFM 3-scale WFM 1-scale FM f ourier 
+
+(b) Turbulent Radiative Layer 2D 
+
+Figure 2: Qualitative results at different rollout snapshots ( τ ). 
+
+4.2 WFM Evaluation 
+
+We benchmark WFM variants (1- and 3-scale) across four prescribed mother wavelets, haar, db2 , db4 ,and db6 , evaluated independently for each PDE system, and compare them to other generative models. To select the optimal wavelet representation, we report the spectral coherence RMSE averaged across 
+
+Low , Mid , and High frequency bands (Table 1), which provides a holistic measure of spectral fidelity across the full frequency spectrum. Per-band results are further detailed in Table S9. Both WFM 1- and 3-scale consistently outperform all generative baselines across every PDE system and frequency band. For WFM 1-scale, haar achieves the lowest average spectral coherence RMSE on TRL and AM, while db4 is optimal for RB. For WFM 3-scale, haar yields the best representation on TRL, db4 on RB, and db2 on AM. All subsequent experiments adopt these PDE-specific wavelet selections, which we summarize in Table S10. Qualitative results are presented in Figures 2a–2b. Both WFM variants produce physically plausible states at extended rollout steps, remaining comparable to pixel-space generation. The difference between variants is most evident on AM (Figure S5), where WFM 1-scale loses coherent structure as early as τ = 16 , whereas WFM 3-scale preserves it throughout. WFM performance relative to deterministic and generative baselines is shown in Figure 3. WFM 3-scale consistently outperforms the 1-scale variant and all deterministic (Figure 3a) and generative baselines (Figures 3b and 3c) across all systems. It further shows competitive performance against FM pixel , outperforming the quality control model on TRL and RB systems, and only showing marginally worse performance at early rollout steps on AM. 7Table 1: Spectral Coherence RMSE averaged across Low , Mid and High frequency bands per PDE system. For each WFM variant, bold denotes the optimal wavelet representation used in all subsequent experiments. Generative baselines are included for comparison. Turbulent Radiative Layer 2D Rayleigh–Bénard Active Matter WFM 1-scale db2 0.152 0.132 0.287 WFM 1-scale db4 0.148 0.119 0.303 WFM 1-scale db6 0.150 0.132 0.290 WFM 1-scale haar 0.148 0.139 0.241 
+
+WFM 3-scale db2 0.154 0.111 0.219 
+
+WFM 3-scale db4 0.154 0.109 0.247 WFM 3-scale db6 0.152 0.112 0.237 WFM 3-scale haar 0.148 0.131 0.245 FM f ourier 0.379 0.264 0.375 WDNO 0.270 0.466 0.303 FM pixel 0.152 0.131 0.241 Table 2: Inference speedup of WFM vari-ants relative to FM pixel (higher is better).         
+
+> PDE WFM 1-scale WFM 3-scale
+> TRL 1.25 ×1.14 ×
+> RB 1.52 ×1.38 ×
+> AM 1.46 ×1.26 ×
+
+Beyond competitive accuracy, WFM consistently deliv-ers faster inference than FM pixel across all three systems, as reported in Table 2. Since all experiments are con-ducted under identical conditions, we attribute this result to the spatially smaller wavelet representation space in which the generative process operates. We report addi-tional profiling information for all WFM variants (scales and choice of mother wavelet) in Table S19. We provide additional evaluation of WFM’s performance across different turbulent regimes. For TRL, we vary the cooling time tcool and report CRPS (Tables 3a and S14) and spectral coherence RMSE (Table S15). WFM outperforms all generative baselines across the full range of tcool , with the largest gains in the small tcool regime, where rapid condensation produces a highly corrugated interface and sharp density contrasts that are particularly challenging to emulate. For RB, we vary 
+
+Ra and P r numbers and report CRPS (Tables 3b, S16, and S17) and spectral coherence RMSE (Tables S18a and S18b). Even for this PDE, WFM outperforms other models in the full Ra –P r 
+
+parameter space, including the most challenging regime ( Ra = 10 10 , P r = 10 −1), where dynamics are mostly chaotic. Table 3: CRPS averaged over rollout steps, broken down by the most chaotic parameters combination in TRL (a) and RB (b). Bold : best; underline: second best.  
+
+> (a) TRL per tcool .
+
+tcool 0.03 0.06 0.10 WFM-1 haar 1.122 1.124 0.816 WFM-1 db2 1.188 1.150 0.903 WFM-1 db4 1.126 1.127 0.861 WFM-1 db6 1.089 1.081 0.869 WFM-3 haar 1.085 1.149 0.932 WFM-3 db2 1.267 1.121 0.918 WFM-3 db4 1.031 1.038 0.808 
+
+WFM-3 db6 1.076 1.074 0.891 FM fourier 1.390 1.411 1.175 WDNO 3.306 3.298 3.195 FM pixel 1.161 1.145 0.909   
+
+> (b) Rayleigh–Bénard per Ra , averaged over P r .
+
+Ra 10 6 10 8 10 10 
+
+WFM-1 haar 0.058 0.065 0.054 WFM-1 db2 0.058 0.057 0.052 WFM-1 db4 0.058 0.059 0.052 WFM-1 db6 0.062 0.068 0.076 WFM-3 haar 0.059 0.063 0.054 WFM-3 db2 0.058 0.057 0.053 WFM-3 db4 0.054 0.057 0.048 
+
+WFM-3 db6 0.059 0.056 0.055 FM fourier 0.071 0.081 0.064 WDNO 0.120 0.118 0.116 FM pixel 0.056 0.066 0.055 8(a) VRMSE for WFM variants and deterministic baselines. 01:32 33:64 65:97 
+
+Lead Time 
+
+> 246
+> VRMSE
+
+Turbulent Radiative Layer 2D   
+
+> 01:32 33:64 65:196
+
+Lead Time 
+
+> 1.53.04.5
+
+Rayleigh-B´ enard   
+
+> 01:16 17:32 33:77
+
+Lead Time 
+
+> 123
+
+Active Matter     
+
+> WFM 1-scale (ours) WFM 3-scale (ours) WNO FNO TFNO
+
+(b) CRPS for WFM variants and generative baselines. 01:32 33:64 65:97 Lead Time 0.40.81.2CRPS 
+
+Turbulent Radiative Layer 2D   
+
+> 01:32 33:64 65:196
+
+Lead Time 0.04 0.08 0.12 
+
+Rayleigh-B´ enard   
+
+> 01:16 17:32 33:77
+
+Lead Time 0.10.20.3
+
+Active Matter       
+
+> FM pixel WFM 1-scale (ours) WFM 3-scale (ours) FM f ourier WDNO
+
+(c) Spectral Coherence RMSE for WFM variants and generative baselines. Low Mid High 
+
+Spectral Bands 
+
+> 0.15 0.30 0.45
+> Spectral Coherence RMSE
+
+Turbulent Radiative Layer 2D   
+
+> Low Mid High
+
+Spectral Bands 
+
+> 0.15 0.30 0.45
+
+Rayleigh-B´ enard   
+
+> Low Mid High
+
+Spectral Bands 
+
+> 0.15 0.30 0.45
+
+Active Matter     
+
+> FM pixel WFM 1-scale (ours) WFM 3-scale (ours) FM f ourier WDNO
+
+Figure 3: VRMSE (a) and CRPS (b) across rollout steps, and Spectral coherence RMSE (c) across frequency bands for the three PDE systems. FM pixel shows as a dashed gray line and serves as a quality control reference. 
+
+## 5 Discussion 
+
+A key perspective offered by our approach is its connection to multi-scale closure modeling in PDEs. Classical closure schemes parameterize unresolved small-scale processes as functions of resolved variables, often assuming a unidirectional dependence that neglects cross-scale feedbacks such as backscatter and intermittency [ 49 , 50 ]. WFM instead models the joint evolution of all scales in a unified generative framework, where multi-scale representations are induced by the choice of mother wavelet. This provides a principled multi-scale decomposition aligned with the locality and cascade structure of many physical systems, without requiring learned compression and loss of information. The resulting separation of representation and dynamics introduces a structured inductive bias that may improve interpretability [ 35 ], and generalization [ 51 ], as suggested by our consistent performance across the wide range of Ra –P r regimes in RB and tcool times in TRL. 
+
+Related work. Other works have explored a hybrid representation between data-driven and physics-informed manifold construction, such as operator-theoretic embeddings [21] or Fourier-based trans-formation [ 52 ]. Despite their effectiveness, these approaches still rely on data-driven learning process, 9often depend on empirical mode truncation or handcrafted basis selection. In related studies for multi-scale representation, multi-scale structure is typically enforced indirectly (e.g., via hierarchical architectures such as pyramidal flow matching [ 53 ]), rather than arising from a principled representa-tion [ 36 ]. Wavelets provide a natural, analytically grounded framework for multi-scale decomposition, offering spatial localization, orthogonality, and energy compaction in a training-free representation. 
+
+Limitations. This study focuses on WFM variants based on the Daubechies family of orthonormal wavelets, but other types such as mallat [30 ], symlets and coiflets [34 ] remain unexplored. Addition-ally, the current DWT implementation operates on regular grids. Extending it to other geometries, such as spherical domains, would extend the applicability of the framework to a wider range of physical systems, including the burgeoning field of weather and climate emulation. 
+
+Acknowledgements. We acknowledge funding from NSF through the Learning the Earth with Artificial intelligence and Physics (LEAP) Science and Technology Center (STC) (Award #2019625). VA acknowledges support a PIVOT Research award (Award #12871) from the Simons Foundation. This work used Derecho-GPU at NSF NCAR through allocation CIS251353 from the Advanced Cyberinfrastructure Coordination Ecosystem: Services & Support (ACCESS) program, which is supported by National Science Foundation grants #2138259, #2138286, #2138307, #2137603, and #2138296. 10 References 
+
+[1] Stephen B. Pope. Turbulent Flows . Cambridge University Press, 2000. [2] Kaifeng Bi, Lingxi Xie, Hengheng Zhang, Xin Chen, Xiaotao Gu, and Qi Tian. Accurate medium-range global weather forecasting with 3D neural networks. Nature , 619(7970):533– 538, July 2023. ISSN 1476-4687. doi: 10.1038/s41586-023-06185-3. URL https://doi. org/10.1038/s41586-023-06185-3 .[3] Juan Nathaniel, Yongquan Qu, Tung Nguyen, Sungduk Yu, Julius Busecke, Aditya Grover, and Pierre Gentine. Chaosbench: A multi-channel, physics-based benchmark for subseasonal-to-seasonal climate prediction. Advances in Neural Information Processing Systems , 37: 43715–43729, 2024. [4] Remi Lam et al. Learning skillful medium-range global weather forecasting. Science , 2023. [5] Ruben Ohana, Michael McCabe, et al. The well: a large-scale collection of diverse physics sim-ulations for machine learning. Advances in Neural Information Processing Systems (NeurIPS) ,2024. [6] Tim N. Palmer. Stochastic weather and climate models. Nature Reviews Physics , 2019. [7] Dmitrii Kochkov, Jamie A. Smith, Ayya Alieva, Qing Wang, Michael P. Brenner, and Stephan Hoyer. Machine learning–accelerated computational fluid dynamics. Proceedings of the National Academy of Sciences , 2021. [8] Zongyi Li, Nikola Kovachki, Kamyar Azizzadenesheli, Burigede Liu, Kaushik Bhattacharya, Andrew Stuart, and Anima Anandkumar. Fourier neural operator for parametric partial differen-tial equations. International Conference on Learning Representations (ICLR) , 2021. [9] Michael McCabe, Bruno Regaldo-Saint Blancard, et al. Multiple physics pretraining for spa-tiotemporal surrogate models. Advances in Neural Information Processing Systems (NeurIPS) ,2024. [10] Jean Kossaifi, Nikola Kovachki, Kamyar Azizzadenesheli, and Anima Anandkumar. Multi-grid tensorized fourier neural operator for high-resolution PDEs. arXiv preprint arXiv:2310.00120 ,2023. [11] Bogdan Raonic, Roberto Molinaro, Tim De Ryck, Tobias Rohner, Francesca Bartolucci, Rima Alaifari, Siddhartha Mishra, and Emmanuel De Bézenac. Convolutional neural operators for robust and accurate learning of pdes. Advances in Neural Information Processing Systems , 36: 77187–77200, 2023. [12] Olaf Ronneberger, Philipp Fischer, and Thomas Brox. U-Net: Convolutional networks for biomedical image segmentation. In MICCAI , 2015. [13] Zijie Li, Kazem Meidani, and Amir Barati Farimani. Transformer for partial differential equations’ operator learning. In TMLR , 2023. [14] Michael McCabe, Peter Harrington, Shashank Subramanian, and Jed Brown. Towards stability of autoregressive neural operators. Transactions on Machine Learning Research (TMLR) , 2023. [15] Phillip Lippe, Bastiaan S. Veeling, Paris Perdikaris, Richard E. Turner, and Johannes Brand-stetter. PDE-Refiner: Achieving accurate long rollouts with neural pde solvers. In NeurIPS ,2023. [16] Georg Kohl, Li-Wei Chen, and Nils Thuerey. Benchmarking autoregressive conditional diffusion models for turbulent flow simulation. In ICML AI4Science Workshop , 2024. [17] Robin Rombach, Andreas Blattmann, Dominik Lorenz, Patrick Esser, and Björn Ommer. High-resolution image synthesis with latent diffusion models. In CVPR , 2022. [18] Aliaksandra Shysheya et al. On conditional diffusion models for PDE simulations. In NeurIPS ,2024. 11 [19] Jiahe Huang, Guandao Yang, Zichen Wang, and Jeong Joon Park. Diffusionpde: Generative pde-solving under partial observation. Advances in Neural Information Processing Systems , 37: 130291–130323, 2024. [20] François Rozet, Ruben Ohana, Michael McCabe, Gilles Louppe, François Lanusse, and Shirley Ho. Lost in latent space: An empirical study of latent diffusion models for physics emulation. 
+
+NeurIPS , 2025. [21] Juan Nathaniel and Pierre Gentine. Generative emulation of chaotic dynamics with coherent prior. Computer Methods in Applied Mechanics and Engineering , 448:118410, 2026. [22] Yaron Lipman, Ricky T. Q. Chen, Heli Ben-Hamu, Maximilian Nickel, and Matt Le. Flow matching for generative modeling. In ICLR , 2023. [23] Yaron Lipman, Marton Havasi, Peter Holderrieth, Neta Shaul, Matt Le, Brian Karrer, Ricky T. Q. Chen, David Lopez-Paz, Heli Ben-Hamu, and Itai Gat. Flow matching guide and code, 2024. URL https://arxiv.org/abs/2412.06264 .[24] Xingchao Liu, Chengyue Gong, and Qiang Liu. Flow straight and fast: Learning to generate and transfer data with rectified flow. In ICLR , 2023. [25] Alexander Tong, Kilian Fatras, Nikolay Malkin, et al. Improving and generalizing flow-based generative models with minibatch optimal transport. Transactions on Machine Learning Research (TMLR) , 2024. [26] Zijie Li, Anthony Zhou, and Amir Barati Farimani. Generative latent neural PDE solver using flow matching. arXiv preprint arXiv:2503.22600 , 2025. [27] Srishti Gupta and Yashasvee Taiwade. Efficiency vs. fidelity: A comparative analysis of diffusion probabilistic models and flow matching on low-resource hardware, 2025. URL 
+
+https://arxiv.org/abs/2511.19379 .[28] Quan Dao, Hao Phung, Binh Nguyen, and Anh Tran. Flow matching in latent space. arXiv preprint arXiv:2307.08698 , 2023. [29] Xin Li, Jingdong Zhang, Qunxi Zhu, Chengli Zhao, Xue Zhang, Xiaojun Duan, and Wei Lin. From Fourier to neural ODEs: Flow matching for modeling complex systems. In Ruslan Salakhutdinov, Zico Kolter, Katherine Heller, Adrian Weller, Nuria Oliver, Jonathan Scarlett, and Felix Berkenkamp, editors, Proceedings of the 41st International Conference on Machine Learning , volume 235 of Proceedings of Machine Learning Research , pages 29390–29405. PMLR, 21–27 Jul 2024. URL https://proceedings.mlr.press/v235/li24cn.html .[30] Stéphane Mallat. A Wavelet Tour of Signal Processing: The Sparse Way . Academic Press, 3rd edition, 2009. [31] Anne Gagneux, Ségolène Martin, Rémi Emonet, Quentin Bertrand, and Mathurin Massias. A visual dive into conditional flow matching. In ICLR Blogposts 2025 , 2025. URL https:// iclr-blogposts.github.io/2025/blog/conditional-flow-matching/ . https://iclr-blogposts.github.io/2025/blog/conditional-flow-matching/. [32] Ruiqi Gao, Emiel Hoogeboom, Jonathan Heek, Valentin De Bortoli, Kevin P. Murphy, and Tim Salimans. Diffusion meets flow matching: Two sides of the same coin. 2024. URL 
+
+https://diffusionflow.github.io/ .[33] Stéphane G. Mallat. A theory for multiresolution signal decomposition: the wavelet repre-sentation. IEEE Transactions on Pattern Analysis and Machine Intelligence , 11(7):674–693, 1989. [34] Ingrid Daubechies. Ten Lectures on Wavelets . SIAM, Philadelphia, PA, 1992. [35] Wooseok Ha, Chandan Singh, Francois Lanusse, Srigokul Upadhyayula, and Bin Yu. Adaptive wavelet distillation from neural networks through interpretations. In Advances in Neural Information Processing Systems , volume 34, 2021. 12 [36] Gabriele Accarino, Viviana Acquaviva, Sara Shamekh, Duncan Watson-Parris, and David Lawrence. Wavesim: A wavelet-based multi-scale similarity metric for weather and climate fields. arXiv preprint arXiv:2512.14656 , 2025. [37] Eero P. Simoncelli and Edward H. Adelson. Noise removal via bayesian wavelet coring. 
+
+Proceedings of the IEEE International Conference on Image Processing , 1:379–382, 1996. [38] David L. Donoho and Iain M. Johnstone. Ideal spatial adaptation by wavelet shrinkage. 
+
+Biometrika , 81(3):425–455, 1994. [39] Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. Deep residual learning for image recognition. In Proceedings of the IEEE conference on computer vision and pattern recognition ,pages 770–778, 2016. [40] Ethan Perez, Florian Strub, Harm de Vries, Vincent Dumoulin, and Aaron Courville. Film: visual reasoning with a general conditioning layer. In Proceedings of the Thirty-Second AAAI Conference on Artificial Intelligence and Thirtieth Innovative Applications of Artificial Intelligence Conference and Eighth AAAI Symposium on Educational Advances in Artificial Intelligence , AAAI’18/IAAI’18/EAAI’18. AAAI Press, 2018. ISBN 978-1-57735-800-8. [41] Drummond B Fielding, Eve C Ostriker, Greg L Bryan, and Adam S Jermyn. Multiphase gas and the fractal nature of radiative turbulent mixing layers. The Astrophysical Journal Letters ,894(2):L24, 2020. [42] Keaton J Burns, Geoffrey M Vasil, Jeffrey S Oishi, Daniel Lecoanet, and Benjamin P Brown. Dedalus: A flexible framework for numerical simulations with spectral methods. Physical Review Research , 2(2):023068, 2020. [43] Suryanarayana Maddu, Scott Weady, and Michael J Shelley. Learning fast, accurate, and stable closures of a kinetic theory of an active fluid. Journal of Computational Physics , 504:112869, 2024. [44] Haixin Wang, Jiashu Pan, Hao Wu, Fan Zhang, and Tailin Wu. Fourierflow: Frequency-aware flow matching for generative turbulence modeling, 2025. URL https://arxiv.org/abs/ 2506.00862 .[45] Peiyan Hu, Rui Wang, Xiang Zheng, Tao Zhang, Haodong Feng, Ruiqi Feng, Long Wei, Yue Wang, Zhi-Ming Ma, and Tailin Wu. Wavelet diffusion neural operator. arXiv preprint arXiv:2412.04833 , 2024. [46] Zongyi Li, Nikola Kovachki, Kamyar Azizzadenesheli, Burigede Liu, Kaushik Bhattacharya, Andrew Stuart, and Anima Anandkumar. Fourier neural operator for parametric partial differen-tial equations. arXiv preprint arXiv:2010.08895 , 2020. [47] Tapas Tripura and Souvik Chakraborty. Wavelet neural operator for solving parametric partial differential equations in computational mechanics problems. Computer Methods in Applied Mechanics and Engineering , 404:115783, 2023. [48] Tilmann Gneiting and Adrian E. Raftery. Strictly proper scoring rules, prediction, and estimation. 
+
+Journal of the American Statistical Association , 102(477):359–378, 2007. [49] Shinya Maeyama and Tomo-Hiko Watanabe. Extracting and modeling the effects of small-scale fluctuations on large-scale fluctuations by mori–zwanzig projection operator method. Journal of the Physical Society of Japan , 89(2):024401, 2020. [50] Benjamin Sanderse, Panos Stinis, Romit Maulik, and Shady E Ahmed. Scientific machine learning for closure models in multiscale problems: A review. arXiv preprint arXiv:2403.02913 ,2024. [51] Juan Nathaniel, Carla Roesch, Jatan Buch, Derek DeSantis, Adam Rupe, Kara D Lamb, and Pierre Gentine. Deep koopman operators for causal discovery. Communications Physics , 8(1): 513, 2025. 13 [52] Vivek Oommen, Aniruddha Bora, Zhen Zhang, and George Em Karniadakis. Integrating neural operators with diffusion models improves spectral representation in turbulence modeling. arXiv preprint arXiv:2409.08477 , 2024. [53] Jeremy Andrew Irvin, Jiaqi Han, Zikui Wang, Abdulaziz Alharbi, Yufei Zhao, Nomin-Erdene Bayarsaikhan, Daniele Visioni, Andrew Y Ng, and Duncan Watson-Parris. Spatiotemporal pyramid flow matching for climate emulation. arXiv preprint arXiv:2512.02268 , 2025. [54] Lord Rayleigh. Lix. on convection currents in a horizontal layer of fluid, when the higher temperature is on the under side. The London, Edinburgh, and Dublin Philosophical Magazine and Journal of Science , 32(192):529–546, 1916. [55] Baole Wen, David Goluskin, and Charles R Doering. Steady rayleigh–bénard convection between no-slip boundaries. Journal of Fluid Mechanics , 933:R4, 2022. [56] Prafulla Dhariwal and Alexander Nichol. Diffusion models beat gans on image synthesis. In M. Ranzato, A. Beygelzimer, Y. Dauphin, P.S. Liang, and J. Wortman Vaughan, editors, 
+
+Advances in Neural Information Processing Systems , volume 34, pages 8780–8794. Curran Associates, Inc., 2021. URL https://proceedings.neurips.cc/paper_files/paper/ 2021/file/49ad23d1ec9fa4bd8d77d02681df5cfa-Paper.pdf .[57] Christopher A. T. Ferro. Fair scores for ensemble forecasts. Quarterly Journal of the Royal Meteorological Society , 140(683):1917–1923, 2014. [58] Ingrid Daubechies. Orthonormal bases of compactly supported wavelets. Communications on Pure and Applied Mathematics , 41(7):909–996, 1988. doi: 10.1002/cpa.3160410705. [59] Gregory R. Lee, Ralf Gommers, Filip Waselewski, Kai Wohlfahrt, and Aaron ;Leary. Pywavelets: A python package for wavelet analysis. Journal of Open Source Software , 4(36):1237, 2019. doi: 10.21105/joss.01237. URL https://doi.org/10.21105/joss.01237 .[60] Timothy J. Boerner, Stephen Deems, Thomas R. Furlani, Shelley L. Knuth, and John Towns. Access: Advancing innovation: Nsf’s advanced cyberinfrastructure coordination ecosystem: Services & support. In Practice and Experience in Advanced Research Computing 2023: Computing for the Common Good , PEARC ’23, page 173–176, New York, NY, USA, 2023. Association for Computing Machinery. ISBN 9781450399852. doi: 10.1145/3569951.3597559. URL https://doi.org/10.1145/3569951.3597559 .14 A Datasets 
+
+For all PDE datasets, each field is standardized using the mean and standard deviation computed over the training set. Each dataset also provides constant scalar parameters (see Table S1), denoted κ,which are linearly embedded and injected into every residual block of the velocity-predicting U-Net via FiLM conditioning. For the Rayleigh-Bénard dataset, the Rayleigh and Prandtl numbers are log-transformed prior to embedding. Table S1: Characteristics of the PDE systems considered in this study. Additional details can be found in [5].                                               
+
+> Rayleigh–Bénard Turbulent Radiative Layer 2D Active Matter
+> Fields buoyancy, pressure, velocities ( x,y)density, pressure, velocities (x,y)concentration, velocities (x,y), Dxx ,Dxy ,Dyx ,
+> Dyy ,Exx ,Exy ,Eyx ,Eyy
+> Scalar constants (κ)Ra, Pr tcool α, ζ
+> Resolution (pixel) 512 ×128 384 ×128 256 ×256
+> # Channels ( C)4411 # Trajectories 1750 90 360 # Steps per trajectory 200 101 81 Size (GB) 342 6.9 51.3 Software Dedalus Athena++ Python Reference [42] [43] [41]
+
+Turbulent Radiative Layer 2D. This PDE [ 41 ] simulates two-dimensional radiative turbulent mixing layers, a ubiquitous phenomenon in astrophysical environments such as the circum-galactic medium, where cold dense gas and hot dilute gas move relative to each other at subsonic velocities. The velocity shear drives the Kelvin–Helmholtz instability, populating intermediate-temperature gas through turbulent mixing; this mixed gas cools rapidly, driving a net mass flux from the hot to the cold phase. The evolution is governed by the compressible Euler equations with a radiative cooling source term, ∂ρ ∂t + ∇ · (ρv ) = 0 (14) 
+
+∂ρv ∂t + ∇ · (ρvv + P ) = 0 (15) 
+
+∂E ∂t + ∇ · [( E + P )v] = −E/t cool (16) 
+
+E = P/ (γ − 1) γ = 5 /3 (17) with ρ the density, v the 2D velocity, P the pressure, E the total energy, and tcool is the ra-diative cooling time. The dataset comprises 90 trajectories spanning nine values of tcool =
+
+{0.03 , 0.06 , 0.1, 0.18 , 0.32 , 0.56 , 1.00 , 1.78 , 3.16 } (ten random seeds each), simulated on a 384 ×128 
+
+uniform Cartesian grid and stored at 101 snapshots. The fields available are density, pressure, and velocity components, providing a challenging testbed for emulators across a wide range of cooling-to-mixing dynamical regimes. 
+
+Rayleigh-Bénard Convection. Rayleigh–Bénard Convection (RBC) [ 54 , 55 ] describes the dynam-ics of a horizontal fluid layer heated from below and cooled from above, where buoyancy-driven instabilities generate convection currents with rising warm fluid and sinking cold fluid, governed by 
+
+∂b ∂t − κ∆b = −u · ∇ b, (18) 
+
+∂u ∂t − ν∆u + ∇p − bez = −u · ∇ u, (19) 15 where b denotes buoyancy, u the velocity field, and p the pressure. The thermal diffusivity κ and viscosity ν are parameterized by the Rayleigh and Prandtl numbers as 
+
+κ = ( Ra · Pr )−1/2, ν = ( Ra /Pr )−1/2. (20) The system exhibits strongly nonlinear and chaotic behavior, transitioning between laminar and turbulent regimes, making it a challenging benchmark for PDE emulation. The 2D state is represented by two scalar fields (buoyancy and pressure) and one vector field (velocity components), discretized on a 512 × 128 grid ( C = 4 channels). We gather data from The Well, selecting all the 200 timesteps (∆t = 1 ) available to evaluate the models along long rollouts. Each trajectory is associated with a distinct combination of Rayleigh and Prandtl numbers, providing a diverse range of dynamical regimes for training and evaluation. 
+
+Active matter. Active matter [ 43 ] describes the dynamics of N elongated active particles of length 
+
+ℓ and thickness b (ℓ/b ≫ 1) immersed in a Stokes fluid of volume V . Individual particles convert chemical energy into mechanical work, generating persistent active stresses that give rise to complex, non-equilibrium dynamics. In the continuum limit, these systems are described by a kinetic theory for the distribution function Ψ( x, p, t ) governed by the Smoluchowski equation, 
+
+∂Ψ
+
+∂t + ∇x · ( ˙ xΨ) + ∇p · ( ˙ pΨ) = 0 , (21) which ensures particle number conservation. The conformational fluxes ˙x and ˙p arise from single-particle dynamics in a background flow u(x, t ) and, for dense suspensions, take the form 
+
+˙x = u − dT ∇x log Ψ , (22) 
+
+˙p = ( I − pp ) · (∇u + 2 ζD) · p − dR∇p log Ψ , (23) where dT and dR are translational and rotational diffusion coefficients, ζ controls alignment through steric interactions, and D = ⟨pp ⟩ is the second-moment tensor. Macroscopic fields are obtained as moments of Ψ: the concentration c = ⟨1⟩, polarity n = ⟨p⟩/c , and nematic order parameter 
+
+Q = ⟨pp ⟩/c , with ⟨f ⟩ = R 
+
+> |p|=1
+
+f Ψ dp. The particle dynamics are coupled to the surrounding incompressible Stokes flow, 
+
+−∆u + ∇P = ∇ · Σ, ∇ · u = 0 , (24) where the stress tensor 
+
+Σ = αD + βS : E − 2ζβ (D · D − S : D) (25) captures contributions from active dipoles ( α, the dipole strength), particle interactions ( β, the particle density), and steric torques. Here E = ( ∇u + ∇u⊤)/2 is the rate-of-strain tensor and S = ⟨pppp ⟩
+
+the fourth-moment tensor. The dataset comprises 225 trajectories (5 random seeds per parameter set) on a uniform 256 × 256 Cartesian grid with domain size Lx = Ly = 10 and periodic boundary conditions, stored at 81 snapshots separated by ∆t = 0 .25 seconds over a total window of t ∈ [0 , 20] 
+
+s. The available fields are concentration, velocity components, orientation tensor, and strain-rate tensor. The parameter space covers active dipole strengths α ∈ {− 1, −2, −3, −4, −5} and alignment coefficients ζ ∈ { 1, 3, 5, 7, 9, 11 , 13 , 15 , 17 } at fixed β = 0 .8, spanning regimes from disordered isotropic motion to coherent nematic collective flows, and constituting a challenging benchmark for surrogate modelling of long-horizon non-equilibrium dynamics. 16 B Models 
+
+This section details the model settings and hyperparameters used during training. We keep all hyper-parameters fixed across experiments and PDE benchmarks to ensure a fair comparison. At inference time, M = 8 ensemble members are generated by drawing independent Gaussian noise initial conditions and numerically integrating the underlying ODE (for FM-based models) or Stochastic Differential Equation (WDNO) for N = 50 steps. 
+
+B.1 Velocity-predicting U-Net. Skip 1           
+
+> DownConv (stride 2)
+> ResBlock x N
+> + FiLM (AdaGN)
+> Stem scale 1
+> Conv 3 x 3
+> ResBlock x N
+> + FiLM (AdaGN)
+> Inject scale 2
+> Conv 1 x 1
+> DownConv (stride 2)
+> Skip 2
+> ResBlock x N
+> + FiLM (AdaGN)
+> Stem scale 2
+> Conv 3 x 3
+> Up x 2 + Conv
+> ResBlock x N
+> + FiLM (AdaGN)
+> Inject scale 3
+> Conv 1 x 1
+> DownConv (stride 2)
+> ResBlock x N
+> + FiLM (AdaGN)
+> Up x 2 + Conv
+> ResBlock
+> + FiLM (AdaGN) Skip 3
+> Up x 2 + Conv
+> Bottleneck
+> ResBlock x N + FiLM
+> Out Head 1
+> (GN + SiLU + Conv)
+> Out Head 2
+> (GN + SiLU + Conv)
+> Out Head 3
+> (GN + SiLU + Conv)
+> Conditioning
+> Stem scale 3
+> Conv 3 x 3
+> Predicted
+> velocities
+> GN + SiLU Conv 3 x 3 AdaGN (FiLM) SiLU Conv 3 x 3
+> (zero-init) +Input Output
+> Residual Block conditioning
+> residual skip
+> GN =Group Normalization
+> SiLU = Sigmoid Linear Unit
+> FiLM = Feature-wise Linear Modulation
+
+Figure S1: Illustration of the velocity-predicting U-Net uθ .The velocity field uθ is parameterized by a U-Net (depicted in Figure S1) whose depth and wavelet injection points are controlled independently by the number of wavelet scales ( nscales ), and the number of encoder/decoder levels ( nlevels ), with nlevels ≥ nscales . This decoupling allows the same architecture to be used across all experimental conditions without structural changes. 
+
+Stems and injection. Each wavelet scale j is processed by a dedicated stem , a single 3 × 3
+
+convolution that projects the channel-wise concatenation of the current-state coefficients wtj and the noisy interpolant wτj into the encoder feature space. The stem at scale j = 1 initializes the encoder, while stems at scales j > 1 are fused into the encoder via a 1 × 1 convolution after the corresponding downsampling step, injecting multi-scale structure progressively into the representation. 
+
+Encoder, bottleneck, and decoder. Each encoder level applies N pre-activation residual blocks followed by a stride-2 convolution that halves the spatial resolution and doubles the channel width, up to a maximum of 8 × Cbase . In all the experiment we set to N = 3 . The bottleneck operates at the coarsest resolution with at least two residual blocks, providing a wide effective receptive field. The decoder mirrors the encoder with bilinear upsampling followed by a 3 × 3 convolution, and restores resolution by concatenating skip connections from the corresponding encoder level. A lightweight output head (GroupNorm–SiLU–Conv) is applied at each decoder level that corresponds to a wavelet scale, producing one velocity prediction per scale ( ˆuj ). 17 Conditioning. All residual blocks use adaptive group normalization (AdaGN) [ 56 ]: the conditioning vector c ∈ Rd, obtained by summing a sinusoidal flow-time embedding, constant parameters of the PDE ( κ), and the spatiotemporal context embedding of the past L = 3 states, modulates the feature activations via learned scale and shift parameters. Throughout the experiments we set d = 256 .
+
+Special cases. Setting nscales = nlevels recovers a standard multi-scale wavelet U-Net in which every encoder level receives the wavelet representation at the appropriate scale. Setting nscales = 1 disables all injections beyond the input stem, reducing the model to a plain U-Net operating on the finest wavelet scale only ( j = 1) . This is the configuration used for WFM 1-scale variants. Instead, FM pixel 
+
+uses the same architecture with wavelet injection disabled, and the stem operating directly on the full pixel grid. 
+
+Wavelet Flow Matching. To ensure a fair comparison across scale configurations, we normalize model capacity. The 3-scale WFM employs a shared U-Net backbone with three output heads, making it an inherently harder multi-target task compared to single-scale prediction. In U-Net architectures, capacity is primarily driven by the convolutions in residual blocks [ 39 ], which scale as O(init_dim 2), where init_dim denotes the number of feature channels in the first layer, assuming input and output channels grow proportionally to init_dim. We therefore equalize capacity on a per-head basis. In particular, for init_dim = 64 , the per-head capacity is proportional to 64 2/3 ≈ 1365 ,which corresponds to init_dim = 64 /√3 ≈ 37 for single-head models (e.g., WFM 1-scale and the remainder of generative baselines). We round this value to init_dim = 40 , the nearest multiple of 8
+
+above 37 , to satisfy divisibility by 8 of GroupNormalization layers. All single-head baselines are therefore retrained with init_dim = 40 .Table S2: Hyperparameters for the WFM configurations. WFM 1-scale WFM 3-scale Architecture U-Net U-Net Initial dimension 40 64 Residual blocks 3 3Embedding dimension 256 256 Parameters 12 .7 × 10 6 30 .6 × 10 6
+
+Wavelet scales 1 3Mother wavelet db2 db2 
+
+Padding mode periodic periodic Scales weighting scheme 1.0 for all scales 1.0 for all scales Optimizer AdamW AdamW Learning rate 3 × 10 −4 3 × 10 −4
+
+Weight decay 1 × 10 −2 1 × 10 −2
+
+Betas (0 .9, 0.999) (0 .9, 0.999) 
+
+Scheduler CosineAnnealingLR CosineAnnealingLR Eta min 1 × 10 −7 1 × 10 −7
+
+Epochs 200 200 Warm-up epochs 20 20 Batch size 32 32 Gradient clipping 1.0 1.0 Precision bf16-mixed bf16-mixed 
+
+Matmul precision high high 
+
+Strategy DDP DDP Framework PyTorch Lightning PyTorch Lightning GPUs 4× A100 (40GB) 4× A100 (40GB) 18 Flow Matching in pixel space. 
+
+Table S3: Hyperparameters for the FM pixel configuration. FM pixel 
+
+Architecture U-Net Initial dimension 40 Residual blocks 3Embedding dimension 256 Parameters 12 .7 × 10 6
+
+Optimizer AdamW Learning rate 6 × 10 −4
+
+Weight decay 1 × 10 −2
+
+Betas (0 .9, 0.999) 
+
+Scheduler CosineAnnealingLR Eta min 1 × 10 −7
+
+Epochs 200 Warm-up epochs 20 Batch size 16 Gradient clipping 1.0 Precision bf16-mixed 
+
+Matmul precision high 
+
+Strategy DDP Framework PyTorch Lightning GPUs 4× A100 (40GB) 
+
+Flow Matching in fourier space. 
+
+Table S4: Hyperparameters for the FM f ourier configuration. FM f ourier 
+
+Architecture U-Net Initial dimension 64 Residual blocks 3Embedding dimension 256 Parameters 30 .3 × 10 6
+
+Fourier Modes (H, W) (32, 32) Optimizer AdamW Learning rate 1 × 10 −4
+
+Weight decay 1 × 10 −2
+
+Betas (0 .9, 0.999) 
+
+Scheduler CosineAnnealingLR Eta min 1 × 10 −7
+
+Epochs 200 Warm-up epochs 20 Batch size 32 Gradient clipping 1.0 Precision bf16-mixed 
+
+Matmul precision high 
+
+Strategy DDP Framework PyTorch Lightning GPUs 4× A100 (40GB) 19 Wavelet Neural Operator. Our implementation keeps the core WNO operator structure [ 47 ], adapting the wrapper to the WFM benchmark: we flatten history and field channels as model input, append available physical scalar conditions through the benchmark data interface, and evaluate using identical WFM normalization and rollout pipeline. For Rayleigh–Bénard we apply a logarithmic trans-form to the physical parameters; for TRL and active matter we use the default scalar representation. Hyperparameters for all four WNO variants are reported in Table S5. Table S5: Hyperparameters for the WNO configuration. WNO Hidden width 32 Layers 4Wavelet scales 3Mother wavelet db2 
+
+Padding mode periodic Input steps 4Output steps 1Optimizer AdamW Learning rate 1 × 10 −3
+
+Weight decay 1 × 10 −6
+
+Betas (0 .9, 0.999) 
+
+Scheduler CosineAnnealingLR Eta min 1 × 10 −6
+
+Epochs 200 Early-stopping patience 20 Batch size 16 Framework PyTorch Lightning GPUs 1× A100 (40GB) 20 Wavelet Diffusion Neural Operator. Our WDNO baseline [ 45 ] is a diffusion model that operates in wavelet space. We adapt it from image reconstruction to PDE emulation as follows. The input to the model is the full spatiotemporal block [t1, t 2, t 3, t 4, t 5], transformed via a 3D DWT over time and space; a 3D U-Net is then trained to denoise in this wavelet state space. For conditioning, the observed steps [t1, t 2, t 3, t 4] are provided as fixed channels, with known components re-imposed at each sampling step. We use the db2 mother wavelet with periodic padding, u-prediction, deterministic DDIM sampling, and EMA weights at inference. Full hyperparameters are reported in Table S6. Table S6: Hyperparameters for the WDNO configuration. WDNO Architecture U-Net Initial dimension 64 Residual blocks 1U-Net resolution levels 3Conditioning dimension 128 Input steps 4Output steps 1Mother wavelet db2 
+
+Padding mode periodic Wavelet scales 3Diffusion steps 4Sampling steps 4Sampler DDIM ( η = 0 )Beta schedule Cosine 
+
+x0 clipping [−1, 1] 
+
+EMA decay 0.995 Optimizer AdamW Learning rate 1 × 10 −4
+
+Weight decay 1 × 10 −6
+
+Betas (0 .9, 0.999) 
+
+Scheduler CosineAnnealingLR Eta min 1 × 10 −6
+
+Epochs 200 Early-stopping patience 20 Batch size 4Precision fp32 
+
+Framework PyTorch Lightning GPUs 1× A100 (40GB) 21 Fourier-based Neural Operators. 
+
+Table S7: Hyperparameters for the FNO and TFNO configurations. FNO TFNO Architecture FNO TFNO Hidden dimension 128 128 Fourier blocks 4 4Parameters 19 × 10 6 7.9 × 10 6
+
+Fourier Modes (H, W) (16, 16) (16, 16) Tucker rank - 0.42 Learning rate 5 × 10 −3 5 × 10 −3
+
+Epochs 500 500 Batch size 16 16 Early stopping patience 20 20 Early stopping min delta 1 × 10 −6 1 × 10 −6
+
+Precision 32-true 32-true 
+
+Matmul precision high high 
+
+Strategy DDP DDP Framework PyTorch Lightning PyTorch Lightning GPUs 2× A100 (40GB) 2× A100 (40GB) 22 C Metrics 
+
+Let u ∈ RH×W and v ∈ RH×W denote the ground-truth and the predicted spatial field, respectively. For generative models we generate M = 8 ensemble predictions {vm}M
+
+> m=1
+
+, each of the same shape. Let · denote the mean across spatial dimensions. 
+
+Variance-normalized Root Mean Squared Error (VRMSE). The RMSE of the ensemble mean, normalized by the spatial standard deviation of the reference field, VRMSE (u, v ) = 
+
+s
+
+(u − v)2
+
+(u − ⟨ u⟩)2 + ϵ (26) where ε = 10 −6 ensures numerical stability. VRMSE predicts the mean of u yields VRMSE ≈ 1,providing a meaningful baseline [ 5, 20 ]. Unlike the normalised RMSE (NRMSE), which divides by 
+
+⟨u2⟩, VRMSE avoids down-weighting errors in non-negative fields (e.g. pressure and density) [20]. 
+
+Fair Continuous Ranked Probability Score (CRPS). The CRPS generalizes the mean absolute er-ror (MAE) to probabilistic forecasts by scoring an entire predictive distribution against an observation [48]. For an ensemble of size M the unbiased (“fair”) estimator of Ferro [57] is 
+
+CRPS fair (u, {vm}) = 1
+
+M
+
+> M
+
+X
+
+> m=1
+
+⟨| vm − u|⟩ − 1
+
+M(M − 1) 
+
+X
+
+> 1≤m<m ′≤M
+
+⟨| vm − vm′ |⟩ , (27) The first term penalizes deviations of individual members from the truth; the second rewards ensemble spread (inter-member diversity). Equation (27) is the unique finite-sample estimator of the population CRPS that is unbiased with respect to bootstrap resampling of ensemble members [ 57 ]; the naïve 
+
+1/M2 weight is biased toward over-dispersed ensembles. The CRPS is minimized (to zero) when the ensemble samples exactly the true conditional distribution of u [48 ]. For turbulent flows, CRPS measures whether the model correctly represents the range of possible realizations rather than just their mean, making it essential when trajectories diverge chaotically after a finite predictability horizon. 
+
+Spectral Coherence RMSE. Let Pu(k) and Pv (k) denote the isotropic power spectral densities (PSDs) of fields u and v respectively, at radial wavenumber k (cycles pixel −1), obtained by azimuthal averaging of the 2-D DFT magnitude squared. Let Cuv (k) = |ˆu(k) ˆ v(k)| be the corresponding cross-spectrum magnitude. The spectral coherence at wavenumber k is 
+
+γ(k) = Cuv (k) + ε
+
+pPu(k) Pv (k) + ε , (28) where ε = 10 −6. By the Cauchy–Schwarz inequality, γ(k) ∈ [0 , 1] . We distribute the resulting wavenumbers evenly in log-space and divide into three frequency bands ( Low , Mid , High ), then for each band: 
+
+RMSE c(B) = 
+
+s 1
+
+|B| 
+
+X
+
+> k∈B
+
+ 1 − γ(k)2. (29) 
+
+RMSE c ≈ 0 indicates that v reproduces the correct phase and amplitude structure of u at each resolved scale within the band; RMSE c = 1 (the maximum, by Cauchy–Schwarz) indicates the two fields are spectrally uncorrelated across the band. For turbulent flows energy cascades from large to small scales, so coherence typically degrades first at high wavenumbers; RMSE c therefore quantifies whether the model respects the inertial-range cascade structure at each resolved scale, complementing the point-wise VRMSE which loses sensitivity once trajectories have diverged chaotically. We prefer Spectral Coherence RMSE over Power Spectrum RMSE, which is defined as in Equation 29 but replacing γ(k) with the ratio Pv (k)/P u(k). This choice is motivated by the fact that Power Spectrum RMSE is unbounded and numerically unstable when Pu(k) ≈ 0, which is the case of near-zero-mean fields in some PDEs considered in this study. 23 D Mother Wavelets 
+
+All four wavelets used in this study belong to the Daubechies family [ 58 ], which constructs compactly supported orthonormal bases of L2(R). A family {ψj,n }(j,n )∈Z2 is orthonormal when 
+
+⟨ψj,n , ψ j′,n ′ ⟩ = δjj ′ δnn ′ , (30) with δij the Kronecker delta ( 1 if i = j, 0 otherwise). This means that the basis functions are both mutually orthogonal and of unit norm. This is strictly stronger than mere orthogonality, where cross inner products vanish but norms need not equal one. Because the basis is orthonormal, the L2 energy of any signal is exactly preserved in its coefficient sequence (Parseval’s identity), so energy-based metrics such as RMSE carry the same meaning in both the signal and the wavelet domain without any additional rescaling. 
+
+Vanishing moments and polynomial cancellation. The Daubechies db p wavelet is the unique compactly supported, orthonormal wavelet that maximises the number of vanishing moments p for a support of length 2p − 1 (equivalently, a filter of length 2p). Having p vanishing moments means 
+
+Z ∞−∞ 
+
+tk ψ(t) d t = 0 , k = 0 , . . . , p − 1, (31) so the wavelet transform exactly annihilates polynomials of degree less than p: detail coefficients are identically zero wherever the signal is locally well approximated by such polynomials. Increasing p
+
+therefore yields sparser coefficient representations for smooth signals, at the cost of a wider spatial support and a slightly larger convolution per decomposition level. The Haar wavelet (equivalent to db1 ) is the simplest member of this family: its scaling function is piecewise constant on [0 , 1) , giving a support of length one and a single vanishing moment. It is the only Daubechies wavelet that is symmetric and discontinuous, making it computationally cheap but poorly suited to capturing smooth transitions. Instead, db2 , db4 , and db6 progressively widen the support and increase regularity, suppressing polynomial trends of degree up to 1, 3, and 5, respectively. Table S8 summarises the key properties of the four mother wavelets considered in this work. Table S8: Key properties of the mother wavelets used in this study. All four belong to the Daubechies (db p) family [ 58 , 34 ] and form orthonormal bases of L2(R). Filter length equals 2p and support length equals 2p − 1 for db p.
+
+Wavelet Filter length Support Vanishing moments Polynomials annihilated Symmetry 
+
+db1 (haar) 2 [0 , 1] 1 constants (deg ≤ 0) symmetric 
+
+db2 4 [0 , 3] 2 linear (deg ≤ 1) asymmetric 
+
+db4 8 [0 , 7] 4 cubic (deg ≤ 3) asymmetric 
+
+db6 12 [0 , 11] 6 quintic (deg ≤ 5) asymmetric 
+
+Discrete Wavelet Transform Implementation. Our DWT is implemented in PyTorch using the 
+
+PyWavelets (pywt ) [ 59 ] backend, using the periodic padding mode. The transform operates on the spatial dimensions (H, W ) only, leaving the batch, channel, and temporal axes untouched. To enable batched processing, input tensors of shape (B, C, T, H, W ) are transiently reshaped to 
+
+(B · C · T, H, W ) before each single-level DWT call and restored afterwards. 24 E Additional Experimental Results 
+
+This section provides additional material and analyses complementing the main text. Figures S2, S3, and S4 show WFM variants based on the wavelet selection reported in Section 4.2 and summarized in Table S10. Bold and underlined entries denote the best and second-best results, respectively. All metrics reported in this section are lower-is-better. 
+
+Effect of mother wavelet family on WFM performance. 
+
+Table S9: Average Spectral Coherence RMSE across frequency bands and autoregressive rollout timesteps, comparing WFM representations induced by different mother wavelet families, evaluated for both 1-scale and 3-scale variants, against generative baselines, for each PDE system. Turb. Rad. Layer 2D Rayleigh-Bénard Active Matter Frequency Bands Low Mid High Low Mid High Low Mid High WFM 1-scale db2 0.136 0.179 0.141 0.167 0.125 0.104 0.291 0.335 0.235 WFM 1-scale db4 0.129 0.175 0.139 0.166 0.116 0.076 0.307 0.351 0.251 WFM 1-scale db6 0.133 0.175 0.141 0.188 0.124 0.084 0.283 0.346 0.241 WFM 1-scale haar 0.134 0.175 0.134 0.169 0.131 0.116 0.227 0.291 0.204 WFM 3-scale db2 0.139 0.187 0.136 0.142 0.113 0.078 0.198 0.260 0.198 
+
+WFM 3-scale db4 0.141 0.177 0.144 0.143 0.109 0.075 0.217 0.289 0.235 WFM 3-scale db6 0.136 0.174 0.147 0.147 0.110 0.079 0.194 0.257 0.259 WFM 3-scale haar 0.132 0.172 0.141 0.150 0.129 0.113 0.203 0.277 0.254 WDNO 0.199 0.249 0.361 0.392 0.472 0.534 0.365 0.345 0.200 FM f ourier 0.235 0.487 0.416 0.325 0.260 0.208 0.423 0.464 0.237 FM pixel 0.138 0.180 0.138 0.151 0.128 0.113 0.181 0.253 0.288 Table S10: Optimal mother wavelet per WFM variant and PDE system, selected by lowest spectral coherence RMSE averaged across Low , Mid , and High frequency bands. Turbulent Radiative Layer 2D Rayleigh–Bénard Active Matter WFM 1-scale haar (0.148) db4 (0.119) haar (0.241) WFM 3-scale haar (0.148) db4 (0.109) db2 (0.219) 25 VRMSE across autoregressive rollout steps. 
+
+Table S11: VRMSE across rollout horizons for all models and PDE systems. Turb. Rad. Layer 2D Rayleigh–Bénard Active Matter Rollout 01:32 33:64 65:97 01:32 33:64 65:196 01:16 17:32 33:77 WFM-1 haar 0.545 0.765 0.782 1.778 1.985 0.811 2.864 1.547 1.074 WFM-1 db2 0.553 0.752 0.856 1.326 1.893 0.797 5.641 2.940 1.623 WFM-1 db4 0.556 0.731 0.776 1.732 2.362 0.800 14.219 5.562 2.490 WFM-1 db6 0.544 0.705 0.787 1.463 1.998 0.980 6.782 2.932 1.567 WFM-3 haar 0.557 0.859 0.810 1.584 2.366 0.803 0.849 1.325 1.019 
+
+WFM-3 db2 0.635 0.892 0.934 1.030 1.652 0.783 0.934 1.328 1.085 WFM-3 db4 0.578 0.763 0.817 1.012 1.909 0.766 3.224 2.256 1.412 WFM-3 db6 0.582 0.893 0.821 0.779 1.666 0.815 2.317 2.088 1.275 FM fourier 0.602 0.740 0.779 1.106 0.809 0.837 1.302 1.126 1.021 WDNO 1.517 1.835 1.953 19.346 8.225 1.395 4.481 2.185 1.400 WNO inf inf inf 44.226 24.463 2.452 10.669 4.321 2.002 FNO 2.952 4.978 4.349 3.368 3.972 inf 1.682 3.227 1.727 TFNO 2.300 6.534 6.387 102.678 31.842 2.965 4.443 2.968 1.525 FM pixel 0.576 0.920 0.865 1.277 1.892 0.830 0.587 1.399 1.033 0 20 40 60 80 100             
+
+> Lead time
+> 0.0
+> 2.5
+> 5.0
+> 7.5
+> VRMSE
+> Turbulent Radiative Layer 2D
+> 050 100 150 200
+> Lead time
+> 0.0
+> 2.5
+> 5.0
+> 7.5
+> Rayleigh-B´ enard
+> 020 40 60 80
+> Lead time
+> 0.0
+> 2.5
+> 5.0
+> 7.5
+> Active Matter WFM 1-scale (ours) WFM 3-scale (ours) WNO FNO TFNO
+
+Figure S2: VRMSE across rollout steps for WFM and deterministic baselines per PDE system. 26 CRPS across autoregressive rollout steps. 
+
+Table S12: CRPS across rollout horizons for all models and PDE systems. Turb. Rad. Layer 2D Rayleigh–Bénard Active Matter Rollout 01:32 33:64 65:97 01:32 33:64 65:196 01:16 17:32 33:77 WFM-1 haar 0.503 1.049 1.193 0.005 0.036 0.078 0.118 0.190 0.197 WFM-1 db2 0.449 1.144 1.427 0.005 0.036 0.072 0.173 0.239 0.261 WFM-1 db4 0.532 1.079 1.228 0.007 0.041 0.072 0.326 0.387 0.388 WFM-1 db6 0.451 1.036 1.197 0.005 0.040 0.091 0.175 0.222 0.232 WFM-3 haar 0.415 1.073 1.173 0.004 0.036 0.077 0.079 0.169 0.191 
+
+WFM-3 db2 0.450 1.143 1.227 0.003 0.032 0.074 0.087 0.174 0.195 WFM-3 db4 0.426 0.994 1.124 0.004 0.032 0.070 0.107 0.209 0.238 WFM-3 db6 0.443 1.041 1.180 0.004 0.032 0.075 0.100 0.197 0.213 FM fourier 0.854 1.391 1.528 0.009 0.038 0.096 0.185 0.224 0.216 WDNO 2.460 3.372 4.285 0.051 0.102 0.138 0.218 0.245 0.266 FM pixel 0.422 1.093 1.236 0.005 0.036 0.078 0.058 0.166 0.194 0 20 40 60 80 100             
+
+> Lead time
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> CRPS
+> Turbulent Radiative Layer 2D
+> 050 100 150 200
+> Lead time
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> Rayleigh-B´ enard
+> 020 40 60 80
+> Lead time
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> Active Matter FM pixel WFM 1-scale (ours) WFM 3-scale (ours) FM f ourier WDNO
+
+Figure S3: CRPS across rollout steps for WFM and generative baselines per PDE system. 27 Spectral Coherence RMSE. 
+
+Table S13: Spectral coherence RMSE across Low , Mid , and High frequency bands for all models and PDE systems. Turb. Rad. Layer 2D Rayleigh–Bénard Active Matter Frequency Bands Low Mid High Low Mid High Low Mid High WFM-1 haar 0.134 0.176 0.134 0.169 0.132 0.117 0.228 0.291 0.204 WFM-1 db2 0.137 0.180 0.141 0.167 0.126 0.105 0.291 0.336 0.236 WFM-1 db4 0.129 0.175 0.139 0.166 0.117 0.077 0.307 0.351 0.251 WFM-1 db6 0.134 0.176 0.141 0.188 0.125 0.085 0.283 0.347 0.242 WFM-3 haar 0.132 0.173 0.141 0.150 0.130 0.114 0.205 0.279 0.256 WFM-3 db2 0.140 0.187 0.136 0.143 0.114 0.079 0.200 0.262 0.198 
+
+WFM-3 db4 0.141 0.178 0.144 0.143 0.109 0.075 0.220 0.292 0.235 WFM-3 db6 0.137 0.174 0.147 0.147 0.110 0.080 0.196 0.258 0.260 FM fourier 0.236 0.487 0.417 0.325 0.262 0.209 0.425 0.463 0.238 WDNO 0.199 0.249 0.365 0.392 0.473 0.535 0.366 0.344 0.200 FM pixel 0.139 0.180 0.138 0.151 0.129 0.114 0.183 0.256 0.290 0.0                   
+
+> 0.2
+> 0.4
+> Turbulent Radiative Layer 2D Rayleigh-B´ enard Active Matter
+> 0.0
+> 0.2
+> 0.4
+> 020 40 60 80 100
+> Lead time
+> 0.0
+> 0.2
+> 0.4
+> 050 100 150 200
+> Lead time
+> 020 40 60 80
+> Lead time
+> Spectral Coherence RMSE Low  Mid  High FM pixel WFM 1-scale (ours) WFM 3-scale (ours) FM f ourier WDNO
+
+Figure S4: Spectral coherence RMSE across frequency bands and rollout steps for WFM and generative baselines per PDE system. 28 Turbulent Radiative Layer 2D: sensitivity to cooling time tcool 
+
+Table S14: CRPS per tcool on TRL, averaged over rollout steps. Expandend version of Table 3a. tcool 0.03 0.06 0.10 0.18 0.32 0.56 1.0 1.78 3.16 WFM-1 haar 1.122 1.124 0.816 1.085 0.831 0.790 0.812 0.994 0.688 WFM-1 db2 1.188 1.150 0.903 1.149 0.854 0.839 0.953 0.997 1.066 WFM-1 db4 1.126 1.127 0.861 1.159 0.839 0.874 0.841 1.012 0.702 WFM-1 db6 1.089 1.081 0.869 1.058 0.811 0.780 0.754 1.047 0.588 WFM-3 haar 1.085 1.149 0.932 1.047 0.732 0.775 0.782 0.944 0.562 WFM-3 db2 1.267 1.121 0.918 1.118 0.863 0.769 0.756 1.020 0.655 WFM-3 db4 1.031 1.038 0.808 0.992 0.782 0.742 0.709 0.897 0.657 WFM-3 db6 1.076 1.074 0.891 0.947 0.867 0.829 0.778 0.975 0.583 FM fourier 1.390 1.411 1.175 1.429 1.268 1.214 1.140 1.323 0.994 WDNO 3.306 3.298 3.195 3.411 3.360 3.415 3.460 3.560 3.431 FM pixel 1.161 1.145 0.909 1.064 0.926 0.799 0.759 0.968 0.551 
+
+29 Table S15: Spectral coherence RMSE per tcool and frequency band on TRL. 
+
+tcool 0.03 0.06 0.10 0.18 0.32 0.56 1.0 1.78 3.16 WFM-1 haar Low 0.137 0.143 0.135 0.137 0.135 0.124 0.132 0.145 0.123 Mid 0.191 0.197 0.186 0.191 0.185 0.170 0.159 0.154 0.149 High 0.142 0.142 0.132 0.139 0.147 0.145 0.134 0.120 0.106 WFM-1 db2 Low 0.140 0.140 0.137 0.133 0.137 0.126 0.135 0.138 0.149 Mid 0.190 0.195 0.189 0.189 0.183 0.176 0.168 0.164 0.163 High 0.138 0.141 0.138 0.146 0.152 0.155 0.146 0.135 0.122 WFM-1 db4 Low 0.131 0.134 0.132 0.137 0.137 0.125 0.126 0.130 0.114 
+
+Mid 0.188 0.191 0.184 0.191 0.186 0.175 0.163 0.156 0.145 High 0.134 0.137 0.136 0.144 0.151 0.158 0.147 0.135 0.111 WFM-1 db6 Low 0.138 0.140 0.141 0.132 0.140 0.128 0.129 0.132 0.124 Mid 0.192 0.194 0.189 0.190 0.188 0.171 0.158 0.153 0.148 High 0.138 0.141 0.143 0.145 0.154 0.158 0.145 0.133 0.111 WFM-3 haar Low 0.132 0.145 0.141 0.143 0.132 0.129 0.126 0.125 0.120 Mid 0.189 0.201 0.191 0.190 0.180 0.168 0.151 0.148 0.142 
+
+High 0.152 0.154 0.146 0.150 0.156 0.151 0.133 0.125 0.104 WFM-3 db2 Low 0.148 0.143 0.142 0.146 0.143 0.131 0.133 0.145 0.128 Mid 0.193 0.198 0.190 0.197 0.193 0.185 0.178 0.179 0.173 High 0.153 0.153 0.146 0.143 0.140 0.140 0.127 0.121 0.104 WFM-3 db4 Low 0.149 0.153 0.144 0.141 0.139 0.136 0.141 0.142 0.131 Mid 0.192 0.197 0.191 0.190 0.183 0.174 0.168 0.158 0.149 High 0.146 0.151 0.151 0.155 0.161 0.157 0.139 0.129 0.108 WFM-3 db6 Low 0.154 0.137 0.143 0.136 0.140 0.137 0.132 0.138 0.114 Mid 0.195 0.190 0.187 0.188 0.180 0.178 0.154 0.154 0.143 High 0.151 0.146 0.149 0.156 0.170 0.162 0.143 0.135 0.110 FM fourier 
+
+Low 0.240 0.246 0.226 0.248 0.239 0.228 0.229 0.248 0.219 Mid 0.494 0.495 0.492 0.504 0.494 0.487 0.481 0.469 0.467 High 0.489 0.483 0.464 0.456 0.417 0.386 0.360 0.349 0.347 WDNO Low 0.205 0.203 0.193 0.203 0.195 0.193 0.196 0.214 0.191 Mid 0.254 0.252 0.250 0.246 0.240 0.243 0.248 0.252 0.263 High 0.360 0.364 0.353 0.362 0.367 0.372 0.375 0.378 0.371 FM pixel 
+
+Low 0.139 0.146 0.144 0.151 0.140 0.133 0.134 0.145 0.124 Mid 0.192 0.202 0.193 0.201 0.186 0.175 0.165 0.158 0.152 High 0.153 0.156 0.151 0.151 0.149 0.147 0.128 0.112 0.096 
+
+30 Rayleigh–Bénard: sensitivity to Rayleigh and Prandtl numbers. 
+
+Table S16: CRPS per Rayleigh number Ra on Rayleigh–Bénard, averaged over Prandtl numbers. Same as Table 3b. Rayleigh number 10 6 10 8 10 10 
+
+WFM-1 haar 0.058 0.065 0.054 WFM-1 db2 0.058 0.057 0.052 WFM-1 db4 0.058 0.059 0.052 WFM-1 db6 0.062 0.068 0.076 WFM-3 haar 0.059 0.063 0.054 WFM-3 db2 0.058 0.057 0.053 WFM-3 db4 0.054 0.057 0.048 
+
+WFM-3 db6 0.059 0.056 0.055 FM fourier 0.071 0.081 0.064 WDNO 0.120 0.118 0.116 FM pixel 0.056 0.066 0.055 Table S17: CRPS per Prandtl number P r on Rayleigh–Bénard, averaged over Rayleigh numbers. Prandtl number 10 −1 1 10 
+
+WFM-1 haar 0.094 0.054 0.029 WFM-1 db2 0.083 0.052 0.031 WFM-1 db4 0.085 0.050 0.034 WFM-1 db6 0.093 0.065 0.049 WFM-3 haar 0.095 0.049 0.032 WFM-3 db2 0.086 0.051 0.031 WFM-3 db4 0.082 0.049 0.028 
+
+WFM-3 db6 0.083 0.048 0.039 FM fourier 0.114 0.058 0.044 WDNO 0.145 0.112 0.097 FM pixel 0.090 0.054 0.033 31 Table S18: Spectral coherence RMSE per frequency band on Rayleigh–Bénard, broken down by Rayleigh number Ra (left, averaged over P r ) and Prandtl number P r (right, averaged over Ra ). 
+
+(a) vs Ra (averaged over P r )
+
+Model Band 10 6 10 8 10 10 
+
+WFM-1 haar Low 0.172 0.158 0.135 Mid 0.189 0.136 0.132 High 0.112 0.188 0.163 WFM-1 db2 Low 0.163 0.157 0.143 Mid 0.165 0.131 0.133 High 0.094 0.163 0.151 WFM-1 db4 Low 0.150 0.169 0.141 Mid 0.116 0.130 0.132 High 0.048 0.102 0.120 
+
+WFM-1 db6 Low 0.184 0.190 0.209 Mid 0.141 0.125 0.177 High 0.053 0.090 0.181 WFM-3 haar Low 0.157 0.167 0.129 Mid 0.186 0.133 0.129 High 0.108 0.181 0.158 WFM-3 db2 Low 0.144 0.159 0.127 
+
+Mid 0.134 0.120 0.125 
+
+High 0.060 0.106 0.120 WFM-3 db4 Low 0.134 0.158 0.130 Mid 0.119 0.119 0.126 High 0.052 0.098 0.120 WFM-3 db6 Low 0.148 0.165 0.135 Mid 0.123 0.120 0.129 High 0.068 0.098 0.126 FM fourier 
+
+Low 0.345 0.325 0.294 Mid 0.252 0.307 0.314 High 0.137 0.262 0.296 WDNO Low 0.427 0.401 0.365 Mid 0.548 0.483 0.447 High 0.585 0.580 0.528 FM pixel 
+
+Low 0.155 0.156 0.129 Mid 0.188 0.132 0.127 High 0.113 0.187 0.152 
+
+(b) vs P r (averaged over Ra )
+
+Model Band 10 −1 1 10 
+
+WFM-1 haar Low 0.175 0.142 0.147 Mid 0.159 0.165 0.133 High 0.193 0.160 0.110 WFM-1 db2 Low 0.169 0.147 0.146 Mid 0.151 0.155 0.124 High 0.182 0.138 0.089 WFM-1 db4 Low 0.178 0.138 0.144 Mid 0.138 0.130 0.111 High 0.121 0.086 0.063 
+
+WFM-1 db6 Low 0.212 0.183 0.188 Mid 0.151 0.151 0.142 High 0.130 0.118 0.075 WFM-3 haar Low 0.182 0.136 0.134 Mid 0.156 0.157 0.135 High 0.189 0.150 0.108 WFM-3 db2 Low 0.167 0.133 0.130 Mid 0.129 0.134 0.115 High 0.123 0.096 0.067 WFM-3 db4 Low 0.159 0.133 0.129 
+
+Mid 0.126 0.131 0.108 
+
+High 0.111 0.092 0.067 WFM-3 db6 Low 0.168 0.141 0.139 Mid 0.129 0.133 0.110 High 0.118 0.095 0.079 FM fourier 
+
+Low 0.341 0.312 0.311 Mid 0.308 0.291 0.274 High 0.262 0.228 0.205 WDNO Low 0.391 0.385 0.417 Mid 0.476 0.497 0.504 High 0.574 0.575 0.545 FM pixel 
+
+Low 0.163 0.141 0.137 Mid 0.155 0.158 0.133 High 0.198 0.148 0.105 
+
+32 Qualitative Assessment for Active Matter. τ = 32 τ = 16 τ = 8 τ = 1 Ground-truth FM pixel WFM 3-scale WFM 1-scale FM f ourier 
+
+Figure S5: Qualitative rollout comparison for Active Matter: ground truth vs. model predictions across autoregressive steps. 33 F Profiling Analysis 
+
+Profiling metrics. Inference wall-clock times are measured by recording system timestamps immediately before the first rollout step and immediately after the last, on the same hardware without concurrent workloads. Models operating in wavelet space (WFM 1-scale and WFM 3-scale) and the pixel space baseline (FM pixel ) are evaluated under identical conditions: given an ensemble size of M = 8 and a total trajectory length of nsteps rollout steps, each step requires integrating the underlying ODE via the Euler method for ni = 50 neural function evaluations (NFEs), distributed across 4 A100 GPUs on NSF NCAR Derecho-GPU [ 60 ]. The total number of NFEs per run is therefore nsteps × ni.Timing is collected in a distributed setting with R = 4 parallel processes (ranks), one per GPU, each responsible for generating ⌊M /R⌋ ensemble members. To reflect true end-to-end latency, the reported wall-clock time Twall is taken as the maximum across all ranks: 
+
+Twall = max  
+
+> r∈{ 0,..., R− 1}
+
+Tr , (32) where Tr is the local elapsed time on rank r, measured with a synchronization barrier both before and after the inference loop to ensure all ranks begin and end counting simultaneously. DataFrame construction, file I/O, and shard merging are explicitly excluded from this measurement. From Twall , two throughput metrics are derived. The step throughput (Γsteps ) measures the total number of rollout steps generated across all ranks per unit time: 
+
+Γsteps =
+
+P 
+
+> r
+
+nsteps ,r 
+
+Twall 
+
+[steps/s ], (33) where nsteps ,r = nens ,r × nsteps ,r is the number of steps generated locally on rank r. The frame throughput (Γ frames ) further accounts for spatial resolution by weighting each step by the number of spatial elements H × W :
+
+Γframes = (P 
+
+> r
+
+nsteps ,r ) × H × WTwall 
+
+[frames/s ]. (34) Peak GPU memory consumption (in GiB) is recorded per rank using 
+
+torch.cuda.max_memory_allocated and reported individually to diagnose load imbal-ance across devices. The speedup of a WFM variant relative to FM pixel is defined as the ratio of their respective wall-clock times under the same experimental conditions: Speedup = T FM pixel 
+
+> wall
+
+T WFM wall 
+
+. (35) Since all hyperparameters (ensemble size, NFEs, ODE solver, hardware) are held fixed across models, any observed speedup is attributable to the multi-scale wavelet space in which the generative process operates. Table S19: Inference performance across PDEs and models. The reported WFM variants are selected based on the procedure in Section 4.2, and summarized in Table S10.                                                                      
+
+> PDE Model Wall Clock (s) sec / step GPU Mem (GiB) Throughput (Mfr/s) Speedup ×Mem ratio ×
+> TRL FM pixel 247.8 0.0355 0.59 1.39 ——WFM 1-scale (haar )198.1 0.0284 0.59 1.73 1.25 ×1.00 ×
+> WFM 3-scale (haar )218.3 0.0313 0.66 1.57 1.14 ×0.89 ×
+> RB FM pixel 633.9 0.0449 1.44 1.46 ——WFM 1-scale (db4 )418.1 0.0296 1.44 2.21 1.52 ×1.00 ×
+> WFM 3-scale (db4 )457.9 0.0324 1.51 2.02 1.38 ×0.95 ×
+> AM FM pixel 310.8 0.0459 1.63 1.43 ——WFM 1-scale (haar )213.3 0.0315 1.64 2.08 1.46 ×1.00 ×
+> WFM 3-scale (db2 )247.4 0.0365 1.71 1.80 1.26 ×0.95 ×
+
+34 Profiling different WFM representations. In this section we ablate the profiling results of WFM variants (1- and 3-scale) across different representations induced by a different choice of mother wavelet. Table S20: Complete inference profiling across all WFM variants (scale and choice of the mother wavelet) relative to FM pixel .
+
+PDE Model Wavelet Wall Clock (s) sec / step GPU Mem (GiB) Throughput (Mfr/s) Speedup × Mem ratio ×
+
+TRL FM pixel — 247.8 0.0355 0.59 1.39 — —WFM 1-scale 
+
+haar 198.1 0.0284 0.59 1.73 1.25 × 1.00 ×
+
+db2 199.0 0.0285 0.59 1.72 1.24 × 1.00 ×
+
+db4 208.1 0.0298 0.59 1.65 1.19 × 1.00 ×
+
+db6 204.5 0.0293 0.59 1.68 1.21 × 1.00 ×
+
+WFM 3-scale 
+
+haar 218.3 0.0313 0.66 1.57 1.14 × 0.89 ×
+
+db2 224.0 0.0321 0.66 1.53 1.11 × 0.89 ×
+
+db4 228.2 0.0327 0.66 1.50 1.09 × 0.89 ×
+
+db6 221.1 0.0317 0.66 1.55 1.12 × 0.89 ×
+
+RB FM pixel — 633.9 0.0449 1.44 1.46 — —WFM 1-scale haar 413.3 0.0293 1.44 2.24 1.53 × 1.00 ×
+
+db2 417.4 0.0296 1.44 2.22 1.52 × 1.00 ×
+
+db4 418.1 0.0296 1.44 2.21 1.52 × 1.00 ×
+
+db6 417.4 0.0296 1.44 2.22 1.52 × 1.00 ×
+
+WFM 3-scale haar 453.0 0.0321 1.51 2.04 1.40 × 0.95 ×
+
+db2 446.5 0.0316 1.51 2.07 1.42 × 0.95 ×
+
+db4 457.9 0.0324 1.51 2.02 1.38 × 0.95 ×
+
+db6 468.0 0.0332 1.51 1.98 1.35 × 0.95 ×
+
+AM FM pixel — 310.8 0.0459 1.63 1.43 — —WFM 1-scale 
+
+haar 213.3 0.0315 1.64 2.08 1.46 × 1.00 ×
+
+db2 216.9 0.0320 1.64 2.05 1.43 × 1.00 ×
+
+db4 222.6 0.0329 1.64 1.99 1.40 × 1.00 ×
+
+db6 228.2 0.0337 1.64 1.95 1.36 × 1.00 ×
+
+WFM 3-scale haar 244.7 0.0361 1.71 1.82 1.27 × 0.95 ×
+
+db2 247.4 0.0365 1.71 1.80 1.26 × 0.95 ×
+
+db4 252.6 0.0373 1.71 1.76 1.23 × 0.95 ×
+
+db6 261.2 0.0386 1.71 1.70 1.19 × 0.95 ×
+
+35

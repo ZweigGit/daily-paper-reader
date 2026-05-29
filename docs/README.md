@@ -6,55 +6,50 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-20 ~ 2026-05-29
-- 运行时间：2026-05-29 10:50:47 UTC
+- 最新运行日期：2026-04-30 ~ 2026-05-29
+- 运行时间：2026-05-29 11:27:42 UTC
 - 运行状态：成功
-- 本次总论文数：11
-- 精读区：5
-- 速读区：6
+- 本次总论文数：9
+- 精读区：0
+- 速读区：9
 
 ### 今日简报（AI）
-今日推荐11篇论文，精读5篇，聚焦物理科学中的表示对齐与生成求解器突破。
-最值得看的两篇精读：打破物理扩散模型中捷径学习的表示对齐方法，以及融合数据先验与守恒律的时空场重建生成求解器。
-建议关注物理引导的生成模型方向，尤其结合正则化与守恒律的框架，能提升复杂科学问题的预测稳定性。
-- 详情：[/20260520-20260529/README](/20260520-20260529/README)
+1) 今日速读9篇论文，聚焦动力系统预测与湍流建模，3篇高分文章（9.0/10）值得关注。  
+2) 最值得看的方向：可扩展一步生成模型用于自回归预报，以及改进的一致性蒸馏流匹配提升物理保真度。  
+3) 建议读者优先精读这三篇高分文章，掌握生成式模型在动力系统预测和湍流动力学中的前沿应用。
+- 详情：[/20260430-20260529/README](/20260430-20260529/README)
 
 ### 精读区论文标签
-1. [Learning to Think in Physics: Breaking Shortcut Learning in Scientific Diffusion via Representation Alignment](/20260520-20260529/2605.20780v1-learning-to-think-in-physics-breaking-shortcut-learning-in-scientific-diffusion-via-representation-alignment)  
-   标签：评分：8.0/10、query:genmod-fluid
-   evidence：将物理信息扩散模型应用于达西流和湍流PDE
-2. [Physics-Informed Generative Solver: Bridging Data-Driven Priors and Conservation Laws for Stable Spatiotemporal Field Reconstruction](/20260520-20260529/2605.22338v1-physics-informed-generative-solver-bridging-data-driven-priors-and-conservation-laws-for-stable-spatiotemporal-field-reconstruction)  
-   标签：评分：8.0/10、query:genmod-fluid
-   evidence：使用基于评分的生成模型结合守恒定律进行物理场重建
-3. [FMSIM: A Multimodal Flow Matching Framework for Conditional Geomodeling](/20260520-20260529/2605.25161v1-fmsim-a-multimodal-flow-matching-framework-for-conditional-geomodeling)  
-   标签：评分：8.0/10、query:genmod-fluid
-   evidence：将流匹配应用于地下相建模以进行流预测
-4. [Guided Flow Matching for Forward and Inverse PDE Problems with Sparse Observations: Algorithm and Theory](/20260520-20260529/2605.25509v1-guided-flow-matching-for-forward-and-inverse-pde-problems-with-sparse-observations-algorithm-and-theory)  
-   标签：评分：8.0/10、query:genmod-fluid
-   evidence：流匹配方法用于偏微分方程正反问题；生成式框架求解PDE
-5. [Recursive Flow Matching](/20260520-20260529/2605.26535v1-recursive-flow-matching)  
-   标签：评分：8.0/10、query:genmod-fluid
-   evidence：用于物理时空动力学的流匹配生成框架
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [On the Regularity and Generalization of One-Step Wasserstein-guided Generative Models for PDE-Induced Measures](/20260520-20260529/2605.21388v1-on-the-regularity-and-generalization-of-one-step-wasserstein-guided-generative-models-for-pde-induced-measures)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：针对偏微分方程（含流体动力学）诱导测度的生成模型理论分析
-2. [Generative Modeling by Value-Driven Transport](/20260520-20260529/2605.22507v1-generative-modeling-by-value-driven-transport)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：基于受控输运的新生成建模框架，可适应流体动力学
-3. [Precise: SDE-Consistent Stochastic Sampling for RL Post-Training of Flow-Matching Models](/20260520-20260529/2605.23522v1-precise-sde-consistent-stochastic-sampling-for-rl-post-training-of-flow-matching-models)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：流匹配模型对齐方法，可应用于流体动力学
-4. [AdvantageFlow: Advantage-Weighted Least Squares for RL in Flow Models](/20260520-20260529/2605.26013v1-advantageflow-advantage-weighted-least-squares-for-rl-in-flow-models)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：整流流模型的RL算法，与流体动力学中的流匹配相关
-5. [Aligning Few-Step Generative Models by Amortizing Sample-based Variational Inference](/20260520-20260529/2605.26552v2-aligning-few-step-generative-models-by-amortizing-sample-based-variational-inference)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：通用生成模型对齐框架，可支撑任何领域的生成式AI
-6. [Universal Time Series Generation with Neural Controlled Differential Equations](/20260520-20260529/2605.28507v1-universal-time-series-generation-with-neural-controlled-differential-equations)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：基于神经控制微分方程的路径空间流匹配，可应用于流体动力学
+1. [Towards Scalable One-Step Generative Modeling for Autoregressive Dynamical System Forecasting](/20260430-20260529/2605.05540v1-towards-scalable-one-step-generative-modeling-for-autoregressive-dynamical-system-forecasting)  
+   标签：评分：9.0/10、query:genmod-fluid
+   evidence：适用于湍流等动力系统预测的生成模型
+2. [Physical Fidelity Reconstruction via Improved Consistency-Distilled Flow Matching for Dynamical Systems](/20260430-20260529/2605.05975v1-physical-fidelity-reconstruction-via-improved-consistency-distilled-flow-matching-for-dynamical-systems)  
+   标签：评分：9.0/10、query:genmod-fluid
+   evidence：流匹配用于动力系统流场重建
+3. [The finite expression method for turbulent dynamics with high-order moment recovery](/20260430-20260529/2605.10687v1-the-finite-expression-method-for-turbulent-dynamics-with-high-order-moment-recovery)  
+   标签：评分：9.0/10、query:genmod-fluid
+   evidence：使用生成模型学习湍流随机残差成分
+4. [Policy-DRIFT: Dynamic Reward-Informed Flow Trajectory Steering](/20260430-20260529/2605.14022v1-policy-drift-dynamic-reward-informed-flow-trajectory-steering)  
+   标签：评分：9.0/10、query:genmod-fluid
+   evidence：Policy-DRIFT 将条件流匹配应用于湍流控制，直接使用流匹配解决流体动力学问题
+5. [PerFlow: Physics-Embedded Rectified Flow for Efficient Reconstruction and Uncertainty Quantification of Spatiotemporal Dynamics](/20260430-20260529/2605.03548v1-perflow-physics-embedded-rectified-flow-for-efficient-reconstruction-and-uncertainty-quantification-of-spatiotemporal-dynamics)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：物理嵌入的整流流用于时空动力学重建
+6. [Inpainting physics: self-supervised learning for context-driven fluid simulation](/20260430-20260529/2605.08832v1-inpainting-physics-self-supervised-learning-for-context-driven-fluid-simulation)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：自监督生成式先验用于流体模拟
+7. [Wavelet Flow Matching for Multi-Scale Physics Emulation](/20260430-20260529/2605.16573v1-wavelet-flow-matching-for-multi-scale-physics-emulation)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：小波流匹配用于多尺度物理仿真
+8. [Guided Flow Matching for Forward and Inverse PDE Problems with Sparse Observations: Algorithm and Theory](/20260430-20260529/2605.25509v1-guided-flow-matching-for-forward-and-inverse-pde-problems-with-sparse-observations-algorithm-and-theory)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：用于稀疏观测偏微分方程问题的流匹配方法
+9. [Recursive Flow Matching](/20260430-20260529/2605.26535v1-recursive-flow-matching)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：递归流匹配用于预测物理系统的时空动力学
 
 
 <div class="dpr-home-promo-card">
