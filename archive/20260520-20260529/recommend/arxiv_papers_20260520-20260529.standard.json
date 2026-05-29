@@ -1,0 +1,472 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-29T10:36:30.314984+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 5,
+    "deep_cap": 6,
+    "deep_selected": 5,
+    "quick_candidates": 6,
+    "quick_skim_target": 11,
+    "quick_selected": 6
+  },
+  "deep_dive": [
+    {
+      "id": "2605.20780v1",
+      "source": "arxiv",
+      "title": "Learning to Think in Physics: Breaking Shortcut Learning in Scientific Diffusion via Representation Alignment",
+      "abstract": "Physics-informed diffusion models typically enforce PDE constraints only on final outputs, leaving intermediate representations unconstrained and prone to shortcut learning under shifted boundary conditions. We introduce **REPA-P**, a teacher-free, architecture-agnostic framework that aligns intermediate features with physical states using first-principles residuals. REPA-P attaches lightweight $1{\\times}1$ projection heads to selected layers, decodes hidden activations into physical quantities, and applies PDE residual losses during training. These heads are discarded at inference, introducing **zero overhead**. Across four PDE tasks, including Darcy flow, topology optimization, electrostatic potential, and turbulent channel flow, REPA-P accelerates convergence by up to $2{\\times}$, reduces physics residuals by up to $66.4\\%$, and improves out-of-distribution robustness by up to $49.3\\%$, with consistent gains on both U-Net and Diffusion Transformer backbones. Ablations show that supervising a small set of intermediate layers captures most benefits and complements output-level physics losses. Code is available at [https://github.com/Hxxxz0/REPA-P](https://github.com/Hxxxz0/REPA-P).",
+      "authors": [
+        "Haozhe Jia",
+        "Pengyu Yin",
+        "Wenshuo Chen",
+        "Shaofeng Liang",
+        "Lei Wang",
+        "Bowen Tian",
+        "Xiucheng Wang",
+        "Nanqian Jia",
+        "Yutao Yue"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.CV"
+      ],
+      "published": "2026-05-20T06:22:44+00:00",
+      "link": "https://arxiv.org/pdf/2605.20780v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "applies physics-informed diffusion models to Darcy flow and turbulent PDEs",
+      "llm_evidence_cn": "将物理信息扩散模型应用于达西流和湍流PDE",
+      "llm_evidence": "将物理信息扩散模型应用于达西流和湍流PDE",
+      "canonical_evidence": "将物理信息扩散模型应用于达西流和湍流PDE",
+      "llm_tldr_en": "Proposes REPA-P to align intermediate diffusion features with physical states using PDE residuals, improving generalization under shifted boundary conditions across four PDE tasks including Darcy flow and turbulence, with zero overhead.",
+      "llm_tldr_cn": "现有物理信息扩散模型仅在最终输出上施加PDE约束，导致中间表示无约束且在边界条件变化时出现捷径学习。本文提出REPA-P框架，通过轻量投影头将隐藏激活解码为物理量并施加PDE残差损失，训练后丢弃投影头零开销。在达西流、拓扑优化、静电势和湍流四个PDE任务上，REPA-P显著提升了泛化能力，尤其在外推边界条件下表现优异。该工作为科学扩散模型提供了有效的正则化方法，可广泛用于流体力学模拟。",
+      "llm_tldr": "现有物理信息扩散模型仅在最终输出上施加PDE约束，导致中间表示无约束且在边界条件变化时出现捷径学习。本文提出REPA-P框架，通过轻量投影头将隐藏激活解码为物理量并施加PDE残差损失，训练后丢弃投影头零开销。在达西流、拓扑优化、静电势和湍流四个PDE任务上，REPA-P显著提升了泛化能力，尤其在外推边界条件下表现优异。该工作为科学扩散模型提供了有效的正则化方法，可广泛用于流体力学模拟。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.22338v1",
+      "source": "arxiv",
+      "title": "Physics-Informed Generative Solver: Bridging Data-Driven Priors and Conservation Laws for Stable Spatiotemporal Field Reconstruction",
+      "abstract": "Reconstructing continuous physical fields from sparse measurements is a central inverse problem, but data-driven generative models can produce states that violate governing dynamics. We introduce a physics-informed generative solver that separates stable prior learning from inference-time enforcement of conservation laws. Martingale-Regularized Score Matching regularizes score pretraining with a Score Fokker-Planck constraint, yielding a dynamically stable prior. Physics-Informed Implicit Score Sampling then guides denoising trajectories by gradients of physical residuals, projecting samples toward admissible manifolds without retraining. In acoustics, the method co-generates pressure and particle velocity from sparse sensors, enabling dense virtual arrays that suppress spatial aliasing. The same framework generalizes to real-world ERA5 meteorological fields under extreme sparsity. Together, this work establishes a rigorous and generalizable paradigm for solving high-dimensional inverse problems, bridging the gap between generative artificial intelligence and first-principles science.",
+      "authors": [
+        "Ziyuan Zhu",
+        "Keyu Hu",
+        "Zhifei Chen",
+        "Yuhao Shi",
+        "Ming Bao",
+        "Jing Zhao",
+        "Gang Wang",
+        "Haitan Xu",
+        "Jiadong Li",
+        "Qijun Zhao",
+        "Xiaodong Li",
+        "Minghui Lu",
+        "Yanfeng Chen"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-05-21T11:24:48+00:00",
+      "link": "https://arxiv.org/pdf/2605.22338v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "physics-informed generative solver using score-based models for field reconstruction with conservation laws",
+      "llm_evidence_cn": "使用基于评分的生成模型结合守恒定律进行物理场重建",
+      "llm_evidence": "使用基于评分的生成模型结合守恒定律进行物理场重建",
+      "canonical_evidence": "使用基于评分的生成模型结合守恒定律进行物理场重建",
+      "llm_tldr_en": "Introduces a physics-informed generative solver that separates stable prior learning via Martingale-Regularized Score Matching and inference-time enforcement of conservation laws via physics-informed score sampling for spatiotemporal field reconstruction.",
+      "llm_tldr_cn": "数据驱动生成模型在重建物理场时可能违反守恒定律。该文提出物理信息生成求解器，通过鞅正则化评分匹配预先训练稳定先验，再在推理时利用物理残差梯度引导去噪轨迹，使生成样本满足守恒律。在声学场重建中，该方法同时生成压力和粒子速度场，显著优于纯数据驱动方法。",
+      "llm_tldr": "数据驱动生成模型在重建物理场时可能违反守恒定律。该文提出物理信息生成求解器，通过鞅正则化评分匹配预先训练稳定先验，再在推理时利用物理残差梯度引导去噪轨迹，使生成样本满足守恒律。在声学场重建中，该方法同时生成压力和粒子速度场，显著优于纯数据驱动方法。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.25161v1",
+      "source": "arxiv",
+      "title": "FMSIM: A Multimodal Flow Matching Framework for Conditional Geomodeling",
+      "abstract": "Subsurface geomodeling plays a critical role in reservoir characterization, uncertainty quantification, and subsurface flow prediction. However, integrating heterogeneous sources of geological information, including conceptual geological descriptions, sparse well observations, and spatial prior constraints, remains a significant challenge for traditional geostatistical and data-driven geomodeling approaches. In this study, we present FMSIM, a multi-modal conditional flow matching framework for subsurface facies model generation. FMSIM utilizes a deep learning formulation to learn a velocity field that transports samples from a simple prior distribution to a complex geological facies distribution. Global geological semantic information is incorporated through a learned semantic representation framework and a learned prior model, while local hard constraints are enforced via an iterative projection strategy during sampling to ensure 100% fidelity to well observations. Additionally, a temporal guidance gating mechanism is introduced to regulate the influence of spatial probability maps, balancing large-scale trend alignment with fine-scale geological variability. Benefiting from the framework design, the model enables efficient and stable training with a simple loss function. The framework's fully convolutional architecture also demonstrates promising generalization to moderately larger grid sizes not seen during training without retraining. Results on a synthetic fluvial channel dataset indicate that FMSIM captures complex non-stationary geological features and produces geologically consistent realizations under multi-modal conditioning. This approach offers a flexible tool for incorporating conceptual geological knowledge, sparse observational data, and spatial priors into probabilistic subsurface geomodeling workflows.",
+      "authors": [
+        "Jiayuan Huang",
+        "Suihong Song",
+        "Tapan Mukerji"
+      ],
+      "primary_category": "physics.geo-ph",
+      "categories": [
+        "physics.geo-ph"
+      ],
+      "published": "2026-05-24T16:37:15+00:00",
+      "link": "https://arxiv.org/pdf/2605.25161v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "applies flow matching to subsurface facies modeling for flow prediction",
+      "llm_evidence_cn": "将流匹配应用于地下相建模以进行流预测",
+      "llm_evidence": "将流匹配应用于地下相建模以进行流预测",
+      "canonical_evidence": "将流匹配应用于地下相建模以进行流预测",
+      "llm_tldr_en": "Presents FMSIM, a multimodal conditional flow matching framework for subsurface facies model generation, integrating geological descriptions, well data, and priors, enabling realistic facies realizations for reservoir flow simulation.",
+      "llm_tldr_cn": "地下地质建模中整合多种异构信息是一个挑战。本文提出FMSIM，一个多模态条件流匹配框架，通过学习速度场将先验分布映射到复杂地质相分布，并融合概念描述、井观测和空间先验。实验表明，FMSIM能生成符合地质约束的高质量相模型，且条件控制灵活。该方法可直接用于油藏流动模拟的不确定性量化，将生成式AI有效应用于流体力学中的地下流动问题。",
+      "llm_tldr": "地下地质建模中整合多种异构信息是一个挑战。本文提出FMSIM，一个多模态条件流匹配框架，通过学习速度场将先验分布映射到复杂地质相分布，并融合概念描述、井观测和空间先验。实验表明，FMSIM能生成符合地质约束的高质量相模型，且条件控制灵活。该方法可直接用于油藏流动模拟的不确定性量化，将生成式AI有效应用于流体力学中的地下流动问题。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.25509v1",
+      "source": "arxiv",
+      "title": "Guided Flow Matching for Forward and Inverse PDE Problems with Sparse Observations: Algorithm and Theory",
+      "abstract": "Reconstructing PDE solutions from sparse observations is a core challenge in scientific computing. We present FM4PDE, a flow-matching generative framework that learns the joint distribution of PDE coefficients (or initial states) and solutions (or final states), enabling both forward simulation and inverse recovery with limited paired data. At inference, sampling is guided by a composite loss that enforces agreement with sparse measurements and reduces the PDE residual; we support deterministic, stochastic, and hybrid samplers. We provide error guarantees for these guided procedures. For the deterministic optimizer, a coercivity condition ensures trajectory boundedness and a phase-wise contraction yields logarithmic complexity in the target accuracy. For the stochastic sampler, we introduce adaptive guidance and assume dissipativity of the velocity field to obtain uniform moment bounds independent of the noise-floor parameter. This leads to polynomial-time error bounds, and a matching lower bound shows constant guidance induces an unavoidable positive bias, motivating adaptivity. A hybrid deterministic-stochastic analysis is also provided. Experiments on static and time-dependent benchmark PDEs demonstrate competitive accuracy and faster inference than diffusion-based generative models.",
+      "authors": [
+        "Xifeng Zhang",
+        "Jin Zhao"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.LG"
+      ],
+      "published": "2026-05-25T07:14:11+00:00",
+      "link": "https://arxiv.org/pdf/2605.25509v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "flow matching for PDE problems; generative framework for PDE solutions",
+      "llm_evidence_cn": "流匹配方法用于偏微分方程正反问题；生成式框架求解PDE",
+      "llm_evidence": "流匹配方法用于偏微分方程正反问题；生成式框架求解PDE",
+      "canonical_evidence": "流匹配方法用于偏微分方程正反问题；生成式框架求解PDE",
+      "llm_tldr_en": "Proposes FM4PDE, a flow-matching generative framework for forward and inverse PDE problems with sparse observations, providing error guarantees and guided sampling.",
+      "llm_tldr_cn": "本论文提出FM4PDE，一种基于流匹配的生成式框架，用于处理稀疏观测下的正向和反向PDE问题。该方法学习PDE系数与解的联合分布，并通过复合引导损失实现采样，支持确定性、随机和混合采样器。理论分析提供了误差保证，实验验证了其在多个PDE问题上的有效性。该工作将生成式流匹配引入科学计算，为流体力学等领域的正向模拟与反问题求解提供了新工具。",
+      "llm_tldr": "本论文提出FM4PDE，一种基于流匹配的生成式框架，用于处理稀疏观测下的正向和反向PDE问题。该方法学习PDE系数与解的联合分布，并通过复合引导损失实现采样，支持确定性、随机和混合采样器。理论分析提供了误差保证，实验验证了其在多个PDE问题上的有效性。该工作将生成式流匹配引入科学计算，为流体力学等领域的正向模拟与反问题求解提供了新工具。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.26535v1",
+      "source": "arxiv",
+      "title": "Recursive Flow Matching",
+      "abstract": "Generative models have emerged as a powerful paradigm for solving physics systems and modeling complex spatiotemporal dynamics. However, achieving high physical accuracy without incurring high computational cost remains a fundamental challenge, as existing approaches face a critical speed-fidelity trade-off. In this work, we introduce Recursive Flow Matching (RecFM), a generative framework for forecasting complex spatiotemporal dynamics. RecFM enforces self-consistency to align trajectories across discretization scales, reducing discretization errors and improving performance across metrics for physics-based tasks. To our knowledge, this is the first method to achieve high-fidelity one- and few-step (2-4 step) dynamic generation for scientific systems with performance comparable to state-of-the-art multi-step solvers. Across challenging scientific benchmarks, RecFM achieves up to a 20$\\times$ speedup over leading diffusion-based emulators while improving predictive accuracy. Furthermore, RecFM reduces mean squared error by over 15% compared to vanilla flow matching, offering a scalable and efficient solution for real-time scientific emulation.",
+      "authors": [
+        "Jiahe Huang",
+        "Sihan Xu",
+        "Sharvaree Vadgama",
+        "Rose Yu"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CV",
+        "math.NA"
+      ],
+      "published": "2026-05-26T04:32:01+00:00",
+      "link": "https://arxiv.org/pdf/2605.26535v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "flow matching generative framework for spatiotemporal dynamics in physics",
+      "llm_evidence_cn": "用于物理时空动力学的流匹配生成框架",
+      "llm_evidence": "用于物理时空动力学的流匹配生成框架",
+      "canonical_evidence": "用于物理时空动力学的流匹配生成框架",
+      "llm_tldr_en": "Recursive Flow Matching (RecFM) is a generative framework that enforces self-consistency across discretization scales for high-fidelity few-step forecasting of complex spatiotemporal dynamics.",
+      "llm_tldr_cn": "该论文针对现有生成模型在物理系统建模中速度与保真度不可兼得的问题，提出了递归流匹配 (RecFM) 框架。RecFM通过跨离散化尺度强制自一致性来减少离散误差，从而在一步到少步 (2-4步) 生成中实现高保真动态预测。实验表明，该方法在多种物理任务上达到与最先进扩散模型相当的性能，同时显著降低计算成本。这是首个实现高保真少步科学系统动态生成的方法。",
+      "llm_tldr": "该论文针对现有生成模型在物理系统建模中速度与保真度不可兼得的问题，提出了递归流匹配 (RecFM) 框架。RecFM通过跨离散化尺度强制自一致性来减少离散误差，从而在一步到少步 (2-4步) 生成中实现高保真动态预测。实验表明，该方法在多种物理任务上达到与最先进扩散模型相当的性能，同时显著降低计算成本。这是首个实现高保真少步科学系统动态生成的方法。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2605.21388v1",
+      "source": "arxiv",
+      "title": "On the Regularity and Generalization of One-Step Wasserstein-guided Generative Models for PDE-Induced Measures",
+      "abstract": "Despite the remarkable empirical success of generative models, the available theory on their statistical accuracy in scientific computing remains largely pessimistic. This paper develops a theoretical framework for understanding the regularity of transport maps and the generalization properties of one-step Wasserstein-guided generative models for PDE-induced probability measures. We consider normalized target densities associated with linear elliptic and parabolic equations on bounded domains, as well as diffusion and Fokker--Planck equations on the torus. Under standard structural assumptions, we prove that these target measures satisfy doubling conditions. By combining this fact with regularity theory for optimal transport between doubling measures, we show that the optimal transport map from a uniform source measure to the target measure is Hölder continuous. This regularity yields an approximation-theoretic justification for one-step generative models that learn PDE-induced distributions via a single pushforward map. As a representative instance, we study DeepParticle and derive excess-risk bounds characterizing the discrepancy between the learned map and the population-optimal map. We also establish a robustness estimate under target shift and illustrate the theory with experiments which support the derived rates.",
+      "authors": [
+        "Likun Lin",
+        "Zhongjian Wang",
+        "Jack Xin",
+        "Zhiwen Zhang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "math.NA",
+        "stat.ML"
+      ],
+      "published": "2026-05-20T16:43:55+00:00",
+      "link": "https://arxiv.org/pdf/2605.21388v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "theoretical analysis of generative models for PDE-induced measures including those from fluid dynamics",
+      "llm_evidence_cn": "针对偏微分方程（含流体动力学）诱导测度的生成模型理论分析",
+      "llm_evidence": "针对偏微分方程（含流体动力学）诱导测度的生成模型理论分析",
+      "canonical_evidence": "针对偏微分方程（含流体动力学）诱导测度的生成模型理论分析",
+      "llm_tldr_en": "Develops a theoretical framework for one-step Wasserstein-guided generative models on PDE-induced measures, proving regularity and generalization bounds for measures from elliptic, parabolic, and Fokker-Planck equations.",
+      "llm_tldr_cn": "生成模型在科学计算中的统计精度理论通常悲观。该文为PDE诱导测度（包括椭圆、抛物和Fokker-Planck方程）建立了一步Wasserstein引导生成模型的正则性和泛化理论，证明这些测度满足加倍条件，从而得到样本复杂度的上界，为生成模型在流体力学等PDE领域的应用提供了理论支撑。",
+      "llm_tldr": "生成模型在科学计算中的统计精度理论通常悲观。该文为PDE诱导测度（包括椭圆、抛物和Fokker-Planck方程）建立了一步Wasserstein引导生成模型的正则性和泛化理论，证明这些测度满足加倍条件，从而得到样本复杂度的上界，为生成模型在流体力学等PDE领域的应用提供了理论支撑。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.22507v1",
+      "source": "arxiv",
+      "title": "Generative Modeling by Value-Driven Transport",
+      "abstract": "We propose a new framework for generative modeling based on a discrete-time stochastic control formulation of measure transport. Adapting classic results from control theory, we formulate our problem as a linear program whose dual variables correspond to the \\emph{optimal value function} of the control problem, which directly encodes the optimal control policy. Exploiting this LP formulation, we develop an efficient simulation-free primal-dual algorithm for computing approximately optimal value functions and the associated \\emph{value-driven transport} (VDT) policies which approximate the true optimal policy. We show that well-trained VDT policies enjoy numerous favorable properties in comparison with other state-of-the-art methods based on flows, diffusions, or Schrödinger bridges: they lead to straight transport paths which can be simulated quickly and robustly, and can be enhanced in all the same ways as diffusion and flow-based models (e.g., conditional generation, classifier-free guidance, unpaired data-to-data translation are all easy to incorporate). We evaluate our methodology in a range of experiments, with results that indicate strong performance and good potential for scalability.",
+      "authors": [
+        "Pablo Moreno-Muñoz",
+        "Adrian Müller",
+        "Gergely Neu"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "stat.ML"
+      ],
+      "published": "2026-05-21T13:57:06+00:00",
+      "link": "https://arxiv.org/pdf/2605.22507v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "new generative modeling framework based on controlled transport, adaptable to fluid dynamics",
+      "llm_evidence_cn": "基于受控输运的新生成建模框架，可适应流体动力学",
+      "llm_evidence": "基于受控输运的新生成建模框架，可适应流体动力学",
+      "canonical_evidence": "基于受控输运的新生成建模框架，可适应流体动力学",
+      "llm_tldr_en": "Proposes a value-driven transport framework for generative modeling via a discrete-time stochastic control formulation, with a simulation-free algorithm.",
+      "llm_tldr_cn": "该论文提出了一种基于离散时间随机控制的最优输运新生成框架，通过线性规划对偶得到最优价值函数，进而驱动输运策略。方法不需要模拟，具有良好性质，可与流、扩散或薛定谔桥方法媲美。该框架为生成模型提供了新视角，可应用于流体动力学中的概率建模。",
+      "llm_tldr": "该论文提出了一种基于离散时间随机控制的最优输运新生成框架，通过线性规划对偶得到最优价值函数，进而驱动输运策略。方法不需要模拟，具有良好性质，可与流、扩散或薛定谔桥方法媲美。该框架为生成模型提供了新视角，可应用于流体动力学中的概率建模。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.23522v1",
+      "source": "arxiv",
+      "title": "Precise: SDE-Consistent Stochastic Sampling for RL Post-Training of Flow-Matching Models",
+      "abstract": "Reinforcement learning (RL) has become an effective way to improve prompt alignment and perceptual quality in diffusion and flow-matching generators. A critical step for applying online RL to flow matching is turning the deterministic sampling trajectory into a stochastic policy, typically by replacing the reverse-time Ordinary Differential Equation (ODE) with a Stochastic Differential Equation (SDE). The stochastic sampler, controlling the exploration behavior and denoising dynamics, is thus part of the policy, and its design can significantly affect the reward optimization performance. We break down the sampler design into two interdependent components: choosing the right amount of stochastic exploration, and discretizing the resulting SDE faithfully at the small step counts used in RL. To address the first component, we analyze the inherent tension between exploration and stability in denoising and derive an SDE schedule that balances the two. Turning to the discretization challenge, we use a toy example to show that existing samplers can deviate from the flow-matching process, either by introducing excessive discretization noise or by relying on heuristic rules that do not guarantee convergence to the data distribution. To address these issues, we propose Precise, a new stochastic sampler that balances effective exploration with stability. Crucially, Precise keeps the denoising trajectory SDE-consistent through a novel approximation that freezes the clean-latent posterior mean, resolving the excess noise issue in standard samplers. Extensive experiments demonstrate that this formulation leads to significantly faster and more stable reward optimization via reinforcement learning, achieving state-of-the-art alignment scores (e.g., PickScore, HPSv2.1) while requiring 13.1-53.2% less wall-clock training time to match the best in-domain performance of prior samplers.",
+      "authors": [
+        "Jade Zou",
+        "Tao Huang",
+        "Weijie Kong",
+        "Junzhe Li",
+        "Yue Wu",
+        "Qi Tian",
+        "Jiangfeng Xiong",
+        "Jianwei Zhang",
+        "Liefeng Bo",
+        "Zhao Zhong"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-05-22T11:37:22+00:00",
+      "link": "https://arxiv.org/pdf/2605.23522v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "flow-matching model alignment method applicable to fluid dynamics",
+      "llm_evidence_cn": "流匹配模型对齐方法，可应用于流体动力学",
+      "llm_evidence": "流匹配模型对齐方法，可应用于流体动力学",
+      "canonical_evidence": "流匹配模型对齐方法，可应用于流体动力学",
+      "llm_tldr_en": "Proposes SDE-consistent stochastic sampling for RL post-training of flow-matching models, enabling better policy optimization and reward alignment.",
+      "llm_tldr_cn": "该论文针对流匹配模型的强化学习后训练问题，提出了一种SDE一致的随机采样方法，通过将确定性ODE替换为SDE来提供随机探索策略。方法分解了采样器的设计和离散化，提高了奖励优化性能。虽然实验在图像生成上，但其流匹配方法可直接迁移至流体动力学中的生成建模任务。",
+      "llm_tldr": "该论文针对流匹配模型的强化学习后训练问题，提出了一种SDE一致的随机采样方法，通过将确定性ODE替换为SDE来提供随机探索策略。方法分解了采样器的设计和离散化，提高了奖励优化性能。虽然实验在图像生成上，但其流匹配方法可直接迁移至流体动力学中的生成建模任务。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.26013v1",
+      "source": "arxiv",
+      "title": "AdvantageFlow: Advantage-Weighted Least Squares for RL in Flow Models",
+      "abstract": "We introduce AdvantageFlow, a forward-process reinforcement learning algorithm for rectified flow models. Unlike Flow-GRPO, which optimizes the reverse process, we optimize an advantage-weighted forward-process prediction loss. This optimization problem is unstable when advantages are negative and the loss becomes non-convex. We stabilize it by rollout policy regularization, which reduces variance and arises from fitting a local reward-improving target distribution. We evaluate AdvantageFlow on image generation tasks with Stable Diffusion 3.5 Medium. It outperforms both Flow-GRPO and a state-of-the-art forward-process RL baseline based on negative-aware fine-tuning.",
+      "authors": [
+        "Branislav Kveton",
+        "Anup Rao",
+        "Subhojyoti Mukherjee",
+        "Krishna Kumar Singh",
+        "Viet Dac Lai"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-05-25T16:32:14+00:00",
+      "link": "https://arxiv.org/pdf/2605.26013v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "RL algorithm for rectified flow models, relevant to flow matching in fluid dynamics",
+      "llm_evidence_cn": "整流流模型的RL算法，与流体动力学中的流匹配相关",
+      "llm_evidence": "整流流模型的RL算法，与流体动力学中的流匹配相关",
+      "canonical_evidence": "整流流模型的RL算法，与流体动力学中的流匹配相关",
+      "llm_tldr_en": "Introduces AdvantageFlow, a forward-process RL algorithm for rectified flow models using advantage-weighted least squares with rollout regularization.",
+      "llm_tldr_cn": "该论文针对整流流模型（一种流匹配变体）提出AdvantageFlow算法，通过优势加权最小二乘优化前向过程预测损失，并用滚动策略正则化稳定训练。在图像生成任务上优于Flow-GRPO等基线。该算法可直接应用于流体动力学中的流匹配生成建模，以改善采样质量。",
+      "llm_tldr": "该论文针对整流流模型（一种流匹配变体）提出AdvantageFlow算法，通过优势加权最小二乘优化前向过程预测损失，并用滚动策略正则化稳定训练。在图像生成任务上优于Flow-GRPO等基线。该算法可直接应用于流体动力学中的流匹配生成建模，以改善采样质量。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.26552v2",
+      "source": "arxiv",
+      "title": "Aligning Few-Step Generative Models by Amortizing Sample-based Variational Inference",
+      "abstract": "Aligning a few-step generative model is challenging, since existing alignment frameworks typically rely on restrictive assumptions: a tractable likelihood, a specific ODE/SDE solver, or a particular model family. We introduce FAV, Few-step Generative Models Alignment via Sample-based Variational Inference, a general alignment framework that requires only sample access to the generator and the reference distribution. We cast alignment as sampling from a reward-tilted distribution anchored to a reference distribution. We leverage Stein Variational Gradient Descent as a sample-based variational inference scheme and amortize its particle updates into the generator parameters via fixed-point regression. We evaluate FAV on two domains: robotics manipulation and image generator alignment. On generative policy alignment for robotic manipulation, FAV outperforms prevailing policy extraction baselines across 56 offline and 30 offline-to-online RL tasks. For image generator alignment, FAV fine-tunes diverse few-step backbones, including GAN, drifting model, consistency models, and flow maps, scaling from ImageNet-$256$ to 1024$^2$ text-to-image synthesis. Code is available at https://github.com/Jaewoopudding/FAV.",
+      "authors": [
+        "Jaewoo Lee",
+        "Hyeongyu Kang",
+        "Dohyun Kim",
+        "Kyuil Sim",
+        "Woocheol Shin",
+        "Minsu Kim",
+        "Taeyoung Yun",
+        "Jeongjae Lee",
+        "Sanghyeok Choi",
+        "Tabitha Edith Lee",
+        "Jong Chul Ye",
+        "Jinkyoo Park"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-05-26T05:02:49+00:00",
+      "link": "https://arxiv.org/pdf/2605.26552v2",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "general generative model alignment framework relevant to generative AI in any domain",
+      "llm_evidence_cn": "通用生成模型对齐框架，可支撑任何领域的生成式AI",
+      "llm_evidence": "通用生成模型对齐框架，可支撑任何领域的生成式AI",
+      "canonical_evidence": "通用生成模型对齐框架，可支撑任何领域的生成式AI",
+      "llm_tldr_en": "Introduces FAV, a few-step generative model alignment method via sample-based variational inference, requiring only sample access.",
+      "llm_tldr_cn": "该论文针对少步生成模型的对齐难题，提出了FAV框架，通过样本变分推断将对齐问题转化为从奖励倾斜分布中采样。方法利用Stein变分梯度下降进行粒子更新，并通过固定点回归摊销到生成器参数。该框架不依赖似然或特定求解器，适用于包括流体动力学在内的通用生成模型对齐。",
+      "llm_tldr": "该论文针对少步生成模型的对齐难题，提出了FAV框架，通过样本变分推断将对齐问题转化为从奖励倾斜分布中采样。方法利用Stein变分梯度下降进行粒子更新，并通过固定点回归摊销到生成器参数。该框架不依赖似然或特定求解器，适用于包括流体动力学在内的通用生成模型对齐。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.28507v1",
+      "source": "arxiv",
+      "title": "Universal Time Series Generation with Neural Controlled Differential Equations",
+      "abstract": "Recent work on the sequence universality of State Space Models (SSMs) has introduced efficient, maximally expressive continuous-time approaches for time-series modelling. While these works focus on discriminative settings, we extend this perspective to generative time-series modelling by proving that maximally expressive Structured Linear Controlled Differential Equations (SLiCEs) are universal time-series generators, in the sense that they can approximate the induced path laws of continuous causal pushforwards on compact latent sets in $W_\\infty$. Building on these theoretical results, we propose Generative SLiCEs (G-SLiCEs), a maximally expressive continuous-time model for flow matching on path-space. Empirically, we show that expressivity improves performance in probabilistic forecasting and downstream tasks, while retaining the advantages of continuous-time models such as generalising to arbitrary observation grids. This is particularly beneficial for irregular grids, where fixed-grid models often struggle.",
+      "authors": [
+        "Torben Berndt",
+        "Elyes Farjallah",
+        "Leif Seute",
+        "Raeid Saqur",
+        "Benjamin Walker",
+        "Jan Stühmer"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-05-27T14:10:41+00:00",
+      "link": "https://arxiv.org/pdf/2605.28507v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "flow matching on path-space using neural CDEs, applicable to fluid dynamics",
+      "llm_evidence_cn": "基于神经控制微分方程的路径空间流匹配，可应用于流体动力学",
+      "llm_evidence": "基于神经控制微分方程的路径空间流匹配，可应用于流体动力学",
+      "canonical_evidence": "基于神经控制微分方程的路径空间流匹配，可应用于流体动力学",
+      "llm_tldr_en": "Proposes Generative SLiCEs, a universal flow matching model for time series generation using neural controlled differential equations.",
+      "llm_tldr_cn": "该论文证明了结构化线性控制微分方程（SLiCEs）是通用时间序列生成器，并提出了G-SLiCEs，一种在路径空间上进行流匹配的最大表达能力连续时间模型。理论证明其通用性，实验展示了优于基准的生成质量。其流匹配方法可直接用于流体动力学中的时间演化生成。",
+      "llm_tldr": "该论文证明了结构化线性控制微分方程（SLiCEs）是通用时间序列生成器，并提出了G-SLiCEs，一种在路径空间上进行流匹配的最大表达能力连续时间模型。理论证明其通用性，实验展示了优于基准的生成质量。其流匹配方法可直接用于流体动力学中的时间演化生成。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
