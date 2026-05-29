@@ -6,50 +6,43 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-30 ~ 2026-05-29
-- 运行时间：2026-05-29 11:27:42 UTC
+- 最新运行日期：2026-05-29
+- 运行时间：2026-05-29 21:28:55 UTC
 - 运行状态：成功
-- 本次总论文数：9
-- 精读区：0
-- 速读区：9
+- 本次总论文数：7
+- 精读区：2
+- 速读区：5
 
 ### 今日简报（AI）
-1) 今日速读9篇论文，聚焦动力系统预测与湍流建模，3篇高分文章（9.0/10）值得关注。  
-2) 最值得看的方向：可扩展一步生成模型用于自回归预报，以及改进的一致性蒸馏流匹配提升物理保真度。  
-3) 建议读者优先精读这三篇高分文章，掌握生成式模型在动力系统预测和湍流动力学中的前沿应用。
-- 详情：[/20260430-20260529/README](/20260430-20260529/README)
+今日聚焦稀疏测量流场重建与空间推进膜冷却的深度学习新方法。
+最佳精读分别提出语言模型从稀疏点重构流场、以及像素级生成插值替代大量实验测试。
+对初学者可关注扩散模型教程，从微分方程到扩散模型的基础知识更易入门。
+- 详情：[/202605/29/README](/202605/29/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [Operator Learning for Reconstructing Flow Fields from Sparse Measurements: a Language Model Approach](/202605/29/2605.23712v1-operator-learning-for-reconstructing-flow-fields-from-sparse-measurements-a-language-model-approach)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：将语言模型（生成式）应用于流体力学流场重建
+2. [Reducing Experimental Testing in Space Propulsion Film Cooling Analyses by Pixelwise Generative Image Interpolation](/202605/29/2605.29911v1-reducing-experimental-testing-in-space-propulsion-film-cooling-analyses-by-pixelwise-generative-image-interpolation)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：生成图像插值应用于空间推进膜冷却；直接在流体动力学问题中使用生成模型
 
 ### 速读区论文标签
-1. [Towards Scalable One-Step Generative Modeling for Autoregressive Dynamical System Forecasting](/20260430-20260529/2605.05540v1-towards-scalable-one-step-generative-modeling-for-autoregressive-dynamical-system-forecasting)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：适用于湍流等动力系统预测的生成模型
-2. [Physical Fidelity Reconstruction via Improved Consistency-Distilled Flow Matching for Dynamical Systems](/20260430-20260529/2605.05975v1-physical-fidelity-reconstruction-via-improved-consistency-distilled-flow-matching-for-dynamical-systems)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：流匹配用于动力系统流场重建
-3. [The finite expression method for turbulent dynamics with high-order moment recovery](/20260430-20260529/2605.10687v1-the-finite-expression-method-for-turbulent-dynamics-with-high-order-moment-recovery)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：使用生成模型学习湍流随机残差成分
-4. [Policy-DRIFT: Dynamic Reward-Informed Flow Trajectory Steering](/20260430-20260529/2605.14022v1-policy-drift-dynamic-reward-informed-flow-trajectory-steering)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：Policy-DRIFT 将条件流匹配应用于湍流控制，直接使用流匹配解决流体动力学问题
-5. [PerFlow: Physics-Embedded Rectified Flow for Efficient Reconstruction and Uncertainty Quantification of Spatiotemporal Dynamics](/20260430-20260529/2605.03548v1-perflow-physics-embedded-rectified-flow-for-efficient-reconstruction-and-uncertainty-quantification-of-spatiotemporal-dynamics)  
-   标签：评分：8.0/10、query:genmod-fluid
-   evidence：物理嵌入的整流流用于时空动力学重建
-6. [Inpainting physics: self-supervised learning for context-driven fluid simulation](/20260430-20260529/2605.08832v1-inpainting-physics-self-supervised-learning-for-context-driven-fluid-simulation)  
-   标签：评分：8.0/10、query:genmod-fluid
-   evidence：自监督生成式先验用于流体模拟
-7. [Wavelet Flow Matching for Multi-Scale Physics Emulation](/20260430-20260529/2605.16573v1-wavelet-flow-matching-for-multi-scale-physics-emulation)  
-   标签：评分：8.0/10、query:genmod-fluid
-   evidence：小波流匹配用于多尺度物理仿真
-8. [Guided Flow Matching for Forward and Inverse PDE Problems with Sparse Observations: Algorithm and Theory](/20260430-20260529/2605.25509v1-guided-flow-matching-for-forward-and-inverse-pde-problems-with-sparse-observations-algorithm-and-theory)  
-   标签：评分：8.0/10、query:genmod-fluid
-   evidence：用于稀疏观测偏微分方程问题的流匹配方法
-9. [Recursive Flow Matching](/20260430-20260529/2605.26535v1-recursive-flow-matching)  
-   标签：评分：8.0/10、query:genmod-fluid
-   evidence：递归流匹配用于预测物理系统的时空动力学
+1. [A Tutorial on Diffusion Theory: From Differential Equations to Diffusion Models](/202605/29/2605.22586v1-a-tutorial-on-diffusion-theory-from-differential-equations-to-diffusion-models)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：从微分方程角度的扩散理论教程
+2. [A Tutorial on Diffusion Theory: From Differential Equations to Diffusion Models](/202605/29/2605.22586v3-a-tutorial-on-diffusion-theory-from-differential-equations-to-diffusion-models)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：扩散理论教程，为扩散模型奠定基础
+3. [Flow Mismatching: Unsupervised Anomaly Detection via Velocity Discrepancies in Flow Matching Models](/202605/29/2605.23070v1-flow-mismatching-unsupervised-anomaly-detection-via-velocity-discrepancies-in-flow-matching-models)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：流匹配方法用于异常检测；可迁移至流体流动模拟
+4. [Sparse Compositional Flow Matching by geometric assembly from motion primitives](/202605/29/2605.23341v1-sparse-compositional-flow-matching-by-geometric-assembly-from-motion-primitives)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：从运动基元组合流匹配；方法可迁移至流体流动生成
+5. [Two-Parameter Flows for Learning Population Dynamics of Physical Systems](/202605/29/2605.26285v1-two-parameter-flows-for-learning-population-dynamics-of-physical-systems)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：使用条件流匹配学习物理系统动力学，可应用于流体动力学
 
 
 <div class="dpr-home-promo-card">

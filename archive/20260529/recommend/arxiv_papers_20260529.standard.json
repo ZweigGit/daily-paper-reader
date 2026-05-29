@@ -1,0 +1,282 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-29T21:23:10.724517+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [
+    {
+      "id": "2605.23712v1",
+      "source": "arxiv",
+      "title": "Operator Learning for Reconstructing Flow Fields from Sparse Measurements: a Language Model Approach",
+      "abstract": "Reconstructing flow fields from sparse measurements is a fundamental problem in fluid mechanics with broad implications for modeling, control, and design. In this work, we propose a novel operator learning framework that leverages the architecture of language models to perform flow reconstruction in a mesh-free manner. We reformulate flow field reconstruction as a sequence-to-sequence learning task, where sparse measurements are treated as context and unobserved locations as queries. Our model learns to reconstruct the full flow field from sparse inputs, effectively capturing spatial correlations and long-range dependencies. We evaluate the proposed approach on four benchmark datasets: (1) two-dimensional vortex street simulations, (2) daily average temperature data across the contiguous United States, (3) three-dimensional blood flow simulations based on dissipative particle dynamics, and (4) three-dimensional turbulent jet flow measurements obtained via particle tracking velocimetry. Across all cases, our method demonstrates competitive reconstruction accuracy, even with highly incomplete data (less than 10\\% observed), and achieves efficient performance. The results highlight the potential of language models as robust and scalable tools for scientific data reconstruction, and suggest a promising direction toward the development of foundation models for scientific and engineering applications.",
+      "authors": [
+        "Qian Zhang",
+        "George Em Karniadakis"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE",
+        "cs.LG"
+      ],
+      "published": "2026-05-22T14:56:05+00:00",
+      "link": "https://arxiv.org/pdf/2605.23712v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Applies language model (generative) to flow field reconstruction in fluid dynamics",
+      "llm_evidence_cn": "将语言模型（生成式）应用于流体力学流场重建",
+      "llm_evidence": "将语言模型（生成式）应用于流体力学流场重建",
+      "canonical_evidence": "将语言模型（生成式）应用于流体力学流场重建",
+      "llm_tldr_en": "Uses a language model architecture to reconstruct flow fields from sparse measurements, treating it as a sequence-to-sequence task, evaluated on vortex street and other datasets.",
+      "llm_tldr_cn": "针对稀疏测量下的流场重建这一流体力学基本问题，本文提出利用语言模型架构进行算子学习，将重建任务转换为序列到序列的学习问题。模型以稀疏测量为上下文，未知位置为查询，在多个基准数据集（如二维涡街）上有效捕捉空间相关性并实现高精度重建。该方法为流体力学中的生成式模型应用提供了新思路。",
+      "llm_tldr": "针对稀疏测量下的流场重建这一流体力学基本问题，本文提出利用语言模型架构进行算子学习，将重建任务转换为序列到序列的学习问题。模型以稀疏测量为上下文，未知位置为查询，在多个基准数据集（如二维涡街）上有效捕捉空间相关性并实现高精度重建。该方法为流体力学中的生成式模型应用提供了新思路。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.29911v1",
+      "source": "arxiv",
+      "title": "Reducing Experimental Testing in Space Propulsion Film Cooling Analyses by Pixelwise Generative Image Interpolation",
+      "abstract": "We propose a machine learning approach for image regression from sparse experimental measurements. We show the application of the proposed method on film cooling studies in propulsion system development, aiming to reduce the need for extensive physical testing. Our method employs a lightweight feed-forward neural network with positional encoding to generate images conditioned by input parameters. Validated on real and synthetic data, it achieves high image similarity (RMSE < 8 %, SSIM > 93 %) while maintaining accuracy with a 30 \\% reduction of measurements. We further propose a knowledge-informed extension for local adaptability of the generated images. This approach significantly reduces required tests while preserving high-quality data, enabling efficient optimization of coolant injector configurations with applications beyond aerospace.",
+      "authors": [
+        "Adam T. Müller",
+        "Philipp J. Teuffel",
+        "Konstantin Manassis",
+        "Nicolaj C. Stache"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.CV"
+      ],
+      "published": "2026-05-28T13:29:19+00:00",
+      "link": "https://arxiv.org/pdf/2605.29911v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "generative image interpolation applied to film cooling in space propulsion; directly uses generative model for fluid dynamics problem",
+      "llm_evidence_cn": "生成图像插值应用于空间推进膜冷却；直接在流体动力学问题中使用生成模型",
+      "llm_evidence": "生成图像插值应用于空间推进膜冷却；直接在流体动力学问题中使用生成模型",
+      "canonical_evidence": "生成图像插值应用于空间推进膜冷却；直接在流体动力学问题中使用生成模型",
+      "llm_tldr_en": "Proposes a lightweight generative neural network for pixelwise image regression from sparse measurements, applied to film cooling in propulsion systems, reducing experimental tests by 30% while maintaining high image similarity.",
+      "llm_tldr_cn": "该论文针对空间推进系统膜冷却分析中实验测试成本高的问题，提出了一种轻量级生成式神经网络，通过位置编码从稀疏测量点生成完整图像。该方法基于生成式图像插值，仅需30%的测量数据即可达到高保真度（RMSE<8%，SSIM>93%），显著减少实验次数。工作是生成模型在流体力学应用中的直接范例，展示了AI减少物理实验的潜力。",
+      "llm_tldr": "该论文针对空间推进系统膜冷却分析中实验测试成本高的问题，提出了一种轻量级生成式神经网络，通过位置编码从稀疏测量点生成完整图像。该方法基于生成式图像插值，仅需30%的测量数据即可达到高保真度（RMSE<8%，SSIM>93%），显著减少实验次数。工作是生成模型在流体力学应用中的直接范例，展示了AI减少物理实验的潜力。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2605.22586v1",
+      "source": "arxiv",
+      "title": "A Tutorial on Diffusion Theory: From Differential Equations to Diffusion Models",
+      "abstract": "This tutorial develops diffusion models from the viewpoint of differential equations. We begin with the conditional Gaussian forward process and show that this path admits both an ordinary differential equation (ODE) representation and a stochastic differential equation (SDE) representation. Averaging the conditional process over the data distribution then yields marginalized forward ODE and SDE formulations that transport the data distribution $p_0=p_{\\mathrm{data}}$ to a Gaussian prior $p_1=\\mathcal{N}(0,I)$. We next derive the corresponding reverse-time dynamics, namely the reverse SDE and the reverse probability-flow ODE, both of which are governed by the marginal score $\\grad\\log p_t(x)$. This leads to a training objective for score estimation and shows that the standard noise-prediction objective is equivalent to score matching up to an additive constant independent of the model parameters. We then discuss sampling methods for the learned reverse dynamics, including DPM-Solver, as well as guided sampling through classifier guidance and classifier-free guidance. Finally, we compare DDPM and DDIM with the reverse SDE/ODE framework and show that they share the same training objective, while DDPM sampling corresponds to discrete reverse-SDE sampling and DDIM sampling corresponds to reverse-ODE sampling.",
+      "authors": [
+        "Jiayi Fu",
+        "Yuxia Wang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.CL"
+      ],
+      "published": "2026-05-21T14:59:12+00:00",
+      "link": "https://arxiv.org/pdf/2605.22586v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "tutorial on diffusion theory from differential equations",
+      "llm_evidence_cn": "从微分方程角度的扩散理论教程",
+      "llm_evidence": "从微分方程角度的扩散理论教程",
+      "canonical_evidence": "从微分方程角度的扩散理论教程",
+      "llm_tldr_en": "Tutorial deriving diffusion models from ODE/SDE perspectives, covering score estimation.",
+      "llm_tldr_cn": "本文以微分方程视角详细推导扩散模型，从条件高斯噪声过程出发，得到前向和反向SDE/ODE，并基于分数匹配训练。该教程为扩散模型在流体模拟中的应用提供了坚实的理论基础。",
+      "llm_tldr": "本文以微分方程视角详细推导扩散模型，从条件高斯噪声过程出发，得到前向和反向SDE/ODE，并基于分数匹配训练。该教程为扩散模型在流体模拟中的应用提供了坚实的理论基础。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.22586v3",
+      "source": "arxiv",
+      "title": "A Tutorial on Diffusion Theory: From Differential Equations to Diffusion Models",
+      "abstract": "Diffusion models have emerged as a dominant framework for generative modeling, but their mathematical foundations are often presented separately through diffusion probabilistic models, score-based modeling, stochastic differential equations, and numerical sampling methods. We write this tutorial to provide a unified and self-contained account of these viewpoints from the perspective of differential equations. Starting from a conditional Gaussian noising process, we derive ordinary differential equation (ODE) and stochastic differential equation (SDE) representations, pass to the corresponding marginal forward dynamics, and then obtain the reverse-time SDE and probability-flow ODE that make generation possible. We show that the central unknown quantity in reverse sampling is the marginal score, explain how score matching becomes the standard denoising objective under a noise-prediction parameterization, and discuss practical reverse-time sampling and guidance. We further place DDPM, DDIM, flow matching, and score-based SDEs in a common framework, and conclude with diffusion language models in continuous embedding space together with a brief discussion of discrete masked-token diffusion. The tutorial is intended as a bridge between the analytical foundations of diffusion processes and the modern generative algorithms built upon them.",
+      "authors": [
+        "Jiayi Fu",
+        "Yuxia Wang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.CL"
+      ],
+      "published": "2026-05-21T14:59:12+00:00",
+      "link": "https://arxiv.org/pdf/2605.22586v3",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "tutorial on diffusion theory, foundational for diffusion models",
+      "llm_evidence_cn": "扩散理论教程，为扩散模型奠定基础",
+      "llm_evidence": "扩散理论教程，为扩散模型奠定基础",
+      "canonical_evidence": "扩散理论教程，为扩散模型奠定基础",
+      "llm_tldr_en": "A unified tutorial on diffusion models covering ODE/SDE formulations, score estimation, and sampling.",
+      "llm_tldr_cn": "本文以微分方程为视角，统一介绍了扩散概率模型、基于分数的建模、随机微分方程和数值采样方法。从条件高斯噪声过程出发，推导了前向和反向SDE/ODE，并展示了分数估计的训练目标。该教程为将扩散模型应用于流体模拟提供了扎实的理论基础。",
+      "llm_tldr": "本文以微分方程为视角，统一介绍了扩散概率模型、基于分数的建模、随机微分方程和数值采样方法。从条件高斯噪声过程出发，推导了前向和反向SDE/ODE，并展示了分数估计的训练目标。该教程为将扩散模型应用于流体模拟提供了扎实的理论基础。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.23070v1",
+      "source": "arxiv",
+      "title": "Flow Mismatching: Unsupervised Anomaly Detection via Velocity Discrepancies in Flow Matching Models",
+      "abstract": "We propose Flow Mismatching, an unsupervised anomaly detection method that deliberately avoids reconstruction-based paradigms. Instead, we treat flow matching as geometric dynamics and leverage a key insight: anomalies occur at places where the learned normal flow disagrees with the geometric path toward a test image.   Given a flow matching model trained only on normal images, we probe its learned velocity field along affine paths from Gaussian noise to a target image. Along each path, we compare the model-predicted velocity, which follows normal generative dynamics, with the geometric velocity toward the target, which includes any anomalous content. Anomalies induce strong local disagreement between these velocities. Aggregating the mismatch over different time steps and multiple paths yields pixel-wise heatmaps and image-level scores without test-time optimization, feature memories, or additional calibration.   Our analysis shows that the population mismatch decomposes into an irreducible denoising term and a Fisher-divergence term between the test-path and normal-path score functions, which identifies the score-gap component that drives anomaly separation and explains the effectiveness of robust path aggregation. Extensive experiments on MVTec-AD and VisA demonstrate superior performance compared with SOTA reconstruction-based and recent flow matching-based approaches.",
+      "authors": [
+        "Shengzhe Chen",
+        "Mehrdad Moradi",
+        "Kamran Paynabar",
+        "Hao Yan"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-05-21T22:01:31+00:00",
+      "link": "https://arxiv.org/pdf/2605.23070v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "flow matching method for anomaly detection; transferable to fluid flow simulation",
+      "llm_evidence_cn": "流匹配方法用于异常检测；可迁移至流体流动模拟",
+      "llm_evidence": "流匹配方法用于异常检测；可迁移至流体流动模拟",
+      "canonical_evidence": "流匹配方法用于异常检测；可迁移至流体流动模拟",
+      "llm_tldr_en": "Proposes flow mismatching, an unsupervised anomaly detection method using velocity discrepancies in flow matching models; demonstrates on images; transferable to fluid dynamics.",
+      "llm_tldr_cn": "该论文提出流失配（Flow Mismatching）方法，利用流匹配模型中预测速度与几何速度之间的差异进行无监督异常检测，避免了基于重建的范式。在图像数据集上验证了有效性。由于核心方法是流匹配，其框架可迁移至流体动力学中的异常检测或流场生成任务，为生成模型在流体力学中的应用提供了方法论桥梁。",
+      "llm_tldr": "该论文提出流失配（Flow Mismatching）方法，利用流匹配模型中预测速度与几何速度之间的差异进行无监督异常检测，避免了基于重建的范式。在图像数据集上验证了有效性。由于核心方法是流匹配，其框架可迁移至流体动力学中的异常检测或流场生成任务，为生成模型在流体力学中的应用提供了方法论桥梁。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.23341v1",
+      "source": "arxiv",
+      "title": "Sparse Compositional Flow Matching by geometric assembly from motion primitives",
+      "abstract": "Embodied trajectories, such as the executable motion sequences of robotic manipulators, underwater vehicles, and mobile robots, are a fundamental output of embodied AI. Modern generative models often treat them as a dense, monolithic signal generated point by point, fitting an intricate high-dimensional posterior while leaving the data's latent structure unmodeled, the same sample inefficiency long identified by the structured generative model literature. We argue that a compositional latent structure is a natural choice: many embodied tasks share recurring motion fragments that can be made explicit as a finite repertoire of reusable motion primitives, and compositional units naturally align with subtask boundaries to support task decomposition. Existing compositional generators, however, compose in a latent space and rely on post-hoc decoding to relate sampled units to actual trajectory segments. We instead compose directly in the physical trajectory space through a flow-matching framework with two coupled designs. Motion-Primitive Dictionary Learning equips each atom with a learnable length mask and binary starting indicators so the atom itself is the primitive, reused verbatim wherever it is placed. Structural Sparse Flow Matching with Geometric Constraints then generates a binary placement matrix using duration-aware tokenization and a differentiable geometric loss that enforces spatial continuity and temporal contiguity where adjacent primitives meet. On Open X-Embodiment and 3DMoTraj, the framework attains state-of-the-art accuracy and reduces the FDE/ADE ratio from 1.8 to 1.07, improving ADE by 19.2% and FDE by 21.0% over the strongest baseline.",
+      "authors": [
+        "Yan Tang",
+        "Yuanbo Tang",
+        "Tingyu Cao",
+        "Shaolun Huang",
+        "Yang Li"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-05-22T07:55:48+00:00",
+      "link": "https://arxiv.org/pdf/2605.23341v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "compositional flow matching from motion primitives; method transferable to fluid flow generation",
+      "llm_evidence_cn": "从运动基元组合流匹配；方法可迁移至流体流动生成",
+      "llm_evidence": "从运动基元组合流匹配；方法可迁移至流体流动生成",
+      "canonical_evidence": "从运动基元组合流匹配；方法可迁移至流体流动生成",
+      "llm_tldr_en": "Proposes sparse compositional flow matching by assembling motion primitives; reduces sample complexity; applicable to fluid dynamics as flow matching on trajectory data.",
+      "llm_tldr_cn": "该论文提出稀疏组合流匹配方法，将运动基元组合成复杂轨迹，利用流匹配生成具身运动序列。通过显式建模潜在组合结构，提高了样本效率。该方法可自然推广到流体流动生成：将流场视为轨迹，利用基元组合降低数据需求，为流匹配在流体力学中的应用提供了高效方案。",
+      "llm_tldr": "该论文提出稀疏组合流匹配方法，将运动基元组合成复杂轨迹，利用流匹配生成具身运动序列。通过显式建模潜在组合结构，提高了样本效率。该方法可自然推广到流体流动生成：将流场视为轨迹，利用基元组合降低数据需求，为流匹配在流体力学中的应用提供了高效方案。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.26285v1",
+      "source": "arxiv",
+      "title": "Two-Parameter Flows for Learning Population Dynamics of Physical Systems",
+      "abstract": "This work addresses the problem of learning the dynamics of high-dimensional probability densities over time using unlabeled samples, without assuming access to trajectory information. We introduce two-parameter flows that learn only sampling-time transports from a base distribution to each marginal and then extract a physics-time velocity by regressing on coupled synthetic trajectories. We prove that the resulting physics-time dynamics are unique and inherit regularity from the sampling-time transports. Because we can build on standard, well-developed conditional flow matching techniques for learning the base-to-marginal transports, our approach scales to high dimensions and avoids per-step optimal-transport couplings, while allowing admissible non-gradient dynamics that can naturally explain rotational or circulating physics phenomena.",
+      "authors": [
+        "Paul Schwerdtner",
+        "Tobias Blickhan",
+        "Benjamin Peherstorfer"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.NA"
+      ],
+      "published": "2026-05-25T19:16:22+00:00",
+      "link": "https://arxiv.org/pdf/2605.26285v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "uses conditional flow matching to learn population dynamics of physical systems, applicable to fluid dynamics",
+      "llm_evidence_cn": "使用条件流匹配学习物理系统动力学，可应用于流体动力学",
+      "llm_evidence": "使用条件流匹配学习物理系统动力学，可应用于流体动力学",
+      "canonical_evidence": "使用条件流匹配学习物理系统动力学，可应用于流体动力学",
+      "llm_tldr_en": "Introduces two-parameter flows using conditional flow matching to learn population dynamics of physical systems, scalable to high dimensions and avoiding per-step optimal transport, with potential for fluid dynamic applications.",
+      "llm_tldr_cn": "该论文提出双参数流方法，利用标准条件流匹配技术学习物理系统的群体动力学，无需轨迹信息即可从样本中提取物理时间速度场。方法可扩展到高维，避免逐步骤最优传输，并允许非梯度动力学。虽然未直接验证流体问题，但其基于流匹配的框架可直接应用于流体动力学中的概率密度演化建模，为生成式流体模拟提供新工具。",
+      "llm_tldr": "该论文提出双参数流方法，利用标准条件流匹配技术学习物理系统的群体动力学，无需轨迹信息即可从样本中提取物理时间速度场。方法可扩展到高维，避免逐步骤最优传输，并允许非梯度动力学。虽然未直接验证流体问题，但其基于流匹配的框架可直接应用于流体动力学中的概率密度演化建模，为生成式流体模拟提供新工具。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
