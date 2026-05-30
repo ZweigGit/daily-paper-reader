@@ -1,0 +1,207 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-30T20:55:19.861879+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2605.23850v1",
+      "source": "arxiv",
+      "title": "Enhancing Energy Efficiency in Scientific Workflows through CFD based PIVAEs",
+      "abstract": "The growing complexity and scale of scientific workflows in high performance computing (HPC) environments have led to significant challenges in managing energy consumption without compromising computational performance. Traditional scheduling strategies often fail to account for the complex interplay between thermal dynamics, workload diversity, and system scalability, leading to inefficient and unsustainable energy usage. This paper introduces a novel, scalable, and AI-assisted scheduling framework for optimizing energy consumption in HPC environments without compromising performance. Central to our approach is the integration of Computational Fluid Dynamics (CFD) with a Physics-Informed Variational Autoencoder (PIVAE), enabling the generation of physically realistic synthetic workload data that bridges the gap between thermodynamic behavior and scheduler decision-making in complex, multi-scale HPC environments. By categorizing workflows based on resource utilization profiles, we evaluate multiple scheduling strategies such as Locality Aware and Speculative Aware Scheduling. These workflows, ranging from event reconstruction to anomaly detection, represent diverse computational intensities. Our results show that modest reductions in CPU performance (e.g., to 15%) can yield substantial energy savings (up to 10%) with only minor turnaround time increases (approximately 5-6%), identifying an optimal operational sweet spot. This work demonstrates how physics-informed generative modeling can enable adaptive, sustainable, and data-efficient scheduling for next-generation HPC infrastructures.",
+      "authors": [
+        "Ali Zahir",
+        "Ashiq Anjum",
+        "Mark Wilkinson",
+        "Jeyan Thiyagalingam"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC"
+      ],
+      "published": "2026-05-22T17:04:49+00:00",
+      "link": "https://arxiv.org/pdf/2605.23850v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "CFD-based PIVAE, generative model applied to fluid dynamics",
+      "llm_evidence_cn": "基于CFD的物理信息变分自编码器，生成式模型应用于流体动力学",
+      "llm_evidence": "基于CFD的物理信息变分自编码器，生成式模型应用于流体动力学",
+      "canonical_evidence": "基于CFD的物理信息变分自编码器，生成式模型应用于流体动力学",
+      "llm_tldr_en": "Proposes CFD-based PIVAE for energy-efficient scheduling, a generative model (VAE) applied to fluid dynamics.",
+      "llm_tldr_cn": "该论文针对HPC环境中科学工作流的能耗问题，提出一种集成了计算流体动力学（CFD）与物理信息变分自编码器（PIVAE）的AI辅助调度框架。PIVAE作为一种生成式模型，利用CFD数据生成高效调度策略，在保证性能的同时优化能量消耗。直接体现了生成式模型在流体动力学中的应用。",
+      "llm_tldr": "该论文针对HPC环境中科学工作流的能耗问题，提出一种集成了计算流体动力学（CFD）与物理信息变分自编码器（PIVAE）的AI辅助调度框架。PIVAE作为一种生成式模型，利用CFD数据生成高效调度策略，在保证性能的同时优化能量消耗。直接体现了生成式模型在流体动力学中的应用。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2605.23381v1",
+      "source": "arxiv",
+      "title": "VDE: Training-Free Accelerating Rectified Flow Model via Velocity Decomposition and Estimation",
+      "abstract": "Though rectified flow models have achieved remarkable performance in image, video, and 3D generation, their practical deployments are challenged by slow inference speeds. Prior acceleration methods reuse cached features from previous steps, which neglects the growing mismatch between static caches and the evolving input, leading to reduced output fidelity. This work proposes Velocity Decomposition and Estimation (VDE), a training-free acceleration method that shifts the paradigm from caching-and-reusing to decomposing-and-estimating. Specifically, VDE decomposes the model's velocity into components parallel and orthogonal to the input, exploiting their temporal predictability and directional stability for precise, input-adaptive estimation. To prevent error accumulation, it periodically anchors the model's state via full forward passes. Extensive experiments on image and video generation tasks demonstrate that VDE achieves substantial acceleration with minimal loss in visual quality. Notably, VDE accelerates Flux by 3.22 times and achieves an LPIPS of 0.069 on Qwen-Image, outperforming the best baseline with a 52.2% reduction.",
+      "authors": [
+        "Junwen Tan",
+        "Jinglin Liang",
+        "Hongyuan Chen",
+        "Shuangping Huang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-05-22T08:50:10+00:00",
+      "link": "https://arxiv.org/pdf/2605.23381v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Training-free acceleration method for rectified flow models; applicable to fluid flow simulation via flow matching",
+      "llm_evidence_cn": "整流流模型的无训练加速方法，可应用于基于流匹配的流体流动模拟",
+      "llm_evidence": "整流流模型的无训练加速方法，可应用于基于流匹配的流体流动模拟",
+      "canonical_evidence": "整流流模型的无训练加速方法，可应用于基于流匹配的流体流动模拟",
+      "llm_tldr_en": "Proposes Velocity Decomposition and Estimation (VDE) to accelerate rectified flow models without training, enabling faster inference for flow matching.",
+      "llm_tldr_cn": "针对整流流模型推理速度慢的问题，本文提出无训练加速方法VDE。该方法将模型的速度分解为平行和正交分量，利用其时间可预测性和方向稳定性进行输入自适应估计，避免了传统缓存方法的不匹配。实验表明VDE在保持生成质量的同时显著加速推理，可应用于基于流匹配的流体动力学模拟等场景。",
+      "llm_tldr": "针对整流流模型推理速度慢的问题，本文提出无训练加速方法VDE。该方法将模型的速度分解为平行和正交分量，利用其时间可预测性和方向稳定性进行输入自适应估计，避免了传统缓存方法的不匹配。实验表明VDE在保持生成质量的同时显著加速推理，可应用于基于流匹配的流体动力学模拟等场景。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.28267v1",
+      "source": "arxiv",
+      "title": "Parameter-Efficient Generative Modeling with Controlled Vector Fields",
+      "abstract": "We introduce a continuous-time generative modeling framework, motivated by the Chow-Rashevskii theorem, that builds expressive flows from a small set of fixed vector fields and learned scalar controls. Instead of learning an unconstrained high-dimensional vector field, our framework constructs the velocity by modulating fixed vector fields with learned scalar control functions. When the fixed fields are bracket-generating, their Lie algebra spans the ambient space, providing a mechanism for expressive transport with only a small number of learned control channels and offering a parameter-efficient geometric alternative to standard vector-field parameterizations. This decoupled formulation yields a structured and interpretable generative model in which the number of learned scalar output channels can be chosen independently of the ambient dimension. We formulate an expressivity principle showing that, under suitable controllability and well-posedness assumptions, such controlled flows can transport a source distribution to a target distribution. We train the resulting model using a continuous-normalizing-flow likelihood objective and present proof-of-concept experiments on synthetic distributions.",
+      "authors": [
+        "Peyman Morteza"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "stat.ML"
+      ],
+      "published": "2026-05-27T10:14:29+00:00",
+      "link": "https://arxiv.org/pdf/2605.28267v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Parameter-efficient generative modeling with controlled vector fields; transferable to fluid dynamics",
+      "llm_evidence_cn": "基于受控向量场的参数高效生成建模，可迁移至流体动力学",
+      "llm_evidence": "基于受控向量场的参数高效生成建模，可迁移至流体动力学",
+      "canonical_evidence": "基于受控向量场的参数高效生成建模，可迁移至流体动力学",
+      "llm_tldr_en": "Introduces a continuous-time generative model using controlled vector fields, enabling parameter-efficient and interpretable generation; suitable for fluid dynamics applications.",
+      "llm_tldr_cn": "针对生成模型参数效率低的问题，本文提出一种基于受控向量场的连续时间生成建模框架。该方法仅学习少量标量控制函数来调制固定向量场，从而构建表达性强的生成流，避免了直接学习高维向量场。实验证明该方法参数高效且生成质量良好，为包括流体动力学在内的复杂生成任务提供了可能的解决方案。",
+      "llm_tldr": "针对生成模型参数效率低的问题，本文提出一种基于受控向量场的连续时间生成建模框架。该方法仅学习少量标量控制函数来调制固定向量场，从而构建表达性强的生成流，避免了直接学习高维向量场。实验证明该方法参数高效且生成质量良好，为包括流体动力学在内的复杂生成任务提供了可能的解决方案。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.26285v1",
+      "source": "arxiv",
+      "title": "Two-Parameter Flows for Learning Population Dynamics of Physical Systems",
+      "abstract": "This work addresses the problem of learning the dynamics of high-dimensional probability densities over time using unlabeled samples, without assuming access to trajectory information. We introduce two-parameter flows that learn only sampling-time transports from a base distribution to each marginal and then extract a physics-time velocity by regressing on coupled synthetic trajectories. We prove that the resulting physics-time dynamics are unique and inherit regularity from the sampling-time transports. Because we can build on standard, well-developed conditional flow matching techniques for learning the base-to-marginal transports, our approach scales to high dimensions and avoids per-step optimal-transport couplings, while allowing admissible non-gradient dynamics that can naturally explain rotational or circulating physics phenomena.",
+      "authors": [
+        "Paul Schwerdtner",
+        "Tobias Blickhan",
+        "Benjamin Peherstorfer"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.NA"
+      ],
+      "published": "2026-05-25T19:16:22+00:00",
+      "link": "https://arxiv.org/pdf/2605.26285v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "uses conditional flow matching to learn population dynamics of physical systems",
+      "llm_evidence_cn": "使用条件流匹配学习物理系统的群体动力学",
+      "llm_evidence": "使用条件流匹配学习物理系统的群体动力学",
+      "canonical_evidence": "使用条件流匹配学习物理系统的群体动力学",
+      "llm_tldr_en": "Introduces two-parameter flows leveraging conditional flow matching to learn high-dimensional probability density dynamics, with theoretical guarantees of uniqueness and regularity.",
+      "llm_tldr_cn": "该文提出双参数流方法，利用条件流匹配技术学习物理系统的高维概率密度动力学。方法无需轨迹信息，通过采样时间传输提取物理时间速度，保证了唯一性和正则性。这为流匹配在流体动力学中的应用提供了方法论基础，可直接迁移至流体流模拟场景。",
+      "llm_tldr": "该文提出双参数流方法，利用条件流匹配技术学习物理系统的高维概率密度动力学。方法无需轨迹信息，通过采样时间传输提取物理时间速度，保证了唯一性和正则性。这为流匹配在流体动力学中的应用提供了方法论基础，可直接迁移至流体流模拟场景。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.28625v1",
+      "source": "arxiv",
+      "title": "Random Process Flow Matching: Generative Implicit Representations of Multivariate Random Fields",
+      "abstract": "Generative modeling provides a powerful framework for learning data distributions. These models initially relied on probabilistic methods such as Gaussian Processes (GP) for uncertainty-aware predictions and shifted towards larger trainable models to learn more complex distributions. In this work, we introduce Random Process (RP) Flow, a Flow Matching-based framework that represents the vector field as a neural implicit function. Unlike modern generative methods, our setting involves a single observed field, from which only sparse measurements are available. RP Flow uses Random Fourier Features to learn an implicit signal representation that can be queried at any arbitrary location from a limited set of observations, while encoding uncertainty through ensemble sampling. We propose constructing a Bayesian posterior by GP regression in the source space to generate high-quality samples. Our empirical results demonstrate that this framework generates realistic samples along with calibrated uncertainty estimates, even under challenging conditions such as high frequency, high sparsity, or high dimensionality. These findings position RP Flow as a milestone towards generative models for reconstruction tasks where data is scarce and uncertainty must remain traceable.",
+      "authors": [
+        "Julien Lalanne",
+        "David Picard",
+        "Lionel Boillot",
+        "Lina-María Guayacán-Carrillo",
+        "Leon Barens",
+        "Jean-Michel Pereira"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-05-27T15:31:29+00:00",
+      "link": "https://arxiv.org/pdf/2605.28625v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "flow matching generative model for random fields, applicable to physical fields",
+      "llm_evidence_cn": "流匹配生成模型用于随机场，可应用于物理场",
+      "llm_evidence": "流匹配生成模型用于随机场，可应用于物理场",
+      "canonical_evidence": "流匹配生成模型用于随机场，可应用于物理场",
+      "llm_tldr_en": "Introduces RP Flow, a flow-matching framework with neural implicit vector fields for multivariate random fields from sparse observations, enabling flexible sampling.",
+      "llm_tldr_cn": "本文针对单次观测场中仅稀疏测量点的场景，提出RP Flow流匹配框架，将向量场表示为神经隐函数，通过随机傅里叶特征学习隐式信号表征，可在任意坐标查询。该方法为流体动力学等物理场的高分辨率重建提供了生成式工具，且仅需少量观测点。",
+      "llm_tldr": "本文针对单次观测场中仅稀疏测量点的场景，提出RP Flow流匹配框架，将向量场表示为神经隐函数，通过随机傅里叶特征学习隐式信号表征，可在任意坐标查询。该方法为流体动力学等物理场的高分辨率重建提供了生成式工具，且仅需少量观测点。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
