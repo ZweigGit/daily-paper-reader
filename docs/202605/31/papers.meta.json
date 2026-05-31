@@ -1,0 +1,39 @@
+{
+  "label": "2026-05-31",
+  "date": "2026-05-31",
+  "generated_at": "2026-05-31T20:53:19",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202605/31/2605.27499v1-gensbi-generative-methods-for-simulation-based-inference-in-jax",
+      "section": "deep",
+      "title_en": "GenSBI: Generative Methods for Simulation-Based Inference in JAX",
+      "authors": "Aurelio Amerio",
+      "date": "2026-05-26",
+      "pdf": "https://arxiv.org/pdf/2605.27499v1",
+      "score": "8.0",
+      "evidence": "实现了流匹配和扩散模型用于仿真推断",
+      "tldr": "现有基于模拟的推断（SBI）库多基于PyTorch，而JAX用户缺乏原生支持。GenSBI是一个完全在JAX中实现流匹配、得分匹配和去噪扩散的开源库，提供三种基于Transformer的架构并通过统一接口解耦生成方法、神经网络骨干和推断模式。在标准SBI基准测试中达到近乎理想的C2ST分数（0.50-0.56）和校准良好的后验覆盖。该库支持从训练到后验校准的端到端工作流，并允许用户自定义架构。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Flow and diffusion generative models have established themselves as widely adopted density estimators for simulation-based inference (SBI), extending naturally from neural posterior estimation to likelihood and joint density estimation. Their principled optimization objectives and freedom from architectural constraints have driven rapid adoption across the natural sciences. Yet the most widely used SBI libraries remain PyTorch-based, leaving researchers who develop their forward models and analysis pipelines in JAX without a native option. We present GenSBI, an open-source library that implements flow matching, score matching, and denoising diffusion entirely in JAX. The library offers three transformer-based architectures - SimFormer, Flux1, and a novel Flux1Joint that extends gate-modulated transformer blocks to joint density estimation - all interchangeable through a unified interface that decouples generative method, neural backbone, and inference mode. GenSBI provides an end-to-end workflow from training through posterior calibration (SBC, TARP, LC2ST) and supports custom architectures with domain-specific embedding networks. We validate the framework on standard SBI benchmarks, achieving near-ideal mean C2ST scores (0.50-0.56, where 0.50 is ideal) on SBIBM tasks with minimal per-task tuning and well-calibrated posterior coverage across all tested configurations. The code is publicly available at https://github.com/aurelio-amerio/GenSBI.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/31/2605.29920v1-midpoint-generative-models",
+      "section": "quick",
+      "title_en": "Midpoint Generative Models",
+      "authors": "Daniil Shlenskii, Nikita Gushchin, Lev Novitskiy, Dmitry V. Dylov, Alexander Korotin",
+      "date": "2026-05-28",
+      "pdf": "https://arxiv.org/pdf/2605.29920v1",
+      "score": "6.0",
+      "evidence": "中点生成模型提供了一种可适配于流体动力学的流匹配新框架",
+      "tldr": "中点生成模型（MGM）是一种基于流匹配对称性的一步生成模型框架。当两端分布相同时，线性插值的漂移场在中间时刻为零，其范数定义中点散度作为分布差异。通过随机翻转插值和对称随机插值推广该散度，得到广义中点散度。变分形式提供可训练目标，MGM在一步生成任务上达到竞争性能。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We introduce Midpoint Generative Models (MGM), a principled framework for training one-step generative models. MGM is based on a simple symmetry of Flow Matching with linear interpolation: when the two endpoint distributions coincide, the corresponding drift field vanishes at the midpoint time, $t=1/2$. We show that the norm of this field defines a valid discrepancy between distributions, which we call the Midpoint Divergence. We extend this discrepancy beyond the midpoint by introducing randomly flipped interpolations and further generalize it by replacing deterministic linear Flow Matching interpolations with symmetric stochastic interpolants, yielding a generalized Midpoint Divergence. Finally, we derive a variational formulation of our generalized divergence, yielding a tractable objective for training a one-step generator. The resulting MGM algorithm offers an effective and theoretically grounded approach to generative modeling, achieving competitive performance against existing one-step generative modeling methods.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

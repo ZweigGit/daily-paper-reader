@@ -1,6 +1,11 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-05-31 <!--dpr-date:20260531-->
+    * 精读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202605/31/2605.27499v1-gensbi-generative-methods-for-simulation-based-inference-in-jax" data-sidebar-item="{&quot;title&quot;: &quot;GenSBI: Generative Methods for Simulation-Based Inference in JAX&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2605.27499v1-gensbi-generative-methods-for-simulation-based-inference-in-jax&quot;, &quot;score&quot;: &quot;8.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;实现了流匹配和扩散模型用于仿真推断&quot;}">GenSBI: Generative Methods for Simulation-Based Inference in JAX</a>
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202605/31/2605.29920v1-midpoint-generative-models" data-sidebar-item="{&quot;title&quot;: &quot;Midpoint Generative Models&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2605.29920v1-midpoint-generative-models&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;中点生成模型提供了一种可适配于流体动力学的流匹配新框架&quot;}">Midpoint Generative Models</a>
   * 2026-05-30 <!--dpr-date:20260530-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202605/30/2605.23850v1-enhancing-energy-efficiency-in-scientific-workflows-through-cfd-based-pivaes" data-sidebar-item="{&quot;title&quot;: &quot;Enhancing Energy Efficiency in Scientific Workflows through CFD based PIVAEs&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2605.23850v1-enhancing-energy-efficiency-in-scientific-workflows-through-cfd-based-pivaes&quot;, &quot;score&quot;: &quot;8.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;基于CFD的物理信息变分自编码器，生成式模型应用于流体动力学&quot;}">Enhancing Energy Efficiency in Scientific Workflows through CFD based PIVAEs</a>

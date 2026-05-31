@@ -1,0 +1,95 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-31T20:49:11.824152+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2605.27499v1",
+      "source": "arxiv",
+      "title": "GenSBI: Generative Methods for Simulation-Based Inference in JAX",
+      "abstract": "Flow and diffusion generative models have established themselves as widely adopted density estimators for simulation-based inference (SBI), extending naturally from neural posterior estimation to likelihood and joint density estimation. Their principled optimization objectives and freedom from architectural constraints have driven rapid adoption across the natural sciences. Yet the most widely used SBI libraries remain PyTorch-based, leaving researchers who develop their forward models and analysis pipelines in JAX without a native option. We present GenSBI, an open-source library that implements flow matching, score matching, and denoising diffusion entirely in JAX. The library offers three transformer-based architectures - SimFormer, Flux1, and a novel Flux1Joint that extends gate-modulated transformer blocks to joint density estimation - all interchangeable through a unified interface that decouples generative method, neural backbone, and inference mode. GenSBI provides an end-to-end workflow from training through posterior calibration (SBC, TARP, LC2ST) and supports custom architectures with domain-specific embedding networks. We validate the framework on standard SBI benchmarks, achieving near-ideal mean C2ST scores (0.50-0.56, where 0.50 is ideal) on SBIBM tasks with minimal per-task tuning and well-calibrated posterior coverage across all tested configurations. The code is publicly available at https://github.com/aurelio-amerio/GenSBI.",
+      "authors": [
+        "Aurelio Amerio"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "astro-ph.CO",
+        "astro-ph.IM",
+        "physics.comp-ph",
+        "stat.ML"
+      ],
+      "published": "2026-05-26T17:59:59+00:00",
+      "link": "https://arxiv.org/pdf/2605.27499v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "implements flow matching and diffusion models for simulation-based inference",
+      "llm_evidence_cn": "实现了流匹配和扩散模型用于仿真推断",
+      "llm_evidence": "实现了流匹配和扩散模型用于仿真推断",
+      "canonical_evidence": "实现了流匹配和扩散模型用于仿真推断",
+      "llm_tldr_en": "GenSBI is a JAX library providing flow matching, score matching, and denoising diffusion for simulation-based inference, offering three transformer architectures and enabling scalable generative modeling for natural science simulations including fluid dynamics.",
+      "llm_tldr_cn": "GenSBI是一个基于JAX的开源库，实现了流匹配、分数匹配和去噪扩散等生成模型方法，用于基于仿真的推断。该库提供三种Transformer架构，支持自然科学研究中的概率密度估计，可直接应用于流体动力学等领域的仿真数据生成与推断，解决了现有PyTorch库在JAX生态中的缺失问题。实验表明其在多种任务中有效。",
+      "llm_tldr": "GenSBI是一个基于JAX的开源库，实现了流匹配、分数匹配和去噪扩散等生成模型方法，用于基于仿真的推断。该库提供三种Transformer架构，支持自然科学研究中的概率密度估计，可直接应用于流体动力学等领域的仿真数据生成与推断，解决了现有PyTorch库在JAX生态中的缺失问题。实验表明其在多种任务中有效。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2605.29920v1",
+      "source": "arxiv",
+      "title": "Midpoint Generative Models",
+      "abstract": "We introduce Midpoint Generative Models (MGM), a principled framework for training one-step generative models. MGM is based on a simple symmetry of Flow Matching with linear interpolation: when the two endpoint distributions coincide, the corresponding drift field vanishes at the midpoint time, $t=1/2$. We show that the norm of this field defines a valid discrepancy between distributions, which we call the Midpoint Divergence. We extend this discrepancy beyond the midpoint by introducing randomly flipped interpolations and further generalize it by replacing deterministic linear Flow Matching interpolations with symmetric stochastic interpolants, yielding a generalized Midpoint Divergence. Finally, we derive a variational formulation of our generalized divergence, yielding a tractable objective for training a one-step generator. The resulting MGM algorithm offers an effective and theoretically grounded approach to generative modeling, achieving competitive performance against existing one-step generative modeling methods.",
+      "authors": [
+        "Daniil Shlenskii",
+        "Nikita Gushchin",
+        "Lev Novitskiy",
+        "Dmitry V. Dylov",
+        "Alexander Korotin"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-05-28T13:31:53+00:00",
+      "link": "https://arxiv.org/pdf/2605.29920v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Midpoint Generative Models provide a new flow-matching framework that can be adapted for fluid dynamics generative modeling",
+      "llm_evidence_cn": "中点生成模型提供了一种可适配于流体动力学的流匹配新框架",
+      "llm_evidence": "中点生成模型提供了一种可适配于流体动力学的流匹配新框架",
+      "canonical_evidence": "中点生成模型提供了一种可适配于流体动力学的流匹配新框架",
+      "llm_tldr_en": "Midpoint Generative Models (MGM) introduce a principled one-step generative training objective derived from flow matching symmetry, using the vanishing drift at the midpoint to define a distribution discrepancy, and generalize it to stochastic interpolants, offering a tractable variational objective.",
+      "llm_tldr_cn": "扩散模型和流匹配模型通常需要多步采样，推理成本高。本文提出中点生成模型（MGM），利用线性插值流匹配的对称性，在时间中点处漂移为零的特性定义了一种分布散度，并推广到随机插值。该框架通过变分目标实现单步生成训练，在保证生成质量的同时大幅降低推理延迟，为包括流体动力学在内的生成任务提供了更高效的方案。",
+      "llm_tldr": "扩散模型和流匹配模型通常需要多步采样，推理成本高。本文提出中点生成模型（MGM），利用线性插值流匹配的对称性，在时间中点处漂移为零的特性定义了一种分布散度，并推广到随机插值。该框架通过变分目标实现单步生成训练，在保证生成质量的同时大幅降低推理延迟，为包括流体动力学在内的生成任务提供了更高效的方案。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
