@@ -1,0 +1,69 @@
+{
+  "label": "2026-06-01",
+  "date": "2026-06-01",
+  "generated_at": "2026-06-01T22:24:05",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202606/01/2605.29920v1-midpoint-generative-models",
+      "section": "deep",
+      "title_en": "Midpoint Generative Models",
+      "authors": "Daniil Shlenskii, Nikita Gushchin, Lev Novitskiy, Dmitry V. Dylov, Alexander Korotin",
+      "date": "2026-05-28",
+      "pdf": "https://arxiv.org/pdf/2605.29920v1",
+      "score": "8.0",
+      "evidence": "生成模型中的流匹配方法",
+      "tldr": "生成模型常需多步采样，效率受限。本文提出中点生成模型（MGM），利用流匹配的对称性在中点定义散度，并扩展为广义中点散度，进而导出单步生成器的可训练变分目标。实验表明MGM在单步生成上取得与现有方法相当的竞争力，提供了理论严谨且实用的生成框架。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We introduce Midpoint Generative Models (MGM), a principled framework for training one-step generative models. MGM is based on a simple symmetry of Flow Matching with linear interpolation: when the two endpoint distributions coincide, the corresponding drift field vanishes at the midpoint time, $t=1/2$. We show that the norm of this field defines a valid discrepancy between distributions, which we call the Midpoint Divergence. We extend this discrepancy beyond the midpoint by introducing randomly flipped interpolations and further generalize it by replacing deterministic linear Flow Matching interpolations with symmetric stochastic interpolants, yielding a generalized Midpoint Divergence. Finally, we derive a variational formulation of our generalized divergence, yielding a tractable objective for training a one-step generator. The resulting MGM algorithm offers an effective and theoretically grounded approach to generative modeling, achieving competitive performance against existing one-step generative modeling methods.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/01/2605.28900v1-spectral-guidance-for-flexible-and-efficient-control-of-diffusion-models",
+      "section": "quick",
+      "title_en": "Spectral Guidance for Flexible and Efficient Control of Diffusion Models",
+      "authors": "Gabriel Moreira, Manuel Marques, João Paulo Costeira, Chenyan Xiong",
+      "date": "2026-05-27",
+      "pdf": "https://arxiv.org/pdf/2605.28900v1",
+      "score": "7.0",
+      "evidence": "扩散模型的谱控制引导方法",
+      "tldr": "扩散模型控制通常依赖重训练或采样时反向传播，效率低且灵活性差。本文提出Spectral Guidance框架，利用生成过程的几何结构，将条件期望算子的奇异函数作为基，将任意引导信号直接投影到采样轨迹上。在CIFAR-10上，条件准确率比最强无训练基线提升37%，采样速度提升4倍，且无需辅助模型即可实现掩码等空间控制。该方法还揭示了生成过程的相变，为有效引导指明了最佳时间窗口。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We introduce Spectral Guidance, a framework for controlling diffusion models by leveraging the intrinsic geometry of the generative process. As data is progressively corrupted by noise, only a small number of features remain informative for control. We characterize them as the singular functions of a conditional expectation operator and show that they can be learned via a self-supervised objective. Once recovered, this basis enables the projection of arbitrary guidance signals, such as labels, CLIP embeddings, or masks, directly onto the sampling trajectory. This approach allows for stable, high-fidelity control without retraining or denoiser backpropagation during sampling. Empirically, we improve conditional accuracy on CIFAR-10 by 37 percentage points over the strongest training-free baseline while offering $4\\times$ faster sampling. Moreover, the same representations that support label and CLIP guidance also enable spatial control, such as mask-based guidance, without auxiliary models. Finally, our framework reveals a phase transition in the generative process, pinpointing the optimal time window for effective guidance.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/01/2605.29194v1-stochastic-lifting-for-generating-trajectories-of-stochastic-physical-systems",
+      "section": "quick",
+      "title_en": "Stochastic Lifting for Generating Trajectories of Stochastic Physical Systems",
+      "authors": "Jules Berman, Tobias Blickhan, Benjamin Peherstorfer",
+      "date": "2026-05-28",
+      "pdf": "https://arxiv.org/pdf/2605.29194v1",
+      "score": "6.0",
+      "evidence": "针对随机物理系统的生成式轨迹模型，可应用于流体动力学",
+      "tldr": "随机物理系统的状态转移常包含平滑映射和随机性，但有限样本下直接回归易导致均值预测崩溃。Stochastic Lifting方法在训练时为每个转移附加独立高维随机标签，通过回归学习从当前状态和标签到下一状态的映射，标签作为辅助坐标保留了多模态分布。推理时采样新标签并自回归展开，单次网络评估即可生成多样、逼真的轨迹。该方法简单高效，显著提升了轨迹多样性与保真度。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Many stochastic physical systems evolve smoothly over time in the sense that the distribution of states changes regularly across time steps. The transition from current state to the next state can often be modeled as the combination of a smooth map and an explicit source of randomness. Stochastic Lifting exploits this structure by attaching an independent, high-dimensional random label to each state transition in the training data and fitting a transition map from the current state and label to the next state using a standard regression loss. The labels act as auxiliary coordinates that let the model represent multiple plausible next states from similar current states, avoiding collapse to a mean prediction in the finite-sample size regime. At inference, fresh labels are sampled at each time step and the learned map is rolled forward autoregressively, generating diverse trajectories with a single network evaluation per time step.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/01/2605.31204v1-probabilistic-precipitation-nowcasting-with-rectified-flow-transformers",
+      "section": "quick",
+      "title_en": "Probabilistic Precipitation Nowcasting with Rectified Flow Transformers",
+      "authors": "Johannes Schusterbauer, Jannik Wiese, Nick Stracke, Timy Phan, Björn Ommer",
+      "date": "2026-05-29",
+      "pdf": "https://arxiv.org/pdf/2605.31204v1",
+      "score": "6.0",
+      "evidence": "流匹配方法应用于降水预报这一流体动力学问题",
+      "tldr": "降水临近预报对极端天气安全至关重要。现有数据驱动方法使用确定性压缩，难以捕捉高维天气数据的不确定性。本文提出FREUD模型，基于整流流变换器，通过框架式编码实现连续更新，统一视频解码器保证时间一致性，并保留不确定性以集成方式捕捉偶然不确定性。在SEVIR基准上达到最优性能，且模型和测试时扩展可进一步提升效果。本工作展示了不确定性保留压缩与整流流变换器在降水预报中的有效性。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Accurate weather forecasts are essential across various domains and are safety-critical in extreme weather conditions. Compared to simulation-based forecasting, data-driven approaches show greater efficiency, enabling short-term, high-resolution nowcasting. In particular, diffusion models proved effective in weather nowcasting due to their strong probabilistic foundation. However, existing methods rely on deterministic compression to reduce the complexity of high-dimensional weather data, limiting their ability to capture uncertainty in the decoding process. In this work, we introduce $\\textbf{FREUD}$, a $\\textbf{Fr}$ame-wise $\\textbf{E}$ncoder and $\\textbf{U}$nited $\\textbf{D}$ecoder model based on rectified flow transformers for efficient compression of spatio-temporal weather data. Frame-wise encoding enables continuous forecast updates, while the unified video decoder ensures temporal consistency. Our uncertainty-preserving first stage allows us to capture aleatoric uncertainty via ensembling, which is particularly beneficial for extreme weather events with high decoding variability. We achieve state-of-the-art performance in precipitation nowcasting with a compact latent-space rectified flow transformer on the SEVIR benchmark and show further performance gains by model and test-time scaling. Code available here: https://github.com/CompVis/weather-rf",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

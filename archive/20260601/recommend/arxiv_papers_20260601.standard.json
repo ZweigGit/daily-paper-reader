@@ -1,0 +1,172 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-01T22:19:58.121881+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2605.29920v1",
+      "source": "arxiv",
+      "title": "Midpoint Generative Models",
+      "abstract": "We introduce Midpoint Generative Models (MGM), a principled framework for training one-step generative models. MGM is based on a simple symmetry of Flow Matching with linear interpolation: when the two endpoint distributions coincide, the corresponding drift field vanishes at the midpoint time, $t=1/2$. We show that the norm of this field defines a valid discrepancy between distributions, which we call the Midpoint Divergence. We extend this discrepancy beyond the midpoint by introducing randomly flipped interpolations and further generalize it by replacing deterministic linear Flow Matching interpolations with symmetric stochastic interpolants, yielding a generalized Midpoint Divergence. Finally, we derive a variational formulation of our generalized divergence, yielding a tractable objective for training a one-step generator. The resulting MGM algorithm offers an effective and theoretically grounded approach to generative modeling, achieving competitive performance against existing one-step generative modeling methods.",
+      "authors": [
+        "Daniil Shlenskii",
+        "Nikita Gushchin",
+        "Lev Novitskiy",
+        "Dmitry V. Dylov",
+        "Alexander Korotin"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-05-28T13:31:53+00:00",
+      "link": "https://arxiv.org/pdf/2605.29920v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Flow matching method for generative models",
+      "llm_evidence_cn": "生成模型中的流匹配方法",
+      "llm_evidence": "生成模型中的流匹配方法",
+      "canonical_evidence": "生成模型中的流匹配方法",
+      "llm_tldr_en": "Midpoint Generative Models (MGM) introduces a novel flow matching framework that enables one-step generation by exploiting a symmetry in linear interpolation flow matching, providing a tractable objective for training. This method is directly applicable to flow matching in fluid dynamics.",
+      "llm_tldr_cn": "本文提出中点生成模型（MGM），一种基于流匹配对称性的单步生成模型训练框架。通过利用线性插值流匹配中当两端分布相同时中点漂移场为零的性质，定义了中点散度作为分布差异度量，并扩展为随机插值的广义形式。该工作为流匹配方法在流体动力学中的高效应用提供了理论基础，可直接用于流体流动模拟中的概率生成建模。",
+      "llm_tldr": "本文提出中点生成模型（MGM），一种基于流匹配对称性的单步生成模型训练框架。通过利用线性插值流匹配中当两端分布相同时中点漂移场为零的性质，定义了中点散度作为分布差异度量，并扩展为随机插值的广义形式。该工作为流匹配方法在流体动力学中的高效应用提供了理论基础，可直接用于流体流动模拟中的概率生成建模。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2605.28900v1",
+      "source": "arxiv",
+      "title": "Spectral Guidance for Flexible and Efficient Control of Diffusion Models",
+      "abstract": "We introduce Spectral Guidance, a framework for controlling diffusion models by leveraging the intrinsic geometry of the generative process. As data is progressively corrupted by noise, only a small number of features remain informative for control. We characterize them as the singular functions of a conditional expectation operator and show that they can be learned via a self-supervised objective. Once recovered, this basis enables the projection of arbitrary guidance signals, such as labels, CLIP embeddings, or masks, directly onto the sampling trajectory. This approach allows for stable, high-fidelity control without retraining or denoiser backpropagation during sampling. Empirically, we improve conditional accuracy on CIFAR-10 by 37 percentage points over the strongest training-free baseline while offering $4\\times$ faster sampling. Moreover, the same representations that support label and CLIP guidance also enable spatial control, such as mask-based guidance, without auxiliary models. Finally, our framework reveals a phase transition in the generative process, pinpointing the optimal time window for effective guidance.",
+      "authors": [
+        "Gabriel Moreira",
+        "Manuel Marques",
+        "João Paulo Costeira",
+        "Chenyan Xiong"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-05-27T15:11:09+00:00",
+      "link": "https://arxiv.org/pdf/2605.28900v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "spectral control of diffusion models for guidance",
+      "llm_evidence_cn": "扩散模型的谱控制引导方法",
+      "llm_evidence": "扩散模型的谱控制引导方法",
+      "canonical_evidence": "扩散模型的谱控制引导方法",
+      "llm_tldr_en": "Introduces Spectral Guidance, a framework that controls diffusion models by projecting arbitrary guidance signals onto the singular function basis, enabling stable control without retraining.",
+      "llm_tldr_cn": "提出谱引导（Spectral Guidance）框架，利用扩散过程的内在几何结构，通过条件期望算子的奇异函数基将任意引导信号投影到采样轨迹上，实现无需重训练或反向传播的稳定高保真控制。在CIFAR-10上分类准确率提升37个百分点，为生成模型的条件控制提供了通用工具，可迁移至流体模拟生成任务。",
+      "llm_tldr": "提出谱引导（Spectral Guidance）框架，利用扩散过程的内在几何结构，通过条件期望算子的奇异函数基将任意引导信号投影到采样轨迹上，实现无需重训练或反向传播的稳定高保真控制。在CIFAR-10上分类准确率提升37个百分点，为生成模型的条件控制提供了通用工具，可迁移至流体模拟生成任务。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.29194v1",
+      "source": "arxiv",
+      "title": "Stochastic Lifting for Generating Trajectories of Stochastic Physical Systems",
+      "abstract": "Many stochastic physical systems evolve smoothly over time in the sense that the distribution of states changes regularly across time steps. The transition from current state to the next state can often be modeled as the combination of a smooth map and an explicit source of randomness. Stochastic Lifting exploits this structure by attaching an independent, high-dimensional random label to each state transition in the training data and fitting a transition map from the current state and label to the next state using a standard regression loss. The labels act as auxiliary coordinates that let the model represent multiple plausible next states from similar current states, avoiding collapse to a mean prediction in the finite-sample size regime. At inference, fresh labels are sampled at each time step and the learned map is rolled forward autoregressively, generating diverse trajectories with a single network evaluation per time step.",
+      "authors": [
+        "Jules Berman",
+        "Tobias Blickhan",
+        "Benjamin Peherstorfer"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "math.NA"
+      ],
+      "published": "2026-05-28T00:10:45+00:00",
+      "link": "https://arxiv.org/pdf/2605.29194v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "generative model for stochastic physical system trajectories applicable to fluid dynamics",
+      "llm_evidence_cn": "针对随机物理系统的生成式轨迹模型，可应用于流体动力学",
+      "llm_evidence": "针对随机物理系统的生成式轨迹模型，可应用于流体动力学",
+      "canonical_evidence": "针对随机物理系统的生成式轨迹模型，可应用于流体动力学",
+      "llm_tldr_en": "Stochastic Lifting attaches random labels to state transitions to model multiple plausible next states, enabling generative trajectory prediction for stochastic physical systems such as fluids.",
+      "llm_tldr_cn": "该论文针对随机物理系统中多步轨迹的生成问题，提出Stochastic Lifting方法。通过为每个状态转换附加独立的高维随机标签，并训练一个从当前状态和标签到下一状态的映射模型，避免了有限样本下的均值坍缩问题。该方法可广泛应用于流体动力学等随机物理系统的轨迹生成与预测。",
+      "llm_tldr": "该论文针对随机物理系统中多步轨迹的生成问题，提出Stochastic Lifting方法。通过为每个状态转换附加独立的高维随机标签，并训练一个从当前状态和标签到下一状态的映射模型，避免了有限样本下的均值坍缩问题。该方法可广泛应用于流体动力学等随机物理系统的轨迹生成与预测。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.31204v1",
+      "source": "arxiv",
+      "title": "Probabilistic Precipitation Nowcasting with Rectified Flow Transformers",
+      "abstract": "Accurate weather forecasts are essential across various domains and are safety-critical in extreme weather conditions. Compared to simulation-based forecasting, data-driven approaches show greater efficiency, enabling short-term, high-resolution nowcasting. In particular, diffusion models proved effective in weather nowcasting due to their strong probabilistic foundation. However, existing methods rely on deterministic compression to reduce the complexity of high-dimensional weather data, limiting their ability to capture uncertainty in the decoding process. In this work, we introduce $\\textbf{FREUD}$, a $\\textbf{Fr}$ame-wise $\\textbf{E}$ncoder and $\\textbf{U}$nited $\\textbf{D}$ecoder model based on rectified flow transformers for efficient compression of spatio-temporal weather data. Frame-wise encoding enables continuous forecast updates, while the unified video decoder ensures temporal consistency. Our uncertainty-preserving first stage allows us to capture aleatoric uncertainty via ensembling, which is particularly beneficial for extreme weather events with high decoding variability. We achieve state-of-the-art performance in precipitation nowcasting with a compact latent-space rectified flow transformer on the SEVIR benchmark and show further performance gains by model and test-time scaling. Code available here: https://github.com/CompVis/weather-rf",
+      "authors": [
+        "Johannes Schusterbauer",
+        "Jannik Wiese",
+        "Nick Stracke",
+        "Timy Phan",
+        "Björn Ommer"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-05-29T12:11:05+00:00",
+      "link": "https://arxiv.org/pdf/2605.31204v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "flow matching method applied to weather nowcasting which is a fluid dynamics problem",
+      "llm_evidence_cn": "流匹配方法应用于降水预报这一流体动力学问题",
+      "llm_evidence": "流匹配方法应用于降水预报这一流体动力学问题",
+      "canonical_evidence": "流匹配方法应用于降水预报这一流体动力学问题",
+      "llm_tldr_en": "FREUD uses rectified flow transformers for probabilistic precipitation nowcasting, achieving efficient compression and uncertainty-aware generation.",
+      "llm_tldr_cn": "该论文针对高分辨率天气预报中的不确定性建模问题，提出基于整流流变换器的概率降水现报模型FREUD。模型采用分帧编码器和联合解码器架构，利用整流流生成方法在压缩空间中高效生成概率预报，克服了传统确定性解码损失不确定性的缺陷。实验表明FREUD在多个预报指标上超越现有扩散模型，且推理速度更快。",
+      "llm_tldr": "该论文针对高分辨率天气预报中的不确定性建模问题，提出基于整流流变换器的概率降水现报模型FREUD。模型采用分帧编码器和联合解码器架构，利用整流流生成方法在压缩空间中高效生成概率预报，克服了传统确定性解码损失不确定性的缺陷。实验表明FREUD在多个预报指标上超越现有扩散模型，且推理速度更快。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
