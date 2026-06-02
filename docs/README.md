@@ -6,32 +6,31 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-01
-- 运行时间：2026-06-01 22:24:01 UTC
+- 最新运行日期：2026-06-02
+- 运行时间：2026-06-02 22:03:40 UTC
 - 运行状态：成功
-- 本次总论文数：4
-- 精读区：1
-- 速读区：3
+- 本次总论文数：3
+- 精读区：2
+- 速读区：1
 
 ### 今日简报（AI）
-今日推荐4篇AI论文，重点精读《Midpoint Generative Models》（8.0/10）。最值得关注的是中点生成模型和频谱引导扩散模型控制的新方法。普通读者可快速浏览这两篇，前者带来生成模型新思路，后者展示更灵活的控制技巧。
-- 详情：[/202606/01/README](/202606/01/README)
+1) 今日精读两篇流匹配应用高分论文，速读一篇速度分解新方法。  
+2) 最值得看的是对流尺度降水降尺度（9.0分）与沸腾反演重建（8.0分），均展示流匹配在物理模拟中的强大潜力。  
+3) 建议优先阅读降水降尺度论文，理解流匹配如何提升高分辨率天气预测的精度与效率。
+- 详情：[/202606/02/README](/202606/02/README)
 
 ### 精读区论文标签
-1. [Midpoint Generative Models](/202606/01/2605.29920v1-midpoint-generative-models)  
+1. [Flow Matching for Convective-Scale Precipitation Downscaling](/202606/02/2606.00281v1-flow-matching-for-convective-scale-precipitation-downscaling)  
+   标签：评分：9.0/10、query:genmod-fluid
+   evidence：流匹配用于降水降尺度，属于流体动力学模拟任务
+2. [(HB-ARFM) History-Bootstrapped Flow Matching for Inverse Boiling Reconstruction](/202606/02/2606.00349v1-hb-arfm-history-bootstrapped-flow-matching-for-inverse-boiling-reconstruction)  
    标签：评分：8.0/10、query:genmod-fluid
-   evidence：生成模型中的流匹配方法
+   evidence：流匹配方法用于流体动力学时空逆重建
 
 ### 速读区论文标签
-1. [Spectral Guidance for Flexible and Efficient Control of Diffusion Models](/202606/01/2605.28900v1-spectral-guidance-for-flexible-and-efficient-control-of-diffusion-models)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：扩散模型的谱控制引导方法
-2. [Stochastic Lifting for Generating Trajectories of Stochastic Physical Systems](/202606/01/2605.29194v1-stochastic-lifting-for-generating-trajectories-of-stochastic-physical-systems)  
+1. [Pave-GRPO: Beyond Instantaneous Guidance through Principled Average Velocity Decomposition](/202606/02/2606.01636v1-pave-grpo-beyond-instantaneous-guidance-through-principled-average-velocity-decomposition)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：针对随机物理系统的生成式轨迹模型，可应用于流体动力学
-3. [Probabilistic Precipitation Nowcasting with Rectified Flow Transformers](/202606/01/2605.31204v1-probabilistic-precipitation-nowcasting-with-rectified-flow-transformers)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：流匹配方法应用于降水预报这一流体动力学问题
+   evidence：提出基于GRPO的流模型后训练对齐方法，属于流匹配生成模型优化
 
 
 <div class="dpr-home-promo-card">

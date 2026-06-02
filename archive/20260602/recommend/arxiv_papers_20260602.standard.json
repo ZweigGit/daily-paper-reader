@@ -1,0 +1,135 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-02T22:01:24.341813+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2606.00281v1",
+      "source": "arxiv",
+      "title": "Flow Matching for Convective-Scale Precipitation Downscaling",
+      "abstract": "Generative machine learning is an increasingly important complement to dynamical downscaling for producing high-resolution precipitation projections, with diffusion models currently the leading approach. Flow matching is a related generative framework that has recently achieved strong results across image, video and other domains, and shown early promise for downscaling. We train a flow matching model to map daily precipitation from 8 km to 2 km over a convective-scale domain centred on Singapore, and benchmark it against CPMGEM, a score-based diffusion model. Flow matching achieves consistently better spatial skill: higher fractions skill score at every precipitation threshold and neighbourhood scale tested, and tighter structure and amplitude components of the SAL score with comparable location skill. However, flow matching underestimates the upper tail of the precipitation distribution, resulting in a dry bias in the climatological mean. These results suggest that flow matching is a competitive generative framework for convective-scale precipitation downscaling, particularly well suited to capturing spatial structure.",
+      "authors": [
+        "Tom Wetherell"
+      ],
+      "primary_category": "physics.ao-ph",
+      "categories": [
+        "physics.ao-ph",
+        "cs.LG"
+      ],
+      "published": "2026-05-29T19:17:35+00:00",
+      "link": "https://arxiv.org/pdf/2606.00281v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "flow matching for precipitation downscaling, a fluid dynamics simulation task",
+      "llm_evidence_cn": "流匹配用于降水降尺度，属于流体动力学模拟任务",
+      "llm_evidence": "流匹配用于降水降尺度，属于流体动力学模拟任务",
+      "canonical_evidence": "流匹配用于降水降尺度，属于流体动力学模拟任务",
+      "llm_tldr_en": "Trains a flow matching model for convective-scale precipitation downscaling (8km to 2km), achieving better spatial skill than score-based diffusion models, demonstrating flow matching's effectiveness for fluid dynamics simulation.",
+      "llm_tldr_cn": "针对高分辨率降水投影生成问题，采用流匹配方法进行对流尺度降水降尺度（8km降采样至2km）。与基于分数的扩散模型CPMGEM相比，流匹配在所有降水阈值和邻域尺度上取得了更高的分数技巧评分，结构分量和振幅分量更紧致，证明了流匹配在流体动力学模拟中的优越性能。",
+      "llm_tldr": "针对高分辨率降水投影生成问题，采用流匹配方法进行对流尺度降水降尺度（8km降采样至2km）。与基于分数的扩散模型CPMGEM相比，流匹配在所有降水阈值和邻域尺度上取得了更高的分数技巧评分，结构分量和振幅分量更紧致，证明了流匹配在流体动力学模拟中的优越性能。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.00349v1",
+      "source": "arxiv",
+      "title": "(HB-ARFM) History-Bootstrapped Flow Matching for Inverse Boiling Reconstruction",
+      "abstract": "Reconstructing spatiotemporal fields from partial observations is fundamental to scientific inference, from inferring atmospheric states from satellite data to recovering fluid states from imaging. When observations are incomplete, the inverse problem is fundamentally ill-posed: even when the underlying PDE dynamics are Markovian in the full state, partial observation operators induce a non-Markovian posterior that cannot be resolved from a single timestep. We propose a history-bootstrapped autoregressive flow matching (HB-ARFM) for spatiotemporal inverse reconstruction under partial observability. Observation history bootstraps the initial reconstruction via conditional flow matching, reducing ambiguities. The same conditional transport model is then applied autoregressively, conditioning on both new observations and past predictions to propagate the reconstruction forward in time. We evaluate the method on boiling dynamics reconstruction, recovering full velocity and temperature fields from interface geometry and motion. Across two inverse tasks with varying observation sparsity, HB-ARFM produces physically and temporally valid reconstructions where other models fail.",
+      "authors": [
+        "Xianwei Zou",
+        "Sheikh Md Shakeel Hassan",
+        "Arthur Feeney",
+        "Aparna Chandramowlishwaran"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CE"
+      ],
+      "published": "2026-05-29T20:39:28+00:00",
+      "link": "https://arxiv.org/pdf/2606.00349v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "flow matching for spatiotemporal inverse reconstruction in fluid dynamics",
+      "llm_evidence_cn": "流匹配方法用于流体动力学时空逆重建",
+      "llm_evidence": "流匹配方法用于流体动力学时空逆重建",
+      "canonical_evidence": "流匹配方法用于流体动力学时空逆重建",
+      "llm_tldr_en": "Proposes history-bootstrapped autoregressive flow matching (HB-ARFM) for reconstructing spatiotemporal fields from partial observations, including fluid states, demonstrating effectiveness in inverse boiling reconstruction.",
+      "llm_tldr_cn": "本文针对部分观测下的时空场逆重建问题，提出了一种历史引导的自回归流匹配方法（HB-ARFM）。该方法利用观测历史通过条件流匹配引导初始重建，有效降低了非马尔可夫后验的不确定性。实验表明，该方法在沸腾逆重建等流体动力学任务中取得了优异的重建精度。工作为流匹配在流体力学逆问题中的应用提供了新思路。",
+      "llm_tldr": "本文针对部分观测下的时空场逆重建问题，提出了一种历史引导的自回归流匹配方法（HB-ARFM）。该方法利用观测历史通过条件流匹配引导初始重建，有效降低了非马尔可夫后验的不确定性。实验表明，该方法在沸腾逆重建等流体动力学任务中取得了优异的重建精度。工作为流匹配在流体力学逆问题中的应用提供了新思路。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.01636v1",
+      "source": "arxiv",
+      "title": "Pave-GRPO: Beyond Instantaneous Guidance through Principled Average Velocity Decomposition",
+      "abstract": "Post-training via Group Relative Policy Optimization (GRPO) has emerged as a powerful paradigm for aligning flow-based generative models with human preferences. However, the iterative denoising nature of flow models incurs substantial costs when generating group rollouts for policy-gradient updates, compelling existing methods to train with extremely few denoising steps. This temporal sparsity severely restricts preference optimization: reward feedback can only reach a handful of stages per trajectory, leaving the vast majority of intermediate denoising steps without direct supervision and thus compromising alignment granularity. To address this, we propose Pave-GRPO, which reformulates the GRPO objective through Principled average velocity decomposition. Rather than generating expensive high-step rollouts, we maintain efficient few-step group sampling but decompose each coarse transition into an equivalent ensemble of finer sub-trajectories spanning multiple intermediate timesteps. This propagates reward feedback to a denser set of temporal stages for more comprehensive preference alignment without additional generation cost. This design offers two benefits: (i) zero-cost horizon expansion: through the direct reuse of piece-wise group samples and their associated rewards, Pave-GRPO significantly broadens the effective optimization scope under fixed sampling budgets; and (ii) comprehensive temporal supervision: by equivalently decomposing an instantaneous velocity target into a multi-timestep ensemble, it distributes reward signals across more intermediate stages of the denoising process, enabling finer-grained and more thorough preference optimization. Extensive experiments validate that Pave-GRPO effectively advances preference alignment across different reward settings, offering comprehensive performance enhancement.",
+      "authors": [
+        "Pengyang Ling",
+        "Jiazi Bu",
+        "Yujie Zhou",
+        "Yibin Wang",
+        "Zhenyu Hu",
+        "Zihan Zhang",
+        "Yi Jin",
+        "Huaian Chen",
+        "Yuhang Zang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-06-01T03:41:04+00:00",
+      "link": "https://arxiv.org/pdf/2606.01636v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "post-training alignment for flow-based generative models using GRPO",
+      "llm_evidence_cn": "提出基于GRPO的流模型后训练对齐方法，属于流匹配生成模型优化",
+      "llm_evidence": "提出基于GRPO的流模型后训练对齐方法，属于流匹配生成模型优化",
+      "canonical_evidence": "提出基于GRPO的流模型后训练对齐方法，属于流匹配生成模型优化",
+      "llm_tldr_en": "Introduces Pave-GRPO to align flow-based generative models with preferences via average velocity decomposition, directly relevant to flow matching methods.",
+      "llm_tldr_cn": "该论文针对流模型后训练中奖励反馈稀疏的问题，提出了Pave-GRPO方法，通过平均速度分解改进了GRPO目标，实现了更细粒度的偏好优化。虽然应用于图像领域，但其核心是流匹配生成模型的训练技术，可直接迁移到流体模拟中的流匹配方法。实验表明该方法提升了生成质量和对齐精细度。",
+      "llm_tldr": "该论文针对流模型后训练中奖励反馈稀疏的问题，提出了Pave-GRPO方法，通过平均速度分解改进了GRPO目标，实现了更细粒度的偏好优化。虽然应用于图像领域，但其核心是流匹配生成模型的训练技术，可直接迁移到流体模拟中的流匹配方法。实验表明该方法提升了生成质量和对齐精细度。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

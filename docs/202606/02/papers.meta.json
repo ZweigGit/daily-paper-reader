@@ -1,0 +1,54 @@
+{
+  "label": "2026-06-02",
+  "date": "2026-06-02",
+  "generated_at": "2026-06-02T22:03:47",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202606/02/2606.00281v1-flow-matching-for-convective-scale-precipitation-downscaling",
+      "section": "deep",
+      "title_en": "Flow Matching for Convective-Scale Precipitation Downscaling",
+      "authors": "Tom Wetherell",
+      "date": "2026-05-29",
+      "pdf": "https://arxiv.org/pdf/2606.00281v1",
+      "score": "9.0",
+      "evidence": "流匹配用于降水降尺度，属于流体动力学模拟任务",
+      "tldr": "针对对流尺度降水降尺度问题，本文提出使用生成式flow matching模型将8km日降水降尺度到2km，并在新加坡区域与扩散模型CPMGEM对比。结果显示，flow matching在分数技巧评分和SAL结构分量上始终优于扩散模型，空间技巧更强，但低估了降水分布的上尾，导致气候平均干偏差。这表明flow matching是竞争性的降尺度框架，尤其擅长捕捉空间结构。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Generative machine learning is an increasingly important complement to dynamical downscaling for producing high-resolution precipitation projections, with diffusion models currently the leading approach. Flow matching is a related generative framework that has recently achieved strong results across image, video and other domains, and shown early promise for downscaling. We train a flow matching model to map daily precipitation from 8 km to 2 km over a convective-scale domain centred on Singapore, and benchmark it against CPMGEM, a score-based diffusion model. Flow matching achieves consistently better spatial skill: higher fractions skill score at every precipitation threshold and neighbourhood scale tested, and tighter structure and amplitude components of the SAL score with comparable location skill. However, flow matching underestimates the upper tail of the precipitation distribution, resulting in a dry bias in the climatological mean. These results suggest that flow matching is a competitive generative framework for convective-scale precipitation downscaling, particularly well suited to capturing spatial structure.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/02/2606.00349v1-hb-arfm-history-bootstrapped-flow-matching-for-inverse-boiling-reconstruction",
+      "section": "deep",
+      "title_en": "(HB-ARFM) History-Bootstrapped Flow Matching for Inverse Boiling Reconstruction",
+      "authors": "Xianwei Zou, Sheikh Md Shakeel Hassan, Arthur Feeney, Aparna Chandramowlishwaran",
+      "date": "2026-05-29",
+      "pdf": "https://arxiv.org/pdf/2606.00349v1",
+      "score": "8.0",
+      "evidence": "流匹配方法用于流体动力学时空逆重建",
+      "tldr": "从部分观测重构时空场是病态逆问题，因观测不完整导致非马尔可夫后验。提出历史引导自回归流匹配（HB-ARFM），用观测历史通过条件流匹配初始化，再自回归融合新观测与先前预测传播重构。在沸腾动力学中从界面几何恢复速度温度场，结果物理和时序一致，优于其他模型。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Reconstructing spatiotemporal fields from partial observations is fundamental to scientific inference, from inferring atmospheric states from satellite data to recovering fluid states from imaging. When observations are incomplete, the inverse problem is fundamentally ill-posed: even when the underlying PDE dynamics are Markovian in the full state, partial observation operators induce a non-Markovian posterior that cannot be resolved from a single timestep. We propose a history-bootstrapped autoregressive flow matching (HB-ARFM) for spatiotemporal inverse reconstruction under partial observability. Observation history bootstraps the initial reconstruction via conditional flow matching, reducing ambiguities. The same conditional transport model is then applied autoregressively, conditioning on both new observations and past predictions to propagate the reconstruction forward in time. We evaluate the method on boiling dynamics reconstruction, recovering full velocity and temperature fields from interface geometry and motion. Across two inverse tasks with varying observation sparsity, HB-ARFM produces physically and temporally valid reconstructions where other models fail.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/02/2606.01636v1-pave-grpo-beyond-instantaneous-guidance-through-principled-average-velocity-decomposition",
+      "section": "quick",
+      "title_en": "Pave-GRPO: Beyond Instantaneous Guidance through Principled Average Velocity Decomposition",
+      "authors": "Pengyang Ling, Jiazi Bu, Yujie Zhou, Yibin Wang, Zhenyu Hu, Zihan Zhang, Yi Jin, Huaian Chen, Yuhang Zang",
+      "date": "2026-06-01",
+      "pdf": "https://arxiv.org/pdf/2606.01636v1",
+      "score": "6.0",
+      "evidence": "提出基于GRPO的流模型后训练对齐方法，属于流匹配生成模型优化",
+      "tldr": "针对流模型后训练中GRPO因去噪步数少导致奖励反馈稀疏的问题，提出Pave-GRPO。它通过原则性平均速度分解，将粗粒度步等效为多时间步子轨迹，在不增加生成成本下密集传播奖励。该方法实现了零成本视野扩展和全面时间监督，显著提升对齐细粒度。实验证明在不同奖励设置下均能提升偏好对齐性能。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Post-training via Group Relative Policy Optimization (GRPO) has emerged as a powerful paradigm for aligning flow-based generative models with human preferences. However, the iterative denoising nature of flow models incurs substantial costs when generating group rollouts for policy-gradient updates, compelling existing methods to train with extremely few denoising steps. This temporal sparsity severely restricts preference optimization: reward feedback can only reach a handful of stages per trajectory, leaving the vast majority of intermediate denoising steps without direct supervision and thus compromising alignment granularity. To address this, we propose Pave-GRPO, which reformulates the GRPO objective through Principled average velocity decomposition. Rather than generating expensive high-step rollouts, we maintain efficient few-step group sampling but decompose each coarse transition into an equivalent ensemble of finer sub-trajectories spanning multiple intermediate timesteps. This propagates reward feedback to a denser set of temporal stages for more comprehensive preference alignment without additional generation cost. This design offers two benefits: (i) zero-cost horizon expansion: through the direct reuse of piece-wise group samples and their associated rewards, Pave-GRPO significantly broadens the effective optimization scope under fixed sampling budgets; and (ii) comprehensive temporal supervision: by equivalently decomposing an instantaneous velocity target into a multi-timestep ensemble, it distributes reward signals across more intermediate stages of the denoising process, enabling finer-grained and more thorough preference optimization. Extensive experiments validate that Pave-GRPO effectively advances preference alignment across different reward settings, offering comprehensive performance enhancement.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
