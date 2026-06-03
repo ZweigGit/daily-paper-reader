@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-03",
+  "date": "2026-06-03",
+  "generated_at": "2026-06-03T22:25:57",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/03/2606.03820v1-a-quantitative-approximation-framework-for-flow-distillation-in-diffusion-models",
+      "section": "quick",
+      "title_en": "A Quantitative Approximation Framework for Flow Distillation in Diffusion Models",
+      "authors": "Weiguo Gao, Ming Li, Lei Shi, Hanfei Zhou",
+      "date": "2026-06-02",
+      "pdf": "https://arxiv.org/pdf/2606.03820v1",
+      "score": "6.0",
+      "evidence": "扩散模型的流蒸馏分析可应用于流体流动模拟",
+      "tldr": "针对扩散模型少步采样中的误差传播问题，本文构建了概率流ODE轨迹蒸馏的定量近似框架。将蒸馏过程分解为时变分数场近似与动力系统稳定性放大两个核心挑战，证明ReLU-ReQU网络可高效逼近高斯混合分数，并推导了流映射的Lipschitz常数显式界。在此基础上，通过稳定性平衡的非均匀时间网格策略，有效抑制低噪声多模态区域的动态放大效应，实验表明8步采样相对MSE降低51.9%。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We develop a quantitative approximation framework for diffusion distillation, viewing few-step sampling as error propagation under compositions of learned flow maps. Focusing on trajectory distillation for the probability-flow ODE, we show that local approximation errors can be strongly amplified in low-noise multimodal regimes, where the underlying dynamics become stiff. In an analytically tractable Gaussian-mixture Ornstein--Uhlenbeck setting, we separate two core difficulties: approximating the time-dependent score field and controlling the dynamical amplification governed by the time-integrated Jacobian bound of the probability-flow ODE. On the approximation side, we prove constructive L^p(p_t) guarantees showing that ReLU--ReQU networks approximate the Gaussian-mixture score uniformly over time, with depth and width scaling polylogarithmically in the target accuracy and explicitly with the mixture geometry. On the stability side, we derive an explicit bound L(t) for the spatial Lipschitz constant of the probability-flow velocity and convert it into a flow map stability estimate governed by \\int_s^t L(u)\\,du, making late-time amplification in stiff regimes computable. Building on these estimates, we prove that deep residual compositions efficiently approximate the long-horizon transport, with global error controlled by the stability amplification factor, and identify a Lipschitz-mismatch regime in which one-step distillation is structurally unfavorable. The resulting theory yields a stability-balanced non-uniform time grid obtained by uniform partitioning in the cumulative stability coordinate. Experiments support the prediction and reduce end-to-end relative MSE by up to 51.9\\% with 8 segments compared with uniform grids.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

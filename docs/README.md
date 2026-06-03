@@ -6,31 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-02
-- 运行时间：2026-06-02 22:03:40 UTC
+- 最新运行日期：2026-06-03
+- 运行时间：2026-06-03 22:25:51 UTC
 - 运行状态：成功
-- 本次总论文数：3
-- 精读区：2
+- 本次总论文数：1
+- 精读区：0
 - 速读区：1
 
 ### 今日简报（AI）
-1) 今日精读两篇流匹配应用高分论文，速读一篇速度分解新方法。  
-2) 最值得看的是对流尺度降水降尺度（9.0分）与沸腾反演重建（8.0分），均展示流匹配在物理模拟中的强大潜力。  
-3) 建议优先阅读降水降尺度论文，理解流匹配如何提升高分辨率天气预测的精度与效率。
-- 详情：[/202606/02/README](/202606/02/README)
+今天仅速读一篇评分6.0的论文《A Quantitative Approximation Framework for Flow Distillation in Diffusion Models》。  
+该论文提出了一个量化框架来分析扩散模型中的流蒸馏，可能有助于理解生成加速机制。  
+建议后续关注流蒸馏的量化方法及其对采样效率的实际改进。
+- 详情：[/202606/03/README](/202606/03/README)
 
 ### 精读区论文标签
-1. [Flow Matching for Convective-Scale Precipitation Downscaling](/202606/02/2606.00281v1-flow-matching-for-convective-scale-precipitation-downscaling)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：流匹配用于降水降尺度，属于流体动力学模拟任务
-2. [(HB-ARFM) History-Bootstrapped Flow Matching for Inverse Boiling Reconstruction](/202606/02/2606.00349v1-hb-arfm-history-bootstrapped-flow-matching-for-inverse-boiling-reconstruction)  
-   标签：评分：8.0/10、query:genmod-fluid
-   evidence：流匹配方法用于流体动力学时空逆重建
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Pave-GRPO: Beyond Instantaneous Guidance through Principled Average Velocity Decomposition](/202606/02/2606.01636v1-pave-grpo-beyond-instantaneous-guidance-through-principled-average-velocity-decomposition)  
+1. [A Quantitative Approximation Framework for Flow Distillation in Diffusion Models](/202606/03/2606.03820v1-a-quantitative-approximation-framework-for-flow-distillation-in-diffusion-models)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：提出基于GRPO的流模型后训练对齐方法，属于流匹配生成模型优化
+   evidence：扩散模型的流蒸馏分析可应用于流体流动模拟
 
 
 <div class="dpr-home-promo-card">

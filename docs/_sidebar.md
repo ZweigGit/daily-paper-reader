@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-06-03 <!--dpr-date:20260603-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/03/2606.03820v1-a-quantitative-approximation-framework-for-flow-distillation-in-diffusion-models" data-sidebar-item="{&quot;title&quot;: &quot;A Quantitative Approximation Framework for Flow Distillation in Diffusion Models&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.03820v1-a-quantitative-approximation-framework-for-flow-distillation-in-diffusion-models&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;扩散模型的流蒸馏分析可应用于流体流动模拟&quot;}">A Quantitative Approximation Framework for Flow Distillation in Diffusion Models</a>
   * 2026-06-02 <!--dpr-date:20260602-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/02/2606.00281v1-flow-matching-for-convective-scale-precipitation-downscaling" data-sidebar-item="{&quot;title&quot;: &quot;Flow Matching for Convective-Scale Precipitation Downscaling&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.00281v1-flow-matching-for-convective-scale-precipitation-downscaling&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;流匹配用于降水降尺度，属于流体动力学模拟任务&quot;}">Flow Matching for Convective-Scale Precipitation Downscaling</a>
