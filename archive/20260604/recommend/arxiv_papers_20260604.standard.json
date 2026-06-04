@@ -1,0 +1,205 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-04T20:57:50.561634+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2606.01538v1",
+      "source": "arxiv",
+      "title": "MPMWorlds: Material-Point-Method Simulations for Inferring and Extrapolating Physical Dynamics",
+      "abstract": "To study the ability to infer physical dynamics from videos and extrapolate them forward in time, we assemble a dataset of 2D Material Point Method (MPM) physical simulations covering rich physical phenomena such as deformable objects, fluids, kinetic objects, and emitters. We study code generation and video diffusion approaches on this dataset, identifying their strengths and weaknesses by varying the amount of physically relevant side information. The code generation model, beyond giving a working demonstration of automatic synthesis of MPM simulations, reveals that such an approach struggles with inferring physical parameters from visual input, but relative to video diffusion, produces physically and temporally stable extrapolations forward in time, while the video diffusion model more strongly identifies geometric properties from visual input but produces physically implausible extrapolations.",
+      "authors": [
+        "Žiga Kovačič",
+        "Kevin Ellis"
+      ],
+      "primary_category": "cs.GR",
+      "categories": [
+        "cs.GR",
+        "cs.CV",
+        "cs.LG"
+      ],
+      "published": "2026-06-01T01:36:44+00:00",
+      "link": "https://arxiv.org/pdf/2606.01538v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "uses video diffusion models to simulate fluid dynamics from MPM data",
+      "llm_evidence_cn": "使用视频扩散模型基于MPM模拟数据仿真流体动力学",
+      "llm_evidence": "使用视频扩散模型基于MPM模拟数据仿真流体动力学",
+      "canonical_evidence": "使用视频扩散模型基于MPM模拟数据仿真流体动力学",
+      "llm_tldr_en": "MPMWorlds creates a dataset of 2D MPM simulations including fluids, and evaluates both code generation and video diffusion for extrapolating physics. Diffusion models show promise in generating physically plausible fluid evolution, though they face stability challenges compared to code generation.",
+      "llm_tldr_cn": "该论文构建了包含流体等多种物理现象的二维物质点法（MPM）模拟数据集，并系统研究代码生成与视频扩散两种方法在物理动力学推断与外推中的表现。结果表明，视频扩散模型能够生成视觉合理的流体演化，但相对于代码生成方法在物理参数推理上存在不足，而代码生成可产生更稳定的外推。研究揭示了扩散模型在流体动力学仿真中的应用潜力与局限。",
+      "llm_tldr": "该论文构建了包含流体等多种物理现象的二维物质点法（MPM）模拟数据集，并系统研究代码生成与视频扩散两种方法在物理动力学推断与外推中的表现。结果表明，视频扩散模型能够生成视觉合理的流体演化，但相对于代码生成方法在物理参数推理上存在不足，而代码生成可产生更稳定的外推。研究揭示了扩散模型在流体动力学仿真中的应用潜力与局限。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.01086v1",
+      "source": "arxiv",
+      "title": "Strong Stochastic Flow Maps",
+      "abstract": "Flow and diffusion models generate high-quality samples in many modalities; however, many network evaluations are required during inference due to numerical integration of an underlying differential equation. Flow maps alleviate this problem by learning the solution map of the differential equation directly, enabling few-step sampling. Yet, current methods are restricted to approximating the solution map of ODEs. These methods can be used to learn the transition kernel of an SDE, thereby obtaining a solution map that recovers the marginal distributions of the process (weak convergence) rather than the solution path (strong convergence). We propose Strong Stochastic Flow Maps (SSFMs) as a novel framework for learning the strong solution map of additive-noise SDEs, directly generalizing deterministic flow maps to the stochastic setting. Further, a polynomial approximation to Brownian motion is introduced and shown to converge pathwise. These results enable a simulation-free training objective for the solution map of diffusion models. We demonstrate that SSFMs outperform previous stochastic flow map methods on image generation and enable few-step sampling of molecular systems.",
+      "authors": [
+        "Sam McCallum",
+        "Zander W. Blasingame",
+        "Timothy Herschell",
+        "Niklas Rindtorff",
+        "Alexander Tong",
+        "James Foster"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-05-31T08:14:47+00:00",
+      "link": "https://arxiv.org/pdf/2606.01086v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "strong stochastic flow maps for diffusion models",
+      "llm_evidence_cn": "强随机流映射用于扩散模型",
+      "llm_evidence": "强随机流映射用于扩散模型",
+      "canonical_evidence": "强随机流映射用于扩散模型",
+      "llm_tldr_en": "Proposes Strong Stochastic Flow Maps (SSFMs) to learn strong solution maps of additive-noise SDEs, enabling few-step sampling and generalizing flow/diffusion model inference.",
+      "llm_tldr_cn": "现有流映射方法只能学习ODE解映射，限制了SDE的强收敛。本文提出强随机流映射（SSFMs），通过学习加性噪声SDE的强解映射，实现了少步采样并直接泛化确定性流映射。该方法可加速扩散模型推理，在图像生成等任务上展示了有效性，为生成模型在科学计算中的高效应用提供了新途径。",
+      "llm_tldr": "现有流映射方法只能学习ODE解映射，限制了SDE的强收敛。本文提出强随机流映射（SSFMs），通过学习加性噪声SDE的强解映射，实现了少步采样并直接泛化确定性流映射。该方法可加速扩散模型推理，在图像生成等任务上展示了有效性，为生成模型在科学计算中的高效应用提供了新途径。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2605.31106v1",
+      "source": "arxiv",
+      "title": "Riemannian Diffusion Models on General Manifolds via Physics-Informed Neural Networks",
+      "abstract": "Riemannian diffusion models generalize score-based generative modeling to manifold-supported data via stochastic diffusion equations on the manifold. However, training requires sampling from and differentiating the manifold heat kernel, which is rarely available in closed form beyond a few highly symmetric manifolds. We propose a general approach that approximates the heat kernel by directly solving the manifold heat equation with a physics-informed neural network (PINN). Given an explicit manifold specification, we choose a coordinate system, derive the corresponding heat (Fokker--Planck) equation and a short-time asymptotic approximation, and then train a PINN to learn the log heat kernel. The resulting surrogate enables both forward noising (heat-kernel sampling) and conditional-score evaluation for denoising score matching. We demonstrate the method on diverse manifolds including $S^2$, $SO(3)$, $\\mathrm{SPD}(n)$, and permutation-quotiented point clouds.",
+      "authors": [
+        "Gyeonghoon Ko",
+        "Juho Lee"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-05-29T10:16:47+00:00",
+      "link": "https://arxiv.org/pdf/2605.31106v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Riemannian diffusion models use score-based generative modeling with PINNs, relevant to generative models for fluid dynamics via manifold methods",
+      "llm_evidence_cn": "黎曼扩散模型结合物理信息神经网络，与流体动力学生成模型的方法论桥梁",
+      "llm_evidence": "黎曼扩散模型结合物理信息神经网络，与流体动力学生成模型的方法论桥梁",
+      "canonical_evidence": "黎曼扩散模型结合物理信息神经网络，与流体动力学生成模型的方法论桥梁",
+      "llm_tldr_en": "Introduces a PINN-based method to approximate heat kernels for Riemannian diffusion models, enabling score-based generation on general manifolds—transferable to fluid dynamics.",
+      "llm_tldr_cn": "针对黎曼扩散模型需要热核解析式的问题，本文提出用物理信息神经网络（PINN）求解流形上的热方程来逼近热核。该方法无需封闭形式，可扩展到一般流形，为流体力学中定义在复杂几何上的生成建模（如流形支持的数据）提供了可行的替代方案。",
+      "llm_tldr": "针对黎曼扩散模型需要热核解析式的问题，本文提出用物理信息神经网络（PINN）求解流形上的热方程来逼近热核。该方法无需封闭形式，可扩展到一般流形，为流体力学中定义在复杂几何上的生成建模（如流形支持的数据）提供了可行的替代方案。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.02177v1",
+      "source": "arxiv",
+      "title": "Low-Pass Flow Matching",
+      "abstract": "Flow Matching typically relies on white noise sources, a choice often misaligned with the power spectra of natural data, which tend to decay with frequency. To address this, we introduce Low-Pass Flow Matching, a variant of Flow Matching based on an operator-modulated interpolant. This formulation induces a time-varying spectral bias that transitions from the source spectrum to a frequency-decaying bias as the path approaches the data. We validate our method on unconditional image generation tasks, including the scientific Galaxy10 dataset. Empirically, we show that our method is particularly effective when paired with adaptive ODE solvers, where it improves or preserves sample quality while substantially reducing sampling cost compared to standard baselines.",
+      "authors": [
+        "Francesco M. Ruscio",
+        "T. Konstantin Rusch"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-01T12:35:13+00:00",
+      "link": "https://arxiv.org/pdf/2606.02177v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "flow matching variant (Low-Pass Flow Matching) that can be applied to fluid flow simulation",
+      "llm_evidence_cn": "流匹配变体（低通流匹配），可应用于流体流动模拟",
+      "llm_evidence": "流匹配变体（低通流匹配），可应用于流体流动模拟",
+      "canonical_evidence": "流匹配变体（低通流匹配），可应用于流体流动模拟",
+      "llm_tldr_en": "Low-Pass Flow Matching introduces a spectral bias mechanism for flow matching, improving ODE solver efficiency. While demonstrated on images, the method is directly transferable to fluid flow simulation tasks.",
+      "llm_tldr_cn": "针对标准流匹配使用白噪声源与自然数据频谱不匹配的问题，该论文提出低通流匹配，通过算子调制插值路径引入时变频谱偏置。实验表明，该方法配合自适应ODE求解器可在不损失质量前提下显著降低采样成本。虽在图像任务上验证，但其核心思想可直接应用于流体流动模拟中的流匹配生成建模。",
+      "llm_tldr": "针对标准流匹配使用白噪声源与自然数据频谱不匹配的问题，该论文提出低通流匹配，通过算子调制插值路径引入时变频谱偏置。实验表明，该方法配合自适应ODE求解器可在不损失质量前提下显著降低采样成本。虽在图像任务上验证，但其核心思想可直接应用于流体流动模拟中的流匹配生成建模。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.04804v1",
+      "source": "arxiv",
+      "title": "The Right Measure for Physics-Constrained Generation: A Co-Area Correction for Posterior-Consistent PDE Inverse Problems",
+      "abstract": "Generative models -- diffusion and flow matching -- are increasingly used to solve partial differential equation (PDE) inverse problems, enforcing the governing physics as a \\emph{hard constraint} (via projection or guidance) and reporting the resulting samples as a Bayesian posterior with calibrated uncertainty. We show that this widely adopted recipe samples the wrong distribution. Conditioning a generative prior on a hard PDE constraint is conditioning on a measure-zero manifold -- an operation that is intrinsically ambiguous (the Borel--Kolmogorov paradox) and whose physically correct resolution, the small-residual-noise limit, carries a co-area (Fixman) Jacobian factor $[det(JJ^{\\top})]^{-1/2}$ that projection- and guidance-based methods silently omit. We make the bias precise, show that it grows with the heterogeneity of the constraint sensitivity, and validate it on controlled problems against an \\emph{i.i.d.} ground-truth arbiter. The omitted factor is not a second-order detail: removing it inflates the posterior error to $20\\times$ the sampling-noise floor; minimal-displacement projection (as in PCFM) is biased at $9\\times$ the floor; and a naive scalar reweighting does not fix it. We introduce \\textbf{CoCoS}, a measure-aware constrained sampler that targets the correct co-area posterior, and show that it matches the gold-standard posterior to within sampling noise. Our results imply that ``satisfying the physics'' is not the same as ``sampling the posterior,'' and give a principled correction for uncertainty-aware scientific inference.",
+      "authors": [
+        "Jian Xu",
+        "Delu Zeng",
+        "John Paisley",
+        "Qibin Zhao"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-03T12:30:03+00:00",
+      "link": "https://arxiv.org/pdf/2606.04804v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "analyzes measure-zero issues in physics-constrained generation for PDE inverse problems, relevant to generative models in fluid dynamics",
+      "llm_evidence_cn": "分析物理约束生成中的测度零问题，与流体动力学生成模型的理论基础相关",
+      "llm_evidence": "分析物理约束生成中的测度零问题，与流体动力学生成模型的理论基础相关",
+      "canonical_evidence": "分析物理约束生成中的测度零问题，与流体动力学生成模型的理论基础相关",
+      "llm_tldr_en": "Identifies and corrects the Borel-Kolmogorov paradox in hard physics-constrained generation, showing a missing co-area Jacobian factor critical for posterior consistency.",
+      "llm_tldr_cn": "本文指出在硬约束物理条件下使用扩散和流匹配生成模型进行PDE逆问题时，由于条件在零测流形上，会遭遇Borel-Kolmogorov悖论。纠正方法需引入共面积Jacobian因子，从而得到正确的后验分布，为流体动力学等领域的物理约束生成提供了理论一致性。",
+      "llm_tldr": "本文指出在硬约束物理条件下使用扩散和流匹配生成模型进行PDE逆问题时，由于条件在零测流形上，会遭遇Borel-Kolmogorov悖论。纠正方法需引入共面积Jacobian因子，从而得到正确的后验分布，为流体动力学等领域的物理约束生成提供了理论一致性。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
