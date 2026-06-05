@@ -1,0 +1,378 @@
+Title: Stochastic Multiscale Reconstruction of Lagrangian Turbulence via Guided Diffusion Models
+
+URL Source: https://arxiv.org/pdf/2606.05783v1
+
+Published Time: Fri, 05 Jun 2026 00:43:58 GMT
+
+Number of Pages: 7
+
+Markdown Content:
+## Stochastic Multiscale Reconstruction of Lagrangian Turbulence via Guided Diffusion Models 
+
+Conghui Wang, 1 Tianyi Li, 2, ∗ Luca Biferale, 2 Qinmin Zheng, 1, 3, † Michele Buzzicotti, 2 and Fabio Bonaccorso 2
+
+> 1
+
+Hangzhou International Innovation Institute, Beihang University, Hangzhou, Zhejiang 311115, PR China 
+
+> 2
+
+Department of Physics and INFN, University of Rome ‘Tor Vergata’, Via della Ricerca Scientifica 1, 00133 Rome, Italy 
+
+> 3
+
+Fluid Mechanics Key Laboratory of Ministry of Education, Institute of Fluid Mechanics, Beihang University, Beijing 100191, China 
+
+(Dated: June 5, 2026) Lagrangian turbulence is characterized by intermittent, fat-tailed fluctuations and nontrivial cor-relations across temporal scales, making a quantitative description of its full multiscale probability distribution a longstanding challenge. A particularly important question is whether unresolved fine-scale fluctuations can be inferred from coarse-grained trajectory information. Here, we address this problem by sampling the conditional distribution of unresolved fluctuations using a diffusion-model prior conditioned on large-scale dynamics obtained through a wavelet-based coarse-graining of Lagrangian trajectories. Using tracer trajectories from direct numerical simulations of homo-geneous and isotropic turbulence at Re λ ≃ 310, we show that the reconstructed signals recover scale-dependent intermittent statistics, including high-order structure functions, flatness, and local scaling exponents, together with cross-scale temporal correlations between resolved and unresolved fluctuations. The method also reproduces the broad stochastic variability of intermittent accel-eration fluctuations conditioned on the same coarse-grained trajectory, whereas Gaussian-process reconstructions in wavelet representation suppress rare events. Our results show that small-scale La-grangian intermittency can be modeled as a non-Gaussian conditional stochastic process constrained by coarse-scale dynamics and quantitatively reproduced through data-driven generative sampling. 
+
+Introduction. Turbulence is a ubiquitous phe-nomenon in natural and engineering flows, character-ized by strong nonlinearity, multiscale interactions, and spatio-temporal intermittency [1–3]. While turbulent dy-namics can be described in both Eulerian and Lagrangian frameworks, the latter—following individual fluid parti-cles along their trajectories—provides a natural frame-work to access multiscale temporal correlations and in-termittent extreme fluctuations [4–8]. Along Lagrangian trajectories, velocity increments and accelerations ex-hibit strongly non-Gaussian, fat-tailed statistics, a sig-nature of intermittency across a wide range of tempo-ral scales (Fig. 1a). A central challenge in turbulence is that these multiscale and intermittent fluctuations lack a quantitative statistical description. In particular, while coarse-grained representations of Lagrangian trajectories capture large-scale behavior, the non-Gaussian and mul-tiscale statistical response of small-scale turbulent dy-namics to large-scale motion remains largely unknown. This missing information plays a central role in inter-mittency, turbulence modeling, and subgrid-scale clo-sures. This problem can be understood as the char-acterization and sampling of the conditional distribu-tion of fine-scale fluctuations given coarse-scale observa-tions. Despite their fundamental importance, such condi-tional statistics are currently not available, and no gen-eral framework exists to characterize and sample them consistently. Over the past decades, Lagrangian turbulence has been studied through a variety of stochastic and phenomeno-logical models, including Markovian and non-Markovian processes, as well as multifractal and multiplicative cas-cade approaches, which reproduce selected statistical fea-tures such as scaling laws and intermittency [9–17]. How-ever, these approaches do not provide a systematic frame-work to quantitatively characterize the full multiscale statistics of Lagrangian turbulence. As a result, gener-ating realistic Lagrangian trajectories with correct mul-tiscale behavior remains challenging. Although related stochastic interpolation approaches have been proposed [18, 19], it remains unclear whether fine-scale turbulent fluctuations can be inferred from coarse-grained observa-tions in a statistically consistent manner that preserves multiscale correlations and intermittency. In this Letter, we build on recent advances in gen-erative modeling of Lagrangian turbulence [20, 21], which demonstrated that data-driven diffusion models can generate trajectories with quantitatively accurate multiscale statistics. We introduce a framework to infer fine-scale fluctuations conditioned on coarse-grained (low-frequency) observations. By combining a learned prior with a conditional sampling strategy [22], we reconstruct the fine-scale turbulent fluctuations in amanner consistent with both large-scale constraints and intermittent small-scale statistics. 
+
+Lagrangian turbulence data. We analyze La-grangian velocity trajectories obtained from direct numerical simulations (DNS) of homogeneous and isotropic turbulence at Taylor-scale Reynolds num-ber Re λ ≃ 310 [23]. Each trajectory is sampled at temporal resolution dt s = 0.1τη over a duration 
+
+> arXiv:2606.05783v1 [physics.flu-dyn] 4 Jun 2026
+
+2
+
+T ∼ 0.7τL ∼ 100 τη . This setup spans a wide range of dynamically relevant time scales, from the dissipative scale τη to the integral scale τL, covering more than two decades of temporal scales. Velocity increments are defined as 
+
+δτ Vi(t) = Vi(t + τ ) − Vi(t), (1) and exhibit strongly non-Gaussian statistics across these scales (Fig. 1), with increasing intermittency toward smaller scales. Further details on the simulations and data are provided in Appendix A. 
+
+Multiscale wavelet decomposition. We con-sider a Lagrangian velocity trajectory V(t) sampled at temporal resolution dt s and discretized into K = 2 N
+
+time points, which can be written as V = {Vi(tk)}
+
+with i = x, y, z and k = 1, . . . , K . We introduce dyadic temporal scales labeled by j = 0 , . . . , N , with characteristic scale 2 j dt s, where larger j corresponds to coarser resolution. We denote by Vj (t) the corre-sponding coarse-grained approximation of the signal, with V0(t) the original trajectory. For simplicity, the following decomposition is written for a generic velocity component. Upon coarse-graining from level j − 1 to j,the signal decomposes as 
+
+Vj−1(t) = Vj (t) + Dj (t), (2) where Dj (t) denotes the scale-localized detail at temporal scale 2 j dt s. Iterating this decomposition yields 
+
+V(t) = VJ (t) + 
+
+> J
+
+X
+
+> j=1
+
+Dj (t) ≡ V J (t) + V<J (t), (3) where V<J collects fluctuations at scales smaller than 2J dt s. This construction corresponds to an orthogonal wavelet decomposition [24]. Equivalently, the decompo-sition can be expressed in terms of approximation and detail coefficients aj (k) and dj (k) associated with each scale j, as detailed in Appendix B. 
+
+Stochastic multiscale reconstruction. The goal is to characterize and sample the fine-scale fluctua-tions conditioned on a coarse-grained observation: 
+
+P (V<J | V J ). (4) To illustrate the complexity of this task, Fig. 1(b) shows an example of a trajectory and its decomposition into approximation and detail components, highlighting the nontrivial cross-scale correlations underlying intermit-tency. We employ an unconditional diffusion model trained on the present dataset [20, 25], which accurately reproduces the statistical properties of Lagrangian tra-jectories and defines an implicit prior distribution P (V)over trajectories. Sampling from this prior is performed through an iterative reverse diffusion process from Gaus-sian noise VM to a trajectory sample V0, producing a sequence of states VM , . . . , Vm, Vm−1, . . . , V0. To approx-imate P (V<J | V J ), we guide the sampling process by en-forcing consistency with the coarse-grained observation, following a diffusion posterior sampling (DPS) approach [22]. Specifically, at each reverse diffusion step, the up-dated state Vm−1 is corrected according to 
+
+Vm−1 ← V m−1 − ξ∇Vm ∥V J − bVJ
+
+> 0|m
+
+∥2, (5) where bV0|m denotes the model estimate of the clean trajectory given the current state Vm, and bVJ 
+
+> 0|m
+
+its coarse-grained component, while ξ controls the guidance strength. Additional details on the proposed method, including the selection of ξ, are reported in Appendix C and Supplemental Material (SM). This procedure can be interpreted as an approximate Bayesian posterior sampling scheme [22], where the learned diffusion prior is conditioned on the prescribed coarse-grained observa-tion. −50 −25 0 25                  
+
+> δτVi/σ (δτVi)10 −8
+> 10 −6
+> 10 −4
+> 10 −2
+> 10 0
+> PDF( δτ Vi)
+> τ /τ η= 1
+> τ /τ η= 10
+> τ /τ η= 100
+> (a)
+> −505V
+> (b)
+> −505V5
+> 0100
+> t/τ η
+> −505V<5
+> FIG. 1. Multiscale characterization of Lagrangian turbulence. (a) Standardized PDFs of Lagrangian velocity increments at
+> τ /τ η= 1 ,10 ,100, with curves shifted vertically for clarity. In-set: representative vortex-trapping and extreme-acceleration event along a particle trajectory. (b) Original trajectory
+> V, coarse-grained large-scale component V5, and small-scale fluctuations V<5obtained from a multiscale decomposition, shown for a single velocity component. All signals are nor-malized by the velocity standard deviation.
+
+Results. We assess whether the proposed frame-work can reconstruct fine-scale statistics of intermittent Lagrangian turbulence from coarse-grained observations, while preserving their cross-scale correlations with the large-scale components. To this end, we reconstruct trajectories using both the proposed DPS method and a Gaussian process regression (GPR) baseline [26], applied in the wavelet representation of the velocity trajectories (see Appendix D for details), and compare both against the DNS ground truth. The guidance strength ξ in Eq. (5) is selected using a validation dataset by jointly considering pointwise reconstruc-tion error and higher-order statistical properties. We consider two coarse-graining levels, J = 5 and J = 7, 3corresponding to truncation scales of a few Kolmogorov times τη (approximately 3 τη and 10 τη , respectively). In the main text we present results for J = 5, where the truncation lies close to the transition between inertial and dissipative scales, while results for J = 7, corre-sponding to a truncation within the inertial range, are reported in the SM. To quantify the statistical fidelity of the reconstruction, we adopt three complementary diagnostics, probing single-scale statistics, cross-scale correlations, and stochastic variability of intermittent fluctuations. 
+
+1. Single-scale statistics. We first perform a scale-by-scale validation based on the structure functions 
+
+S(p) 
+
+> τ
+
+= ⟨(δτ Vi)p⟩, (6) where ⟨·⟩ denotes averaging over time and trajectories, and the component index i is omitted assuming isotropy. We further consider the fourth-order flatness and the cor-responding local scaling exponent, defined as 
+
+F (4)  
+
+> τ
+
+= S(4) 
+
+> τ
+
+(S(2)  
+
+> τ
+
+)2 , ζ(4)  
+
+> τ
+
+= d log S(4) 
+
+> τ
+
+d log S(2) 
+
+> τ
+
+. (7) These quantities provide stringent tests of multiscale intermittency [27]. Fig. 2 compares the reconstructed statistics obtained with DPS and GPR against the DNS reference. The grey region indicates the range of small-scale fluctuations removed by the coarse-graining and targeted for reconstruction. In panel (a), GPR, which reproduces second-order statistics by construction (not shown), deviates from DNS in the fourth-order struc-ture function, whereas DPS remains consistent with DNS across all time lags. A similar behaviour is observed in panel (b) for flatness and in panel (c) for the local scaling exponent: GPR underestimates the growth of flatness to-ward small scales and fails to capture the scale-dependent intermittency, while DPS reproduces both quantities in close agreement with DNS. In particular, GPR fails to capture the pronounced increase of flatness in the dissipa-tive range, a key signature of intermittency that poses a stringent test for stochastic and phenomenological mod-els. In panel (d) we show the PDF over trajectories of the normalized L2 error between the ground truth and the multiscale reconstruction, evaluated on the detail com-ponents at a given scale j, defined as ∆j = K−1 P
+
+> t
+
+(Dj (t) − Drec  
+
+> j
+
+(t)) 2
+
+⟨D2 
+
+> j
+
+⟩ , (8) where Dj and Drec  
+
+> j
+
+denote the ground truth and recon-structed detail components, respectively, and ⟨D2 
+
+> j
+
+⟩ de-notes the mean energy at scale j, averaged over time and trajectories. Results are shown for j = 2, corresponding to small-scale fluctuations at τ ∼ 0.2–0 .4 τη . The cor-responding scale range is highlighted in panel (c). The error distribution for DPS is concentrated at small val-ues and shifted toward lower errors compared to GPR. To further assess reconstruction accuracy at the same scale, we consider the statistics of extreme fluctuations. Panels (e,f) compare, for each trajectory, the maximum ampli-tude of the detail component Dj at j = 2. DPS exhibits a strong correlation with the ground truth across a broad range of fluctuations, whereas GPR collapses toward a narrow band and fails to reproduce large-amplitude val-ues. This shows that, beyond matching global statistics, DPS also achieves accurate reconstruction of fine-scale structures at the level of individual realizations, a non-trivial requirement for multiscale turbulent reconstruc-tion. 10 −1 10 0 10 1 10 2                
+
+> τ /τ η
+> 10 −5
+> 10 −2
+> 10 1
+> S(4)
+> τ
+> (a)
+> DNS DPS GPR
+> 10 −110 010 110 2
+> τ /τ η
+> 10 1
+> F (4)
+> τ
+> (b)
+> DNS DPS GPR
+> 10 −110 010 110 2
+> τ /τ η
+> 1.52.02.5
+> ζ(4)
+> τ
+> j= 2
+> (c)
+> DNS DPS GPR
+> 0.02.55.0∆j
+> 0.0 0.5 1.0 PDF(∆ j)
+> j= 2
+> (d)
+> DPS GPR
+> 10 010 1
+> max( |Dj(t)|)10 0
+> 10 1
+> max( |Drec
+> j (t)|)
+> j= 2
+> (e) DPS
+> 10 010 1
+> max( |Dj(t)|)10 0
+> 10 1
+> max( |Drec
+> j (t)|)
+> j= 2
+> (f) GPR
+
+FIG. 2. Comparison of single-scale statistics between DNS data and trajectories reconstructed using DPS and GPR for the J = 5 truncation configuration, where the grey region in-dicates the scales removed by coarse-graining and targeted for reconstruction. (a) Fourth-order structure function S(4)  
+
+> τ
+
+; (b) Fourth-order flatness F (4)  
+
+> τ
+
+; (c) Local scaling exponent ζ(4)  
+
+> τ
+
+.Error bars indicate the spread among the three velocity com-ponents. The highlighted region in (c) corresponds to the detail scale j = 2. (d) PDF over trajectories of the normal-ized reconstruction error ∆ j evaluated at j = 2. (e,f) Scatter plots of the maximum amplitude of the detail component Dj
+
+at j = 2, comparing DNS and reconstructed trajectories ob-tained using (e) DPS and (f) GPR. Axes are normalized by the standard deviation of Dj from DNS. Warmer colors indi-cate higher probability density. 4
+
+2. Cross-scale correlations. We next assess whether the reconstruction captures cross-scale correlations be-tween velocity fluctuations at different scales [28, 29]. To this end, we consider a two-time-lag correlation function based on velocity increments at τ1 and τ2:
+
+C(4)  
+
+> τ1τ2
+
+= ⟨(δτ1 Vi)2(δτ2 Vi)2⟩⟨(δτ1 Vi)2⟩ ⟨ (δτ2 Vi)2⟩ , (9) where i denotes a generic velocity component. For 
+
+τ1 = τ2, this quantity reduces to the fourth-order flat-ness defined above. We fix one time lag τ1 and scan the second lag τ2 across the resolved and reconstructed ranges. Fig. 3 shows C(4)  
+
+> τ1τ2
+
+for two representative values of τ1, chosen in the reconstructed ( τ1 = 1 .6τη ) and re-solved ( τ1 = 6 .4τη ) ranges. When both τ1 and τ2 lie in the resolved range, all methods recover the DNS correla-tions, as expected. Outside this regime, DPS remains in close agreement with DNS, whereas GPR exhibits signif-icant deviations, especially as τ2 enters the reconstructed small scales (grey region). This suggests that DPS cap-tures cross-scale coupling between large and small scales. 10 −1 10 0 10 1 10 2  
+
+> τ2/τ η
+> 10 0
+> 10 1
+> C(4)
+> τ1τ2 τ1= 1 .6τη
+> τ1= 6 .4τη
+> DNS DPS GPR
+
+FIG. 3. Fourth-order cross-scale correlation coefficient C(4) 
+
+> τ1τ2
+
+for two representative values of τ1. Solid lines correspond to 
+
+τ1 = 1 .6τη , within the reconstructed range, while dashed lines correspond to τ1 = 6 .4τη , within the resolved range. The grey region indicates the reconstructed scales. 
+
+3. Stochastic variability of intermittent fluctuations. We assess the stochastic variability of the reconstruction conditioned on a fixed coarse-grained trajectory VJ . In contrast to the previous ensemble-averaged diagnostics, we fix a single realization of the large-scale component and analyze multiple stochastic reconstructions of the unresolved fluctuations. The imposed coarse-grained trajectory for one velocity component is shown in Fig. 4(c1). Figs. 4(a,b) show the time–scale distribution of the normalized detail energy Dj (t)2/⟨D2 
+
+> j
+
+⟩ for a DNS trajectory and a corresponding DPS reconstruction. The reconstructed scalogram exhibits realistic intermittent structures across scales. Fig. 4(c2) shows the marginal PDF at each time of one acceleration component, aquantity dominated by the smallest temporal scales, obtained from multiple DPS reconstructions conditioned on the same coarse-grained trajectory. The distribution is broad and strongly non-Gaussian, capturing a physi-cally consistent range of small-scale fluctuations around the DNS value. We further focus on a representative extreme fluctuation at t = 50 τη , indicated by the dashed vertical line in panel (c2). Fig. 4(d) shows the corresponding conditional acceleration PDF at this time. While DPS retains finite probability in the vicinity of the DNS event, GPR collapses to a much narrower dis-tribution and strongly suppresses such rare fluctuations. 0 50 100            
+
+> t/τ η
+> 13579
+> j
+> V5
+> (a) DNS
+> 050 100
+> t/τ η
+> 13579
+> V5
+> (b) DPS
+> −505
+> Vi/σ (Vi)
+> (c1)
+> V5V
+> 050 100
+> t/τ η
+> −10 010
+> ai/σ (ai)
+> (c2)
+> −10 010
+> ai/σ (ai)10 −5
+> 10 −3
+> 10 −1
+> PDF( ai) × σ(ai)
+> (d) t= 50 τη
+> DPS GPR DNS
+> 0.2 0.5 0.8
+> Dj(t)2/〈D2
+> j 〉
+
+FIG. 4. Stochastic reconstruction of intermittent fluctua-tions conditioned on a fixed coarse-grained trajectory V5.(a,b) Time–scale distribution of the normalized detail en-ergy Dj (t)2/⟨D2 
+
+> j
+
+⟩ for a DNS trajectory and a corresponding DPS reconstruction. The shaded region indicates the imposed coarse-grained component V5. (c1) Imposed coarse-grained component V5 and corresponding original trajectory V for a single velocity component. (c2) Conditional distribution of the acceleration component ai/σ (ai) obtained from multiple DPS reconstructions conditioned on the trajectory shown in (c1). The dashed line indicates the selected time t = 50 τη
+
+used in (d). (d) Conditional PDFs of the acceleration com-ponent at t = 50 τη obtained from DPS and GPR reconstruc-tions. The dashed vertical line indicates the DNS value from the reference realization. 
+
+Conclusions. In summary, we have shown that unresolved small-scale Lagrangian turbulence can be quantitatively reconstructed as a conditional stochastic process constrained by coarse-scale dynamics. Condi-tioned on the coarse-grained component obtained via a wavelet-based decomposition, fine-scale fluctuations are sampled by guiding a learned generative prior. The resulting reconstructions reproduce multiscale statistics, cross-scale correlations, and the broad non-Gaussian variability associated with intermittent fluctuations. These results establish unresolved Lagrangian intermit-tency as a tractable conditional sampling problem and 5provide a quantitative framework for reconstructing its conditional statistics. 
+
+Acknowledgments. This research was supported by the National Natural Science Foundation of China under Grant No. U2441212 and 12225202, the Zhejiang Provincial Natural Science Foundation of China under Grant No. LZ25A020010, and the Research Funding of Hangzhou International Innovation Institute of Beihang University under Grant No. 2024KQ020. It was also supported by the European Research Council (ERC) under the European Union’s Horizon 2020 research and innovation programme Smart-TURB (Grant Agreement No. 882340) and by the Italian Ministry of Univer-sity and Research (MUR) - FARE programme (No. R2045J8XAW). L. B. and T. L. acknowledge INFN and CINECA for providing high-performance computing resources and support on the Leonardo supercomputer. 
+
+Data and Code Availability. The DNS La-grangian trajectories used in this study are avail-able from the open-access Smart-TURB portal at http://smart-turb.roma2.infn.it , in the TURB-Lagr repository [23]. The code used to train and sample the unconditional diffusion-model prior is publicly available at https: //github.com/SmartTURB/diffusion-lagr [30]. The DPS sampling code developed for the conditional reconstructions in this work will be made publicly available upon publication.  
+
+> ∗
+
+tianyi.li@roma2.infn.it  
+
+> †
+
+zhengqinmin@buaa.edu.cn [1] U. Frisch, Turbulence: the legacy of AN Kolmogorov 
+
+(Cambridge University Press, 1995). [2] A. S. Monin and A. M. Yaglom, Statistical Fluid Mechan-ics, Volume II: Mechanics of Turbulence (Dover, 2013). [3] A. Alexakis and L. Biferale, Cascades and transitions in turbulent flows, Physics Reports 767 , 1 (2018). [4] A. La Porta, G. A. Voth, A. M. Crawford, J. Alexander, and E. Bodenschatz, Fluid particle accelerations in fully developed turbulence, Nature 409 , 1017 (2001). [5] N. Mordant, P. Metz, O. Michel, and J.-F. Pinton, Mea-surement of lagrangian velocity in fully developed turbu-lence, Physical Review Letters 87 , 214501 (2001). [6] N. Mordant, J. Delour, E. L´ eveque, A. Arn´ eodo, and J.-F. Pinton, Long time correlations in lagrangian dynam-ics: a key to intermittency in turbulence, Physical review letters 89 , 254502 (2002). [7] P. Yeung, Lagrangian investigations of turbulence, An-nual review of fluid mechanics 34 , 115 (2002). [8] F. Toschi and E. Bodenschatz, Lagrangian properties of particles in turbulence, Annual review of fluid mechanics 
+
+41 , 375 (2009). [9] B. Sawford, Reynolds number effects in lagrangian stochastic models of turbulent dispersion, Physics of Flu-ids A: Fluid Dynamics 3, 1577 (1991). [10] S. B. Pope, Simple models of turbulent flows, Physics of Fluids 23 (2011). [11] B. Viggiano, J. Friedrich, R. Volk, M. Bourgoin, R. B. Cal, and L. Chevillard, Modelling lagrangian velocity and acceleration in turbulent flows as infinitely differentiable stochastic processes, Journal of Fluid Mechanics 900 ,A27 (2020). [12] R. Zamansky, Acceleration scaling and stochastic dynam-ics of a fluid particle in turbulence, Physical Review Flu-ids 7, 084608 (2022). [13] A. Arneodo, E. Bacry, and J.-F. Muzy, Random cascades on wavelet dyadic trees, Journal of Mathematical Physics 
+
+39 , 4142 (1998). [14] E. Bacry, J. Delour, and J.-F. Muzy, Multifractal random walk, Physical review E 64 , 026103 (2001). [15] L. Chevillard, C. Garban, R. Rhodes, and V. Vargas, On a skewed and multifractal unidimensional random field, as a probabilistic representation of kolmogorov’s views on turbulence, in Annales Henri Poincar´ e, Vol. 20 (Springer, 2019) pp. 3693–3741. [16] L. Biferale, G. Boffetta, A. Celani, A. Crisanti, and A. Vulpiani, Mimicking a turbulent signal: Sequen-tial multiaffine processes, Physical Review E 57 , R6261 (1998). [17] M. Sinhuber, J. Friedrich, R. Grauer, and M. Wilczek, Multi-level stochastic refinement for complex time se-ries and fields: a data-driven approach, New Journal of Physics 23 , 063063 (2021). [18] J. Friedrich, S. Gallon, A. Pumir, and R. Grauer, Stochastic interpolation of sparsely sampled time series via multipoint fractional brownian bridges, Physical Re-view Letters 125 , 170602 (2020). [19] J. L¨ ubke, J. Friedrich, and R. Grauer, Stochastic interpo-lation of sparsely sampled time series by a superstatistical random process and its synthesis in fourier and wavelet space, Journal of Physics: Complexity 4, 015005 (2023). [20] T. Li, L. Biferale, F. Bonaccorso, M. A. Scarpolini, and M. Buzzicotti, Synthetic lagrangian turbulence by gen-erative diffusion models, Nature Machine Intelligence 6,393 (2024). [21] L. Guastoni and R. Vinuesa, A new perspective on the simulation of stochastic problems in fluid mechanics with diffusion models: Fluid dynamics, Nature Machine Intel-ligence 7, 816 (2025). [22] H. Chung, J. Kim, M. T. Mccann, M. L. Klasky, and J. C. Ye, Diffusion posterior sampling for general noisy inverse problems, arXiv preprint arXiv:2209.14687 (2022). [23] L. Biferale, F. Bonaccorso, M. Buzzicotti, and C. Calasci-betta, Turb-lagr. a database of 3d lagrangian trajectories in homogeneous and isotropic turbulence, arXiv preprint arXiv:2303.08662 (2023). [24] S. G. Mallat, A theory for multiresolution signal decom-position: the wavelet representation, IEEE transactions on pattern analysis and machine intelligence 11 , 674 (2002). [25] T. Li, F. Tuteri, M. Buzzicotti, F. Bonaccorso, and L. Biferale, Deterministic diffusion models for lagrangian turbulence: Robustness and encoding of extreme events, European Journal of Mechanics-B/Fluids 116 , 204402 (2026). [26] C. K. Williams and C. E. Rasmussen, Gaussian processes for machine learning , Vol. 2 (MIT press Cambridge, MA, 2006). 6                    
+
+> [27] A. Arn´ eodo, R. Benzi, J. Berg, L. Biferale, E. Bo-denschatz, A. Busse, E. Calzavarini, B. Castaing, M. Cencini, L. Chevillard, et al. , Universal intermit-tent properties of particle trajectories in highly turbulent flows, Physical review letters 100 , 254504 (2008). [28] V. L’vov and I. Procaccia, Fusion rules in turbulent sys-tems with flux equilibrium, Physical review letters 76 ,2898 (1996). [29] R. Benzi, L. Biferale, and F. Toschi, Multiscale veloc-ity correlations in turbulence, Physical review letters 80 ,3244 (1998). [30] TianyiLi-92, SmartTURB/diffusion-lagr: stable (2024).
+> Appendix A: Lagrangian dataset from Navier–Stokes simulations
+
+We use Lagrangian trajectories extracted from a di-rect numerical simulation of the three-dimensional in-compressible Navier–Stokes equations in a periodic do-main of size L = 2 π, forced at large scales to achieve a statistically stationary state [23]. Lagrangian particle positions X(t) and velocities V (t) are obtained by inte-grating passive tracers according to ˙X(t) = V (t) = u(X(t), t ), (10) where u denotes the Eulerian velocity field obtained from the Navier–Stokes simulation. A total of Np = 655 ,360 trajectories are extracted from the simulation. Each tra-jectory spans a duration T ∼ 0.7τL ∼ 100 τη and is sampled at temporal resolution dt s = 0 .1τη , resulting in K = 2 10 = 1024 points per trajectory. The dataset is divided into training, validation, and test sets with a ratio of 8:1:1. The validation set is used to select the guidance strength ξ in Eq. (5). 
+
+> Appendix B: Wavelet decomposition
+
+We summarize the wavelet decomposition used in the main text (see Eq. (3)). For simplicity, we write the de-composition for a single velocity component; the three-dimensional case is treated componentwise. The coarse-grained approximation and the detail components are de-fined as 
+
+VJ (t) = X
+
+> k
+
+aJ (k) ϕJ,k (t),Dj (t) = X
+
+> k
+
+dj (k) ψj,k (t), (11) where ϕJ,k and ψj,k denote the scaling and wavelet basis functions, respectively [24], and k labels the temporal location of the coefficients. At each scale j, the number of coefficients is Kj = K/ 2j . In this work we employ the Haar wavelet basis; other choices would not affect the generality of the framework. 
+
+> Appendix C: Diffusion posterior sampling (DPS)
+
+We train an unconditional diffusion model to define a learned prior distribution Pθ (V) over Lagrangian velocity trajectories [20, 25]. Trajectory generation is performed through an iterative reverse stochastic process over a to-tal of M diffusion steps, 
+
+VM → V M −1 → · · · → V 0, (12) starting from Gaussian noise VM ∼ N (0 , I), where V0
+
+corresponds to the generated trajectory V. Each transi-tion from step m to m − 1 is sampled from the learned transition probability parameterized by neural network weights θ:
+
+Vm−1 ∼ pθ (Vm−1 | V m) (13) The diffusion architecture follows the U-Net framework introduced in Ref. [20]. Additional implementation de-tails are reported in the SM. At each DPS sampling step, the reverse transition in Eq. (13) is followed by the cor-rection step introduced in Eq. (5). The quantity bV0|m
+
+corresponds to the model prediction of the clean trajec-tory from the intermediate state Vm, and can be inter-preted as an approximation of the posterior mean [22] 
+
+bV0|m ≈ Ep(V0|V m) [V0 | V m] . (14) The correction term in Eq. (5) therefore guides the reverse stochastic dynamics toward trajectories whose coarse-grained component matches the prescribed large-scale observation. 
+
+> Appendix D: Gaussian process regression (GPR)
+
+The GPR baseline models the reconstruction problem defined in Eq. (4) in terms of the wavelet representation introduced in Eq. (11). The wavelet decomposition is ap-plied componentwise, and the resulting coefficients of the three velocity components are considered jointly in the GPR model. We collect the coarse-grained coefficients into 
+
+AJ = {aJ,i (k)}i,k , (15) and the detail coefficients into 
+
+D<J = {dj,i (k)}i,j,k , (16) where i = x, y, z , k = 0 , . . . , K J − 1 for AJ , and j =1, . . . , J , k = 0 , . . . , K j − 1 for D<J . We assume a joint multivariate Gaussian distribution for the coarse-grained and detail coefficients, 
+
+ AJ
+
+D<J 
+
+
+
+∼ N 
+
+ μA
+
+μD
+
+
+
+,
+
+CAA CAD 
+
+CDA CDD 
+
+ 
+
+. (17) 7Here μA = ⟨A J ⟩ and μD = ⟨D <J ⟩ denote the mean vec-tors estimated from the training dataset, while 
+
+CAD = ⟨(AJ − μA)( D<J − μD )⟩ (18) denotes the cross-covariance matrix between coarse-grained and detail coefficients, with the remaining co-variance matrices defined analogously. Given observed coarse-grained coefficients AJ , the detail coefficients are reconstructed through 
+
+PGP R (D<J | A J ) = N (μD + CDA C−1
+
+> AA
+
+(AJ − μA),CDD − CDA C−1
+
+> AA
+
+CAD ). (19)

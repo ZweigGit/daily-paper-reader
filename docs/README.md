@@ -6,35 +6,38 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-04
-- 运行时间：2026-06-04 21:01:40 UTC
+- 最新运行日期：2026-06-05
+- 运行时间：2026-06-05 21:52:17 UTC
 - 运行状态：成功
-- 本次总论文数：5
+- 本次总论文数：6
 - 精读区：2
-- 速读区：3
+- 速读区：4
 
 ### 今日简报（AI）
-今天推送5篇论文，精读聚焦物理模拟推断与随机流图。最值得看的是**MPMWorlds**（9.0分）——用物质点法模拟推断和推演物理动力学，以及**Strong Stochastic Flow Maps**（8.0分）。建议先消化MPMWorlds的物理推断思路，再结合速读中的物理约束扩散模型（7.0分）拓展应用。
-- 详情：[/202606/04/README](/202606/04/README)
+今日处理6篇论文，精选2篇9分研究：随机多尺度拉格朗日湍流重建与三维水下路径规划。值得关注扩散模型在物理场重建中的潜力，以及生成流场替代模型在导航中的高效性。建议重点精读这两篇方法类文章，其余速读辅助理解传统PDE约束与误差学习思路。
+- 详情：[/202606/05/README](/202606/05/README)
 
 ### 精读区论文标签
-1. [MPMWorlds: Material-Point-Method Simulations for Inferring and Extrapolating Physical Dynamics](/202606/04/2606.01538v1-mpmworlds-material-point-method-simulations-for-inferring-and-extrapolating-physical-dynamics)  
+1. [Stochastic Multiscale Reconstruction of Lagrangian Turbulence via Guided Diffusion Models](/202606/05/2606.05783v1-stochastic-multiscale-reconstruction-of-lagrangian-turbulence-via-guided-diffusion-models)  
    标签：评分：9.0/10、query:genmod-fluid
-   evidence：使用视频扩散模型基于MPM模拟数据仿真流体动力学
-2. [Strong Stochastic Flow Maps](/202606/04/2606.01086v1-strong-stochastic-flow-maps)  
-   标签：评分：8.0/10、query:genmod-fluid
-   evidence：强随机流映射用于扩散模型
+   evidence：引导扩散模型用于拉格朗日湍流重建
+2. [3D Underwater Path Planning via Generative Flow Field Surrogates](/202606/05/2606.06077v1-3d-underwater-path-planning-via-generative-flow-field-surrogates)  
+   标签：评分：9.0/10、query:genmod-fluid
+   evidence：应用条件生成对抗网络作为RANS CFD数据的替代模型用于水下路径规划
 
 ### 速读区论文标签
-1. [Riemannian Diffusion Models on General Manifolds via Physics-Informed Neural Networks](/202606/04/2605.31106v1-riemannian-diffusion-models-on-general-manifolds-via-physics-informed-neural-networks)  
+1. [The Right Measure for Physics-Constrained Generation: A Co-Area Correction for Posterior-Consistent PDE Inverse Problems](/202606/05/2606.04804v1-the-right-measure-for-physics-constrained-generation-a-co-area-correction-for-posterior-consistent-pde-inverse-problems)  
    标签：评分：7.0/10、query:genmod-fluid
-   evidence：黎曼扩散模型结合物理信息神经网络，与流体动力学生成模型的方法论桥梁
-2. [The Right Measure for Physics-Constrained Generation: A Co-Area Correction for Posterior-Consistent PDE Inverse Problems](/202606/04/2606.04804v1-the-right-measure-for-physics-constrained-generation-a-co-area-correction-for-posterior-consistent-pde-inverse-problems)  
+   evidence：将生成模型（扩散、流匹配）应用于PDE逆问题，与流体动力学直接相关
+2. [The Right Measure for Physics-Constrained Generation: A Co-Area Correction for Posterior-Consistent PDE Inverse Problems](/202606/05/2606.04804v2-the-right-measure-for-physics-constrained-generation-a-co-area-correction-for-posterior-consistent-pde-inverse-problems)  
    标签：评分：7.0/10、query:genmod-fluid
-   evidence：分析物理约束生成中的测度零问题，与流体动力学生成模型的理论基础相关
-3. [Low-Pass Flow Matching](/202606/04/2606.02177v1-low-pass-flow-matching)  
+   evidence：生成模型用于PDE逆问题包括流体动力学
+3. [Surrogate modeling for convection-dominated parametric problems based on error learning](/202606/05/2605.29769v1-surrogate-modeling-for-convection-dominated-parametric-problems-based-on-error-learning)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：流匹配变体（低通流匹配），可应用于流体流动模拟
+   evidence：使用深度神经网络误差学习进行对流主导流体问题的代理建模
+4. [Multimarginal flow matching with optimal transport potentials](/202606/05/2606.05327v1-multimarginal-flow-matching-with-optimal-transport-potentials)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：具有最优输运势的流匹配，可应用于流体动力学
 
 
 <div class="dpr-home-promo-card">
