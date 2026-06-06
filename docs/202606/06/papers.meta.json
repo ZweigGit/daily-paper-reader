@@ -1,0 +1,69 @@
+{
+  "label": "2026-06-06",
+  "date": "2026-06-06",
+  "generated_at": "2026-06-06T21:18:59",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202606/06/2606.04804v2-the-right-measure-for-physics-constrained-generation-a-co-area-correction-for-posterior-consistent-pde-inverse-problems",
+      "section": "deep",
+      "title_en": "The Right Measure for Physics-Constrained Generation: A Co-Area Correction for Posterior-Consistent PDE Inverse Problems",
+      "authors": "Jian Xu, Delu Zeng, John Paisley, Qibin Zhao",
+      "date": "2026-06-03",
+      "pdf": "https://arxiv.org/pdf/2606.04804v2",
+      "score": "8.0",
+      "evidence": "扩散和流匹配生成模型用于物理约束PDE逆问题，可应用于流体动力学",
+      "tldr": "物理约束生成模型（如扩散模型）在求解PDE逆问题时，通过投影或引导强制执行物理定律，但该方法因忽视测度零流形上的co-area Jacobian因子而采样了错误的后验分布。该偏差随约束灵敏度异质性增大，且无法通过简单标量重加权消除。作者提出CoCoS方法，引入正确的co-area校正因子，实现了与黄金标准后验匹配的采样。实验表明，忽略该因子会使后验误差增大至采样噪声底数的20倍，而CoCoS可在采样噪声内匹配真实后验。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Generative models -- diffusion and flow matching -- are increasingly used to solve partial differential equation (PDE) inverse problems, enforcing the governing physics as a \\emph{hard constraint} (via projection or guidance) and reporting the resulting samples as a Bayesian posterior with calibrated uncertainty. We show that this widely adopted recipe samples the wrong distribution. Conditioning a generative prior on a hard PDE constraint is conditioning on a measure-zero manifold -- an operation that is intrinsically ambiguous (the Borel--Kolmogorov paradox) and whose physically correct resolution, the small-residual-noise limit, carries a co-area (Fixman) Jacobian factor $[det(JJ^{\\top})]^{-1/2}$ that projection- and guidance-based methods silently omit. We make the bias precise, show that it grows with the heterogeneity of the constraint sensitivity, and validate it on controlled problems against an \\emph{i.i.d.} ground-truth arbiter. The omitted factor is not a second-order detail: removing it inflates the posterior error to $20\\times$ the sampling-noise floor; minimal-displacement projection (as in PCFM) is biased at $9\\times$ the floor; and a naive scalar reweighting does not fix it. We introduce \\textbf{CoCoS}, a measure-aware constrained sampler that targets the correct co-area posterior, and show that it matches the gold-standard posterior to within sampling noise. Our results imply that ``satisfying the physics'' is not the same as ``sampling the posterior,'' and give a principled correction for uncertainty-aware scientific inference.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/06/2606.04737v1-physics-informed-video-generation-via-mixture-of-experts-latent-alignment",
+      "section": "quick",
+      "title_en": "Physics-Informed Video Generation via Mixture-of-Experts Latent Alignment",
+      "authors": "Cong Wang, Hanxin Zhu, Jiayi Luo, Yonglin Tian, Xiaoqian Cheng, Peiyan Tu, Xin Jin, Long Chen, Zhibo Chen",
+      "date": "2026-06-03",
+      "pdf": "https://arxiv.org/pdf/2606.04737v1",
+      "score": "7.0",
+      "evidence": "使用流匹配生成模型的物理信息视频生成",
+      "tldr": "针对大规模视频生成模型因像素级拟合导致物理合理性不足的问题，提出PILA框架，通过锚定场估计将冻结生成器的潜变量映射为由场代理槽组织的物理属性库，利用可观测运动构造代理。采用混合专家设计，标签先验掩码路由选择类别特定算子，利用物理关系中的操作残差规范化精炼，最终解码为流匹配向量场修正，注入物理指导同时保持视觉先验。在Wan 2.1-1.3B训练并直接迁移至Wan 2.2-14B，在VBench-2.0、VideoPhy-2和PhyGenBench上视觉质量和物理合理性均达到最佳。该方法无需修改生成器，为预训练视频模型提供可迁移的物理先验注入方案。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Large-scale video generation models have made remarkable progress in semantic consistency and visual quality, producing videos that are increasingly coherent and visually convincing. Nevertheless, the dynamics induced by pixel-level fitting do not naturally accommodate the regularities that govern real-world motion and interaction, resulting in persistent shortcomings in physical plausibility. To address this limitation, we propose \\textbf{PILA} (Physics-Informed Latent Alignment), a framework that injects physics-structured latent guidance into the frozen flow-matching dynamics of pretrained video models. Specifically, PILA first employs anchored field estimation to map frozen-generator latents into an operational physical attribute bank organized by field-proxy slots, using observable motion as a kinematic anchor for constructing less directly observed proxies. To handle the heterogeneity of real-world dynamics, PILA adopts a mixture-of-experts design over physical categories. Label-prior masked expert routing selects category-specific operator experts, whose refinements are regularized by operational residuals abstracted from physical relations. Finally, the refined proxies are fused into the physical attribute bank and decoded into a correction to the flow-matching vector field, injecting physics-aware guidance while preserving the visual prior of the pretrained backbone. With staged adapter training on Wan 2.1-1.3B and direct transfer of the learned adapter to Wan 2.2-14B, PILA achieves state-of-the-art results on VBench-2.0, VideoPhy-2, and PhyGenBench in both visual quality and benchmark-measured physical plausibility.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/06/2606.05327v1-multimarginal-flow-matching-with-optimal-transport-potentials",
+      "section": "quick",
+      "title_en": "Multimarginal flow matching with optimal transport potentials",
+      "authors": "Raghav Kansal, David Crair, Nghia Nguyen, Scott Pope, Bradley Parry",
+      "date": "2026-06-03",
+      "pdf": "https://arxiv.org/pdf/2606.05327v1",
+      "score": "7.0",
+      "evidence": "多边际流匹配与最优输运势方法，可应用于流体动力学中的时间演化建模",
+      "tldr": "多边际流匹配问题关注中间观测边际对端点间流形约束。本文利用动态最优传输势项软引导流经过中间边际，通过扩展条件流匹配学习目标，提出免模拟的多边际流匹配算法OTP-FM。该方法在单细胞RNA测序、海洋学和气象学数据集上取得最优性能及训练效率。相关工作揭示了流匹配与动态最优传输的联系，并为科学领域中时序分布建模提供新工具。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Flow matching (FM) has emerged as a powerful framework for learning dynamic transport maps between two empirical distributions. However, less explored is the setting with intermediate observed marginals that can help constrain the flows between the endpoints. This \"multimarginal\" regime is central to modeling temporal evolution in dynamical systems in many scientific domains that can sample sequential distributions. We tackle this problem with a novel approach that leverages the connection between FM and dynamic optimal transport (OT), softly steering the flow towards the intermediate marginals through potential terms in the dynamic OT action. By extending the conditional FM learning target to incorporate these potentials, we derive an efficient, simulation-free algorithm for multimarginal FM that offers considerable flexibility in the spatiotemporal dynamics of the learned flows. We demonstrate state-of-the-art performance and training efficiency of OT-potential FM (OTP-FM) on diverse single-cell RNA sequencing, oceanographic, and meteorological datasets. Our code is available at https://github.com/Bexorg-Inc/OTP-FM.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/06/2606.04092v1-optimal-transport-flow-matching-by-design",
+      "section": "quick",
+      "title_en": "Optimal Transport Flow Matching by Design",
+      "authors": "Shimon Malnick, Matan Rusanovsky, Ohad Fried, Shai Avidan",
+      "date": "2026-06-02",
+      "pdf": "https://arxiv.org/pdf/2606.04092v1",
+      "score": "6.0",
+      "evidence": "通过设计最优输运流匹配，将先验视为可设计选择，产生直线轨迹，适用于流体模拟",
+      "tldr": "流匹配模型依赖先验与数据间的最优传输（OT）耦合实现直线轨迹，但高维OT耦合难以计算。本文将先验视为设计变量，选择数据的低频投影作为先验，其与数据形成OT最优的恒等耦合，使流匹配仅需合成高频细节。结合高斯噪声插值后，无需修改流模型，即可在所有基准上将轨迹曲率降低2倍以上，显著提升少步生成质量。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Flow matching models learn to transport samples from a simple prior distribution to a complex data distribution. When prior-data pairs are coupled via optimal transport (OT), the learned trajectories are straight and non-crossing, enabling fast, even single-step, generation. However, computing the OT coupling in high dimensions is intractable, and existing methods attempt to solve the OT problem, at the cost of persistent bias or significant overhead. Rather than solving for the OT coupling, we reformulate the problem. Once the prior is treated as a design choice rather than a fixed input, the OT coupling between prior and data is no longer unique. Many priors admit an OT-optimal identity coupling to the data, leaving us free to choose one that is also tractable to sample. We identify low-frequency projection of natural images as such a choice. The identity coupling between data and its low-frequency representation is empirically OT-optimal, the prior is structured enough to be sampled by a lightweight model at inference, and the remaining flow-matching task reduces to synthesizing high-frequency detail. Interpolating the prior with Gaussian noise further improves generation quality while preserving the OT coupling. The approach requires no modifications to the flow model itself, and integrates naturally with latent-space models, classifier-free guidance, and one-step generation frameworks. Across all benchmarks, our method reduces trajectory curvature by more than $2\\times$ compared to existing flow matching methods, yielding better generation quality in the few-step regime.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
