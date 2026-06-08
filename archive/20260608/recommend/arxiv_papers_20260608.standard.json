@@ -1,0 +1,220 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-08T21:23:24.153308+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2606.07481v1",
+      "source": "arxiv",
+      "title": "Drifting Models for Surrogate Flow Modeling",
+      "abstract": "While Computational Fluid Dynamics (CFD) provides high-fidelity flow fields for optimizing indoor environments, its computational cost limits rapid exploration. To solve this problem generative surrogates offer better distribution modeling than deterministic networks, but iterative sampling is slow. To enable high-quality, single-pass generation, we adapt the novel generative drifting framework to fluid mechanics. We introduce a conditional architecture that performs drifting in a learned VAE latent space and uses label-aware masking to align generated samples with their boundary conditions. Our label-conditioned model matches iterative diffusion in accuracy and flow consistency while running two orders of magnitude faster. Additionally, we propose a spatial-conditioning variant that establishes a promising path towards generalization to unseen geometries. Ultimately, conditional drifting serves as a highly efficient alternative to diffusion based approaches, unlocking real-time CFD surrogates where inference speed is critical.",
+      "authors": [
+        "Chris R. Jung",
+        "Markus Dörr",
+        "Natalie Jüngling",
+        "Jennifer Niessner",
+        "Adam T. Müller",
+        "Nicolaj C. Stache"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-05T17:35:09+00:00",
+      "link": "https://arxiv.org/pdf/2606.07481v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "generative drifting framework adapted to fluid mechanics for surrogate flow modeling",
+      "llm_evidence_cn": "将生成式漂移框架应用于流体力学代理建模",
+      "llm_evidence": "将生成式漂移框架应用于流体力学代理建模",
+      "canonical_evidence": "将生成式漂移框架应用于流体力学代理建模",
+      "llm_tldr_en": "This paper adapts the generative drifting framework to fluid mechanics, enabling fast single-pass generation of flow fields with accuracy matching iterative diffusion.",
+      "llm_tldr_cn": "针对计算流体力学高计算成本限制快速探索的问题，本文提出将生成式漂移框架引入流体力学代理建模。该方法在VAE潜空间中进行条件漂移，并使用标签感知掩码对齐边界条件，实现单步高质量流场生成。实验表明，该模型在准确性和流动一致性上媲美迭代扩散模型，速度提升两个数量级，为高效流体仿真提供了新范式。",
+      "llm_tldr": "针对计算流体力学高计算成本限制快速探索的问题，本文提出将生成式漂移框架引入流体力学代理建模。该方法在VAE潜空间中进行条件漂移，并使用标签感知掩码对齐边界条件，实现单步高质量流场生成。实验表明，该模型在准确性和流动一致性上媲美迭代扩散模型，速度提升两个数量级，为高效流体仿真提供了新范式。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.06658v1",
+      "source": "arxiv",
+      "title": "Capturing non-Markovian dynamics in non-equilibrium stochastic systems using flow matching",
+      "abstract": "Hydrodynamic models of stochastic particle systems represented by coarse-grained stochastic partial differential equations (SPDE), such as the regularized Dean-Kawasaki (DK) equation, do not accurately capture the short-time system dynamics that is dominated by non-Markovian effects, and low particle density regimes where the distributions are highly non-Gaussian. We develop a generative flow matching method that directly models the probability distribution of fluxes from particle simulations that explicitly incorporates non-Markovian and non-Gaussian effects. As a demonstration, we use this method to simulate the Kramers first passage time problem for a system of non-interacting Brownian particles. We show the model accurately captures the short-time behavior and provides better predictions of the statistical moments of the number density when compared against the solution of the Markovian baseline, regularized DK equation.",
+      "authors": [
+        "Bhargav Sriram Siddani",
+        "John B. Bell",
+        "Alejandro L. Garcia",
+        "Ishan Srivastava"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cond-mat.stat-mech",
+        "physics.comp-ph"
+      ],
+      "published": "2026-06-04T19:06:10+00:00",
+      "link": "https://arxiv.org/pdf/2606.06658v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "uses flow matching for hydrodynamic-like stochastic particle systems",
+      "llm_evidence_cn": "使用流匹配方法模拟类似流体动力学的随机粒子系统",
+      "llm_evidence": "使用流匹配方法模拟类似流体动力学的随机粒子系统",
+      "canonical_evidence": "使用流匹配方法模拟类似流体动力学的随机粒子系统",
+      "llm_tldr_en": "This paper develops a generative flow matching method to model probability distributions of fluxes from particle simulations, accurately capturing non-Markovian and non-Gaussian effects in non-equilibrium stochastic systems, with demonstration on Kramers first passage time problem.",
+      "llm_tldr_cn": "针对传统粗粒化随机偏微分方程无法准确捕捉短时间非马尔可夫效应和非高斯分布的问题，本文提出了一种生成式流匹配方法，直接从粒子模拟中建模通量的概率分布，显式包含非马尔可夫和非高斯效应。在克拉默斯首达时间问题上展示了该方法的准确性，证明其能捕捉传统方法缺失的动力学特征。该方法为随机粒子系统的流体动力学建模提供了新工具。",
+      "llm_tldr": "针对传统粗粒化随机偏微分方程无法准确捕捉短时间非马尔可夫效应和非高斯分布的问题，本文提出了一种生成式流匹配方法，直接从粒子模拟中建模通量的概率分布，显式包含非马尔可夫和非高斯效应。在克拉默斯首达时间问题上展示了该方法的准确性，证明其能捕捉传统方法缺失的动力学特征。该方法为随机粒子系统的流体动力学建模提供了新工具。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.02179v1",
+      "source": "arxiv",
+      "title": "On the Generalization in Topology Optimization via Sensitivity-Conditioned Bernoulli Flow Matching",
+      "abstract": "Surrogate models for topology optimization (TO) exhibit highly variable out-of-distribution (OOD) generalization under distribution shifts such as changing loads or boundary conditions, yet the source of this variability remains unclear. We hypothesize that OOD performance is governed by how much information the conditioning signal preserves about the adjoint sensitivity (reduced gradient) that drives classical TO. Modeling the TO pipeline as a causal Markov chain, the Data Processing Inequality establishes that, under this abstraction, the sensitivity field is an information-theoretically optimal conditioning signal for topology prediction. However, computing exact adjoint sensitivities can be expensive or unavailable in practice; we observe that certain physical fields can approximate sensitivities through monotone transformations. To formalize this, we introduce \\textbf{pseudo-sensitivities} to characterize which fields enable generalization versus those that are information-poor. We then show that a sensitivity-conditioned Bernoulli flow-matching generator empirically confirms these predictions: conditioning on sensitivities yields state-of-the-art OOD performance, while increasingly distant physical fields degrade toward raw parameter conditioning. Results hold across structural TO benchmarks under load shifts and our new CFD-TO dataset under boundary-condition shifts such as multi-outlet configurations. Code and datasets are available at https://tum-pbs.github.io/topotransformer/ .",
+      "authors": [
+        "Mohammad Rashed",
+        "Duarte F. Valoroso Madeira",
+        "Babak Gholami",
+        "Caglar Guerbuez",
+        "Yunjia Yang",
+        "Nils Thuerey"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CE"
+      ],
+      "published": "2026-06-01T12:36:41+00:00",
+      "link": "https://arxiv.org/pdf/2606.02179v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Bernoulli flow matching method applied to topology optimization, transferable to fluid dynamics",
+      "llm_evidence_cn": "伯努利流匹配方法应用于拓扑优化，可迁移至流体力学",
+      "llm_evidence": "伯努利流匹配方法应用于拓扑优化，可迁移至流体力学",
+      "canonical_evidence": "伯努利流匹配方法应用于拓扑优化，可迁移至流体力学",
+      "llm_tldr_en": "This paper uses Bernoulli flow matching for topology optimization, showing sensitivity conditioning improves generalization, providing a transferable generative method for fluid dynamics.",
+      "llm_tldr_cn": "针对拓扑优化中代理模型泛化性不足的问题，本文提出基于灵敏度条件的伯努利流匹配方法。该方法利用数据加工不等式证明灵敏度场是最优条件信号，并通过信息论分析解释泛化差异。实验表明，该方法在分布偏移下保持良好性能，其流匹配框架可迁移至流体力学中的生成式建模任务。",
+      "llm_tldr": "针对拓扑优化中代理模型泛化性不足的问题，本文提出基于灵敏度条件的伯努利流匹配方法。该方法利用数据加工不等式证明灵敏度场是最优条件信号，并通过信息论分析解释泛化差异。实验表明，该方法在分布偏移下保持良好性能，其流匹配框架可迁移至流体力学中的生成式建模任务。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.03834v1",
+      "source": "arxiv",
+      "title": "Let the Dynamics Flow: Stable Flow Matching Dynamical Systems",
+      "abstract": "Flow matching has recently emerged as a powerful approach for imitation learning, enabling scalable, expressive, and multimodal motion policies. However, incorporating formal stability guarantees into these generative models, a prerequisite to ensure safe and generalizable robot behaviors, remains a significant challenge. While modeling robot motions as dynamical systems allows for such stability-based inductive biases, existing frameworks struggle to capture the rich action distributions inherent in complex robotic tasks. This paper introduces Stable Flow Matching Dynamical Systems (SFMDS), a novel framework that bridges the gap between high-capacity generative modeling and formal Lyapunov stability guarantees. SFMDS parametrizes dynamical systems via flow matching while simultaneously constraining the model to a family of stable solutions. We propose two variants: a soft constraint based on a penalty term, and a hard structural constraint embedded directly in the model architecture. We further extend both formulations to Lie groups. Experiments on benchmark datasets, in simulation, and on a humanoid robot show that SFMDS learns stable, scalable, and multimodal dynamical systems in low- and high-dimensional state spaces, enabling safe and expressive robot motion generation.",
+      "authors": [
+        "Rodrigo Pérez-Dattari",
+        "Francisco Leiva",
+        "Andrea Testa",
+        "Leonel Rozo",
+        "Javier Ruiz del Solar",
+        "Noémie Jaquier"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-06-02T16:17:26+00:00",
+      "link": "https://arxiv.org/pdf/2606.03834v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Flow matching for stable dynamical systems, method transferable to fluid dynamics",
+      "llm_evidence_cn": "流匹配用于稳定动力系统，方法可迁移至流体动力学",
+      "llm_evidence": "流匹配用于稳定动力系统，方法可迁移至流体动力学",
+      "canonical_evidence": "流匹配用于稳定动力系统，方法可迁移至流体动力学",
+      "llm_tldr_en": "Stable Flow Matching Dynamical Systems (SFMDS) integrates flow matching with Lyapunov stability for robot motion, but method can benefit fluid flow modeling.",
+      "llm_tldr_cn": "机器人运动策略需要同时具备生成模型的表达能力和形式化稳定性保证。该论文提出SFMDS，通过流匹配参数化动力系统，并融入李雅普诺夫稳定性约束。在机器人任务上验证了多模态运动生成和稳定性。虽然应用于机器人，但其稳定流匹配方法可借鉴到流体动力学中的流动建模。",
+      "llm_tldr": "机器人运动策略需要同时具备生成模型的表达能力和形式化稳定性保证。该论文提出SFMDS，通过流匹配参数化动力系统，并融入李雅普诺夫稳定性约束。在机器人任务上验证了多模态运动生成和稳定性。虽然应用于机器人，但其稳定流匹配方法可借鉴到流体动力学中的流动建模。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.05399v1",
+      "source": "arxiv",
+      "title": "UniPixie: Unified and Probabilistic 3D Physics Learning via Flow Matching",
+      "abstract": "Existing feed-forward networks excel at predicting a single set of physical properties from visual appearance, but this point-estimate paradigm fundamentally fails to capture the real world's inherent physical ambiguity. We address this by reframing physics prediction as a task of learning a controllable, continuous distribution of material properties. We introduce UNIPIXIE, a framework trained to predict a continuous and parameterized path of physically plausible material properties from a single visual input. By learning a direct mapping along an object's softest-to-stiffest spectrum on our PIXIEMULTIVERSE dataset, UNIPIXIE allows for controllable generation of diverse, physically valid material fields via a single intuitive parameter. Crucially, UNIPIXIE introduces a novel unified architecture to produce simulation-ready parameters for diverse physics solvers, including continuum-based Material Point Method (MPM), reduced-order deformation based on Linear Blend Skinning (LBS), and anchor-based Spring-Mass systems, addressing a key portability issue in prior work. Experiments show our approach not only generates a rich variety of plausible dynamics but also reduces Young's Modulus prediction error by over 50% against the strongest deterministic baseline, bridging the gap between static point estimates and the continuous nature of physical reality. Project page: https://unipixie.github.io/",
+      "authors": [
+        "Qilin Huang",
+        "Quynh Anh Huynh",
+        "Long Le",
+        "Chen Wang",
+        "Chuhao Chen",
+        "Ryan Lucas",
+        "Eric Eaton",
+        "Lingjie Liu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-06-03T20:08:23+00:00",
+      "link": "https://arxiv.org/pdf/2606.05399v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Flow matching for probabilistic physics learning, transferable to fluid dynamics",
+      "llm_evidence_cn": "流匹配用于概率物理学习，可迁移至流体动力学",
+      "llm_evidence": "流匹配用于概率物理学习，可迁移至流体动力学",
+      "canonical_evidence": "流匹配用于概率物理学习，可迁移至流体动力学",
+      "llm_tldr_en": "UniPixie uses flow matching to learn a continuous distribution of material properties from visual input, enabling controllable generation of physically valid fields.",
+      "llm_tldr_cn": "现有前馈网络只能预测单一物理属性，无法捕捉实际物理中的不确定性。该论文利用流匹配学习材料属性的连续分布，从单张图像生成多样且物理合理的材料场。在PIXIEMULTIVERSE数据集上训练，通过单一参数控制软硬程度。该方法可推广到流体属性分布学习。",
+      "llm_tldr": "现有前馈网络只能预测单一物理属性，无法捕捉实际物理中的不确定性。该论文利用流匹配学习材料属性的连续分布，从单张图像生成多样且物理合理的材料场。在PIXIEMULTIVERSE数据集上训练，通过单一参数控制软硬程度。该方法可推广到流体属性分布学习。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

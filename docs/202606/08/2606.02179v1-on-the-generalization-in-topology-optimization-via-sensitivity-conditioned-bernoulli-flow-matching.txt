@@ -1,0 +1,1130 @@
+Title: On the Generalization in Topology Optimization via Sensitivity-Conditioned Bernoulli Flow Matching
+
+URL Source: https://arxiv.org/pdf/2606.02179v1
+
+Published Time: Tue, 02 Jun 2026 03:16:46 GMT
+
+Number of Pages: 28
+
+Markdown Content:
+# On the Generalization in Topology Optimization via Sensitivity-Conditioned Bernoulli Flow Matching 
+
+Mohammad Rashed 1 2 3 Duarte F. Valoroso Madeira 2 4 Babak Gholami 2 Caglar Guerbuez 2 Yunjia Yang 1
+
+Nils Thuerey 1 3 
+
+## Abstract 
+
+Surrogate models for topology optimization (TO) exhibit highly variable out-of-distribution (OOD) generalization under distribution shifts such as changing loads or boundary conditions, yet the source of this variability remains unclear. We hypothesize that OOD performance is governed by how much information the conditioning sig-nal preserves about the adjoint sensitivity (re-duced gradient) that drives classical TO. Model-ing the TO pipeline as a causal Markov chain, the Data Processing Inequality establishes that, under this abstraction, the sensitivity field is an information-theoretically optimal condition-ing signal for topology prediction. However, computing exact adjoint sensitivities can be expensive or unavailable in practice; we ob-serve that certain physical fields can approxi-mate sensitivities through monotone transforma-tions. To formalize this, we introduce pseudo-sensitivities to characterize which fields enable generalization versus those that are information-poor. We then show that a sensitivity-conditioned Bernoulli flow-matching generator empirically confirms these predictions: conditioning on sensitivities yields state-of-the-art OOD perfor-mance, while increasingly distant physical fields degrade toward raw parameter conditioning. Re-sults hold across structural TO benchmarks under load shifts and our new CFD-TO dataset under boundary-condition shifts such as multi-outlet configurations. Code and datasets are available at https://github.com/tum-pbs/top otransformer .
+
+> 1
+
+School of Computation, Information and Technology, Tech-nical University of Munich, Germany 2BMW AG, Munich, Ger-many 3Munich Center for Machine Learning, Munich, Germany. 
+
+> 4
+
+Hamburg University of Technology, Hamburg, Germany. Corre-spondence to: Mohammad Rashed <m.rashed@tum.de >.
+
+Proceedings of the 43 rd International Conference on Machine Learning , Seoul, South Korea. PMLR 306, 2026. Copyright 2026 by the author(s). Baseline + Pseudo-Sen.   
+
+> Conditioning
+> + Architecture
+> Enhancement
+> + BFM
+> Formulation
+> 0
+> 10
+> 20
+> 30
+> 40
+> 50
+> 60
+> 70
+> Relative Pressure Drop Error (%)
+> In-Distribution
+> OOD-1
+> OOD-2
+> P-S Arch BFM
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> 7
+> 8
+
+Figure 1. Conditioning signal governs OOD generalization. Bot-tom: Quantitative CFD results reveal that the most significant per-formance gain comes from pseudo-sensitivity conditioning, em-pirically validating our theoretical finding that sensitivity-aligned signals are information-theoretically optimal. Subsequent archi-tectural changes (such as Bernoulli Flow Matching) provide sec-ondary, gradual refinements. Top: Qualitative predictions mirror this trend: the conditioning signal establishes the correct global topology and connectivity, while additional model modules pri-marily enhance boundary sharpness. This highlights that the prox-imity of the conditioning signal to the true sensitivity is the dom-inant factor in solving out-of-distribution topology problems. 
+
+## 1. Introduction 
+
+Topology optimization seeks an optimal material distribu-tion, by typically minimizing an objective functional sub-ject to PDE constraints (Bendsøe & Kikuchi, 1988; Sig-mund & Maute, 2013). Classical gradient-based methods rely on repeated forward and adjoint PDE solves, often re-quiring hundreds of iterations. This computational burden is especially severe for CFD problems involving turbulent flows, where each adjoint solve may be unstable or require simplifying assumptions such as frozen turbulence. Recent learning-based approaches aim to amortize this cost by predicting optimal topologies directly from prob-1
+
+> arXiv:2606.02179v1 [cs.LG] 1 Jun 2026 Sensitivity-Conditioned Bernoulli Flow Matching
+
+lem specifications. Deterministic regressors conditioned on boundary conditions and loads achieve fast inference but exhibit limited out-of-distribution (OOD) generaliza-tion (Nobari et al., 2025). Generative models such as TopoDiffusion (Maz´ e & Ahmed, 2023) offer improved ro-bustness by conditioning on strain energy density along with other physical fields, though the mechanism underly-ing this improvement remains unclear. Moreover, existing generative approaches rely on continuous Gaussian diffu-sion (Maz´ e & Ahmed, 2023; Giannone & Ahmed, 2023), a choice that is fundamentally misaligned with binary topol-ogy representations. Another notable gap in the literature is that all existing learning-based topology optimization methods target struc-tural compliance problems. To our knowledge, no prior work has applied deep generative models to turbulent CFD topology optimization, likely due to the expense of gener-ating training data and the complexity of computing adjoint sensitivities under RANS turbulence closures. In this work, we argue that while architectural innovations can enhance generalization, the dominant factor govern-ing out-of-distribution performance is the choice of con-ditioning signal. Modeling the optimization pipeline as a Markov chain, we apply the Data Processing Inequality to show that adjoint sensitivities are information-theoretically optimal for predicting optimal topologies. We further in-troduce pseudo-sensitivities (physical fields related to true sensitivities via monotone transformations) which explains why strain energy density succeeds for structural problems, and identifies velocity magnitude as the analogous signal for CFD. To this end, we make the following contributions: • We show that adjoint sensitivities minimize condi-tional entropy for topology prediction (Theorem 1), providing a principled explanation for OOD general-ization. • We formalize pseudo-sensitivities (Definition 1) and derive closed-form expressions for structural compli-ance and CFD energy dissipation, unifying prior em-pirical conditioning choices under adjoint theory. • We present the first learning-based approach for tur-bulent CFD topology optimization, releasing a dataset of 10,000 problems with multi-outlet OOD splits. • We propose a sensitivity-conditioned Bernoulli Flow Model that respects the binary nature of topology, demonstrating improved OOD generalization over continuous diffusion baselines. 
+
+## 2. Related Work 
+
+Classical Topology Optimization. The Solid Isotropic Material with Penalization (SIMP) method (Bendsøe, 1989; Zhou & Rozvany, 1991; Mlejnek, 1992) serves as the foundation for topology optimization. SIMP relaxes the bi-nary material distribution ρ ∈ { 0, 1}N into a continuous density field ρ ∈ [0 , 1] N , with penalization to encourage binary solutions. Optimization techniques such as the op-timality criteria method (Bendsøe & Sigmund, 2004) and the method of moving asymptotes (Svanberg, 1987), typ-ically used with SIMP, rely on adjoint sensitivity analysis to efficiently compute gradients in these high-dimensional design spaces. And while these classical methods achieve high-quality solutions, they require solving hundreds of ex-pensive PDEs, motivating learning-based acceleration. 
+
+Learning-Based Topology Optimization. Early learn-ing approaches (Sosnovik & Oseledets, 2019; Cang et al., 2018) used neural networks to accelerate iterative op-timization by predicting intermediate topologies or gra-dients. More recent methods aim for direct, non-iterative prediction. Neural Implicit Topology Optimiza-tion (NITO) (Nobari et al., 2025) employs implicit neu-ral representations for resolution-free topology generation, achieving significant speedups over SIMP with 80% lower compliance errors than prior methods. However, determin-istic approaches conditioned solely on boundary conditions and loads exhibit limited OOD generalization. Generative models offer improved robustness through learned stochastic mappings. TopoDiffusion (Maz´ e & Ahmed, 2023) introduced diffusion models for topology optimization, conditioning on strain/stress energy density and employing surrogate-guided sampling to minimize compliance and ensure manufacturability. It demonstrated 8× reduction in OOD compliance error over conditional GANs (Kallioras et al., 2020; Nie et al., 2021). Despite empirical success, theoretical understanding of why these models generalize remains limited. 
+
+Adjoint Methods in CFD and Topology Optimiza-tion. Adjoint sensitivity analysis (Jameson, 1988; Giles & Pierce, 2000; 1997) is foundational for gradient-based design optimization in fluid mechanics. For turbulent flows, the treatment of turbulence model equations in the adjoint system is critical (Giles & Pierce, 2000; Marta & Shankaran, 2013). The “frozen turbulence” assump-tion (Marta & Shankaran, 2013), which neglects varia-tions of eddy viscosity with respect to design variables, significantly simplifies implementation but can produce wrongly-signed sensitivities in turbulent regions (K¨ uhl, 2021). Recent work addresses this through exact discrete adjoints (Dilgen et al., 2018) and wall-function consistent formulations (Palacios et al., 2013). To our knowledge, no 2Sensitivity-Conditioned Bernoulli Flow Matching 
+
+prior work has applied learning-based generative models to turbulent RANS topology optimization. 
+
+Generative Models: Diffusion and Flow Matching. 
+
+Denoising diffusion probabilistic models (DDPM) (Ho et al., 2020; Nichol & Dhariwal, 2021; Dhariwal & Nichol, 2021) have achieved state-of-the-art image generation by learning to reverse a gradual noising process. Conditional variants (Ho & Salimans, 2021; Dhariwal & Nichol, 2021) enable control through classifier-free guidance. However, DDPMs model continuous Gaussian distributions, which are fundamentally misaligned with binary topology repre-sentations. Flow matching (Lipman et al., 2023) provides a simulation-free alternative for training continuous normalizing flows (CNFs) by regressing vector fields along probability paths. It subsumes diffusion as a special case while enabling more efficient optimal transport paths. Recent extensions ad-dress discrete and categorical data. Discrete diffusion mod-els (Austin et al., 2021; Hoogeboom et al., 2021) handle categorical distributions through transition matrices. Most relevant to our work, Bernoulli Flow Models (BFM) (Mo et al., 2026) introduce flow matching for binary data by op-erating in Bernoulli parameter space with closed-form pos-teriors, avoiding invalid parameters and model collapse. 
+
+## 3. Preliminaries and Problem Formulation 
+
+3.1. Topology Optimization Formulation 
+
+Consider a design domain Ω ⊂ Rd. We aim to find a den-sity field ρ ∈ L∞(Ω) that minimizes an objective J , sub-ject to a volume constraint Vreq and a PDE constraint, with 
+
+0 ≤ ρ(x) ≤ 1 for almost every x ∈ Ω.
+
+Let U be the state space (e.g., H10 (Ω) ). The optimization problem is: 
+
+min  
+
+> ρ
+
+J (u(ρ), ρ )
+
+s.t. R(u, ρ ) = 0 (State Equation )
+
+Z
+
+> Ω
+
+ρ dx ≤ V req , 0 ≤ ρ(x) ≤ 1.
+
+(1) where R : U × L∞(Ω) → U ∗ is the PDE residual and u(ρ)
+
+denotes the state solving the PDE for a given design ρ.
+
+3.2. The Reduced Gradient (Sensitivity) 
+
+To solve (1), one typically employs the adjoint method. Let 
+
+λ ∈ U be the adjoint state satisfying: 
+
+ ∂R
+
+∂u 
+
+∗
+
+λ = ∂J
+
+∂u . (2) The Sensitivity Field S ∈ L∞(Ω) is defined as the total derivative (reduced gradient) of the objective with respect to ρ:
+
+S(x) := dJ
+
+dρ (x) = ∂J
+
+∂ρ (x) −
+
+
+
+λ, ∂R
+
+∂ρ (·, x )
+
+
+
+. (3) We write S(ρ) when we wish to emphasize the dependence on the design ρ, and denote by 
+
+S0 := S(ρinit )
+
+the initial sensitivity field evaluated at the initial de-sign ρinit . Abusing notation, we use the same symbols (Θ, X, S 0, ρ ⋆) to denote both random variables and their realizations; the distinction will be clear from context. 
+
+## 4. Theoretical Framework: Conditioning and Generalization in Topology Optimization 
+
+We analyze learning-based topology optimization through the lens of information flow. Our goal is to understand which conditioning signals fundamentally enable general-ization across problem instances, independent of the par-ticular generative model used. Throughout, we consider first-order topology optimization methods (e.g., SIMP) and focus on the initial sensitivity field , which empirically governs the global structure of the final design. 
+
+4.1. A Causal Abstraction of Topology Optimization 
+
+Let Θ ∼ p(Θ) denote random problem parameters, includ-ing boundary conditions, loads, material properties, and ge-ometry. Let ρ⋆ denote the converged (binary) topology pro-duced by a classical optimizer initialized from a fixed initial design ρinit . We model the topology optimization pipeline as the following sequence of operators: 
+
+Θ F
+
+−−→ X A
+
+−−→ S0
+
+> T
+
+−−→ ρ⋆, (4) where S0 := dJ 
+
+> dρ ρinit
+
+is the initial reduced gradient (sen-sitivity field) computed via an adjoint solve. X denotes physical state fields obtained by solving the governing PDE at ρinit (e.g., displacement, velocity, pressure), and T de-notes a deterministic first-order optimizer mapping the ini-tial sensitivity landscape to a target topology. This abstrac-tion isolates the information pathway through which prob-lem parameters influence the optimal design. 
+
+4.2. Markov Structure and Modeling Assumptions 
+
+We formalize the abstraction above via the following as-sumption. 
+
+Assumption 1 (Causal Markov Structure) . The random variables (Θ , X, S 0, ρ ⋆) satisfy the following conditional independencies: 
+
+3Sensitivity-Conditioned Bernoulli Flow Matching         
+
+> Figure 2. Information flow in topology optimization. (A) The TO pipeline forms a Markov chain Θ→X→S0→ρ⋆, with conditional entropy decreasing toward the sensitivity field. (B) Conditioning comparison: pseudo-sensitivities generalize OOD, while non-pseudo fields and raw parameters degrade.
+
+1. Θ → X → S0 (sensitivities are computed deter-ministically from physical fields); 2. X → S0 → ρ⋆ (the optimizer acts on the sensitivity field and constraints, not directly on raw state fields); 3. Θ → X → ρ⋆ (problem parameters influence the design only through the induced physical solution). 
+
+Together, these relations define the Markov chain 
+
+Θ → X → S0 → ρ⋆. (5) Figure 2 illustrates this information flow and the resulting entropy ordering. 
+
+4.3. Information-Theoretic Limits of Conditioning Signals 
+
+We now quantify how much information different condi-tioning signals can provide about the optimal topology. 
+
+Theorem 1 (Sensitivity as Information-Theoretically Op-timal Conditioning) . Under Assumption 1, the mutual in-formation between the optimal topology ρ⋆ and candidate conditioning signals satisfies: 
+
+I(ρ⋆; Θ) ≤ I(ρ⋆; X) ≤ I(ρ⋆; S0). (6) 
+
+Equivalently, the conditional entropies obey: 
+
+H(ρ⋆ | S0) ≤ H(ρ⋆ | X) ≤ H(ρ⋆ | Θ) . (7) 
+
+Proof. By Assumption 1, the variables form the Markov chain Θ → X → S0 → ρ⋆. Applying the Data Processing Inequality twice yields I(Θ; ρ⋆) ≤ I(X; ρ⋆) ≤ I(S0; ρ⋆).The entropy ordering follows from H(ρ⋆ | Z) = H(ρ⋆) −
+
+I(ρ⋆; Z).
+
+Interpretation. Theorem 1 does not claim that con-ditioning on sensitivities guarantees perfect prediction. Rather, it establishes a fundamental lower bound on ir-reducible uncertainty: among all admissible conditioning signals derived from the problem setup, the sensitivity field minimizes the Bayes-optimal prediction error for ρ⋆. The proof is detailed in Appendix A.1. 
+
+4.4. Pseudo-Sensitivities: When Physical Fields Are Sufficient 
+
+While S0 is optimal, computing exact adjoint sensitivities may be expensive or unavailable. We therefore ask when physical fields can serve as effective substitutes. 
+
+Definition 1 (Pseudo-Sensitivity) . Let X : Ω → R be a scalar physical field. We say that X is an ϵ-approximate 
+
+pseudo-sensitivity for S0 if there exists a monotone func-tion h : R → R such that 
+
+∥S0 − h(X)∥2 
+
+> L2(Ω)
+
+≤ ϵ. (8) 
+
+For vector-valued fields, X is first reduced to a scalar in-variant (e.g., ∥v∥2). 
+
+Here, we provide several candidates of the pseudo-sensitivity for both fluid and structural problems. 
+
+Proposition 1 (Hierarchy of Physical Fields) .
+
+1. Linear elasticity (compliance): Strain Energy Density is a 0-approximate pseudo-sensitivity: S0 ∝ − SED .The derivation is detailed in Appendix A.5. 2. Navier–Stokes energy dissipation: Under the frozen turbulence assumption and high-Reynolds-number asymptotics, S0 ∝ −∥ v∥2. The full derivation is de-tailed in Appendix A.6. 
+
+4Sensitivity-Conditioned Bernoulli Flow Matching    
+
+> Figure 3. Network architecture. A hierarchical vision transformer with encoder-decoder structure processes the conditioning field (sensitivity or pseudo-sensitivity) and noisy Bernoulli state xt. Cross-attention blocks at each resolution allow the sensitivity field to modulate feature updates, while AdaLN injects timestep information in addition to main features.
+
+3. Pressure and displacement: In general, these are not pseudo-sensitivities, as their relationship to S0 in-volves nonlocal operators and tensorial contractions. 
+
+Consequences for Generalization. If X is an ϵ-approximate pseudo-sensitivity, then 
+
+H(ρ⋆ | X) = H(ρ⋆ | S0) + O(√ϵ), (9) and by Fano’s inequality, the minimum achievable predic-tion error increases smoothly with ϵ.This explains the success of TopoDiff (Maz´ e & Ahmed, 2023) (which used SED), the limited generalization of methods conditioned on physical parameters (Nobari et al., 2025), and predicts failure for arbitrary physical fields. For CFD, the pseudo-sensitivity relationship emerges from high-Reynolds asymptotics combined with frozen turbu-lence (Appendix A.6). 
+
+## 5. Method: Sensitivity-Conditioned Bernoulli Flow Matching 
+
+We generate binary topologies using Bernoulli flow match-ing (Mo et al., 2026) conditioned on sensitivity fields. Un-like continuous diffusion, this formulation operates directly in Bernoulli parameter space, avoiding instabilities near the simplex boundary that arise with naive velocity regression. 
+
+5.1. Bernoulli Probability Path 
+
+Let x1 ∈ { 0, 1}N denote the target topology. We define an uninformative prior αprior = 0 .5 and a time-indexed family of Bernoulli marginals αt ∈ [0 , 1] N with xt ∼
+
+Bernoulli( αt). Following (Mo et al., 2026), we use a linear probability path 
+
+αt(x1) = (1 − t) · 0.5 + t · x1, t ∈ [0 , 1] , (10) interpolating from the uninformative prior to the target bi-nary topology. 
+
+5.2. Training Objective 
+
+Rather than regressing a probability-space vector field, we train a conditional denoiser fθ (xt, t, S 0) that predicts the clean topology given a noisy sample xt, time t, and condi-tioning signal S0. The network outputs per-cell probabil-ities ˆρ = pθ (x1=1 | xt, t, S 0) and is trained with binary cross-entropy: 
+
+L(θ) = Et,x 1,x t
+
+h
+
+BCE  fθ (xt, t, S 0), x 1
+
+i
+
+. (11) We use 50 sampling steps with linear scheduling. At in-ference, we replace the final stochastic step with a deter-ministic greedy projection to produce clean, simulation-ready topologies (Appendix C.4), and optionally enforce volume fraction constraints via confidence-based progres-sive pruning (Appendix C.3). Full training hyperparame-ters and sampling details are provided in Appendix B. 
+
+5.3. Architecture 
+
+Figure 3 illustrates the network architecture. We use a hierarchical vision transformer with an encoder-decoder structure: two encoder stages, a bottleneck, and two de-coder stages connected by skip connections. The input con-sists of two channels: The conditioning field (sensitivity or 5Sensitivity-Conditioned Bernoulli Flow Matching 
+
+Table 1. Simulation-level performance comparison across ID and OOD test sets. All learned models are conditioned on sensitivities. 
+
+Err ∆p: Mean Relative Pressure Drop Error (%) ± Std. Med. : Median Error (%). Acc. : Accuracy (% within 10% error). STAR-CCM+ represents one optimization iteration. Best learned model results are bolded .
+
+ID Test OOD-Medium (2 Outlets) OOD-Hard (3 Outlets) Model Err ∆p± Std Med. Acc. Err ∆p± Std Med. Acc. Err ∆p± Std Med. Acc. 
+
+STAR-CCM+ (1 iter) 14 .39 ± 21 .49 10 .28 49 .0 21 .94 ± 27 .58 15 .86 41 .0 26 .51 ± 32 .33 18 .47 40 .0
+
+DiT 2.59 ± 4.21 1.45 96 .4 8.58 ± 14 .58 3.66 79 .4 9.06 ± 12 .66 4.85 70 .6
+
+UDiT 2.37 ± 4.26 1.65 97 .2 8.62 ± 15 .77 4.84 75 .4 13 .03 ± 21 .71 7.00 62 .7
+
+PDE-T 2.47 ± 4.82 1.82 96 .8 7.50 ± 14 .23 3.78 75 .5 9.33 ± 17 .68 4.35 68 .6
+
+Ours 3.68 ± 6.71 2.63 92 .6 6.38 ± 12 .64 3.54 72 .3 6.12 ± 13 .77 2.70 74 .5
+
+pseudo-sensitivity) and the noisy Bernoulli state xtwhich are embedded via 4×4 patches. Each stage contains a cross-attention block followed by self-attention blocks, all using Neighborhood Attention (NATTEN) (Hassani et al., 2023). In cross-attention blocks, queries derive from the main feature stream while keys and values come from the conditioning signal, allow-ing the sensitivity field to directly modulate feature updates at every resolution. Timestep information is injected via adaptive layer normalization (AdaLN) (Goyal et al., 2017; Dhariwal & Nichol, 2021), which modulates the scale and shift of each block’s activations. The decoder outputs per-cell logits that are unpatchified to the original resolution. 
+
+5.4. Deployment Enhancements 
+
+Beyond the generative model itself, we develop prac-tical extensions for deployment: a greedy terminal sampling step that eliminates salt-and-pepper artifacts for simulation-ready topologies (Appendix C.4), and a confidence-based progressive pruning strategy for volume fraction control during sampling (Appendix C.3). 
+
+## 6. Experiments 
+
+We evaluate our sensitivity-conditioned Bernoulli Flow Matching framework on turbulent CFD topology optimiza-tion and structural compliance problems. Our experiments are designed to: (i) empirically validate the information-theoretic ordering predicted by Theorem 1, (ii) demonstrate the practical benefits of pseudo-sensitivity conditioning for OOD generalization, and (iii) compare against state-of-the-art baselines. 
+
+6.1. CFD Topology Optimization Dataset. We introduce a CFD-TO dataset of 2D turbulent channel flows (steady RANS, k–ε, STAR-CCM+ (Siemens Digital Industries Software, Siemens 2024)) minimizing energy dissipation: it consists of 10k training samples (single-outlet), 1k ID test samples, 500 OOD-medium sam-ples (2 outlets), and 500 OOD-hard samples (3 outlets); each with varied density and viscosity. Refer to Appendix D.1 for details. 
+
+Baselines. We compare against UDiT (Tian et al., 2024), DiT (Peebles & Xie, 2023), and PDE-Transformer (PDE-T) (Holzschuh et al., 2025), all conditioned on sensitivity fields and all using the small variation of the respective models. We also include STAR-CCM+ optimization after one iteration as a classical baseline. 6.1.1. V ALIDATING THE THEORY 
+
+To test Theorem 1 and Proposition 1, we evaluate models conditioned on different signals using cross-entropy as a proxy for conditional entropy (see Appendix A.2). Figure 4 shows results on the OOD-hard (three-outlet) test set. The DiT UDiT PDE-T Ours    
+
+> Model
+> 0
+> 2
+> 4
+> 6
+> 8
+> 10
+> 12
+> Topology Cross-Entropy (×10 −1 )
+> 52.4 16.7 30.3
+> 4.62
+> 9.07
+> 3.56
+> 5.80
+> 3.82
+> 6.40
+> 2.28
+> 4.08
+> 2.24
+> ↓Lower is better
+> Pressure
+> Flow Magnitude
+> Sensitivity
+
+Figure 4. OOD generalization on three-outlet configurations. Models conditioned on sensitivity or pseudo-sensitivity maintain low cross-entropy under distribution shift, while pressure-based conditioning degrades. 
+
+empirical ordering is consistent with our theoretical predic-tions: sensitivity conditioning achieves the lowest cross-entropy, followed by pseudo-sensitivity (velocity magni-tude squared), with non-pseudo fields (pressure) exhibiting the highest uncertainty. This validates the Markov chain abstraction and confirms that sensitivity proximity governs predictive performance. 6Sensitivity-Conditioned Bernoulli Flow Matching 
+
+Table 2. Conditioning modality comparison (CFD). Non-pseudo fields (pressure) generalize ID but fail OOD. Err ∆p: Mean Rel-ative Pressure Drop Error (%) ± Std. Med.: Median Error (%). 
+
+Modality In-Distribution Out-of-Distribution 
+
+Err ∆p± Std Med. Err ∆p± Std Med. Sensitivity 4.16 ± 9.20 2.47 5.92 ± 15 .55 2.23 
+
+Pseudo-sens. 2.69 ± 7.09 1.99 1.15 ± 24 .26 1.94 
+
+Pressure 6.22 ± 13 .8 3.34 12 .26 ± 48 .30 11 .51 
+
+6.1.2. M ODEL COMPARISON ON SIMULATION -L EVEL 
+
+PERFORMANCE 
+
+Table 1 compares all models trained with sensitivity con-ditioning on simulation-level metrics, reporting relative er-ror in pressure drop (see Appendix B.5). We report mean relative error, median error, and accuracy (fraction of pre-dictions within 10% of target). All learned models condi-tioned on sensitivities outperform STAR-CCM+ after one iteration, demonstrating successful generalization to OOD settings. While UDiT and PDE-T achieve slightly better ID performance, our Bernoulli flow model exhibits the best OOD generalization, particularly on the OOD-hard (three-outlet) setting where it achieves 74.5% accuracy compared to 68.6% for PDE-T and 62.7% for UDiT. 6.1.3. N ON -P SEUDO PHYSICAL FIELDS FAIL OOD Table 2 compares conditioning modalities to validate Proposition 1. While pressure-based conditioning achieves reasonable ID performance, it degrades substantially un-der OOD shifts, with median error increasing from 3.34% to 11.51%. In contrast, sensitivity and pseudo-sensitivity conditioning maintain stable performance across distribu-tion shifts. 6.1.4. Q UALITATIVE RESULTS 
+
+Figure 5 compares conditioning signals on OOD three-outlet cases. Row (b) highlights the key regime shift: sen-sitivity and pseudo-sensitivity conditioning recover sepa-rated channel topologies that connect distinct outlets, a structure absent from the single-outlet training distribution (which only exhibits single connected flow paths). Across rows (a) and (c), sensitivity conditioning aligns most closely with the ground-truth geometry, while pseudo-sensitivity tends to smooth or slightly deform channel boundaries. Pressure conditioning fails in all cases, pro-ducing layouts that do not respect inlet/outlet placement and thus violate boundary conditions. 6.1.5. C ONDITIONING DOMINATES ARCHITECTURE 
+
+To disentangle the effect of conditioning from the gener-ative architecture, we fix one factor and vary the other on simulation-level OOD-Hard metrics. Table 3 shows that a (a)    
+
+> Ground Truth Sensitivity Pseudo-Sen. Pressure
+> (b)
+> (c)
+
+Figure 5. CFD Topology Optimization on three-outlet OOD test case qualitative comparison. Sensitivity best matches the ground truth; pseudo-sensitivity generalizes but with mild geo-metric smoothing. Row (b) shows separated channels that do not appear in the single-outlet training set. Pressure conditioning ig-nores outlet constraints.Green: inflow. Red: outflow. 
+
+Table 3. Conditioning vs. architecture on simulation-level CFD metrics (OOD-Hard, 3 outlets). Median relative pressure-drop error (%). Rows compare the same architecture under different conditioning; columns compare different architectures under the same conditioning. 
+
+Architecture Conditioning UDiT Ours (BFM) 
+
+Pseudo-sens. ( ∥v∥2) 7.0 2.7
+
+Non-pseudo (pressure) 68 .0 100 .0
+
+weaker model with informative conditioning consistently outperforms a stronger model with an information-poor signal. UDiT conditioned on pseudo-sensitivity achieves 
+
+7.0% median pressure-drop error, while our model with pressure conditioning reaches 100% , an order of magni-tude worse despite the stronger architecture. This confirms that the conditioning signal, not the model capacity, is the primary driver of OOD performance. 
+
+6.2. Structural Compliance Optimization Dataset. We use the established structural topology opti-mization benchmark from TopoDiffusion (Maz´ e & Ahmed, 2023) and NITO (Nobari et al., 2025), consisting of 2D cantilever and bridge-like structures under linear elasticity with compliance minimization. The dataset includes di-verse load configurations with OOD test cases containing unseen loading patterns. 
+
+Baselines. We compare against the corresponding mod-els, TopoDiffusion, a diffusion model conditioned on strain/stress energy density, and NITO, a deterministic im-7Sensitivity-Conditioned Bernoulli Flow Matching 0.0 2.5 5.0 7.5 10.0 12.5 15.0 17.5 
+
+> Topology Entropy ( ×10 −1 )
+> Physics Params (NITO)
+> Displacement
+> SED (Pseudo-Sen.)
+> Sensitivity
+> 15.21
+> 3.05
+> 2.35
+> 2.32
+> ← Lower is better
+
+Figure 6. Cross-entropy across conditioning signals for struc-tural problems. Sensitivity and SED (pseudo-sensitivity) achieve nearly identical CE, while displacement and physical parame-ters exhibit higher uncertainty, consistent with Proposition 1. CE computed with logit temperature T =15 .
+
+Table 4. Cross-entropy and compliance error comparison for structural problems. SED (pseudo-sensitivity) matches true sen-sitivity, validating Proposition 1. CE is computed with logit tem-perature T =15 . CE : Cross Entropy. Err C Med. : Median Com-pliance Error. 
+
+Conditioning CE (×10 −1) Err C Med.(%) 
+
+Sensitivity 2.32 0.54 
+
+SED (Pseudo-sens.) 2.35 0.53 
+
+Displacement 3.05 1.30 
+
+Physical Params 15 .21 14 .0
+
+plicit network conditioned on physical parameters. 6.2.1. N EAR -Z ERO GAP BETWEEN SED AND 
+
+SENSITIVITY 
+
+For structural compliance, Proposition 1 establishes that strain energy density (SED) is a 0-approximate pseudo-sensitivity. Figure 6 confirms this prediction: the cross-entropy gap between sensitivity and SED conditioning is negligible, while conditioning on non-pseudo fields (dis-placement) or upstream physical parameters yields sub-stantially higher uncertainty. Table 4 quantifies this ordering using both cross-entropy and median compliance error (see Appendix B.5 for metric definitions). The near-identical performance for sensitivity and SED ( 2.32&0 .54 vs 2.35&0 .53 ) confirm that SED pre-serves essentially all information about the optimal topol-ogy, consistent with the 0-approximate pseudo-sensitivity derivation in Appendix A.5. Physical parameter condition-ing exhibits the highest cross-entropy, explaining the lim-ited OOD generalization of methods like NITO that rely solely on boundary conditions and loads. 6.2.2. D ETERMINISTIC MODELS CAN GENERALIZE 
+
+A common speculation regarding the generalizability of surrogate topology optimization models is that it primarily 
+
+Table 5. Comparison of generative and deterministic surrogate models under different conditioning signals. Sensitivity condi-tioning enables strong generalization even for deterministic mod-els, while conditioning on physical parameters alone leads to sub-stantially higher compliance error. 
+
+Conditioning Model Type Err C Med.(%) 
+
+Sensitivity Generative 0.54 
+
+Sensitivity Deterministic 2.27 
+
+Physical Params Deterministic 14 .0
+
+Table 6. Performance comparison on structural TO. FS: further SIMP steps after model output. 
+
+Model Params (M) FS Mean Med. 
+
+OOD testing Err C % ↓
+
+Ours 34 – 5.73 0.53 
+
+TopoDiff 121 – 8.57 1.14 TopoDiff w/ G 239 – 7.79 1.26 NITO 22 5 9.33 2.37 
+
+stems from their generative nature. Table 5 demonstrates that non-generative (deterministic) models can also gener-alize effectively when provided with informative condition-ing. Notably, while the generative sensitivity-conditioned model achieves a lower median compliance error than its deterministic counterpart ( 0.54% vs. 2.27% ), the deter-ministic sensitivity-conditioned model still outperforms the physics-parameter–conditioned deterministic model by a wide margin ( 2.27% vs. 14 .0% ). This gap underscores that informative conditioning is the dominant factor gov-erning generalization performance even in the absence of a generative modeling framework. This supports Theorem 1, which shows that the choice of conditioning signal is more critical to generalization than whether the model is genera-tive. 6.2.3. C OMPARISON WITH STATE -OF -THE -A RT 
+
+We compare our method against TopoDiffusion and NITO on OOD structural problems. Our sensitivity-conditioned Bernoulli flow model achieves state-of-the-art perfor-mance with 34M parameters, outperforming TopoDiffu-sion (121M parameters) by 33% in mean compliance error (Err C ) and NITO (22M parameters) by 39%, as shown in Table 6. Notably, NITO requires 5 additional SIMP iterations after inference, while our method produces fi-nal topologies directly. These results demonstrate that the combination of optimal conditioning (sensitivities) and ap-propriate generative modeling (Bernoulli flows for binary topology) yields substantial improvements over prior work in both accuracy and efficiency. 8Sensitivity-Conditioned Bernoulli Flow Matching   
+
+> Figure 7. OOD structural qualitative comparison. Sensitiv-ity and SED (pseudo-sensitivity) are visually indistinguishable, while displacement conditioning produces less reliable topolo-gies. Blue: constrained in y-axis. Yellow: constrained in x-axis. Green: constrained in both axes. Red: applied force.
+
+6.2.4. Q UALITATIVE RESULTS (S TRUCTURAL )Figure 7 shows OOD structural examples. As expected from Proposition 1, sensitivity and SED conditioning pro-duce nearly indistinguishable topologies. Notably, dis-placement conditioning yields qualitatively plausible struc-tures that capture the principal load paths. This sug-gests that displacement, while not a pseudo-sensitivity in the strict sense, retains sufficient structural information to approximate the sensitivity landscape (at the cost perfor-mance degradation). The progressive degradation from sensitivity through SED to displacement is consistent with Proposition 1. 6.2.5. C OMPUTATIONAL COST 
+
+Table 7 compares end-to-end wall-clock time. Our method requires a single primal PDE solve for conditioning (∼3.2 s for CFD) followed by near-instant neural inference (0.65 ms per sample at batch size 256). This is ∼2× faster than NITO with 5 SIMP steps and orders of magnitude faster than classical iterative optimization in STAR-CCM+, which requires ∼114 s for convergence. Pseudo-sensitivity conditioning avoids the additional adjoint solve ( ∼5.3 s), reducing the total physics cost by >2.5 × compared to exact sensitivities while retaining strong OOD performance. 
+
+## 7. Conclusions and Discussion 
+
+We have presented a principled framework for gener-alization in topology optimization based on sensitivity-conditioned generative modeling. By combining theoret-ical insights, pseudo-sensitivity derivations, and discrete Bernoulli flow matching, we enable efficient and general-                
+
+> Table 7. Computational cost comparison (CFD). Ours replaces it-erative optimization with a single primal solve and fast inference. Pseudo-sensitivities avoid the costlier adjoint computation.
+> Component Time / sample
+> STAR-CCM+ full optimization 113 .94 sPer SIMP iteration ∼4.32 s NITO + 5 SIMP steps 82 .5ms Primal PDE solve (CFD) ∼3.2 s Adjoint solve (additional) ∼5.3 s
+> Ours (inference, batch 256) 0.65 ms
+> Ours (primal + inference) ∼3.2 s
+> Ours (exact sens. + inference) ∼8.5 s
+
+izable topology optimization and introduce a challenging CFD benchmark. 
+
+Scope and limitations. The Markov abstraction Θ →
+
+X → S0 → ρ∗ is used as a presentation tool for a clean ap-plication of the DPI; the information ordering H(ρ∗ | S) ≤
+
+H(ρ∗ | X) holds more generally at each optimization iter-ation, since sensitivities are objective-aligned functionals of the state. The abstraction may weaken in settings with strong history dependence (e.g., multi-objective or path-dependent constraints), though empirically the initial sen-sitivity already captures the dominant topology structure (Appendix C.5). Our CFD pseudo-sensitivity derivation employs the frozen turbulence assumption, which is standard in steady RANS adjoint optimization (Giles & Pierce, 2000; Papoutsis-Kiachagias & Giannakoglou, 2016). While this introduces approximation error, particularly in transitional Reynolds-number regimes, it was applied consistently in both data generation and sensitivity computation. Quantitative val-idation across our full dataset confirms robustness, with Pearson correlation between pseudo-sensitivity and true sensitivity exceeding r = 0 .95 on average (Appendix C.6). A natural limitation is that our method requires a physics solve for the conditioning signal. Pseudo-sensitivities mit-igate this by relying only on primal simulations (avoiding the costlier adjoint), and benefit directly from ongoing ad-vances in GPU-accelerated and neural PDE solvers. The current evaluation focuses on 2D structural compliance and 2D turbulent CFD; extending to 3D domains and additional PDE families is important future work. 
+
+Outlook. Our results indicate that generalization in topology optimization arises from sensitivity conditioning rather than the choice of generative mechanism. We expect this fundamental insight to be crucial for a wide variety of future, learning-based applications ranging from engineer-ing design to medical scenarios. 9Sensitivity-Conditioned Bernoulli Flow Matching 
+
+## Impact Statement 
+
+This research aims to advance machine learning techniques for topology optimization. More efficient and accurate op-timization capabilities can facilitate scientific and engineer-ing progress in areas such as transportation design, aerody-namics and for medical procedures. We do not identify any immediate or specific negative societal impacts associated with the proposed methods. 
+
+## References 
+
+Austin, J., Johnson, D. D., Ho, J., Tarlow, D., and Van Den Berg, R. Structured denoising diffusion models in discrete state-spaces. In NeurIPS , volume 34, pp. 17981–17993, 2021. Bendsøe, M. P. and Kikuchi, N. Generating optimal topolo-gies in structural design using a homogenization method. 
+
+Computer methods in applied mechanics and engineer-ing , 71(2):197–224, 1988. Bendsøe, M. P. Optimal shape design as a material distri-bution problem. Structural optimization , 1(4):193–202, 1989. Bendsøe, M. P. and Sigmund, O. Topology Optimization: Theory, Methods and Applications . Springer, 2004. Cang, R., Li, H., Yao, H., Jiao, Y., and Ren, Y. Im-proving direct physical properties prediction of het-erogeneous materials from imaging data via convolu-tional neural network and a morphology-aware genera-tive model. Computational Materials Science , 150:212– 221, 2018. ISSN 0927-0256. doi: https://doi.org/ 10.1016/j.commatsci.2018.03.074. URL https: //www.sciencedirect.com/science/arti cle/pii/S0927025618302337 .Dhariwal, P. and Nichol, A. Diffusion models beat gans on image synthesis. In NeurIPS , volume 34, pp. 8780– 8794, 2021. Dilgen, C. B., Dilgen, S. B., Fuhrman, D. R., Sigmund, O., and Lazarov, B. S. Topology optimization of turbu-lent flows. Computer Methods in Applied Mechanics and Engineering , 331:363–393, 2018. Giannone, G. and Ahmed, F. Diffusing the optimal topology: A generative optimization approach. CoRR ,abs/2303.09760, 2023. doi: 10.48550/arxiv.2303.09760. URL https://doi.org/10.48550/arxiv.2 303.09760 .Giles, M. B. and Pierce, N. A. Adjoint equations in cfd: duality, boundary conditions and solution behaviour. In 
+
+AIAA Paper , number 97-1850, 1997. Giles, M. B. and Pierce, N. A. An introduction to the ad-joint approach to design. Flow, Turbulence and Combus-tion , 65(3-4):393–415, 2000. Goyal, P., Doll´ ar, P., Girshick, R. B., Noordhuis, P., Wesolowski, L., Kyrola, A., Tulloch, A., Jia, Y., and He, K. Accurate, large minibatch sgd: Training ima-genet in 1 hour. CoRR , abs/1706.02677, 2017. URL 
+
+http://arxiv.org/abs/1706.02677 .Hassani, A., Walton, S., Li, J., Li, S., and Shi, H. Neigh-borhood attention transformer. In IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) ,2023. Ho, J. and Salimans, T. Classifier-free diffusion guidance. In NeurIPS 2021 Workshop on Deep Generative Models and Downstream Applications , 2021. Ho, J., Jain, A., and Abbeel, P. Denoising diffusion proba-bilistic models. In NeurIPS , volume 33, pp. 6840–6851, 2020. Holzschuh, B. J., Liu, Q., Kohl, G., and Thuerey, N. Pde-transformer: Efficient and versatile transformers for physics simulations. In ICML . OpenReview.net, 2025. URL https://openreview.net/forum?id= 3BaJMRaPSx .Hoogeboom, E., Nielsen, D., Jaini, P., Forr´ e, P., and Welling, M. Argmax flows and multinomial diffusion: Learning categorical distributions. In NeurIPS , vol-ume 34, pp. 12454–12465, 2021. Jameson, A. Aerodynamic design via control theory. Jour-nal of Scientific Computing , 3(3):233–260, 1988. Kallioras, N. A., Kazakis, G., and Lagaros, N. D. Accel-erated topology optimization by means of deep learn-ing. Structural and Multidisciplinary Optimization , 62 (3):1185–1212, 2020. K¨ uhl, N. Adjoint-based shape optimization constrained by the Reynolds-averaged Navier-Stokes equations . PhD thesis, Technische Universit¨ at Hamburg, 2021. Lipman, Y., Chen, R. T., Ben-Hamu, H., Nickel, M., and Le, M. Flow matching for generative modeling. In ICLR ,2023. Marta, A. C. and Shankaran, S. On the handling of tur-bulence equations in rans adjoint solvers. Computers & Fluids , 74:102–113, 2013. Maz´ e, F. and Ahmed, F. Diffusion models beat GANs on topology optimization. In Proceedings of the AAAI Con-ference on Artificial Intelligence , volume 37, pp. 9108– 9116, 2023. 10 Sensitivity-Conditioned Bernoulli Flow Matching 
+
+Mlejnek, H. P. Some aspects of the genesis of structures. 
+
+Structural Optimization , 5:64–69, 1992. Mo, H., Liu, A., Yang, L., Yao, S., and Liang, Y. BERNOULLI FLOW MODELS, 2026. URL https: //openreview.net/forum?id=PO6OodFuGw .Nichol, A. Q. and Dhariwal, P. Improved denoising dif-fusion probabilistic models. In ICML , pp. 8162–8171. PMLR, 2021. Nie, Z., Lin, T., Jiang, H., and Kara, L. B. Topologygan: Topology optimization using generative adversarial net-works based on physical fields over the initial domain. 
+
+Journal of Mechanical Design , 143(3):031715, 2021. Nobari, A. H., Regenwetter, L., Giannone, G., and Ahmed, F. NITO: neural implicit fields for resolution-free and domain-adaptable topology optimization. Trans. Mach. Learn. Res. , 2025, 2025. URL https://openrevi ew.net/forum?id=XHXAvACdgv .Palacios, F., Alonso, J. J., Duraisamy, K., et al. A hybrid adjoint approach applied to rans equations. Center for Turbulence Research Annual Research Briefs , pp. 255– 266, 2013. Papoutsis-Kiachagias, E. M. and Giannakoglou, K. C. Con-tinuous adjoint methods for turbulent flows, applied to shape and topology optimization: Industrial applica-tions. Archives of Computational Methods in Engineer-ing , 23(2):255–299, 2016. Peebles, W. and Xie, S. Scalable diffusion models with transformers. ICCV , pp. 4172–4182, 2023. doi: 10.110 9/iccv51070.2023.00387. URL https://doi.org/ 10.1109/iccv51070.2023.00387 .Siemens Digital Industries Software. Simcenter STAR-CCM+ User Guide v. 2401, Siemens 2024. Sigmund, O. and Maute, K. Topology optimization ap-proaches. Structural and multidisciplinary optimization ,48(6):1031–1055, 2013. Sosnovik, I. and Oseledets, I. Neural networks for topology optimization. In Russian Journal of Numerical Analysis and Mathematical Modelling , volume 34, pp. 215–223, 2019. Svanberg, K. The method of moving asymptotes—a new method for structural optimization. International Jour-nal for Numerical Methods in Engineering , 24(2):359– 373, 1987. Tian, Y., Tu, Z., Chen, H., Hu, J., Xu, C., and Wang, Y. U-dits: Downsample tokens in u-shaped diffusion trans-formers. In NeurIPS , 2024. URL http://papers.n ips.cc/paper_files/paper/2024/hash/5 d2e24df9cfaad3189833b819c40b392-Abstr act-Conference.html .Zhou, M. and Rozvany, G. I. N. The COC algorithm, part II: Topological, geometrical and generalized shape opti-mization. Computer Methods in Applied Mechanics and Engineering , 89(1-3):309–336, 1991. 11 Sensitivity-Conditioned Bernoulli Flow Matching 
+
+# Appendix 
+
+## A. Proofs and Derivations 
+
+A.1. Proof of Data Processing Inequality for Conditioning Signals 
+
+Theorem 1 follows directly from the Data Processing Inequality (DPI) applied to the Markov chain structure in Assump-tion 1. 
+
+Proof. By Assumption 1, the random variables form the Markov chain Θ → X → S0 → ρ⋆. The Data Processing Inequality states that for any Markov chain A → B → C, we have I(A; C) ≤ I(B; C).Applying DPI to Θ → X → ρ⋆ yields I(Θ; ρ⋆) ≤ I(X; ρ⋆).Applying DPI to X → S0 → ρ⋆ yields I(X; ρ⋆) ≤ I(S0; ρ⋆).Combining these inequalities gives the mutual information ordering in Eq. (6). The conditional entropy ordering in Eq. (7) follows from the identity H(ρ⋆ | Z) = H(ρ⋆) − I(ρ⋆; Z), which shows that higher mutual information corresponds to lower conditional entropy. This establishes that among all conditioning signals derivable from the problem parameters Θ, the sensitivity field S0
+
+provides the tightest bound on the irreducible uncertainty in predicting the optimal topology ρ⋆.
+
+A.2. BCE as a Mutual-Information Proxy 
+
+Here Z := ρ⋆ ∈ { 0, 1}d is the (binary) converged topology, and we compare conditioning signals C ∈ { X, S 0} (physical fields vs. initial sensitivities) via their ability to predict Z.Let qϕ(z | C) be a probabilistic decoder and define the population cross-entropy (log-loss) CE C (ϕ) := E[− log qϕ(Z | C)] .A standard decomposition gives 
+
+CE C (ϕ) = H(Z | C) + EC
+
+h
+
+DKL 
+
+ p(· | C) ∥ qϕ(· | C)i
+
+≥ H(Z | C),
+
+(12) with equality if and only if qϕ(· | C) = p(· | C) almost surely. Therefore the quantity bIϕ(Z; C) := H(Z) − CE C (ϕ) is a computable lower bound on the mutual information I(Z; C) = 
+
+H(Z) − H(Z | C): bIϕ(Z; C) ≤ I(Z; C).In our experiments, we evaluate CE X and CE S0 using the same decoder family and training recipe; then CE S0 < CE X
+
+implies a strictly larger information lower bound bIϕ(Z; S0) > bIϕ(Z; X). Log-loss is also a strictly proper scoring rule, making it suitable for comparing conditional uncertainty across signals. 
+
+A.3. Sensitivity Sufficiency at the Optimum 
+
+We connect the information-theoretic framework to classical optimality conditions. 
+
+Proposition 2 (Sensitivity Sufficiency) . Under standard KKT conditions for density-based topology optimization, the optimal design ρ⋆ is uniquely determined (up to measure-zero singular sets) by the terminal sensitivity field S(ρ⋆) and the volume multiplier ν.
+
+Implication. Conditioning on S0 allows a model to implicitly learn the thresholding operation induced by ν, making the sensitivity field a sufficient statistic for predicting ρ⋆ in practice. A detailed proof follows in Section A.4. 12 Sensitivity-Conditioned Bernoulli Flow Matching 
+
+A.4. Proof of Sensitivity Sufficiency and Volume Constraints 
+
+We now show that, at the optimum, the topology ρ⋆ is determined (up to measure-zero singular sets) by the pair consisting of the terminal sensitivity field S(ρ⋆) and the volume multiplier ν.
+
+Proof. We consider the reduced optimization problem in ρ, where the state u has been eliminated via the PDE constraint, so that 
+
+J (ρ) := J (u(ρ), ρ ), R(ρ) := R(u(ρ), ρ ),
+
+and S(ρ) denotes the reduced gradient dJ /dρ as in Eq. (3). The reduced Lagrangian reads 
+
+L(ρ, ν, μ, η) = J (ρ) + ν
+
+Z 
+
+> Ω
+
+ρ dx − V req 
+
+
+
+− μ⊤ρ + η⊤(ρ − 1) ,
+
+where μ, η ≥ 0 collect the Lagrange multipliers for the box constraints 0 ≤ ρ ≤ 1.The KKT stationarity condition with respect to ρ is, componentwise, 
+
+∂L ∂ρ i
+
+= Si(ρ) + ν − μi + ηi = 0 .
+
+For the optimal solution ρ⋆, the complementarity slackness for the box constraints implies: 
+
+ρ⋆i =
+
+
+
+1 if Si(ρ⋆) + ν < 0,
+
+0 if Si(ρ⋆) + ν > 0,ξ ∈ [0 , 1] if Si(ρ⋆) + ν = 0 (singular arc ).
+
+(13) Thus, except on measure-zero singular sets where Si(ρ⋆) + ν = 0 , the optimal design ρ⋆ is uniquely determined by the pair (S(ρ⋆), ν ). In typical penalized TO settings, these singular cases vanish in the limit, so (S(ρ⋆), ν ) can be regarded as determining ρ⋆ in practice. In our learning framework, ν is a global scalar derived from S to satisfy the volume constraint Vreq . Conditioning on the field S therefore allows the network to implicitly learn the thresholding operation ν(S), and S acts as a sufficient statistic field for predicting ρ⋆ up to this scalar threshold. 
+
+A.5. Derivation of Pseudo-Sensitivity for Compliance 
+
+Proof. Let J = f ⊤u (Compliance) and K(ρ)u = f (Equilibrium). Under a standard SIMP interpolation, the element stiffness is Ke(ρe) = ρpe K0 for some penalization exponent p > 1. The adjoint equation is 
+
+K(ρ)λ = −f ,
+
+so that λ = −u (self-adjoint problem). The element-wise sensitivity is 
+
+Se = λ⊤
+
+> e
+
+∂Ke
+
+∂ρ e
+
+ue = −u⊤
+
+> e
+
+ pρ p−1 
+
+> e
+
+K0
+
+ue.
+
+At iteration 0, we take ρe = 1 everywhere, so 
+
+Se = −p u⊤ 
+
+> e
+
+K0ue ∝ − Strain Energy Density .
+
+This shows that, at the initial design, the Strain Energy Density is a 0-approximate Pseudo-Sensitivity, confirming item (1) of Proposition 1. 
+
+A.6. Derivation of Pseudo-Sensitivity for Energy Dissipation in Navier–Stokes Flow 
+
+We consider incompressible Navier–Stokes (NS) flow with an energy dissipation objective and derive the exact sensitivity field. Under the frozen turbulence assumption and high-Reynolds number asymptotics, we show that the sensitivity reduces to a pseudo-sensitivity proportional to −∥ v∥2.13 Sensitivity-Conditioned Bernoulli Flow Matching 
+
+A.6.1. P ROBLEM SETUP : N AVIER –S TOKES WITH BRINKMAN PENALIZATION 
+
+We consider incompressible NS flow in a design domain Ω ⊂ Rd (d = 2 , 3) with the material distribution described by a porosity-dependent Brinkman term α(ρ), where ρ ∈ L∞(Ω; [0 , 1]) is the design variable. Under the frozen turbulence 
+
+assumption, we model the effective kinematic viscosity as constant, 
+
+νeff = ν + νt,
+
+where ν is the molecular viscosity and νt is the turbulent eddy viscosity, treated as independent of ρ during differentiation (δν t = 0 ). The steady primal NS equations (in velocity–pressure form) are 
+
+Rv (v, p, ρ ) := ( v · ∇ )v − νeff ∆v + 1
+
+ρf
+
+∇p + α(ρ) v = 0 in Ω,
+
+Rc(v) := ∇ · v = 0 in Ω,
+
+(14) with appropriate boundary conditions (e.g., prescribed inlet velocity, zero-pressure outlet, no-slip walls). Here v is the velocity field, p the pressure, ρf the fluid density (constant), and α(ρ) enforces solid regions via large drag as ρ → 0.A.6.2. E NERGY DISSIPATION FUNCTIONAL 
+
+We take as objective the total viscous and Brinkman dissipation 
+
+J (v, ρ ) = 
+
+Z
+
+> Ω
+
+νeff ∥∇ v∥2 + α(ρ) ∥v∥2 dV, (15) where ∥∇ v∥2 = ∇v : ∇v = P 
+
+> i,j
+
+(∂j vi)2.The corresponding topology optimization problem is 
+
+min 
+
+> ρ∈[0 ,1] N
+
+J (v(ρ), ρ ) s.t. Rv (v, p, ρ ) = 0, Rc(v) = 0 ,
+
+Z
+
+> Ω
+
+ρ dV ≤ V req . (16) A.6.3. L AGRANGIAN AND ADJOINT EQUATIONS 
+
+We form the Lagrangian 
+
+L(v, p, ρ, w, q ) = J (v, ρ ) + 
+
+Z
+
+> Ω
+
+w · R v (v, p, ρ ) dV +
+
+Z
+
+> Ω
+
+q Rc(v) dV, (17) where w and q are the adjoint velocity and adjoint pressure. Taking variations with respect to the state variables (v, p ) and imposing stationarity yields the adjoint system. Under the frozen turbulence assumption ( δν eff = 0 ), we obtain (after standard integration-by-parts manipulations): 
+
+(∇v)⊤w − (v · ∇ )w − νeff ∆w + α(ρ) w + ∇q = −2νeff ∆v + 2 α(ρ) v in Ω,
+
+∇ · w = 0 in Ω, (18) with suitable adjoint boundary conditions (e.g., homogeneous Dirichlet at inlets and walls, characteristic conditions at outlets). The right-hand side arises from differentiating the dissipation functional (15) with respect to v.A.6.4. S ENSITIVITY WITH RESPECT TO THE DESIGN 
+
+The reduced gradient (sensitivity) with respect to ρ is given by differentiating the Lagrangian while enforcing the adjoint equations: 
+
+S(x) := dJ
+
+dρ (x) = ∂J
+
+∂ρ (x) − w(x) · ∂Rv
+
+∂ρ (x). (19) 14 Sensitivity-Conditioned Bernoulli Flow Matching 
+
+From (14) and (15), we have 
+
+∂J
+
+∂ρ = ∥v∥2 dα dρ , (20) 
+
+∂Rv
+
+∂ρ = dα dρ v. (21) Substituting into the sensitivity expression yields 
+
+S(x) = ∥v(x)∥2 dα dρ 
+
+| {z }
+
+> explicit dissipation term
+
+−w(x) ·
+
+ dα dρ v(x)
+
+
+
+= dα dρ 
+
+ ∥v∥2 − w · v . (22) A common choice for the Brinkman interpolation is, for example, a RAMP-type law 
+
+α(ρ) = αmin + ( αmax − αmin ) 1 − ρ
+
+1 + qρ , q > 0, (23) which yields 
+
+dα dρ = −(αmax − αmin ) 1 + q
+
+(1 + qρ )2 < 0. (24) Thus we can write 
+
+S(x) = − dα dρ 
+
+ ∥v(x)∥2 − w(x) · v(x) . (25) A.6.5. L OW -R EYNOLDS NUMBER (S TOKES ) L IMIT 
+
+At low Reynolds numbers ( Re ≪ 1), inertial terms vanish from both the primal (14) and adjoint (18) systems. Both reduce to linear Brinkman–Stokes operators of the form −νeff ∆u + α(ρ) u + ∇π = f , with ∇ · u = 0 . The adjoint forcing is 
+
+f = −2νeff ∆v + 2 α(ρ) v, for which a particular solution is w = −v (verified by direct substitution). Therefore, in the Stokes regime: 
+
+w = −v =⇒ S(x) = −2 dα dρ ∥v(x)∥2 ∝ −∥ v(x)∥2.
+
+A.6.6. H IGH -R EYNOLDS NUMBER ASYMPTOTICS 
+
+At high Reynolds numbers, the global flow is convection-dominated, but in optimized designs the characteristic channel width h becomes small and the local Reynolds number Re h = U h/ν eff can be much less than one inside thin flow channels. Under the frozen turbulence assumption ( δν t = 0 ), the adjoint equation in these micro-channels reduces to the same Stokes-like balance as above. A scaling argument shows that the adjoint velocity again satisfies w ≈ − v, yielding: 
+
+S(x) ≈ − 2 dα dρ ∥v(x)∥2 ∝ −∥ v(x)∥2.
+
+A.6.7. R OBUSTNESS ACROSS REYNOLDS REGIMES 
+
+The proportionality S ∝ −∥ v∥2 thus holds in both asymptotic limits (low and high Re ), with deviations confined to the transitional regime where neither limit fully applies. In the notation of Definition 1, this corresponds to X(x) = ∥v(x)∥2
+
+and a linear monotone function h(s) = −Cs for some C > 0, giving S0(x) = h(X(x)) with ϵ = 0 in the asymptotic regimes. A.6.8. V ALIDITY OF THE FROZEN TURBULENCE ASSUMPTION 
+
+The frozen turbulence assumption ( δν t = 0 ) becomes increasingly valid at high Reynolds numbers because: • Turbulent fluctuations evolve on much faster time scales than design variations, so νt can be regarded as quasi-steady with respect to ρ.15 Sensitivity-Conditioned Bernoulli Flow Matching 
+
+• Optimized topologies tend to adjust the mean flow structure more strongly than the small-scale turbulence, so the leading-order sensitivity of dissipation is captured by variations in v and α(ρ).• In narrow channels, the effective viscosity is dominated by νt, and the flow tends towards locally Stokes-like behavior despite a large global Reynolds number, reinforcing the approximation w ≈ − v.Under these conditions, the approximation S ∝ −∥ v∥2 holds to leading order, justifying the classification of the veloc-ity magnitude squared as a 0-approximate Pseudo-Sensitivity for the energy dissipation objective in NS-based topology optimization, as stated in item (2) of Proposition 1. Quantitative validation across our full CFD dataset (Appendix C.6) confirms that the Pearson correlation between pseudo-sensitivity and true sensitivity exceeds r = 0 .95 on average, with degradation confined to a narrow transitional Reynolds-number band. 
+
+## B. Training and Evaluation Details 
+
+B.1. Hardware and Software Configuration 
+
+All experiments were conducted on a single NVIDIA L40S GPU with 46 GB of memory. The training server is equipped with an AMD EPYC 7R13 processor (16 cores, 32 threads) and 248 GB of system RAM. We used PyTorch 2.9.1 with CUDA 12.8 and mixed-precision training (bf16) to accelerate computation. 
+
+B.2. CFD Topology Optimization 
+
+For the fluid dynamics problem, we trained four model variants on the sensitivity field prediction task with a resolution of 128 × 128 . We initialized training with 50 epochs for all models; for models that did not converge, we progressively increased the training budget by 50 epochs until satisfactory performance was achieved. Table 8 summarizes the final training hyperparameters.  
+
+> Table 8. Training hyperparameters for CFD topology optimization experiments.
+
+Model Batch Size Grad Accum Eff. Batch Learning Rate Max Steps Max Epochs Ours 256 1 256 5 × 10 −4 5,000 50 PDE-T 256 1 256 5 × 10 −4 10,000 100 UDiT 128 2 256 5 × 10 −4 10,000 100 DiT 128 2 256 3 × 10 −4 15,000 150 Due to memory constraints, UDiT and DiT were trained with a batch size of 128 with gradient accumulation over 2 steps to simulate an effective batch size of 256, matching the other methods. All models employ exponential moving average (EMA) with a decay rate of 0.999 for evaluation. We use linear sampling with 50 denoising steps for our method. During evaluation on the pressure drop relative error metric, we filter out samples where the predicted design deviates more than 50% from the initial geometry to ensure fair comparison across all models. 
+
+B.3. Structural Topology Optimization 
+
+For the compliance minimization problem, Table 9 summarizes the training hyperparameters.  
+
+> Table 9. Training hyperparameters for structural topology optimization experiments.
+
+Model Batch Size Learning Rate Max Steps Max Epochs Ours 256 5 × 10 −4 27,600 150 We use a window size of 33 for neighborhood attention and 50 sampling steps with linear scheduling. Following the NITO evaluation protocol, we filter out samples with compliance errors exceeding 1000% when computing the relative error metric. 16 Sensitivity-Conditioned Bernoulli Flow Matching 
+
+B.4. Common Settings 
+
+All models are trained with the AdamW optimizer. We employ adaptive gradient clipping with EMA-based norm estima-tion (coefficients 0.9 and 0.99) to stabilize training. Data normalization follows a mean-std scheme for both inputs and physical constants. 
+
+B.5. Metric Definitions CFD (pressure-drop relative error). We evaluate CFD solutions by relative error in pressure drop, 
+
+Err ∆p = ∆ppred − ∆pref 
+
+∆pref 
+
+.
+
+The pressure drop ∆p is computed as the mass-flow-weighted total pressure difference between inlet and outlet boundaries: 
+
+∆p =
+
+" P   
+
+> f∈Γin
+
+| ˙mf | pt,f 
+
+P  
+
+> f∈Γin
+
+| ˙mf |
+
+#
+
+−
+
+" P   
+
+> f∈Γout
+
+| ˙mf | pt,f 
+
+P  
+
+> f∈Γout
+
+| ˙mf |
+
+#
+
+,
+
+where Γin and Γout are inlet and outlet boundary faces, ˙mf is the signed mass flow rate through face f , and pt,f is the absolute total pressure at face f .
+
+Structural (compliance relative error). We evaluate structural solutions by relative compliance error, 
+
+Err C = Cpred − Cref 
+
+Cref 
+
+, C = f ⊤u,
+
+where f is the applied nodal load vector and u is the displacement vector obtained from the linear elasticity solve. Cref 
+
+corresponds to the compliance of the reference (ground-truth) topology and Cpred to the compliance of the predicted topology, both evaluated under identical loads and boundary conditions. 
+
+## C. Additional Results 
+
+C.1. Conditioning Signal Ablation 
+
+Table 10 validates our theoretical predictions by comparing cross entropy across three conditioning modalities: sensitiv-ity, velocity (pseudo-sensitivity), and pressure. The DPI-derived information ordering is evident consistently across all architectures; Every model achieves lowest CE under sensitivity conditioning and highest under pressure, with velocity intermediate. This confirms that the conditioning hierarchy is fundamental to the problem structure, not an artifact of any particular architecture. 
+
+C.2. Topology Control via Sensitivity Manipulation 
+
+A practical advantage of sensitivity-based conditioning is the ability to manipulate the input field to enforce geometric constraints on the output topology. By masking regions of the sensitivity field (setting them to values that discourage material placement), we can block specific areas from the generated design. Figure 8 illustrates this capability across four test cases: a circular exclusion zone is applied to the sensitivity field, and the model generates topologies that route flow around the blocked region while maintaining connectivity. This is particularly useful when other components occupy portions of the design domain, or when manufacturing constraints require keep-out regions.                                                  
+
+> Table 10. Cross entropy comparison across conditioning modalities and test sets (median BCE). Lower is better. Best results per column are bolded .
+> Sensitivity Pseudo-Sen. (Velocity) Pressure Model ID OOD-M OOD-H ID OOD-M OOD-H ID OOD-M OOD-H
+> DiT 0.17 0.36 0.64 0.19 0.49 0.91 5.21 5.25 5.24
+> UDiT 0.08 0.15 0.23 0.08 0.20 0.36 0.24 1.01 1.67
+> PDE-T 0.08 0.22 0.41 0.07 0.29 0.58 0.36 1.91 3.03
+> Ours 0.04 0.12 0.22 0.04 0.15 0.38 0.07 0.23 0.46
+
+17 Sensitivity-Conditioned Bernoulli Flow Matching Reference Blocked Output 
+
+Figure 8. Topology control via sensitivity masking. Top row: reference topologies. Middle row: sensitivity fields with circular exclusion zones (dashed red). Bottom row: generated topologies that successfully avoid the blocked region while preserving flow connectivity. 
+
+Algorithm 1 Confidence-based progressive volume constraint. 
+
+Require: Model fθ ; volume limit Vmax ; steps T
+
+1: Sample xtT ∼ Bernoulli (0 .5) 
+
+2: for τ = T, T −1, . . . , 1 do 
+
+3: ℓτ = fθ (xtτ , t τ ) ▷ Raw logits 
+
+4: pτ = σ(ℓτ /κ ) ▷ Probabilities 
+
+5: xtτ −1 ∼ Bernoulli (pτ )
+
+6: if mean (xtτ −1 ) > V max then 
+
+7: θτ = Q1−Vmax (ℓτ ⊙ xtτ −1 ) ▷ Confidence threshold 
+
+8: xtτ −1 = xtτ −1 ⊙ 1[ℓτ > θ τ ] ▷ Prune low-confidence 
+
+9: end if 
+
+10: end for 
+
+11: return xt0
+
+C.3. Volume Fraction Constraints 
+
+The Bernoulli flow formulation naturally supports volume fraction constraints. We propose a confidence-based progressive pruning strategy that enforces the constraint during sampling rather than as a post-processing step. At each diffusion timestep, we remove low-confidence material before the next iteration, allowing the model to adapt its predictions to the pruned state. Algorithm 1 details this procedure. The key insight is that pruning occurs before the next forward pass, so the model observes the constrained state and can redistribute material to maintain connectivity. Figure 9 demonstrates this mechanism across four test cases: starting from unconstrained topologies, we progressively tighten the volume budget to 90% , 80% , and 70% of the original. The model preserves primary flow channels while trimming secondary branches, achieving the target volume fraction without disconnecting the flow path. 18 Sensitivity-Conditioned Bernoulli Flow Matching Unconstrained       
+
+> VF=0.60
+> 90% × VF unc
+> VF=0.55
+> 80% × VF unc
+> VF=0.50
+> 70% × VF unc
+> VF=0.45
+> VF=0.77
+> VF=0.71
+> VF=0.64
+> VF=0.57
+> VF=0.69
+> VF=0.63
+> VF=0.57
+> VF=0.51
+> VF=0.37
+> VF=0.34
+> VF=0.31
+> VF=0.27
+> Figure 9. Confidence-based progressive volume constraint. Each column shows a different test case; rows correspond to decreasing volume budgets (unconstrained, 90% ,80% ,70% of VF unc ). The resulting volume fractions are annotated on each panel. The model adapts to maintain flow connectivity under tighter constraints.
+
+C.4. Greedy Terminal Step for Clean Topologies 
+
+The standard BFM sampling procedure (Mo et al., 2026) draws independent Bernoulli samples at each pixel in the final step, which can introduce salt-and-pepper noise in the generated topology (Figure 10, top row). While acceptable for image generation, such artifacts are problematic for topology optimization: isolated pixels cause mesh generation failures and numerical instabilities in downstream simulations. We address this by replacing the stochastic final step with a deterministic greedy projection. As shown in Algorithm 2, after T − 1 stochastic transitions, the final state is obtained by thresholding the predicted probability field at 0.5 rather than sampling. This produces binary topologies free of isolated pixels while preserving the probabilistic exploration during earlier diffusion steps. 
+
+C.5. Sufficiency of Initial Sensitivity S0
+
+A key modeling assumption is that the initial sensitivity S0 captures sufficient information for predicting the final topology. We validate this using the area under the ROC curve (AUC): the probability that a solid element in ρ∗ ranks above a void element under a given sensitivity field. Table 11 reports AUC for initial ( S0) and converged ( S∗) sensitivities across four 19 Sensitivity-Conditioned Bernoulli Flow Matching 
+
+Algorithm 2 Greedy terminal step sampling. 
+
+Require: Trained model fθ ; diffusion steps T ; temperature κ 
+
+> 1:
+
+Sample xtT ∼ Bernoulli (0 .5)  
+
+> 2:
+
+for τ = T, T −1, . . . , 2 do  
+
+> 3:
+
+Predict pθ (xtτ −1 ) = σ(fθ (xtτ , t τ )/κ ) 
+
+> 4:
+
+Sample xtτ −1 ∼ Bernoulli (pθ (xtτ −1 ))  
+
+> 5:
+
+end for  
+
+> 6:
+
+Predict pθ (xt0 ) = σ(fθ (xt1 , t 1)/κ ) 
+
+> 7:
+
+ˆxt0 = 1[pθ (xt0 ) > 0.5] ▷ Greedy thresholding  
+
+> 8:
+
+return ˆxt0Stochastic Greedy-Last  
+
+> Figure 10. Comparison of sampling strategies across four test cases. Top row: fully stochastic BFM sampling produces salt-and-pepper artifacts along channel boundaries. Bottom row: greedy terminal step yields clean, simulation-ready topologies with identical macro-structure.
+
+PDE families, including two newly generated (heat conduction and eigenfrequency). AUC( S0) > 0.91 in all cases. If S0 were substantially insufficient, AUC should consistently increase from initialization to convergence; this is not observed. Notably, for eigenfrequency, AUC decreases from S0 to S∗, meaning the initial sensitivity is more discriminative of ρ∗ than the converged field. The AUC(vf) column confirms that rank sufficiency does not imply trivial extractability: volume-fraction thresholding alone yields substantially lower AUC, and a learned surrogate is needed to resolve spatial topology. 
+
+C.6. Quantitative Validation of Pseudo-Sensitivity 
+
+We validate the pseudo-sensitivity approximation S ∝ −∥ v∥2 quantitatively across the full CFD dataset. For all 1-, 2-, and 3-outlet configurations, the Pearson correlation between ∥v∥2 and the true sensitivity yields a mean r > 0.95 , with fewer than 2.2% of samples falling below r = 0 .80 .Figure 11 shows the Pearson correlation binned by Reynolds number. At low Re , correlation is highest ( r > 0.98 ), consistent with the Stokes symmetry argument. A mild degradation occurs in the transitional Re regime, as predicted by the theory. At high Re , correlation recovers and variance collapses as the adjoint scaling w → − v takes hold. Increasing inlet count further improves correlation even at moderate Re , as distributed inflow reduces recirculation and adjoint transport effects. 20 Sensitivity-Conditioned Bernoulli Flow Matching 
+
+Table 11. AUC of initial vs. converged sensitivities across PDE families. S0 achieves AUC comparable to S∗ in all cases, confirming practical sufficiency. AUC(vf) shows that volume-fraction thresholding alone is far weaker. 
+
+Problem AUC( S0) AUC( S∗) ∆ AUC(vf) 
+
+Heat conduction 0.972 0.986 +0 .014 0.814 
+
+NS 3-outlet 0.993 1.000 +0 .007 0.799 
+
+Eigenfrequency 0.957 0.868 −0.089 0.730 
+
+Compliance 0.915 0.918 +0 .003 0.731 10 3
+
+> 10 3.5
+> 10 4
+> 10 4.5
+> 10 5
+> 10 5.5
+> 10 6
+
+Re bin  
+
+> 1.0
+> 0.9
+> 0.8
+> 0.7
+> 0.6
+> 0.5
+> Pearson  r (|v|2 vs  sensitivity)  ID 1 outlet
+> 10 3
+> 10 3.5
+> 10 4
+> 10 4.5
+> 10 5
+> 10 5.5
+> 10 6
+
+Re bin  
+
+> OOD 2 outlets
+> 10 3
+> 10 3.5
+> 10 4
+> 10 4.5
+> 10 5
+> 10 5.5
+> 10 6
+
+Re bin  
+
+> OOD 3 outlets
+
+Figure 11. Pearson correlation between pseudo-sensitivity ( ∥v∥2) and true sensitivity, binned by Reynolds number. The approximation holds strongly at both low and high Re , with mild degradation confined to the transitional regime. 
+
+## D. Datasets Details 
+
+D.1. CFD Topology Optimization Dataset 
+
+D.1.1. D OMAIN AND BOUNDARY CONDITIONS 
+
+We consider a 2D square domain Ω = [0 , L ]2 with side length L = 0 .1 m . Inlets and outlets are placed along the domain boundary with fixed aperture size w = 0 .02 m . Inlets are assigned a uniform velocity profile with magnitude uin = 1 m /s
+
+normal to the boundary. Outlets are modeled as pressure outlets with zero gauge pressure. All remaining boundary segments are treated as no-slip walls. D.1.2. G OVERNING EQUATIONS AND SOLVER 
+
+All simulations use steady-state Reynolds-Averaged Navier–Stokes (RANS) equations with the realizable k–ε turbulence model, solved in STAR-CCM+ (Siemens Digital Industries Software, Siemens 2024). The flow is treated as incompressible with constant density ρ and dynamic viscosity μ per instance. Convergence is declared when residuals for continuity, momentum, k, and ε drop below 10 −4.D.1.3. T OPOLOGY OPTIMIZATION FORMULATION 
+
+The optimization objective minimizes pressure drop plus a volume penalty: 
+
+J = ∆ p + λ
+
+Z
+
+> Ω
+
+χ dV, (26) where ∆p is the mass-flow-averaged total pressure difference between inlet and outlet boundaries, χ ∈ { 0, 1} is the material indicator (fluid vs. solid), and λ is a scalar weight controlling the volume fraction. The pressure drop is computed as 
+
+∆p =
+
+" P  
+
+> f
+
+| ˙mf | pt,f 
+
+P 
+
+> f
+
+| ˙mf |
+
+#
+
+> inlet
+
+−
+
+" P  
+
+> f
+
+| ˙mf | pt,f 
+
+P 
+
+> f
+
+| ˙mf |
+
+#
+
+> outlet
+
+, (27) 21 Sensitivity-Conditioned Bernoulli Flow Matching 
+
+where ˙mf is the mass flow rate through face f and pt,f is the absolute total pressure at that face. Solid regions are enforced via Brinkman penalization, which adds a drag term to the momentum equations: 
+
+∂(ρv)
+
+∂t + ∇ · (ρv ⊗ v) = −∇ · σ − α(1 − χ)v, (28) where α is the penalization magnitude (set to 5 × 10 4 in our simulations) and χ = 1 in fluid regions, χ = 0 in solid regions. This formulation models solid material as a porous medium with vanishing permeability. Optimization is performed using Adam with learning rate 10 , β1 = 0 .9, β2 = 0 .999 , for a maximum of 30 iterations per instance or reaching 0.01% material change. D.1.4. D ATASET SPLITS AND SAMPLE COUNTS 
+
+We construct distribution shifts by varying the number of outlets: 
+
+Split Nout Nin range Training Test 
+
+ID 1 1–11 10,000 1,000 OOD-medium 2 1–10 — 500 OOD-hard 3 1–9 — 500 Inlet and outlet positions are sampled uniformly along the boundary edges, subject to a minimum spacing constraint of 
+
+0.015 m to avoid overlapping apertures. D.1.5. F LUID PROPERTY SAMPLING 
+
+For each instance, we independently sample dynamic viscosity and density: 
+
+μ ∼ Unif(10 −5, 10 −3) Pa · s, (29) 
+
+ρ ∼ Unif(0 .5, 10 .0) kg /m3. (30) This range spans from low-viscosity gases to moderately viscous liquids, ensuring diversity in flow regimes. D.1.6. R EYNOLDS NUMBER RANGES 
+
+We characterize flow regimes via the Reynolds number 
+
+Re = ρ U L μ . (31) To define a consistent velocity scale across configurations with varying inlet/outlet counts, we use mass conservation. Assuming incompressible flow and equal aperture sizes, the mean outlet velocity satisfies 
+
+Uout ≈ Nin 
+
+Nout 
+
+uin . (32) The resulting per-outlet Reynolds number ranges are: 
+
+Split Nout Nin range Re out range ID 1 1–11 [50 , 1.1 × 10 6]
+
+OOD-medium 2 1–10 [25 , 5 × 10 5]
+
+OOD-hard 3 1–9 [16 .7, 3 × 10 5]
+
+These ranges span laminar to fully turbulent regimes, with the turbulence model active in all simulations. 22 Sensitivity-Conditioned Bernoulli Flow Matching 
+
+D.1.7. S ENSITIVITY COMPUTATION 
+
+Adjoint sensitivities are computed using the discrete adjoint solver in STAR-CCM+. We employ the frozen turbulence assumption, treating eddy viscosity as constant with respect to design perturbations. This approximation is standard for RANS-based topology optimization and yields stable gradients across the dataset. The initial sensitivity field S0 is evalu-ated at a uniform density ρinit = 1 .0 before optimization begins. D.1.8. D ATA FIELDS STORED 
+
+For each sample, we store: • Binary optimal topology ρ⋆ ∈ { 0, 1}128 ×128 
+
+• Initial sensitivity field S0 ∈ R128 ×128 
+
+• Velocity magnitude field ∥v∥ ∈ R128 ×128 
+
+• Vector velocity field v ∈ R2×128 ×128 
+
+• Pressure field p ∈ R128 ×128 
+
+• Boundary condition mask indicating inlet/outlet/wall locations • Scalar metadata: μ, ρ, Nin , Nout , final objective value All fields are interpolated to a uniform 128 × 128 Cartesian grid. 
+
+D.2. Visualized Samples 
+
+Figures 12–14 show representative samples from each dataset split, illustrating the diversity of boundary configurations and corresponding optimal topologies. Each visualization displays the velocity magnitude field overlaid with the optimized material distribution, where white regions indicate solid material and colored regions show fluid flow. The sensitivity field 
+
+S0 used for conditioning is computed at uniform initial density before optimization. 
+
+D.3. Dataset Visualization 
+
+Figures 15 and 16 present representative samples from the in-distribution and out-of-distribution (OOD) test sets, respec-tively. Each row shows: • BC: Boundary conditions—red (pinned), green (roller-y), blue (roller-x). • Applied Load: Force vectors shown as red arrows. • Optimal Topology: Converged material distribution (light = void, dark = solid). • Sensitivity: First-iteration sensitivity field ( log 10 scale). • Strain Energy: Strain energy density ( log 10 scale). • Displacement: Normalized displacement magnitude. 23 Sensitivity-Conditioned Bernoulli Flow Matching 
+
+Figure 12. Representative samples from the in-distribution (ID) training set with a single outlet. Inlet positions vary along the domain boundary, producing diverse flow patterns and optimal topologies that route flow from inlet(s) to the single outlet while minimizing pressure drop. 
+
+24 Sensitivity-Conditioned Bernoulli Flow Matching 
+
+Figure 13. Representative samples from the OOD-medium test set with two outlets. The model must generalize to splitting flow between multiple outlets—a configuration unseen during training. Note the branching channel structures that emerge to efficiently distribute flow. 
+
+25 Sensitivity-Conditioned Bernoulli Flow Matching 
+
+Figure 14. Representative samples from the OOD-hard test set with three outlets. This configuration represents the most challenging distribution shift, requiring complex multi-branch topologies to route flow from varying inlet configurations to three distinct outlet locations. 
+
+26 Sensitivity-Conditioned Bernoulli Flow Matching 
+
+Figure 15. In-Distribution Set. Representative samples showing BC, loads, optimal topologies, sensitivity, strain energy, and displace-ment magnitude. 
+
+27 Sensitivity-Conditioned Bernoulli Flow Matching 
+
+Figure 16. Out-of-Distribution Test Set. Samples with novel boundary condition configurations for evaluating generalization. 
+
+28
