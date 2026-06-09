@@ -1,0 +1,69 @@
+{
+  "label": "2026-06-09",
+  "date": "2026-06-09",
+  "generated_at": "2026-06-09T20:58:09",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202606/09/2606.04804v3-the-right-measure-for-physics-constrained-generation-a-co-area-correction-for-posterior-consistent-pde-inverse-problems",
+      "section": "deep",
+      "title_en": "The Right Measure for Physics-Constrained Generation: A Co-Area Correction for Posterior-Consistent PDE Inverse Problems",
+      "authors": "Jian Xu, Yanning Wu, Delu Zeng, John Paisley, Qibin Zhao",
+      "date": "2026-06-03",
+      "pdf": "https://arxiv.org/pdf/2606.04804v3",
+      "score": "9.0",
+      "evidence": "生成模型用于物理约束的PDE逆问题",
+      "tldr": "生成模型用于PDE逆问题时，硬约束采样会因测度零流形条件导致后验偏差。投影与引导方法忽略了协面积(Jacobian)因子，偏差可达采样误差的20倍。提出CoCoS方法，通过测度感知约束采样校正该因子，实现与金标准后验匹配。工作表明满足物理约束不等于采样后验，为科学推断提供原则性修正。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Generative models -- diffusion and flow matching -- are increasingly used to solve partial differential equation (PDE) inverse problems, enforcing the governing physics as a \\emph{hard constraint} (via projection or guidance) and reporting the resulting samples as a Bayesian posterior with calibrated uncertainty. We show that this widely adopted recipe samples the wrong distribution. Conditioning a generative prior on a hard PDE constraint is conditioning on a measure-zero manifold -- an operation that is intrinsically ambiguous (the Borel--Kolmogorov paradox) and whose physically correct resolution, the small-residual-noise limit, carries a co-area (Fixman) Jacobian factor $[det(JJ^{\\top})]^{-1/2}$ that projection- and guidance-based methods silently omit. We make the bias precise, show that it grows with the heterogeneity of the constraint sensitivity, and validate it on controlled problems against an \\emph{i.i.d.} ground-truth arbiter. The omitted factor is not a second-order detail: removing it inflates the posterior error to $20\\times$ the sampling-noise floor; minimal-displacement projection (as in PCFM) is biased at $9\\times$ the floor; and a naive scalar reweighting does not fix it. We introduce \\textbf{CoCoS}, a measure-aware constrained sampler that targets the correct co-area posterior, and show that it matches the gold-standard posterior to within sampling noise. Our results imply that ``satisfying the physics'' is not the same as ``sampling the posterior,'' and give a principled correction for uncertainty-aware scientific inference.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/09/2606.09044v1-a-hybrid-generative-reduced-order-model-for-the-minimal-flow-unit",
+      "section": "deep",
+      "title_en": "A Hybrid Generative Reduced-Order Model for the Minimal Flow Unit",
+      "authors": "Niccolò Tonioni, Lionel Agostini, Marcial Sanchis-Agudo, Mohammad Umair, Franck Kerhervé, Laurent Cordier, Ricardo Vinuesa",
+      "date": "2026-06-08",
+      "pdf": "https://arxiv.org/pdf/2606.09044v1",
+      "score": "8.0",
+      "evidence": "用于壁面湍流的混合生成降阶模型",
+      "tldr": "针对壁湍流近壁动力学的高维与间歇性，提出一种混合生成式降阶模型。通过β-VAE-GAN将流场压缩至四维潜空间，并利用传感器条件Transformer预测潜变量演化。在最小流动单元上，压缩恢复87%湍动能，预测时长超17000粘性时间单位，端到端重构82%湍动能。该模型物理可解释，准确再现再生循环，为壁湍流建模提供了高效替代方案。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "A data-driven reduced-order modelling framework is proposed for wall-bounded turbulent flows to forecast the intermittent near-wall dynamics over extended time horizons from sparse sensor measurements. The approach combines a $β$-VAE-GAN, which compresses high-dimensional flow fields into a low-dimensional latent space, with a sensor-conditioned Transformer that forecasts the evolution of the latent variables. The temporal module employs Easy Attention, a static time-mixing operator that replaces the learnable query-key mechanism of standard self-attention at reduced computational cost, combined with an adapted AdaLN-Zero modulation mechanism for sensor-based conditioning. Evaluated on the Minimal Flow Unit ($Re_τ= 200$) at $y^+ = 14$, the compression stage recovers $87\\%$ of the turbulent kinetic energy within a four-dimensional latent space, exceeding the standard $β$-VAE baseline by more than $10\\%$. The latent dimensions autonomously encode the characteristic timescales of the flow, with specific coordinates capturing the low-frequency signature of the near-wall regeneration cycle ($T^+ \\approx 1724$), establishing the physical interpretability of the learnt representation. The sensor-conditioned Transformer maintains accurate forecasts over $17{,}288\\,t^+$ from an initialisation window of only $128\\,t^+$, whilst end-to-end inference reconstructs $82\\%$ of the turbulent kinetic energy. The principal limitation is the attenuation of rare, extreme-amplitude events, a consequence of the encoder prioritising the most statistically recurrent flow states within the low-dimensional bottleneck. Nevertheless, the framework accurately reproduces the alternating active and quiescent phases of the regeneration cycle, demonstrating its suitability as a surrogate model for the intermittent dynamics of wall-bounded turbulence.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/09/2606.07835v1-mitigating-the-contractivity-trap-in-diffusion-odes-via-stein-stabilization",
+      "section": "quick",
+      "title_en": "Mitigating the Contractivity Trap in Diffusion ODEs via Stein Stabilization",
+      "authors": "Shigui Li, Delu Zeng",
+      "date": "2026-06-05",
+      "pdf": "https://arxiv.org/pdf/2606.07835v1",
+      "score": "6.0",
+      "evidence": "针对扩散ODE的Stein稳定化，与流体流动扩散模型中的推理稳定性相关",
+      "tldr": "扩散模型确定性概率流ODE的大步长推理面临收缩性陷阱：大步长提高效率却破坏稳定性。本文提出SteinDiff，基于Stein方法推导几何感知残差校正系数，无需参考样本即可调整求解器步进。实验证明，SteinDiff能有效消除严重伪影，大幅提升大步长下的生成质量。该工作为扩散模型推理提供了无需训练的自适应稳定化新范式。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "A fundamental tension exists in the large-step inference of diffusion models via their deterministic probability flow ordinary differential equation (PF-ODE) trajectories, which we identify as the contractivity trap: efficient inference favors large step sizes, while aggressive steps and highly expressive denoisers can undermine contraction-based stability certificates for error suppression. To address this, we propose SteinDiff, a step-wise inference-time stabilization framework that employs Stein-derived corrections without requiring reference samples. Specifically, SteinDiff introduces a geometry-aware residual correction mechanism that regularizes large-step solver updates without retraining. To this end, we derive a closed-form Stein correction coefficient for step-wise solver adjustment, enabling reference-free adaptation to local data geometry. We further establish a score-controlled perturbation bound under distributional shifts and provide a complementary Stein perspective on EDM-style parameterizations. Extensive experiments demonstrate that SteinDiff mitigates severe artifacts and improves generative quality across large-step inference settings.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/09/2606.08672v1-learning-to-solve-generative-odes-beyond-the-linear-span",
+      "section": "quick",
+      "title_en": "Learning to Solve Generative ODEs Beyond the Linear Span",
+      "authors": "Sihyeon Kim, Seunghun Lee, Vikas Singh, Hyunwoo J. Kim",
+      "date": "2026-06-07",
+      "pdf": "https://arxiv.org/pdf/2606.08672v1",
+      "score": "6.0",
+      "evidence": "学习求解生成ODE超越线性跨度，提升流匹配模拟效率",
+      "tldr": "生成ODE求解器受标量系数更新限制，每个步骤位于缓冲速度的线性张成空间内，无法修正外空间残差。本文提出SpanLift，通过轻量级神经网络学习空间残差算子来增强标量系数更新。该方法保留预训练骨干网络，不增加模型NFE，通过端点教师匹配训练。实验表明，学习到的修正主要位于外空间，在像素级扩散、潜在流匹配等任务上实现最先进的少步采样。3步NFE下，CIFAR-10 FID从8.16提升至5.69，ImageNet FID从17.37降至11.83。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Diffusion and flow generative models sample by integrating a learned ODE, but high quality still requires many sequential model evaluations. Solver learning reduces this cost by adapting scalar coefficients, timesteps, or both, while keeping the backbone model fixed. In this work, we identify a structural bottleneck in this update family: each step remains span-limited. Since the scalar-coefficient update lies in the span of buffered velocity evaluations, it can fit only the in-span component while leaving any out-of-span residual unreachable by scalar recombination alone. We propose SpanLift, a lightweight neural solver that augments scalar-coefficient updates with a spatial residual operator. SpanLift keeps a fixed base solver as an in-span prior and learns a spatial residual operator over the state and velocity buffer. The operator is trained by endpoint teacher matching, preserves the pretrained backbone, and adds no model NFEs. Empirically, the learned correction transfers across base solvers and is predominantly out-of-span. Across pixel-space diffusion, latent flow matching, and precipitation nowcasting, SpanLift achieves state-of-the-art few-step sampling. With only 3 NFE, it improves CIFAR-10 FID from 8.16 to 5.69 and ImageNet FID from 17.37 to 11.83.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

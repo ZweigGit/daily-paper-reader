@@ -1,0 +1,171 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-09T20:53:59.618815+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2606.04804v3",
+      "source": "arxiv",
+      "title": "The Right Measure for Physics-Constrained Generation: A Co-Area Correction for Posterior-Consistent PDE Inverse Problems",
+      "abstract": "Generative models -- diffusion and flow matching -- are increasingly used to solve partial differential equation (PDE) inverse problems, enforcing the governing physics as a \\emph{hard constraint} (via projection or guidance) and reporting the resulting samples as a Bayesian posterior with calibrated uncertainty. We show that this widely adopted recipe samples the wrong distribution. Conditioning a generative prior on a hard PDE constraint is conditioning on a measure-zero manifold -- an operation that is intrinsically ambiguous (the Borel--Kolmogorov paradox) and whose physically correct resolution, the small-residual-noise limit, carries a co-area (Fixman) Jacobian factor $[det(JJ^{\\top})]^{-1/2}$ that projection- and guidance-based methods silently omit. We make the bias precise, show that it grows with the heterogeneity of the constraint sensitivity, and validate it on controlled problems against an \\emph{i.i.d.} ground-truth arbiter. The omitted factor is not a second-order detail: removing it inflates the posterior error to $20\\times$ the sampling-noise floor; minimal-displacement projection (as in PCFM) is biased at $9\\times$ the floor; and a naive scalar reweighting does not fix it. We introduce \\textbf{CoCoS}, a measure-aware constrained sampler that targets the correct co-area posterior, and show that it matches the gold-standard posterior to within sampling noise. Our results imply that ``satisfying the physics'' is not the same as ``sampling the posterior,'' and give a principled correction for uncertainty-aware scientific inference.",
+      "authors": [
+        "Jian Xu",
+        "Yanning Wu",
+        "Delu Zeng",
+        "John Paisley",
+        "Qibin Zhao"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-03T12:30:03+00:00",
+      "link": "https://arxiv.org/pdf/2606.04804v3",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "generative models for PDE inverse problems with physics constraints",
+      "llm_evidence_cn": "生成模型用于物理约束的PDE逆问题",
+      "llm_evidence": "生成模型用于物理约束的PDE逆问题",
+      "canonical_evidence": "生成模型用于物理约束的PDE逆问题",
+      "llm_tldr_en": "Identifies a distribution mismatch when using generative priors for PDE inverse problems with hard physics constraints, and proposes a co-area correction to sample the correct Bayesian posterior.",
+      "llm_tldr_cn": "该文指出当前使用扩散或流匹配模型通过硬物理约束求解偏微分方程逆问题时，由于条件约束处于测度零流形，采样结果存在分布偏差。作者提出了基于共面积雅可比因子的校正方法，确保生成的后验分布与物理极限下的一致。理论分析和数值实验表明，该校正能够恢复正确的后验不确定度。该工作为物理约束生成模型的可靠应用提供了理论基础。",
+      "llm_tldr": "该文指出当前使用扩散或流匹配模型通过硬物理约束求解偏微分方程逆问题时，由于条件约束处于测度零流形，采样结果存在分布偏差。作者提出了基于共面积雅可比因子的校正方法，确保生成的后验分布与物理极限下的一致。理论分析和数值实验表明，该校正能够恢复正确的后验不确定度。该工作为物理约束生成模型的可靠应用提供了理论基础。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.09044v1",
+      "source": "arxiv",
+      "title": "A Hybrid Generative Reduced-Order Model for the Minimal Flow Unit",
+      "abstract": "A data-driven reduced-order modelling framework is proposed for wall-bounded turbulent flows to forecast the intermittent near-wall dynamics over extended time horizons from sparse sensor measurements. The approach combines a $β$-VAE-GAN, which compresses high-dimensional flow fields into a low-dimensional latent space, with a sensor-conditioned Transformer that forecasts the evolution of the latent variables. The temporal module employs Easy Attention, a static time-mixing operator that replaces the learnable query-key mechanism of standard self-attention at reduced computational cost, combined with an adapted AdaLN-Zero modulation mechanism for sensor-based conditioning. Evaluated on the Minimal Flow Unit ($Re_τ= 200$) at $y^+ = 14$, the compression stage recovers $87\\%$ of the turbulent kinetic energy within a four-dimensional latent space, exceeding the standard $β$-VAE baseline by more than $10\\%$. The latent dimensions autonomously encode the characteristic timescales of the flow, with specific coordinates capturing the low-frequency signature of the near-wall regeneration cycle ($T^+ \\approx 1724$), establishing the physical interpretability of the learnt representation. The sensor-conditioned Transformer maintains accurate forecasts over $17{,}288\\,t^+$ from an initialisation window of only $128\\,t^+$, whilst end-to-end inference reconstructs $82\\%$ of the turbulent kinetic energy. The principal limitation is the attenuation of rare, extreme-amplitude events, a consequence of the encoder prioritising the most statistically recurrent flow states within the low-dimensional bottleneck. Nevertheless, the framework accurately reproduces the alternating active and quiescent phases of the regeneration cycle, demonstrating its suitability as a surrogate model for the intermittent dynamics of wall-bounded turbulence.",
+      "authors": [
+        "Niccolò Tonioni",
+        "Lionel Agostini",
+        "Marcial Sanchis-Agudo",
+        "Mohammad Umair",
+        "Franck Kerhervé",
+        "Laurent Cordier",
+        "Ricardo Vinuesa"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn"
+      ],
+      "published": "2026-06-08T05:29:33+00:00",
+      "link": "https://arxiv.org/pdf/2606.09044v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Hybrid generative reduced-order model for wall-bounded turbulent flows",
+      "llm_evidence_cn": "用于壁面湍流的混合生成降阶模型",
+      "llm_evidence": "用于壁面湍流的混合生成降阶模型",
+      "canonical_evidence": "用于壁面湍流的混合生成降阶模型",
+      "llm_tldr_en": "Proposes a hybrid generative ROM combining beta-VAE-GAN for flow field compression and a sensor-conditioned Transformer for temporal prediction, achieving accurate long-term forecasts of near-wall dynamics in a minimal flow unit.",
+      "llm_tldr_cn": "该论文针对壁面湍流间歇性近壁动力学长期预测问题，提出了一种混合生成降阶模型（ROM）。该模型采用beta-VAE-GAN将高维流场压缩为低维潜在表示，并结合传感器条件Transformer预测潜在变量的演化。在最小流动单元（Re_tau=200）上的评估表明，压缩阶段有效保留了流动结构，时序预测实现了超越传统方法的长时间精度。这项工作展示了生成模型在湍流建模中的潜力，为稀疏传感器数据驱动的流场重建与预测提供新方案。",
+      "llm_tldr": "该论文针对壁面湍流间歇性近壁动力学长期预测问题，提出了一种混合生成降阶模型（ROM）。该模型采用beta-VAE-GAN将高维流场压缩为低维潜在表示，并结合传感器条件Transformer预测潜在变量的演化。在最小流动单元（Re_tau=200）上的评估表明，压缩阶段有效保留了流动结构，时序预测实现了超越传统方法的长时间精度。这项工作展示了生成模型在湍流建模中的潜力，为稀疏传感器数据驱动的流场重建与预测提供新方案。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.07835v1",
+      "source": "arxiv",
+      "title": "Mitigating the Contractivity Trap in Diffusion ODEs via Stein Stabilization",
+      "abstract": "A fundamental tension exists in the large-step inference of diffusion models via their deterministic probability flow ordinary differential equation (PF-ODE) trajectories, which we identify as the contractivity trap: efficient inference favors large step sizes, while aggressive steps and highly expressive denoisers can undermine contraction-based stability certificates for error suppression. To address this, we propose SteinDiff, a step-wise inference-time stabilization framework that employs Stein-derived corrections without requiring reference samples. Specifically, SteinDiff introduces a geometry-aware residual correction mechanism that regularizes large-step solver updates without retraining. To this end, we derive a closed-form Stein correction coefficient for step-wise solver adjustment, enabling reference-free adaptation to local data geometry. We further establish a score-controlled perturbation bound under distributional shifts and provide a complementary Stein perspective on EDM-style parameterizations. Extensive experiments demonstrate that SteinDiff mitigates severe artifacts and improves generative quality across large-step inference settings.",
+      "authors": [
+        "Shigui Li",
+        "Delu Zeng"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-05T20:54:13+00:00",
+      "link": "https://arxiv.org/pdf/2606.07835v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Stein stabilization for diffusion ODEs, addressing inference stability relevant to diffusion models for fluid flow",
+      "llm_evidence_cn": "针对扩散ODE的Stein稳定化，与流体流动扩散模型中的推理稳定性相关",
+      "llm_evidence": "针对扩散ODE的Stein稳定化，与流体流动扩散模型中的推理稳定性相关",
+      "canonical_evidence": "针对扩散ODE的Stein稳定化，与流体流动扩散模型中的推理稳定性相关",
+      "llm_tldr_en": "Identifies the contractivity trap in large-step diffusion ODE inference and proposes SteinDiff, a step-wise stabilization using Stein corrections without retraining.",
+      "llm_tldr_cn": "扩散模型在大步长推理时存在压缩陷阱：大步长利于效率但破坏稳定性。本文提出SteinDiff，利用Stein几何感知修正正则化大步长更新，无需重训练。该方法可提升流体动力学中扩散模型采样的鲁棒性。",
+      "llm_tldr": "扩散模型在大步长推理时存在压缩陷阱：大步长利于效率但破坏稳定性。本文提出SteinDiff，利用Stein几何感知修正正则化大步长更新，无需重训练。该方法可提升流体动力学中扩散模型采样的鲁棒性。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.08672v1",
+      "source": "arxiv",
+      "title": "Learning to Solve Generative ODEs Beyond the Linear Span",
+      "abstract": "Diffusion and flow generative models sample by integrating a learned ODE, but high quality still requires many sequential model evaluations. Solver learning reduces this cost by adapting scalar coefficients, timesteps, or both, while keeping the backbone model fixed. In this work, we identify a structural bottleneck in this update family: each step remains span-limited. Since the scalar-coefficient update lies in the span of buffered velocity evaluations, it can fit only the in-span component while leaving any out-of-span residual unreachable by scalar recombination alone. We propose SpanLift, a lightweight neural solver that augments scalar-coefficient updates with a spatial residual operator. SpanLift keeps a fixed base solver as an in-span prior and learns a spatial residual operator over the state and velocity buffer. The operator is trained by endpoint teacher matching, preserves the pretrained backbone, and adds no model NFEs. Empirically, the learned correction transfers across base solvers and is predominantly out-of-span. Across pixel-space diffusion, latent flow matching, and precipitation nowcasting, SpanLift achieves state-of-the-art few-step sampling. With only 3 NFE, it improves CIFAR-10 FID from 8.16 to 5.69 and ImageNet FID from 17.37 to 11.83.",
+      "authors": [
+        "Sihyeon Kim",
+        "Seunghun Lee",
+        "Vikas Singh",
+        "Hyunwoo J. Kim"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.LG"
+      ],
+      "published": "2026-06-07T15:22:13+00:00",
+      "link": "https://arxiv.org/pdf/2606.08672v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "learning to solve generative ODEs beyond linear span improves flow matching simulation efficiency",
+      "llm_evidence_cn": "学习求解生成ODE超越线性跨度，提升流匹配模拟效率",
+      "llm_evidence": "学习求解生成ODE超越线性跨度，提升流匹配模拟效率",
+      "canonical_evidence": "学习求解生成ODE超越线性跨度，提升流匹配模拟效率",
+      "llm_tldr_en": "Identifies span-limitation in solver learning for generative ODEs and proposes SpanLift, a neural solver that augments scalar updates with a spatial residual operator to handle out-of-span components.",
+      "llm_tldr_cn": "现有生成ODE求解器学习受限于缓存速度的线性组合，无法处理跨空间残差。本文提出SpanLift，在标量系数更新基础上引入空间残差算子，突破线性跨度瓶颈。实验表明，该方法显著减少采样步数，对流体动力学中的流匹配快速采样有重要价值。",
+      "llm_tldr": "现有生成ODE求解器学习受限于缓存速度的线性组合，无法处理跨空间残差。本文提出SpanLift，在标量系数更新基础上引入空间残差算子，突破线性跨度瓶颈。实验表明，该方法显著减少采样步数，对流体动力学中的流匹配快速采样有重要价值。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching for fluid flow simulation",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

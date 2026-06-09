@@ -6,35 +6,34 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-08
-- 运行时间：2026-06-08 21:26:21 UTC
+- 最新运行日期：2026-06-09
+- 运行时间：2026-06-09 20:58:02 UTC
 - 运行状态：成功
-- 本次总论文数：5
+- 本次总论文数：4
 - 精读区：2
-- 速读区：3
+- 速读区：2
 
 ### 今日简报（AI）
-今日精读2篇、速读3篇，聚焦流匹配模型在物理模拟与动态系统中的应用。最值得关注《Drifting Models for Surrogate Flow Modeling》（9.0分）和《Capturing non-Markovian dynamics in non-equilibrium stochastic systems using flow matching》（8.0分），前者探索替代流建模的漂移模型，后者解决非平衡随机系统的非马尔可夫动力学。建议优先精读这两篇高分论文，再拓展至速读中拓扑优化与3D物理学习的相关应用。
-- 详情：[/202606/08/README](/202606/08/README)
+1) 今日精读两篇高分论文：物理约束生成采用共面积校正提升PDE逆问题一致性（9.0分），以及最小流动单元的混合生成降阶模型（8.0分）。  
+2) 最值得关注方向：共面积校正确保后验一致，混合降阶模型高效模拟湍流单元。  
+3) 建议先从9分论文切入，理解其校正机制如何突破传统逆问题局限，再延伸至流体模拟的应用。
+- 详情：[/202606/09/README](/202606/09/README)
 
 ### 精读区论文标签
-1. [Drifting Models for Surrogate Flow Modeling](/202606/08/2606.07481v1-drifting-models-for-surrogate-flow-modeling)  
+1. [The Right Measure for Physics-Constrained Generation: A Co-Area Correction for Posterior-Consistent PDE Inverse Problems](/202606/09/2606.04804v3-the-right-measure-for-physics-constrained-generation-a-co-area-correction-for-posterior-consistent-pde-inverse-problems)  
    标签：评分：9.0/10、query:genmod-fluid
-   evidence：将生成式漂移框架应用于流体力学代理建模
-2. [Capturing non-Markovian dynamics in non-equilibrium stochastic systems using flow matching](/202606/08/2606.06658v1-capturing-non-markovian-dynamics-in-non-equilibrium-stochastic-systems-using-flow-matching)  
+   evidence：生成模型用于物理约束的PDE逆问题
+2. [A Hybrid Generative Reduced-Order Model for the Minimal Flow Unit](/202606/09/2606.09044v1-a-hybrid-generative-reduced-order-model-for-the-minimal-flow-unit)  
    标签：评分：8.0/10、query:genmod-fluid
-   evidence：使用流匹配方法模拟类似流体动力学的随机粒子系统
+   evidence：用于壁面湍流的混合生成降阶模型
 
 ### 速读区论文标签
-1. [On the Generalization in Topology Optimization via Sensitivity-Conditioned Bernoulli Flow Matching](/202606/08/2606.02179v1-on-the-generalization-in-topology-optimization-via-sensitivity-conditioned-bernoulli-flow-matching)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：伯努利流匹配方法应用于拓扑优化，可迁移至流体力学
-2. [UniPixie: Unified and Probabilistic 3D Physics Learning via Flow Matching](/202606/08/2606.05399v1-unipixie-unified-and-probabilistic-3d-physics-learning-via-flow-matching)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：流匹配用于概率物理学习，可迁移至流体动力学
-3. [Let the Dynamics Flow: Stable Flow Matching Dynamical Systems](/202606/08/2606.03834v1-let-the-dynamics-flow-stable-flow-matching-dynamical-systems)  
+1. [Mitigating the Contractivity Trap in Diffusion ODEs via Stein Stabilization](/202606/09/2606.07835v1-mitigating-the-contractivity-trap-in-diffusion-odes-via-stein-stabilization)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：流匹配用于稳定动力系统，方法可迁移至流体动力学
+   evidence：针对扩散ODE的Stein稳定化，与流体流动扩散模型中的推理稳定性相关
+2. [Learning to Solve Generative ODEs Beyond the Linear Span](/202606/09/2606.08672v1-learning-to-solve-generative-odes-beyond-the-linear-span)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：学习求解生成ODE超越线性跨度，提升流匹配模拟效率
 
 
 <div class="dpr-home-promo-card">
