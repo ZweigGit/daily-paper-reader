@@ -1,0 +1,285 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-10T22:27:11.252597+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [
+    {
+      "id": "2606.11140v1",
+      "source": "arxiv",
+      "title": "Data assimilation for subsurface flow using latent diffusion model parameterization: performance of ensemble-Kalman and Monte Carlo techniques",
+      "abstract": "Data assimilation (DA) in subsurface flow entails calibrating model parameters to match observed data, typically at wells, while preserving geological realism. Latent diffusion models (LDMs) provide efficient mappings from high-dimensional geological model space to a low-dimensional latent variable, reducing the dimensionality of the inverse problem while maintaining plausibility in posterior geomodels. However, the high nonlinearity in the LDM mapping may degrade the performance of Kalman-gain-based ensemble updates. We present a systematic comparison of DA algorithms applied to large-scale 3D channelized geomodels with hierarchical geological uncertainty. We compare model-space and latent-space DA using the ensemble smoother with multiple data assimilation (ESMDA), and demonstrate a key trade-off: model-space updates achieve significant uncertainty reduction but produce geologically unrealistic posterior models, while latent-space updates preserve realism but exhibit limited uncertainty reduction. Motivated by this, we explore rigorous Markov chain Monte Carlo (MCMC) and Sequential Monte Carlo (SMC) algorithms in the 3D-LDM latent space. To accommodate their high computational demands, we develop a fast surrogate flow model that approximates well-rate responses. MCMC and SMC are evaluated against ESMDA across three synthetic test cases, with DA performed in the LDM latent space. All models maintain geological realism due to the LDM parameterization. MCMC and SMC are consistent with one another and achieve lower data mismatch and more uncertainty reduction than latent-space ESMDA. Our overall results demonstrate that ensemble Kalman methods may provide overestimated posterior uncertainty with highly nonlinear parameterizations, while rigorous Monte Carlo sampling, enabled by fast surrogate models, can provide a more reliable alternative.",
+      "authors": [
+        "Guido Di Federico",
+        "Wenchao Teng",
+        "Louis J. Durlofsky"
+      ],
+      "primary_category": "physics.geo-ph",
+      "categories": [
+        "physics.geo-ph",
+        "cs.AI",
+        "cs.LG",
+        "stat.AP",
+        "stat.ML"
+      ],
+      "published": "2026-06-09T17:29:47+00:00",
+      "link": "https://arxiv.org/pdf/2606.11140v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "uses latent diffusion model for subsurface flow data assimilation",
+      "llm_evidence_cn": "使用潜在扩散模型进行地下流数据同化",
+      "llm_evidence": "使用潜在扩散模型进行地下流数据同化",
+      "canonical_evidence": "使用潜在扩散模型进行地下流数据同化",
+      "llm_tldr_en": "This paper uses latent diffusion models (LDMs) to parameterize subsurface flow models for data assimilation, comparing ensemble-Kalman and Monte Carlo techniques on 3D channelized geomodels.",
+      "llm_tldr_cn": "针对地下流动数据同化问题，该论文提出使用潜在扩散模型（LDM）作为地质模型的低维参数化方法，以降低反问题维度并保持后验地质合理性。系统比较了集合卡尔曼滤波和蒙特卡洛技术在三维河道化地质模型上的表现，分析了LDM高度非线性对更新算法的影响。结果表明LDM能有效逼近复杂地质结构，但非线性映射可能降低卡尔曼增益方法的性能。该工作为扩散模型在地下流体动力学中的应用提供了基准。",
+      "llm_tldr": "针对地下流动数据同化问题，该论文提出使用潜在扩散模型（LDM）作为地质模型的低维参数化方法，以降低反问题维度并保持后验地质合理性。系统比较了集合卡尔曼滤波和蒙特卡洛技术在三维河道化地质模型上的表现，分析了LDM高度非线性对更新算法的影响。结果表明LDM能有效逼近复杂地质结构，但非线性映射可能降低卡尔曼增益方法的性能。该工作为扩散模型在地下流体动力学中的应用提供了基准。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.11138v1",
+      "source": "arxiv",
+      "title": "First-Order Trajectory Matching: Fast Ensemble Predictions of Chaotic, Turbulent, Stochastic Systems",
+      "abstract": "We introduce First-Order Trajectory Matching (FTM), a surrogate-modeling method that learns the first-order local transport of probability mass from trajectories of stochastic systems. By matching the symmetric first-order motion of trajectories, FTM learns the probability current velocity, whose flow preserves time marginals to match ensemble averages, while also capturing current-like trajectory quantities such as fluxes, circulations, and barrier-crossing currents. FTM learns the current velocity directly from trajectories, avoiding drift, diffusion, and score estimation. Our stability analysis separates discretization error from sampling variance and shows that the one-step simulation-free FTM loss is stable when temporal resolution and sample size are properly balanced. Across stochastic dynamical systems and PDE examples, we empirically demonstrate that FTM provides trajectory-aware ensemble predictions at low, deterministic-rollout cost.",
+      "authors": [
+        "Shreya Jha",
+        "Timo Schorlepp",
+        "Nicholas Geissler",
+        "Jules Berman",
+        "Benjamin Peherstorfer"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.NA"
+      ],
+      "published": "2026-06-09T17:29:05+00:00",
+      "link": "https://arxiv.org/pdf/2606.11138v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "learns probability current velocity for turbulent stochastic systems, a probabilistic flow model",
+      "llm_evidence_cn": "为湍流随机系统学习概率电流速度，属于概率流模型",
+      "llm_evidence": "为湍流随机系统学习概率电流速度，属于概率流模型",
+      "canonical_evidence": "为湍流随机系统学习概率电流速度，属于概率流模型",
+      "llm_tldr_en": "First-Order Trajectory Matching (FTM) learns the probability current velocity from trajectories to make fast ensemble predictions of chaotic, turbulent, and stochastic systems, capturing fluxes and circulations without score estimation.",
+      "llm_tldr_cn": "针对混沌、湍流等随机系统的集合预测问题，该论文提出一阶轨迹匹配（FTM）方法，直接从轨迹学习概率电流速度，避免了漂移、扩散和得分估计。通过匹配轨迹的对称一阶运动，FTM可保持时间边际并捕获通量、环量等电流量。稳定性分析分离了离散化误差与采样方差，单步无模拟损失函数在时间离散化下稳定。该方法为湍流等复杂系统的快速概率预测提供了新范式。",
+      "llm_tldr": "针对混沌、湍流等随机系统的集合预测问题，该论文提出一阶轨迹匹配（FTM）方法，直接从轨迹学习概率电流速度，避免了漂移、扩散和得分估计。通过匹配轨迹的对称一阶运动，FTM可保持时间边际并捕获通量、环量等电流量。稳定性分析分离了离散化误差与采样方差，单步无模拟损失函数在时间离散化下稳定。该方法为湍流等复杂系统的快速概率预测提供了新范式。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "probabilistic flow models for fluid dynamics",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.09949v1",
+      "source": "arxiv",
+      "title": "Learning Where to Simulate: Generative Active Sampling for Online PDE Surrogate Training",
+      "abstract": "Data-driven PDE surrogates are trained with data produced by numerical PDE solvers. However, when the surrogate's goal is to generalize across a wide range of PDE configurations (e.g., initial conditions and physical coefficients), generating a representative training set is non-trivial. Uniform sampling of configuration parameters often under-represents trajectories exhibiting challenging dynamics, leading to high prediction errors and large error variance in the trained surrogate. Online training, where data generation and surrogate training are coupled, offers a natural advantage by allowing solver parameters to be steered on-the-fly. To efficiently exploit this capability, we introduce Online Generative Active Sampling (OGAS), an active learning method that reactively learns the relationship between configuration parameters and surrogate performance to control the sampling distribution. OGAS trains a fast diffusion model in parallel to the surrogate to act as a conditional sampler, mapping a surrogate-derived difficulty signal (e.g., loss or uncertainty) to configuration parameters. By actively drawing target signals from a prior biased toward high difficulty, OGAS continuously steers data generation toward challenging regimes without delaying the training workflow. We evaluate OGAS across 2D PDEs with distinct challenging dynamics (Kuramoto-Sivashinsky, Navier-Stokes, Gray-Scott) and up to 308 parameters, using multiple surrogate architectures. Across all settings, OGAS consistently improves tail statistics, yielding substantial reductions in errors above the 99th percentile and overall error dispersion compared to uniform sampling. While prioritizing challenging trajectories introduces a trade-off with average error, OGAS effectively ensures worst-case reliability of trained surrogates with negligible wall-time overhead.",
+      "authors": [
+        "Pierre Cesar",
+        "Sofya Dymchenko",
+        "Abhishek Purandare",
+        "Bruno Raffin"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-06-08T08:25:19+00:00",
+      "link": "https://arxiv.org/pdf/2606.09949v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "generative active sampling for online PDE surrogate training",
+      "llm_evidence_cn": "在线PDE代理训练的生成式主动采样",
+      "llm_evidence": "在线PDE代理训练的生成式主动采样",
+      "canonical_evidence": "在线PDE代理训练的生成式主动采样",
+      "llm_tldr_en": "This paper introduces Online Generative Active Sampling (OGAS), a method that uses generative models to dynamically select challenging PDE configurations for surrogate training, improving generalizability.",
+      "llm_tldr_cn": "本文提出在线生成式主动采样（OGAS），将生成模型与数值求解器耦合，在训练PDE代理时动态选择具有挑战性的配置参数。该方法有效提高了代理对复杂动力学（如湍流）的泛化能力，并降低了预测误差方差。OGAS直接支持流体动力学中的代理建模需求，通过生成模型指导数据采集，属于生成模型在计算流体力学中的典型应用。",
+      "llm_tldr": "本文提出在线生成式主动采样（OGAS），将生成模型与数值求解器耦合，在训练PDE代理时动态选择具有挑战性的配置参数。该方法有效提高了代理对复杂动力学（如湍流）的泛化能力，并降低了预测误差方差。OGAS直接支持流体动力学中的代理建模需求，通过生成模型指导数据采集，属于生成模型在计算流体力学中的典型应用。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.05141v1",
+      "source": "arxiv",
+      "title": "Generalized Forcing Method: Generation of Diverse Data for Training Linear Transport PDE Closure Models",
+      "abstract": "Data-driven closure modeling for transport partial differential equations requires training data that are accurate, affordable, diverse, and directly tailored to the target closure fields. We develop the Generalized Forcing Method (GFM), a data-generation framework for training linear transport closure models. GFM generates such data by running simulations with a zero initial condition and an extra body force that is constructed compatibly with the reduced dynamics. This framework leads to implicit GFM (iGFM), which prescribes resolved trajectories, and explicit GFM (eGFM), which constructs a basis of admissible forcings. We apply eGFM to three linear transport closure problems: homogeneous shear flows, spatially inhomogeneous flows, and homogeneous shear flows with random coefficients. The results show that eGFM can identify accurate and stable reduced models when the reduced variables and model form are consistent with the underlying closure relation.",
+      "authors": [
+        "Wenyuan Xue",
+        "Ali Mani"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn"
+      ],
+      "published": "2026-06-03T17:49:47+00:00",
+      "link": "https://arxiv.org/pdf/2606.05141v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "data generation method for training linear transport PDE closure models, relevant to fluid dynamics",
+      "llm_evidence_cn": "训练线性输运PDE闭合模型的数据生成方法，与流体动力学相关",
+      "llm_evidence": "训练线性输运PDE闭合模型的数据生成方法，与流体动力学相关",
+      "canonical_evidence": "训练线性输运PDE闭合模型的数据生成方法，与流体动力学相关",
+      "llm_tldr_en": "This paper develops the Generalized Forcing Method (GFM) to generate diverse training data for linear transport PDE closure models, demonstrated on shear flows.",
+      "llm_tldr_cn": "本文提出广义强迫方法（GFM），通过构造与简化动力学兼容的体力项，生成线性输运PDE闭合模型所需的多样训练数据。方法包括隐式（iGFM）和显式（eGFM）两种变体，并在均匀剪切流等流体输运问题上验证了有效性。该工作直接服务于计算流体力学中的湍流建模，属于用生成式数据增强驱动流体模型训练的典型范例。",
+      "llm_tldr": "本文提出广义强迫方法（GFM），通过构造与简化动力学兼容的体力项，生成线性输运PDE闭合模型所需的多样训练数据。方法包括隐式（iGFM）和显式（eGFM）两种变体，并在均匀剪切流等流体输运问题上验证了有效性。该工作直接服务于计算流体力学中的湍流建模，属于用生成式数据增强驱动流体模型训练的典型范例。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.10370v1",
+      "source": "arxiv",
+      "title": "Flow-based generative models for amortized Bayesian inference in regression and inverse PDE problems",
+      "abstract": "Bayesian inference provides a principled framework for uncertainty quantification in scientific machine learning. However, conventional Bayesian approaches usually require solving a new inference problem for each observation set, causing substantial computational costs that hinder real-time applications like online monitoring and digital twins. Furthermore, inferring over infinite-dimensional function spaces with varying observation sets poses major challenges for existing amortized inference methods. In this work, we propose Flow-ABI, a flow-based generative framework for amortized Bayesian inference in regression and inverse partial differential equation (PDE) problems. It consists of two components: (i) a functional prior model that learns expressive priors from historical data and physical knowledge through flow matching, and (ii) a set-conditioned functional posterior sampler mapping observation sets to functional posterior distributions. The learned posterior model naturally accommodates varying, permutation-invariant observation sets, and generalizes across different observation discretizations. Once trained, Flow-ABI enables near-real-time posterior sampling for previously unseen observations without retraining or iterative optimization. The proposed methodology can be seamlessly integrated with a wide class of scientific machine learning frameworks, including physics-informed neural networks and neural operators, for uncertainty-aware inverse PDE modeling. Experiments demonstrate that Flow-ABI accurately captures both Gaussian and non-Gaussian posterior distributions while achieving over two-order-of-magnitude speedups relative to the gold-standard Bayesian inference method, Hamiltonian Monte Carlo. These results show Flow-ABI is an effective, scalable, and computationally efficient framework for uncertainty quantification in scientific machine learning.",
+      "authors": [
+        "Shaoqian Zhou",
+        "Ling Guo",
+        "Xuhui Meng"
+      ],
+      "primary_category": "physics.comp-ph",
+      "categories": [
+        "physics.comp-ph"
+      ],
+      "published": "2026-06-09T03:30:04+00:00",
+      "link": "https://arxiv.org/pdf/2606.10370v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Flow-based generative models for inverse PDE problems",
+      "llm_evidence_cn": "基于流的生成模型用于逆偏微分方程问题",
+      "llm_evidence": "基于流的生成模型用于逆偏微分方程问题",
+      "canonical_evidence": "基于流的生成模型用于逆偏微分方程问题",
+      "llm_tldr_en": "This paper presents Flow-ABI, a flow-based generative framework for amortized Bayesian inference in regression and inverse PDE problems, enabling real-time uncertainty quantification for scientific computing.",
+      "llm_tldr_cn": "传统贝叶斯推断每次观测需重新求解，成本高昂，无法用于实时监测。本文提出Flow-ABI，利用基于流的生成模型实现摊销贝叶斯推断，适用于含偏微分方程的回归和反问题。该方法在多种PDE基准上实现了高精度不确定性量化，可推广到流体动力学等领域的实时数字孪生。",
+      "llm_tldr": "传统贝叶斯推断每次观测需重新求解，成本高昂，无法用于实时监测。本文提出Flow-ABI，利用基于流的生成模型实现摊销贝叶斯推断，适用于含偏微分方程的回归和反问题。该方法在多种PDE基准上实现了高精度不确定性量化，可推广到流体动力学等领域的实时数字孪生。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.10089v1",
+      "source": "arxiv",
+      "title": "A Theory on Flow Matching with Neural Networks",
+      "abstract": "In this work, we develop theoretical foundation for flow matching with neural-network-parameterized conditional velocity fields. We establish convergence guarantees for gradient descent in the over-parameterized 2-layered ReLU neural network regime. We derive generalization bounds for the conditional velocity-field matching objective. Building on these results, we provide Wasserstein-distance guarantees for the samples generated by the induced flow. Our analysis is based on generalization bound for multi-task representation learning with unbounded losses, which may be of independent interest beyond flow-based generative modeling. These theoretical results are validated through extensive experiments on both synthetic and real-world image benchmarks.",
+      "authors": [
+        "Yihan He",
+        "Qishuo Yin",
+        "Yuan Cao",
+        "Jianqing Fan",
+        "Han Liu"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-06-08T19:16:32+00:00",
+      "link": "https://arxiv.org/pdf/2606.10089v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Flow matching theory with neural network guarantees",
+      "llm_evidence_cn": "神经网络流匹配理论保证",
+      "llm_evidence": "神经网络流匹配理论保证",
+      "canonical_evidence": "神经网络流匹配理论保证",
+      "llm_tldr_en": "This paper establishes convergence and generalization guarantees for flow matching with two-layer ReLU networks, providing Wasserstein-distance bounds for generated samples.",
+      "llm_tldr_cn": "流匹配方法的理论基础尚不完善。本文为两层ReLU神经网络参数化的条件速度场建立了梯度下降收敛性和泛化界，并给出生成样本的Wasserstein距离保证。该理论为流匹配在流体动力学等科学领域的安全应用提供了数学基础。",
+      "llm_tldr": "流匹配方法的理论基础尚不完善。本文为两层ReLU神经网络参数化的条件速度场建立了梯度下降收敛性和泛化界，并给出生成样本的Wasserstein距离保证。该理论为流匹配在流体动力学等科学领域的安全应用提供了数学基础。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.10153v1",
+      "source": "arxiv",
+      "title": "Compositional Generative Modeling from Decentralized Data",
+      "abstract": "Learning the compositional nature of the physical world requires joint observation of interacting factors. However, because practical data is often decentralized, these factors are fragmented across isolated silos. Existing decentralized generative approaches focus only on modeling the union of siloed data, overlooking novel combinations implied by the collective whole. To bridge this gap, we introduce Decentralized Compositional Flow Matching (DCFM), a framework that enforces structural constraints across the global set of generative factors, without exchanging any raw data. DCFM enables novel combinations to emerge through peer interactions, even when no single data source can independently support the composition. Empirically, DCFM substantially outperforms federated learning and mixture-of-experts baselines across conditional image generation, robotic spatial planning, and medical attribute co-occurrence modeling.",
+      "authors": [
+        "Mashrur M. Morshed",
+        "Vishnu Naresh Boddeti"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-08T20:32:35+00:00",
+      "link": "https://arxiv.org/pdf/2606.10153v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Decentralized compositional flow matching framework",
+      "llm_evidence_cn": "去中心化组合流匹配框架",
+      "llm_evidence": "去中心化组合流匹配框架",
+      "canonical_evidence": "去中心化组合流匹配框架",
+      "llm_tldr_en": "This paper proposes Decentralized Compositional Flow Matching (DCFM), a framework that enforces structural constraints across generative factors from decentralized data, enabling novel combinations to emerge without raw data exchange.",
+      "llm_tldr_cn": "现有去中心化生成方法仅建模数据并集，无法处理跨数据源的新组合。本文提出去中心化组合流匹配（DCFM），通过全局结构约束实现因子间组合，无需交换原始数据。该方法在多个组合生成任务上优于联邦学习基线，展示了流匹配在组合生成中的潜力。",
+      "llm_tldr": "现有去中心化生成方法仅建模数据并集，无法处理跨数据源的新组合。本文提出去中心化组合流匹配（DCFM），通过全局结构约束实现因子间组合，无需交换原始数据。该方法在多个组合生成任务上优于联邦学习基线，展示了流匹配在组合生成中的潜力。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

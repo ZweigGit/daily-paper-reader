@@ -6,34 +6,41 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-09
-- 运行时间：2026-06-09 20:58:02 UTC
+- 最新运行日期：2026-06-10
+- 运行时间：2026-06-10 22:36:09 UTC
 - 运行状态：成功
-- 本次总论文数：4
+- 本次总论文数：7
 - 精读区：2
-- 速读区：2
+- 速读区：5
 
 ### 今日简报（AI）
-1) 今日精读两篇高分论文：物理约束生成采用共面积校正提升PDE逆问题一致性（9.0分），以及最小流动单元的混合生成降阶模型（8.0分）。  
-2) 最值得关注方向：共面积校正确保后验一致，混合降阶模型高效模拟湍流单元。  
-3) 建议先从9分论文切入，理解其校正机制如何突破传统逆问题局限，再延伸至流体模拟的应用。
-- 详情：[/202606/09/README](/202606/09/README)
+今日精读两篇前沿论文，聚焦AI辅助地下流体数据同化与混沌系统集合预测。潜变量扩散模型参数化在数据同化中表现优异，一阶轨迹匹配为湍流随机系统提供高效集合预测。建议优先精读这两篇高分论文，关注其方法在地球科学和工程中的迁移应用。
+- 详情：[/202606/10/README](/202606/10/README)
 
 ### 精读区论文标签
-1. [The Right Measure for Physics-Constrained Generation: A Co-Area Correction for Posterior-Consistent PDE Inverse Problems](/202606/09/2606.04804v3-the-right-measure-for-physics-constrained-generation-a-co-area-correction-for-posterior-consistent-pde-inverse-problems)  
+1. [Data assimilation for subsurface flow using latent diffusion model parameterization: performance of ensemble-Kalman and Monte Carlo techniques](/202606/10/2606.11140v1-data-assimilation-for-subsurface-flow-using-latent-diffusion-model-parameterization-performance-of-ensemble-kalman-and-monte-carlo-techniques)  
    标签：评分：9.0/10、query:genmod-fluid
-   evidence：生成模型用于物理约束的PDE逆问题
-2. [A Hybrid Generative Reduced-Order Model for the Minimal Flow Unit](/202606/09/2606.09044v1-a-hybrid-generative-reduced-order-model-for-the-minimal-flow-unit)  
+   evidence：使用潜在扩散模型进行地下流数据同化
+2. [First-Order Trajectory Matching: Fast Ensemble Predictions of Chaotic, Turbulent, Stochastic Systems](/202606/10/2606.11138v1-first-order-trajectory-matching-fast-ensemble-predictions-of-chaotic-turbulent-stochastic-systems)  
    标签：评分：8.0/10、query:genmod-fluid
-   evidence：用于壁面湍流的混合生成降阶模型
+   evidence：为湍流随机系统学习概率电流速度，属于概率流模型
 
 ### 速读区论文标签
-1. [Mitigating the Contractivity Trap in Diffusion ODEs via Stein Stabilization](/202606/09/2606.07835v1-mitigating-the-contractivity-trap-in-diffusion-odes-via-stein-stabilization)  
+1. [Learning Where to Simulate: Generative Active Sampling for Online PDE Surrogate Training](/202606/10/2606.09949v1-learning-where-to-simulate-generative-active-sampling-for-online-pde-surrogate-training)  
+   标签：评分：7.0/10、query:genmod-fluid
+   evidence：在线PDE代理训练的生成式主动采样
+2. [Flow-based generative models for amortized Bayesian inference in regression and inverse PDE problems](/202606/10/2606.10370v1-flow-based-generative-models-for-amortized-bayesian-inference-in-regression-and-inverse-pde-problems)  
+   标签：评分：7.0/10、query:genmod-fluid
+   evidence：基于流的生成模型用于逆偏微分方程问题
+3. [Generalized Forcing Method: Generation of Diverse Data for Training Linear Transport PDE Closure Models](/202606/10/2606.05141v1-generalized-forcing-method-generation-of-diverse-data-for-training-linear-transport-pde-closure-models)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：针对扩散ODE的Stein稳定化，与流体流动扩散模型中的推理稳定性相关
-2. [Learning to Solve Generative ODEs Beyond the Linear Span](/202606/09/2606.08672v1-learning-to-solve-generative-odes-beyond-the-linear-span)  
+   evidence：训练线性输运PDE闭合模型的数据生成方法，与流体动力学相关
+4. [A Theory on Flow Matching with Neural Networks](/202606/10/2606.10089v1-a-theory-on-flow-matching-with-neural-networks)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：学习求解生成ODE超越线性跨度，提升流匹配模拟效率
+   evidence：神经网络流匹配理论保证
+5. [Compositional Generative Modeling from Decentralized Data](/202606/10/2606.10153v1-compositional-generative-modeling-from-decentralized-data)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：去中心化组合流匹配框架
 
 
 <div class="dpr-home-promo-card">
