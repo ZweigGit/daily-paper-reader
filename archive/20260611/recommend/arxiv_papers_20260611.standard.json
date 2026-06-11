@@ -1,0 +1,134 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-11T22:13:10.554369+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2606.11691v1",
+      "source": "arxiv",
+      "title": "Spectrally Regularized Latent Flow Matching for Turbulence Generation",
+      "abstract": "Latent diffusion and flow matching have emerged as leading approaches for synthetic turbulence generation, yet they systematically under-represent dissipation-range amplitudes. We introduce a latent flow matching framework with a spectrally regularized compression stage that directly targets this failure mode. On a 256^2 DNS dataset at Re_f \\approx 2250, replacing an MSE-trained VAE with a zone-weighted log-spectral objective raises deep-dissipation retained spectral power from 25% to 94% in reconstruction and from 20% to 79% in unconditional generation. The improved latent representation also yields a substantially better sampling cost-fidelity tradeoff: the MSE-trained latent space imposes a fundamental quality ceiling near DD bias -0.70 that no integrator or step-count can overcome, while the spectrally regularized latent space reaches DD bias -0.117 at just 20 function evaluations. Mechanistically, encoder-decoder swap experiments show that the improvement is driven primarily by encoder-induced latent reorganization rather than decoder capacity, while a support-amplitude decomposition reveals that MSE-trained models behave as conservative suppression models, minimizing pointwise error by attenuating intermittent high-wavenumber structure. Both pipelines recover the second-order structure function and the correct sign of S_3, indicating the correct cascade direction without explicit supervision. A small residual gap in the magnitude of S_3 suggests that phase-coherent triadic organization remains a complementary axis to amplitude fidelity for future generative turbulence models.",
+      "authors": [
+        "Khalid Rafiq",
+        "Aditya G. Nair"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "physics.flu-dyn"
+      ],
+      "published": "2026-06-10T06:09:51+00:00",
+      "link": "https://arxiv.org/pdf/2606.11691v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "latent flow matching for turbulence generation",
+      "llm_evidence_cn": "潜在流匹配用于湍流生成",
+      "llm_evidence": "潜在流匹配用于湍流生成",
+      "canonical_evidence": "潜在流匹配用于湍流生成",
+      "llm_tldr_en": "Spectrally regularized latent flow matching significantly improves dissipation-range representation in turbulence generation, raising retained spectral power from 25% to 94%.",
+      "llm_tldr_cn": "该论文针对潜扩散和流匹配在合成湍流生成中低估耗散范围振幅的问题，提出了一种具有谱正则化压缩阶段的潜流匹配框架。通过在256^2 DNS数据集上替换MSE训练的VAE为分区加权对数谱目标，将深层耗散保留谱功率从25%提升至94%，显著改善了采样成本-保真度权衡。",
+      "llm_tldr": "该论文针对潜扩散和流匹配在合成湍流生成中低估耗散范围振幅的问题，提出了一种具有谱正则化压缩阶段的潜流匹配框架。通过在256^2 DNS数据集上替换MSE训练的VAE为分区加权对数谱目标，将深层耗散保留谱功率从25%提升至94%，显著改善了采样成本-保真度权衡。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.11277v1",
+      "source": "arxiv",
+      "title": "Least-Action-Guided Diffusion for Physical Extrapolation",
+      "abstract": "Reliable extrapolation remains a central challenge for generative models in computational physics, because models trained over finite ranges of time, parameters, or geometries may produce physically inconsistent predictions outside the training distribution. We introduce a least-action-principle-guided diffusion, LAPG, a framework that promotes physical consistency during inference rather than relying solely on constraints imposed during training. The method combines a conditional score-based diffusion model with an action-derived physical guidance score. In the first stage, the learned score model generates an in-distribution proposal; in the second, an action-based variational prior refines this proposal toward the target out-of-distribution condition. This formulation turns the principle of least action into a differentiable inference-time correction mechanism and provides an alternative to pointwise residual penalties that often require empirical loss balancing.   We evaluate LAPG on representative ordinary- and partial-differential-equation systems, including free fall, conservative and dissipative spring-mass dynamics, interacting point vortices, and potential flow over parameterized airfoils. In temporal, parameter, and geometric extrapolation tests, LAPG reduces phase drift, preserves dissipative decay, captures vortex motion, and improves the lift response of airfoil flows compared with training-time physics-informed baselines.",
+      "authors": [
+        "Zhongxin Yang",
+        "Yuanwei Bin",
+        "Xiang I. A. Yang",
+        "Shiyi Chen"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "physics.comp-ph"
+      ],
+      "published": "2026-06-09T10:59:37+00:00",
+      "link": "https://arxiv.org/pdf/2606.11277v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "proposes a least-action-guided diffusion combining conditional score-based model with physical guidance for extrapolation in computational physics",
+      "llm_evidence_cn": "提出最小作用引导扩散模型，结合条件得分模型与物理指导，用于计算物理中的外推",
+      "llm_evidence": "提出最小作用引导扩散模型，结合条件得分模型与物理指导，用于计算物理中的外推",
+      "canonical_evidence": "提出最小作用引导扩散模型，结合条件得分模型与物理指导，用于计算物理中的外推",
+      "llm_tldr_en": "This paper introduces LAPG, a framework that combines a conditional score-based diffusion model with an action-derived physical guidance score to enforce physical consistency during inference for out-of-distribution extrapolation in computational physics.",
+      "llm_tldr_cn": "该论文提出最小作用引导扩散（LAPG）框架，用于物理系统的外推预测。核心思想是结合条件得分扩散模型与基于最小作用原理的物理引导评分，分两阶段生成物理一致的外推结果。第一阶段生成分布内提议，第二阶段通过作用量变分先验修正。该方法不依赖训练时的物理约束，在推断时保证一致性。该框架可直接推广到流体动力学等物理系统的生成建模与预测。",
+      "llm_tldr": "该论文提出最小作用引导扩散（LAPG）框架，用于物理系统的外推预测。核心思想是结合条件得分扩散模型与基于最小作用原理的物理引导评分，分两阶段生成物理一致的外推结果。第一阶段生成分布内提议，第二阶段通过作用量变分先验修正。该方法不依赖训练时的物理约束，在推断时保证一致性。该框架可直接推广到流体动力学等物理系统的生成建模与预测。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "score-based generative models for fluid flow",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.05399v2",
+      "source": "arxiv",
+      "title": "UniPixie: Unified and Probabilistic 3D Physics Learning via Flow Matching",
+      "abstract": "Existing feed-forward networks excel at predicting a single set of physical properties from visual appearance, but this point-estimate paradigm fundamentally fails to capture the real world's inherent physical ambiguity. We address this by reframing physics prediction as a task of learning a controllable, continuous distribution of material properties. We introduce UNIPIXIE, a framework trained to predict a continuous and parameterized path of physically plausible material properties from a single visual input. By learning a direct mapping along an object's softest-to-stiffest spectrum on our PIXIEMULTIVERSE dataset, UNIPIXIE allows for controllable generation of diverse, physically valid material fields via a single intuitive parameter. Crucially, UNIPIXIE introduces a novel unified architecture to produce simulation-ready parameters for diverse physics solvers, including continuum-based Material Point Method (MPM), reduced-order deformation based on Linear Blend Skinning (LBS), and anchor-based Spring-Mass systems, addressing a key portability issue in prior work. Experiments show our approach not only generates a rich variety of plausible dynamics but also reduces Young's Modulus prediction error by over 50% against the strongest deterministic baseline, bridging the gap between static point estimates and the continuous nature of physical reality. Project page: https://unipixie.github.io/",
+      "authors": [
+        "Qilin Huang",
+        "Quynh Anh Huynh",
+        "Long Le",
+        "Chen Wang",
+        "Chuhao Chen",
+        "Ryan Lucas",
+        "Eric Eaton",
+        "Lingjie Liu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-06-03T20:08:23+00:00",
+      "link": "https://arxiv.org/pdf/2606.05399v2",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "uses flow matching for probabilistic physics learning, transferable to fluid dynamics",
+      "llm_evidence_cn": "使用流匹配进行概率物理学习，可迁移至流体动力学",
+      "llm_evidence": "使用流匹配进行概率物理学习，可迁移至流体动力学",
+      "canonical_evidence": "使用流匹配进行概率物理学习，可迁移至流体动力学",
+      "llm_tldr_en": "Proposes UniPixie that uses flow matching to learn a continuous distribution of material properties from vision, enabling controllable generation; relevant as a flow matching method for physical systems.",
+      "llm_tldr_cn": "该文针对现有前馈网络只能预测单一物理属性而无法处理物理歧义的问题，提出UniPixie框架，通过流匹配学习物体材料属性的连续可参数化路径，实现从单一视觉输入生成多样且物理合理的材料场。虽然主要关注通用物理属性，但其流匹配方法可直接应用于流体动力学中的概率建模和生成。实验在PixieMultiverse数据集上展示了可控生成能力。",
+      "llm_tldr": "该文针对现有前馈网络只能预测单一物理属性而无法处理物理歧义的问题，提出UniPixie框架，通过流匹配学习物体材料属性的连续可参数化路径，实现从单一视觉输入生成多样且物理合理的材料场。虽然主要关注通用物理属性，但其流匹配方法可直接应用于流体动力学中的概率建模和生成。实验在PixieMultiverse数据集上展示了可控生成能力。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

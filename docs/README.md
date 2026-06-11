@@ -6,41 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-10
-- 运行时间：2026-06-10 22:36:09 UTC
+- 最新运行日期：2026-06-11
+- 运行时间：2026-06-11 22:15:55 UTC
 - 运行状态：成功
-- 本次总论文数：7
+- 本次总论文数：3
 - 精读区：2
-- 速读区：5
+- 速读区：1
 
 ### 今日简报（AI）
-今日精读两篇前沿论文，聚焦AI辅助地下流体数据同化与混沌系统集合预测。潜变量扩散模型参数化在数据同化中表现优异，一阶轨迹匹配为湍流随机系统提供高效集合预测。建议优先精读这两篇高分论文，关注其方法在地球科学和工程中的迁移应用。
-- 详情：[/202606/10/README](/202606/10/README)
+今日精读2篇、速读1篇，聚焦湍流生成与物理外推。最值得看《Spectrally Regularized Latent Flow Matching》（9.0）的频谱正则化流匹配方法，以及《Least-Action-Guided Diffusion》（8.0）的最小作用量引导扩散技术。建议关注流匹配在复杂物理场景中的生成与外推潜力。
+- 详情：[/202606/11/README](/202606/11/README)
 
 ### 精读区论文标签
-1. [Data assimilation for subsurface flow using latent diffusion model parameterization: performance of ensemble-Kalman and Monte Carlo techniques](/202606/10/2606.11140v1-data-assimilation-for-subsurface-flow-using-latent-diffusion-model-parameterization-performance-of-ensemble-kalman-and-monte-carlo-techniques)  
+1. [Spectrally Regularized Latent Flow Matching for Turbulence Generation](/202606/11/2606.11691v1-spectrally-regularized-latent-flow-matching-for-turbulence-generation)  
    标签：评分：9.0/10、query:genmod-fluid
-   evidence：使用潜在扩散模型进行地下流数据同化
-2. [First-Order Trajectory Matching: Fast Ensemble Predictions of Chaotic, Turbulent, Stochastic Systems](/202606/10/2606.11138v1-first-order-trajectory-matching-fast-ensemble-predictions-of-chaotic-turbulent-stochastic-systems)  
+   evidence：潜在流匹配用于湍流生成
+2. [Least-Action-Guided Diffusion for Physical Extrapolation](/202606/11/2606.11277v1-least-action-guided-diffusion-for-physical-extrapolation)  
    标签：评分：8.0/10、query:genmod-fluid
-   evidence：为湍流随机系统学习概率电流速度，属于概率流模型
+   evidence：提出最小作用引导扩散模型，结合条件得分模型与物理指导，用于计算物理中的外推
 
 ### 速读区论文标签
-1. [Learning Where to Simulate: Generative Active Sampling for Online PDE Surrogate Training](/202606/10/2606.09949v1-learning-where-to-simulate-generative-active-sampling-for-online-pde-surrogate-training)  
+1. [UniPixie: Unified and Probabilistic 3D Physics Learning via Flow Matching](/202606/11/2606.05399v2-unipixie-unified-and-probabilistic-3d-physics-learning-via-flow-matching)  
    标签：评分：7.0/10、query:genmod-fluid
-   evidence：在线PDE代理训练的生成式主动采样
-2. [Flow-based generative models for amortized Bayesian inference in regression and inverse PDE problems](/202606/10/2606.10370v1-flow-based-generative-models-for-amortized-bayesian-inference-in-regression-and-inverse-pde-problems)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：基于流的生成模型用于逆偏微分方程问题
-3. [Generalized Forcing Method: Generation of Diverse Data for Training Linear Transport PDE Closure Models](/202606/10/2606.05141v1-generalized-forcing-method-generation-of-diverse-data-for-training-linear-transport-pde-closure-models)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：训练线性输运PDE闭合模型的数据生成方法，与流体动力学相关
-4. [A Theory on Flow Matching with Neural Networks](/202606/10/2606.10089v1-a-theory-on-flow-matching-with-neural-networks)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：神经网络流匹配理论保证
-5. [Compositional Generative Modeling from Decentralized Data](/202606/10/2606.10153v1-compositional-generative-modeling-from-decentralized-data)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：去中心化组合流匹配框架
+   evidence：使用流匹配进行概率物理学习，可迁移至流体动力学
 
 
 <div class="dpr-home-promo-card">
