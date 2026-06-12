@@ -6,29 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-11
-- 运行时间：2026-06-11 22:15:55 UTC
+- 最新运行日期：2026-06-12
+- 运行时间：2026-06-12 22:03:30 UTC
 - 运行状态：成功
-- 本次总论文数：3
-- 精读区：2
-- 速读区：1
+- 本次总论文数：2
+- 精读区：0
+- 速读区：2
 
 ### 今日简报（AI）
-今日精读2篇、速读1篇，聚焦湍流生成与物理外推。最值得看《Spectrally Regularized Latent Flow Matching》（9.0）的频谱正则化流匹配方法，以及《Least-Action-Guided Diffusion》（8.0）的最小作用量引导扩散技术。建议关注流匹配在复杂物理场景中的生成与外推潜力。
-- 详情：[/202606/11/README](/202606/11/README)
+今日速读两篇论文，聚焦流匹配模型蒸馏与连续动力学可解释性。
+重点关注《Mean Flow Distillation》提出的高效蒸馏方案；另一篇探讨物理模型可解释性局限。
+建议优先精读第一篇，理解其稳健蒸馏机制，后续关注该方向在生成模型中的应用。
+- 详情：[/202606/12/README](/202606/12/README)
 
 ### 精读区论文标签
-1. [Spectrally Regularized Latent Flow Matching for Turbulence Generation](/202606/11/2606.11691v1-spectrally-regularized-latent-flow-matching-for-turbulence-generation)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：潜在流匹配用于湍流生成
-2. [Least-Action-Guided Diffusion for Physical Extrapolation](/202606/11/2606.11277v1-least-action-guided-diffusion-for-physical-extrapolation)  
-   标签：评分：8.0/10、query:genmod-fluid
-   evidence：提出最小作用引导扩散模型，结合条件得分模型与物理指导，用于计算物理中的外推
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [UniPixie: Unified and Probabilistic 3D Physics Learning via Flow Matching](/202606/11/2606.05399v2-unipixie-unified-and-probabilistic-3d-physics-learning-via-flow-matching)  
+1. [Mean Flow Distillation: Robust and Stable Distillation for Flow Matching Models](/202606/12/2606.11155v1-mean-flow-distillation-robust-and-stable-distillation-for-flow-matching-models)  
    标签：评分：7.0/10、query:genmod-fluid
-   evidence：使用流匹配进行概率物理学习，可迁移至流体动力学
+   evidence：提出流匹配模型的均值流蒸馏方法
+2. [Sparse probes and murky physics: a case study of interpretability challenges in a foundation model for continuum dynamics](/202606/12/2606.11657v1-sparse-probes-and-murky-physics-a-case-study-of-interpretability-challenges-in-a-foundation-model-for-continuum-dynamics)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：生成式AI在连续介质动力学（含流体）中的可解释性研究
 
 
 <div class="dpr-home-promo-card">
