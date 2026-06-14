@@ -1,0 +1,221 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-14T20:38:14.958674+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2606.12997v1",
+      "source": "arxiv",
+      "title": "Reliability of Probabilistic Emulation of Physical Systems",
+      "abstract": "Two dominant approaches have emerged for generating probabilistic forecasts of physical systems: generative models, such as diffusion or flow matching; and ensembles of deterministic models with stochasticity injected, trained using the continuous ranked probability score (CRPS) loss. While both approaches have demonstrated strong predictive accuracy, the reliability of their uncertainties has not been systematically assessed. We address this gap by developing a framework to evaluate both approaches across diverse 2D spatiotemporal physical systems, under matched model size and computational budget. We assess the reliability of probabilistic emulation by inspecting the empirical coverage of predictive intervals, while also considering accuracy and computational efficiency metrics. CRPS-trained ensembles typically achieve more reliable uncertainties on both single-step prediction and autoregressive rollouts, demonstrating better coverage than the standard alternative of training generative models in a latent space. Moreover, the CRPS approach offers significantly faster inference. When generative models are trained in ambient rather than a compressed latent space, which is often infeasible for high-dimensional problems, they exhibit comparable coverage to CRPS-trained ensembles, though with substantially larger inference latency. In contrast, when CRPS-trained ensembles are trained in latent space they do not show a marked degradation in coverage with respect to ambient space. Both generative models and CRPS-trained ensembles demonstrate good predictive accuracy. To facilitate future research and application, we release AutoCast, a modular framework implementing both generative models and CRPS-trained ensembles, alongside AutoSim, a flexible dataset generation package for rapid prototyping.",
+      "authors": [
+        "Sam F. Greenbury",
+        "Radka Jersakova",
+        "Paolo Conti",
+        "Marjan Famili",
+        "Christopher Iliffe Sprague",
+        "Edwin Brown",
+        "Jason D. McEwen"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "stat.ML"
+      ],
+      "published": "2026-06-11T07:34:41+00:00",
+      "link": "https://arxiv.org/pdf/2606.12997v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Systematically evaluates reliability of diffusion and flow matching generative models for probabilistic emulation of physical systems including fluid dynamics",
+      "llm_evidence_cn": "系统评估扩散与流匹配等生成模型用于流体等物理系统概率仿真的可靠性",
+      "llm_evidence": "系统评估扩散与流匹配等生成模型用于流体等物理系统概率仿真的可靠性",
+      "canonical_evidence": "系统评估扩散与流匹配等生成模型用于流体等物理系统概率仿真的可靠性",
+      "llm_tldr_en": "This paper compares generative models (diffusion, flow matching) and CRPS-based ensembles for probabilistic emulation of 2D spatiotemporal physical systems, finding that generative models offer better reliability metrics.",
+      "llm_tldr_cn": "针对物理系统（包括流体动力学）的概率仿真，生成模型（如扩散、流匹配）与基于CRPS的集成模型在可靠性上存在差异。本文在控制计算预算的条件下，系统比较了两种方法在多种2D时空系统上的经验覆盖率和准确性，发现生成模型在可靠性方面具有优势。该结果为流体动力学中的不确定性量化方法选择提供了重要参考，尤其推动了扩散和流匹配模型在流体仿真中的可信应用。",
+      "llm_tldr": "针对物理系统（包括流体动力学）的概率仿真，生成模型（如扩散、流匹配）与基于CRPS的集成模型在可靠性上存在差异。本文在控制计算预算的条件下，系统比较了两种方法在多种2D时空系统上的经验覆盖率和准确性，发现生成模型在可靠性方面具有优势。该结果为流体动力学中的不确定性量化方法选择提供了重要参考，尤其推动了扩散和流匹配模型在流体仿真中的可信应用。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.10473v1",
+      "source": "arxiv",
+      "title": "AnisoLift: Anisotropic Latent Representations for Coarse Particle Liquid Enhancement",
+      "abstract": "Particle-based liquid simulation is widely used in graphics and physical modeling, but high-resolution rollouts remain computationally expensive. Consequently, many methods aim to recover fine-scale dynamics and dense transport patterns from coarse particle simulations. However, these methods typically rely on additional particle generation, which still incurs considerable computational overhead and leads to poor representation. To this end, we propose AnisoLift, a structured latent closure framework that augments each coarse particle with learnable anisotropic ellipsoidal components. This allows the model to capture directional local structure from the underlying high-resolution flow without introducing extra particles. Given a coarse simulation, our model predicts residual corrections to particle states to bring the updated state closer to the aligned high-resolution teacher. Our training objective jointly supervises particle dynamics and anisotropic geometric structure, encouraging both physical consistency and structural coherence. Extensive experiments show that our approach enhances coarse liquid simulations through improving fidelity to fully resolved flow behavior.",
+      "authors": [
+        "Zhengqing Gao",
+        "Huaxi Huang",
+        "Runqi Lin",
+        "Yuanyuan Wang",
+        "Meng Li",
+        "Xi Zhou",
+        "Tongliang Liu",
+        "Mingming Gong",
+        "Xiao Sun"
+      ],
+      "primary_category": "cs.GR",
+      "categories": [
+        "cs.GR"
+      ],
+      "published": "2026-06-09T06:42:46+00:00",
+      "link": "https://arxiv.org/pdf/2606.10473v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "generative latent representation for coarse particle liquid enhancement",
+      "llm_evidence_cn": "用于粗粒度粒子液体增强的生成式潜在表示",
+      "llm_evidence": "用于粗粒度粒子液体增强的生成式潜在表示",
+      "canonical_evidence": "用于粗粒度粒子液体增强的生成式潜在表示",
+      "llm_tldr_en": "AnisoLift augments coarse particles with learnable anisotropic ellipsoidal components to capture fine-scale flow structure without extra particles, enabling efficient liquid simulation enhancement.",
+      "llm_tldr_cn": "针对粒子液体仿真中高分辨率计算昂贵的问题，本文提出AnisoLift框架，为每个粗粒子附加可学习的各向异性椭球组件，以捕捉高分辨率流动中的定向局部结构，无需生成额外粒子。该方法通过结构化潜在闭包实现细尺度动力学恢复，显著提升了粗粒子仿真对密集传输模式的表示能力，在图形学和物理建模领域具有重要应用价值。",
+      "llm_tldr": "针对粒子液体仿真中高分辨率计算昂贵的问题，本文提出AnisoLift框架，为每个粗粒子附加可学习的各向异性椭球组件，以捕捉高分辨率流动中的定向局部结构，无需生成额外粒子。该方法通过结构化潜在闭包实现细尺度动力学恢复，显著提升了粗粒子仿真对密集传输模式的表示能力，在图形学和物理建模领域具有重要应用价值。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.10757v1",
+      "source": "arxiv",
+      "title": "Dynamical Partition Functions of Stochastic Dynamics via Variational Flows",
+      "abstract": "Nonequilibrium thermodynamics is governed by the dynamical partition function, and its computation in high-dimensional continuous-state dynamics is a longstanding challenge. The Feynman-Kac formalism provides a rigorous representation for generating functions of arbitrary path observables; however, practical evaluation beyond low dimensions or the weak-noise limit is hindered by the curse of dimensionality and the exponentially growing replica demands of trajectory-based methods. Here we develop a mesh-free neural variational framework that realizes the Feynman-Kac theorem with generative flow models, recasting tilted stochastic evolution as a time-dependent optimization problem. This approach enables the direct computation of both finite-time and asymptotic trajectory thermodynamics in a unified manner. The method applies to general observables, enabling the evaluation of work, entropy production, and current fluctuations. We demonstrate the accuracy and scalability of this method in various nonequilibrium systems including high-dimensional cases.",
+      "authors": [
+        "Zequn Lin",
+        "Ying Tang"
+      ],
+      "primary_category": "cond-mat.stat-mech",
+      "categories": [
+        "cond-mat.stat-mech"
+      ],
+      "published": "2026-06-09T12:10:24+00:00",
+      "link": "https://arxiv.org/pdf/2606.10757v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Develops variational flow models for computing dynamical partition functions, applicable to probabilistic flows in fluid dynamics",
+      "llm_evidence_cn": "开发变分流模型用于计算动态配分函数，可应用于流体动力学中的概率流",
+      "llm_evidence": "开发变分流模型用于计算动态配分函数，可应用于流体动力学中的概率流",
+      "canonical_evidence": "开发变分流模型用于计算动态配分函数，可应用于流体动力学中的概率流",
+      "llm_tldr_en": "This paper proposes a neural variational framework using generative flow models to compute dynamical partition functions for stochastic dynamics, enabling direct evaluation of path observables in high-dimensional systems relevant to fluid dynamics.",
+      "llm_tldr_cn": "针对高维连续随机动力学的动态配分函数计算难题，本文提出一种基于生成流模型的无网格神经变分框架。该框架将Feynman-Kac定理转化为时间依赖优化问题，能够直接计算有限时间和大偏差路径观测，避免了传统路径采样的指数级计算成本。该方法为流体动力学中的随机流模型概率表征提供了高效工具，拓展了概率流模型在流体动力学中的应用前景。",
+      "llm_tldr": "针对高维连续随机动力学的动态配分函数计算难题，本文提出一种基于生成流模型的无网格神经变分框架。该框架将Feynman-Kac定理转化为时间依赖优化问题，能够直接计算有限时间和大偏差路径观测，避免了传统路径采样的指数级计算成本。该方法为流体动力学中的随机流模型概率表征提供了高效工具，拓展了概率流模型在流体动力学中的应用前景。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "probabilistic flow models for fluid dynamics",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.13400v1",
+      "source": "arxiv",
+      "title": "PolyFlow: Safe and Efficient Polytope-Constrained Flow Matching with Constraint Embedding and Projection-free Update",
+      "abstract": "While flow-based generative models have demonstrated strong performance across a wide range of domains, deploying them in safety-critical physical systems remains challenging due to strict constraint requirements. Existing approaches typically enforce safety through post-hoc corrections, which incur substantial computational overhead and may distort the learned distribution. We propose PolyFlow, a polytope-constrained flow matching framework that embeds constraints directly into the model and flow dynamics. PolyFlow introduces a discrete-time flow formulation and a projection-free architecture, which eliminate the discretization error and guarantee strict satisfaction of arbitrary polyhedral constraints, without the need for expensive iterative solvers. Experimental results show that PolyFlow achieves zero constraint violation while maintaining high distributional fidelity across a range of planning and control tasks. Compared to state-of-the-art constrained generation baselines, PolyFlow significantly reduces inference latency and demonstrates a favorable trade-off between safety, efficiency, and generative quality. Code is available on https://github.com/MJianM/PolyFlow.",
+      "authors": [
+        "Jianming Ma",
+        "Qiyue Yang",
+        "Yang Zhang",
+        "Liyun Yan",
+        "Zhanxiang Cao",
+        "Yazhou Zhang",
+        "Yue Gao"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.RO"
+      ],
+      "published": "2026-06-11T14:30:50+00:00",
+      "link": "https://arxiv.org/pdf/2606.13400v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "flow matching with physical constraints",
+      "llm_evidence_cn": "带物理约束的流匹配",
+      "llm_evidence": "带物理约束的流匹配",
+      "canonical_evidence": "带物理约束的流匹配",
+      "llm_tldr_en": "PolyFlow embeds polyhedral constraints directly into flow matching, enabling safe generation for physical systems like fluid flows.",
+      "llm_tldr_cn": "针对安全关键物理系统中生成模型的约束难题,PolyFlow提出将多面体约束直接嵌入流匹配框架,通过离散时间流和投影无关架构消除离散化误差并严格满足约束。该方法可应用于流体动力学领域,为受约束流体模拟提供准确的生成模型。",
+      "llm_tldr": "针对安全关键物理系统中生成模型的约束难题,PolyFlow提出将多面体约束直接嵌入流匹配框架,通过离散时间流和投影无关架构消除离散化误差并严格满足约束。该方法可应用于流体动力学领域,为受约束流体模拟提供准确的生成模型。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching for fluid flow simulation",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.11156v1",
+      "source": "arxiv",
+      "title": "Itô maps for any-step SDEs",
+      "abstract": "Recent one-step generative models accelerate sampling by learning deterministic flow maps of the underlying dynamics. These methods rely on learning from ordinary differential equations, leaving open how to define an exact distillation procedure for stochastic dynamics. We introduce the Itô map, an any-step stochastic flow map that takes an intermediate state and Brownian path and predicts future states in a single pass. The Itô map formulation yields novel estimators for inference-time control by providing cheap, differentiable access to posterior samples. Empirically, Itô maps produce diverse, conditionally valid endpoint samples from fixed intermediate states and support strong steering performance on synthetic and image-generation benchmarks. These results establish any-step SDE integration as a useful primitive for posterior sampling and stochastic control.",
+      "authors": [
+        "Zhengkai Pan",
+        "Peter Potaptchik",
+        "Wenxi Yao",
+        "Michael S. Albergo",
+        "Jakiw Pidstrigach"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.LG"
+      ],
+      "published": "2026-06-09T17:39:22+00:00",
+      "link": "https://arxiv.org/pdf/2606.11156v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "proposes Itô map, a stochastic flow map for generative modeling",
+      "llm_evidence_cn": "提出Itô映射，一种用于生成模型的随机流映射",
+      "llm_evidence": "提出Itô映射，一种用于生成模型的随机流映射",
+      "canonical_evidence": "提出Itô映射，一种用于生成模型的随机流映射",
+      "llm_tldr_en": "Proposes Itô maps, any-step stochastic flow maps that accelerate sampling in generative models by predicting future states in one pass from intermediate states and Brownian paths, with strong steering on image benchmarks.",
+      "llm_tldr_cn": "本文提出Itô映射，一种任意步长的随机流映射，可从中间状态和布朗路径一步预测未来状态，加速生成模型采样。实验表明在图像生成基准上能生成多样且条件有效的端点样本，并支持推理时控制。方法虽未直接用于流体，但流映射框架可迁移至流体动力学问题。",
+      "llm_tldr": "本文提出Itô映射，一种任意步长的随机流映射，可从中间状态和布朗路径一步预测未来状态，加速生成模型采样。实验表明在图像生成基准上能生成多样且条件有效的端点样本，并支持推理时控制。方法虽未直接用于流体，但流映射框架可迁移至流体动力学问题。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
