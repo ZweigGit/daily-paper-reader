@@ -1,0 +1,142 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-15T21:59:24.477839+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2606.13742v1",
+      "source": "arxiv",
+      "title": "A fully GPU-based workflow for building physics emulators of hypersonic flows",
+      "abstract": "The ability to resolve complex physical phenomena with high fidelity and at low computational cost is central to addressing key challenges in modern engineering. A prime example lies in hypersonic flows, where the precise prediction of the full flowfield topology, in particular with respect to shock wave location and intensity, is critical. Yet supersonic and hypersonic flows continue to be a stumbling block for traditional reduced-order models and neural emulators that struggle to capture steep gradients in flow states with physical consistency in applications of industrial relevance. To that end, we introduce a fully GPU based workflow that integrates accelerated data generation with the training of neural emulators augmented by uncertainty quantification and physics-aware refinement. Our workflow is enabled by a differentiable high-fidelity solver (JAX-Fluids) which we employ for rapid dataset creation and residual-based improvement of the neural emulator to enhance physical consistency. Building on this framework, we first present a suite of model architectures and analyze their scaling behavior to expose their strengths and shortcomings. We then show that residual-based refinement enables training on cases where only mesh and input parameters are available, substantially reducing residuals and improving physical consistency. Together, differentiable simulation and residual-based refinement yield physics emulators that remain reliable beyond their training distribution, a key requirement for deploying surrogates in real-world engineering design loops.",
+      "authors": [
+        "Fabian Paischer",
+        "Dylan Rubini",
+        "Deniz A. Bezgin",
+        "Aaron B. Buhendwa",
+        "David Hauser",
+        "Florian Sestak",
+        "Johannes Brandstetter",
+        "Sebastian Kaltenbach",
+        "Nikolaus A. Adams"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "physics.comp-ph",
+        "physics.flu-dyn",
+        "stat.ML"
+      ],
+      "published": "2026-06-11T13:11:03+00:00",
+      "link": "https://arxiv.org/pdf/2606.13742v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "develops GPU workflow with neural emulators and uncertainty quantification for hypersonic flow prediction",
+      "llm_evidence_cn": "开发GPU工作流，结合神经仿真器和不确定性量化预测高超声速流场",
+      "llm_evidence": "开发GPU工作流，结合神经仿真器和不确定性量化预测高超声速流场",
+      "canonical_evidence": "开发GPU工作流，结合神经仿真器和不确定性量化预测高超声速流场",
+      "llm_tldr_en": "Presents a fully GPU-accelerated workflow that integrates data generation and training of neural emulators with uncertainty quantification for predicting hypersonic flowfields, overcoming traditional reduced-order model limitations.",
+      "llm_tldr_cn": "该论文针对高超声速流场仿真中传统降阶模型和神经仿真器难以捕捉激波梯度的问题，提出一种全GPU工作流。该工作流集成了加速数据生成与带不确定性量化的神经仿真器训练，能够高保真地预测流场拓扑（包括激波位置和强度）。实验证明其在高超声速工程应用中具有物理一致性和低计算成本。",
+      "llm_tldr": "该论文针对高超声速流场仿真中传统降阶模型和神经仿真器难以捕捉激波梯度的问题，提出一种全GPU工作流。该工作流集成了加速数据生成与带不确定性量化的神经仿真器训练，能够高保真地预测流场拓扑（包括激波位置和强度）。实验证明其在高超声速工程应用中具有物理一致性和低计算成本。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "probabilistic flow models for fluid dynamics",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.08405v1",
+      "source": "arxiv",
+      "title": "Self-Evolving Scientific Agent Discovers Generalizable Physically-Reasoned Fluid Control",
+      "abstract": "While data-intensive deep reinforcement learning can optimize complex control policies, scientific discovery in physical systems fundamentally requires an interpretable chain of reasoning that connects physical evidence to structured control architectures. Here, we present a self-evolving scientific-agent workflow, driven by large language models and iterative code generation, that automates controller construction while preserving strict interpretability and rigorous physical reasoning. Instead of adjusting weights, the agent deploys candidate strategies into physical simulations, actively diagnoses dynamic behaviors from multimodal evidence, and translates these observations into progressive source-code refinements. We demonstrate this framework on a highly non-linear fluid-structure interaction problem: an underactuated, two-joint dogfish swimmer tasked with spatial target reaching using only joint angular accelerations. Starting from a propulsive seed policy that exhibits a one-sided steering bias, the agent autonomously discovers and refines a unified controller that robustly captures all canonical targets. Remarkably, without any retraining or target-specific branching, the synthesized control policy generalizes to unseen static targets and dynamically curved pursuit trajectories. The auditable evolve log reveals an emergent control architecture built upon traveling-wave propulsion, body-frame target guidance, yaw-rate feedback, signed mean-tail curvature, and adaptive cadence relief. Our results show that an autonomous scientific agent can successfully transform accumulated physical evidence into robust, mathematically readable control policy, while maintaining a fully traceable process of scientific discovery.",
+      "authors": [
+        "Boai Sun",
+        "Wenjin Guo",
+        "Zongmin Yu",
+        "Liu Yang"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "physics.flu-dyn"
+      ],
+      "published": "2026-06-07T01:59:11+00:00",
+      "link": "https://arxiv.org/pdf/2606.08405v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "uses LLM to automate code generation for fluid control discovery in physical simulations",
+      "llm_evidence_cn": "使用大型语言模型自动生成代码以在物理仿真中发现流体控制策略",
+      "llm_evidence": "使用大型语言模型自动生成代码以在物理仿真中发现流体控制策略",
+      "canonical_evidence": "使用大型语言模型自动生成代码以在物理仿真中发现流体控制策略",
+      "llm_tldr_en": "Proposes a self-evolving scientific agent driven by LLMs that iteratively generates and tests code for fluid control strategies in physical simulations, enabling automated discovery of interpretable control laws without weight training.",
+      "llm_tldr_cn": "该论文针对数据驱动强化学习缺乏可解释性问题，提出一种基于大语言模型的自演化科学智能体。该智能体通过迭代代码生成策略、部署到物理仿真中诊断动态行为并逐步改进代码，自动构建流体控制策略。实验表明该方法能发现可推广的物理推理控制方案，兼顾严格可解释性。",
+      "llm_tldr": "该论文针对数据驱动强化学习缺乏可解释性问题，提出一种基于大语言模型的自演化科学智能体。该智能体通过迭代代码生成策略、部署到物理仿真中诊断动态行为并逐步改进代码，自动构建流体控制策略。实验表明该方法能发现可推广的物理推理控制方案，兼顾严格可解释性。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative artificial intelligence in fluid mechanics",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.09434v1",
+      "source": "arxiv",
+      "title": "Operator learning for solving Fokker-Planck equations with various initial conditions",
+      "abstract": "The Fokker-Planck equation (FPE) plays a pivotal role in describing the time evolution of probability density functions (PDFs) for systems governed by stochastic dynamics. In this work, we propose a conditional normalizing flow-based physics-informed neural network (PINN) framework for efficiently approximating the solution operator of the FPE for a whole range of initial conditions. Leveraging the Chapman-Kolmogorov equation for Markovian stochastic processes, the problem is reformulated into approximating a transition PDF starting at initial time from a Dirac mass centered at an arbitrary point. The PDF of an associated linearized stochastic differential equation (SDE) is employed as the base distribution for the normalizing flow, providing a good approximation of the target PDF, especially for small times, and thereby avoiding the singularity of the map associated with the Dirac delta initial distribution. Furthermore, a time-weighted loss function is introduced to mitigate numerical instabilities arising at small times, achieving a balance between causality and training difficulty as time progresses. A variety of numerical experiments are presented to illustrate the effectiveness and robustness of the proposed method.",
+      "authors": [
+        "Li Zeng",
+        "Xiaoliang Wan",
+        "Yaobin Wang",
+        "Fabio Nobile",
+        "Tao Zhou"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-08T12:44:13+00:00",
+      "link": "https://arxiv.org/pdf/2606.09434v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "conditional normalizing flow for Fokker-Planck equation, applicable to stochastic fluid dynamics",
+      "llm_evidence_cn": "条件归一化流用于Fokker-Planck方程，可应用于随机流体动力学",
+      "llm_evidence": "条件归一化流用于Fokker-Planck方程，可应用于随机流体动力学",
+      "canonical_evidence": "条件归一化流用于Fokker-Planck方程，可应用于随机流体动力学",
+      "llm_tldr_en": "Proposes a conditional normalizing flow-based PINN to solve Fokker-Planck equations for various initial conditions, enabling operator learning for stochastic processes relevant to fluid dynamics.",
+      "llm_tldr_cn": "针对Fokker-Planck方程求解中初始条件变化的问题，本文提出了一种基于条件归一化流的物理信息神经网络框架。该方法利用Chapman-Kolmogorov方程将问题转化为过渡概率密度近似，以线性化SDE的PDF作为基分布。实验表明该方法能高效逼近不同初始条件下的解算子。这项工作为流体力学中随机过程的概率建模提供了生成式模型新思路。",
+      "llm_tldr": "针对Fokker-Planck方程求解中初始条件变化的问题，本文提出了一种基于条件归一化流的物理信息神经网络框架。该方法利用Chapman-Kolmogorov方程将问题转化为过渡概率密度近似，以线性化SDE的PDF作为基分布。实验表明该方法能高效逼近不同初始条件下的解算子。这项工作为流体力学中随机过程的概率建模提供了生成式模型新思路。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

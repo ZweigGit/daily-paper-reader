@@ -6,35 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-14
-- 运行时间：2026-06-14 20:43:05 UTC
+- 最新运行日期：2026-06-15
+- 运行时间：2026-06-15 22:02:52 UTC
 - 运行状态：成功
-- 本次总论文数：5
+- 本次总论文数：3
 - 精读区：1
-- 速读区：4
+- 速读区：2
 
 ### 今日简报（AI）
-今日共处理5篇论文，精读1篇（概率仿真可靠性）、速读4篇。最值得关注的方向为物理系统概率仿真可靠性及流匹配方法的新进展。建议优先精读《Reliability of Probabilistic Emulation of Physical Systems》以理解关键结论，其余可按需速览。
-- 详情：[/202606/14/README](/202606/14/README)
+今日精读1篇GPU全流程高超声速流仿真器，速读2篇涉及自演化物理推理流体控制与算子学习求解Fokker-Planck方程。最值得关注高超声速流仿真的高效GPU实现及可泛化流体控制智能体。普通读者可优先阅读精读论文，了解GPU加速物理仿真前沿方法。
+- 详情：[/202606/15/README](/202606/15/README)
 
 ### 精读区论文标签
-1. [Reliability of Probabilistic Emulation of Physical Systems](/202606/14/2606.12997v1-reliability-of-probabilistic-emulation-of-physical-systems)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：系统评估扩散与流匹配等生成模型用于流体等物理系统概率仿真的可靠性
+1. [A fully GPU-based workflow for building physics emulators of hypersonic flows](/202606/15/2606.13742v1-a-fully-gpu-based-workflow-for-building-physics-emulators-of-hypersonic-flows)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：开发GPU工作流，结合神经仿真器和不确定性量化预测高超声速流场
 
 ### 速读区论文标签
-1. [AnisoLift: Anisotropic Latent Representations for Coarse Particle Liquid Enhancement](/202606/14/2606.10473v1-anisolift-anisotropic-latent-representations-for-coarse-particle-liquid-enhancement)  
+1. [Self-Evolving Scientific Agent Discovers Generalizable Physically-Reasoned Fluid Control](/202606/15/2606.08405v1-self-evolving-scientific-agent-discovers-generalizable-physically-reasoned-fluid-control)  
    标签：评分：7.0/10、query:genmod-fluid
-   evidence：用于粗粒度粒子液体增强的生成式潜在表示
-2. [PolyFlow: Safe and Efficient Polytope-Constrained Flow Matching with Constraint Embedding and Projection-free Update](/202606/14/2606.13400v1-polyflow-safe-and-efficient-polytope-constrained-flow-matching-with-constraint-embedding-and-projection-free-update)  
+   evidence：使用大型语言模型自动生成代码以在物理仿真中发现流体控制策略
+2. [Operator learning for solving Fokker-Planck equations with various initial conditions](/202606/15/2606.09434v1-operator-learning-for-solving-fokker-planck-equations-with-various-initial-conditions)  
    标签：评分：7.0/10、query:genmod-fluid
-   evidence：带物理约束的流匹配
-3. [Dynamical Partition Functions of Stochastic Dynamics via Variational Flows](/202606/14/2606.10757v1-dynamical-partition-functions-of-stochastic-dynamics-via-variational-flows)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：开发变分流模型用于计算动态配分函数，可应用于流体动力学中的概率流
-4. [Itô maps for any-step SDEs](/202606/14/2606.11156v1-it-maps-for-any-step-sdes)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：提出Itô映射，一种用于生成模型的随机流映射
+   evidence：条件归一化流用于Fokker-Planck方程，可应用于随机流体动力学
 
 
 <div class="dpr-home-promo-card">
