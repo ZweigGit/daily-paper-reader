@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-16",
+  "date": "2026-06-16",
+  "generated_at": "2026-06-16T23:03:28",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/16/2606.15023v1-multiscale-hypersonic-boundary-layer-reconstruction-via-spectral-binning-and-subdomain-wise-conditional-diffusion",
+      "section": "deep",
+      "title_en": "Multiscale Hypersonic Boundary Layer Reconstruction via Spectral Binning and Subdomain-wise Conditional Diffusion",
+      "authors": "Hojin Kim, Dibyajyoti Chakraborty, Takahiko Toki, Carlo Scalo, Romit Maulik",
+      "date": "2026-06-12",
+      "pdf": "https://arxiv.org/pdf/2606.15023v1",
+      "score": "10.0",
+      "evidence": "条件扩散模型用于高超音速边界层重建",
+      "tldr": "高超声速湍流边界层重建面临多尺度和谱保真挑战。提出基于子域划分的条件扩散模型，将边界层分为重叠子域并训练高度和马赫数条件的EDM。通过有界分箱谱损失保持高频内容，软重叠策略保证连续性。在多个马赫数下成功恢复近壁流场和统计特性，并提供不确定性估计。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We propose a multiscale probabilistic reconstruction framework for hypersonic Couette flow, where near-wall states are inferred from limited top-wall observations using conditional diffusion model. The boundary layer is divided into overlapping wall-normal subdomains, and a single height- and Mach-conditioned Elucidating Diffusion Model (EDM) is trained jointly for M=6,7,8 to sample velocity, density, pressure, and temperature fields conditioned on a top-wall boundary slice. A soft overlap inpainting strategy assembles subdomain predictions into full-volume reconstructions while maintaining inter-subdomain continuity and small-scale variability. To improve the spectral fidelity of the generated fields, we introduce a novel bounded binned spectral power (BSP) loss that preserves high-wavenumber content while remaining numerically stable across the diffusion noise schedule. Validation against direct numerical simulation data shows that the model recovers instantaneous structures, spectra, statistical profiles, correlations, and wall quantities across all training Mach numbers, while providing spatially structured uncertainty estimates. The reconstructed Mach-conditioned profiles also collapse under the Trettel-Larsson transformation, indicating consistency with compressibility scaling. These results establish the domain decomposed conditional diffusion model with a bounded binned spectral loss as an effective probabilistic surrogate for near-wall reconstruction in hypersonic wall-bounded turbulence.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

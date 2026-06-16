@@ -1,0 +1,763 @@
+Title: Multiscale Hypersonic Boundary Layer Reconstruction via Spectral Binning and Subdomain-wise Conditional Diffusion
+
+URL Source: https://arxiv.org/pdf/2606.15023v1
+
+Published Time: Tue, 16 Jun 2026 00:25:55 GMT
+
+Number of Pages: 33
+
+Markdown Content:
+> Under consideration for publication in J. Fluid Mech.
+
+1Banner appropriate to article type will appear here in typeset article 
+
+# Multiscale Hypersonic Boundary Layer Reconstruction via Spectral Binning and Subdomain-wise Conditional Diffusion 
+
+Hojin Kim 1, Dibyajyoti Chakraborty 2, Takahiko Toki 1, Carlo Scalo 1, and Romit Maulik 1, 3 
+
+> 1
+
+School of Mechanical Engineering, Purdue University, West Lafayette, 47907, IN, USA 
+
+> 2
+
+College of Information Sciences and Technology, Pennsylvania State University, University Park, 16802, PA, USA 
+
+> 3
+
+Mathematics and Computer Science Division, Argonne National Laboratory, Lemont, 60439, IL, USA (Received xx; revised xx; accepted xx) 
+
+We propose a multiscale probabilistic reconstruction framework for hypersonic Couette flow, where near-wall states are inferred from limited top-wall observations using conditional diffusion model. The boundary layer is divided into overlapping wall-normal subdomains, and a single height- and Mach-conditioned Elucidating Diffusion Model (EDM) is trained jointly for 𝑀 = 6, 7, 8 to sample velocity, density, pressure, and temperature fields conditioned on a top-wall boundary slice. A soft overlap inpainting strategy assembles subdomain predictions into full-volume reconstructions while maintaining inter-subdomain continuity and small-scale variability. To improve the spectral fidelity of the generated fields, we introduce a novel bounded binned spectral power (BSP) loss that preserves high-wavenumber content while remaining numerically stable across the diffusion noise schedule. Validation against direct numerical simulation data shows that the model recovers instantaneous structures, spectra, statistical profiles, correlations, and wall quantities across all training Mach numbers, while providing spatially structured uncertainty estimates. The reconstructed Mach-conditioned profiles also collapse under the Trettel–Larsson transformation, indicating consistency with compressibility scaling. These results establish the domain decomposed conditional diffusion model with a bounded binned spectral loss as an effective probabilistic surrogate for near-wall reconstruction in hypersonic wall-bounded turbulence. 
+
+Key words: Authors should not enter keywords on the manuscript, as these must be chosen by the author during the online submission process and will then be added during the typesetting process (see Keyword PDF for the full list). Other classifications will be added at the same time. 
+
+MSC Codes (Optional) Please enter your MSC Codes here 
+
+# Abstract must not spill onto p.2 
+
+> arXiv:2606.15023v1 [physics.flu-dyn] 12 Jun 2026
+
+2
+
+1. Introduction 
+
+High-fidelity simulation of high-speed boundary layers is notoriously computationally expensive. In wall-bounded flows, dynamically relevant structures become progressively thinner as the wall is approached, which makes accurate resolution of near-wall behavior increasingly demanding (Sillero et al. 2014; Bose & Park 2018; Choi & Moin 2012). In hypersonic regimes, this difficulty is further amplified by compressibility effects, sharp velocity and temperature gradients, and the stringent wall-normal resolution required to capture coupled momentum and heat-transfer processes. These challenges motivate data-driven approaches that can reconstruct unresolved boundary-layer structure from limited observations while preserving the essential multiscale physics of the flow. Boundary-layer reconstruction from sparse observations, however, is fundamentally an ill-posed inverse problem. A given set of boundary measurements may be consistent with multiple plausible near-wall states, especially in turbulent flows where fine-scale fluctuations are only partially observed. Conventional deterministic approaches can provide useful point estimates (Guastoni et al. 2021, 2025; Fukami et al. 2019, 2021), but they are not naturally suited to representing the one-to-many character of this mapping. As a result, they may suppress physically relevant variability, smooth small-scale content, and provide limited information about predictive uncertainty. For high-speed boundary-layer reconstruction, where both multiscale structure and confidence in the recovered state are important, a probabilistic formulation is therefore especially attractive. Generative models provide a natural framework for such inverse problems because they aim to learn conditional distributions rather than single deterministic outputs. Among them, diffusion models (Song et al. 2020; Ho et al. 2020) have recently emerged as particularly promising tools for turbulent flow modeling and reconstruction. In related turbulence applications, diffusion-based approaches have been shown to improve the spectral representation of generated fields (Oommen et al. 2025). Conditional diffusion formulations have also been used for reconstructing high-fidelity turbulence under physics-informed conditioning (Shu et al. 2023), latent generative modeling for turbulence inflow generation (Du et al. 2024), and probabilistic reconstruction of turbulent flow fields (Amor´ os-Trepat 
+
+et al. 2026). In parallel, autoregressive conditional diffusion has been shown to provide stable probabilistic rollouts for turbulent flow simulation (Kohl et al. 2026; Jiang et al. 2025; Chakraborty et al. 2026 a), purely generative formulations have produced three-dimensional turbulence from geometry information (Lienen et al. 2023), and latent conditional neural-field diffusion has enabled efficient spatiotemporal turbulence generation in complex 3D domains (Du et al. 2024). These advances suggest that diffusion models are well suited to recovering complex, multiscale flow structure from incomplete information while also enabling uncertainty quantification through ensemble sampling. Recent studies have further extended diffusion models specifically to wall-bounded flows. Examples include spatiotemporal turbulence generation in backward-facing step and channel flows, together with two-dimensional slices of hypersonic channel flow (Gao et al. 2024); turbulence generation and data assimilation in incompressible Couette flow (Steinbrenner 
+
+et al. 2026); wall-pressure reconstruction from sparse wall sensors (Fan et al. 2025); and near-wall reconstruction in incompressible flows from wall measurements (Parikh et al. 2025). Despite this growing body of work, existing wall-bounded studies largely focus on temporal autoregressive rollouts or on single-shot generation of 2D slices and fixed-size 3D boxes. Probabilistic reconstruction of full three-dimensional hypersonic Couette boundary-layer fields from top-wall boundary information, with explicit control over wall-normal position and compressibility through the Mach number, to our knowledge, has not been addressed. A separate line of work, developed primarily in the computer-vision and medical-imaging 3communities, addresses a closely related question: how to generate large, coherent outputs from diffusion computations performed on smaller patches or chunks. Two families of methods have emerged. Training-free joint-diffusion approaches use a pre-trained diffusion model and reconcile overlapping views at every reverse-diffusion step: MultiDiffusion (Bar-Tal et al. 2023) stitches panoramas by arithmetic averaging of overlapping latent predictions, Mixture of Diffusers (Jim´ enez 2023) generalizes this with Gaussian-weighted averaging, and SyncDiffusion (Lee et al. 2023) replaces averaging with gradient descent on a perceptual similarity loss to improve global coherence. Patch-trained diffusion approaches, in contrast, train the model directly on patches with coordinate-based conditioning: Patch Diffusion (Wang et al. 2023) introduces patch location as additional coordinate channels for efficient training on 2D images, and subsequent volumetric extensions such as PatchDDM (Bieder 
+
+et al. 2024), MedDiff-FM (Yu et al. 2024), and 3D MedDiffusion (Wang et al. 2025) apply patch training with coordinate conditioning and overlapping sliding-window sampling to high-resolution 3D medical volumes. Complementing these, RePaint (Lugmayr et al. 
+
+2022) establishes a powerful inpainting-based conditioning mechanism by injecting known information into the reverse diffusion process through replacement and resampling. These approaches, while directly relevant, are not designed for the problem considered here and exhibit three limitations when transferred to hypersonic boundary-layer reconstruction. First, they partition along translationally homogeneous axes such as panoramic width or medical-volume grid coordinates, whereas subdomains along the wall-normal direction of a boundary layer span physically heterogeneous regimes (viscous sublayer, buffer, log-law, and outer regions) whose statistics change continuously with wall distance and must be learned as a function of a physically meaningful coordinate. Second, the dominant reconciliation strategies such as arithmetic or Gaussian averaging of overlapping predictions are acceptable for natural images but systematically damp the small-scale variance of turbulent fluctuations, because averaging 𝑁 independent stochastic samples reduces their variance by 1 /𝑁 , while the fluctuation statistics are precisely the quantity of interest for turbulence. Third, none of these frameworks addresses compressibility or multivariate thermophysical coupling, and none explicitly supervises the multiscale energy content of the generated fields, which is essential whenever the generated samples will be assessed against a Kolmogorov-like energy cascade rather than perceptual image quality. Motivated by these gaps, we develop a multiscale probabilistic reconstruction framework for hypersonic Couette boundary layers that is organized around two complementary ideas reflected in the title: a subdomain-wise conditional diffusion generation strategy, which decomposes the full volume into wall-normal subdomains generated by a single representative height- and Mach-conditioned diffusion model and stitched together with a continuity- and variance-preserving inpainting scheme; and a spectral-binning training loss, which explicitly supervises binned one-dimensional energy spectra in a form that remains numerically stable across the entire diffusion noise schedule. The framework is positioned at the intersection of the lines reviewed above: it inherits the coordinate-conditioning idea from Patch Diffusion (Wang et al. 2023) and volumetric patch-trained diffusion, but replaces homogeneous-axis coordinates with physically heterogeneous wall-normal conditioning and a physical parameter (Mach number). It replaces averaging-based composition of overlapping subdomains with a replacement-based inpainting mechanism inspired by RePaint (Lugmayr 
+
+et al. 2022), adapted with a noise-level-dependent blending schedule designed to preserve turbulent fluctuation variance rather than collapse it, and it introduces a multiscale spectral supervision specific to turbulent flows. Concretely, the main contributions are: (i) Subdomain-wise conditional diffusion for multiscale boundary layers. A height-and Mach-conditioned EDM-based diffusion model that samples multivariate wall-normal subdomains (velocity, density, pressure, temperature) of hypersonic Couette boundary layers 4from a single top-wall boundary slice, making the full-volume generation tractable without collapsing the multiscale structure of the flow. (ii) Soft overlap inpainting for subdomain composition. A replacement-based, noise-level-dependent blending scheme that stitches subdomain-wise samples into a full volume, preserving inter-subdomain continuity while retaining the small-scale variance that is otherwise damped by the arithmetic or Gaussian averaging used in prior joint-diffusion frameworks. (iii) Bounded spectral-binning loss. A bounded, symmetric variant of the binned spectral power (BSP) loss that remains numerically stable across the EDM noise schedule and sharpens high-wavenumber spectral fidelity of the generated fields, which is especially important for multiscale turbulence. (iv) Comprehensive probabilistic evaluation. A detailed assessment on DNS of hyper-sonic turbulent Couette flow at 𝑀 = 6, 7, 8 by a single jointly-trained Mach-conditioned model, including instantaneous contours, PDFs, one-dimensional energy and Reynolds-stress spectra, mean and Reynolds-stress profiles with uncertainty bands, spatial correlations, uncertainty maps, wall shear stress and heat flux statistics, and Trettel-Larsson transformed profiles that indicate the learned Mach conditioning is consistent with known compressibility scaling of wall-bounded turbulence. The remainder of this paper is organized as follows. Section 2 describes the hypersonic Couette DNS dataset used for training and evaluation. Section 3 introduces the subdomain-wise problem formulation, the EDM-based conditional diffusion model, the bounded BSP spectral loss, and the soft overlap inpainting strategy for full volume reconstruction. Sec-tion 4 presents the evaluation results, including near-wall turbulent statistics, uncertainty quantification, wall-quantity predictions, and multi-Mach performance. Section 5 concludes and outlines future work. 
+
+2. Dataset 
+
+We employ the hypersonic turbulent Couette flow dataset of Toki et al. (2024), which provides direct numerical simulation (DNS) data for wall-bounded hypersonic turbulence at Mach numbers 𝑀 = 6, 7, 8. All three Mach-number cases are used jointly during training, with the Mach number supplied to the model as a conditioning variable (see Sec. 3.2); a single unified model is therefore obtained, and its performance is reported for each of the three training Mach numbers in Sec. 4. We describe the 𝑀 = 6 configuration in detail below, as it is the representative case used in Sec. 4.1. The top wall moves at 1805 m/s while the bottom wall is stationary, with wall temperatures of 224 K and 300 K, respectively. The bulk pressure is 2950 Pa, giving a bulk density of 0 .018 kg/m 3. The computational domain spans 24 𝛿 × 2𝛿 × 4𝛿 in the streamwise, wall-normal, and spanwise directions, with 𝛿 = 0.01 m. The flow is solved using the sixth-order compact finite-difference solver CFDSU (Nagarajan et al. 2003; Chen & Scalo 2021 a,b) and achieves a friction Reynolds number 𝑅𝑒 𝜏 = 621. The DNS uses 512 × 192 × 256 grid points, yielding a maximum grid spacing of (Δ𝑥 /𝜂, Δ𝑦 /𝜂, Δ𝑧 /𝜂 )max = (20 .3, 2.1, 6.8), with 𝜂 the Kolmogorov length scale. Viscous and thermal transport properties are evaluated through Sutherland’s law, and both walls are maintained under isothermal no-slip conditions. The 𝑀 = 7 and 𝑀 = 8 cases share the same numerical framework and domain configuration. 
+
+# Focus on Fluids articles must not exceed this page length 5  
+
+> Figure 1: Iso-surface of the Q-criterion colored by the spanwise vorticity component for the hypersonic turbulent Couette flow ( 𝑀 =6).
+
+3. Methods 
+
+3.1. Problem Formulation: Subdomain-wise Boundary-Layer Reconstruction 
+
+Our goal is to reconstruct the hypersonic Couette boundary layer state given the flow field at the top-wall boundary and the Mach number. The dataset has dimensions (𝑁 𝑥 , 𝑁 𝑦 , 𝑁 𝑧 ) =
+
+(512 , 192 , 256 ) and six flow variables (𝑈, 𝑉, 𝑊, 𝜌, 𝑃, 𝑇 ), so reconstructing the full volume in one shot would require generating a tensor in R6×512 ×192 ×256 , which is computationally prohibitive for diffusion-based training and sampling. Instead, we reformulate the problem as generating a subdomain of 𝑁 𝑠 consecutive wall-normal slices starting at a specified wall-normal location within the boundary layer. Concretely, given a top-wall boundary slice x𝑏 , a Mach number 𝑀 , and a target normalized wall-normal height ℎ, the model generates a subdomain 
+
+yℎ ∈ R6× 𝑁 𝑠 × 𝑁 𝑥 × 𝑁 𝑧 , 𝑁 𝑠 = 4, (3.1) representing the six flow variables over the 𝑁 𝑠 consecutive wall-normal planes whose first plane is located at ℎ. The subdomain depth 𝑁 𝑠 = 4 was selected on the basis of preliminary experiments on a smaller subset of the dataset, balancing per-subdomain computational cost against the model’s ability to capture wall-normal coherence within each subdomain; smaller values fragment the wall-normal structure excessively, while larger values increase memory requirements. Here ℎ is the normalized wall-normal coordinate, 
+
+ℎ = 𝑦 /𝛿 𝑐ℎ𝑎𝑛𝑛𝑒𝑙 , (3.2) where 𝛿 𝑐ℎ𝑎𝑛𝑛𝑒𝑙 = 2𝛿 is the channel height (see Sec. 2), so that ℎ ∈ [ 0, 1] with ℎ = 0on the bottom wall and ℎ = 1 on the top (driven) wall. With this convention, the height conditioner ℎ denotes the lower bound of the subdomain, and the subdomain extends from ℎ
+
+toward increasing wall-normal coordinate. This subdomain-wise design keeps the per-sample cost manageable while allowing wall-normal position and Mach number to act as explicit conditioners. Section 3.4 describes how subdomains are composed into the full volume. Figure 2 summarizes the setup (top) and previews the EDM-based generation pipeline (bottom), which is detailed in Sec. 3.2. 6… …
+
+Top -wall boundary slice 
+
+Wall 
+
+Chunk of consecutive wall -normal slices at h
+
+EDM denoising Forward corruption EDM sampling 
+
+> …
+> …
+> …
+
+Figure 2: Overview of the subdomain-wise conditional diffusion framework. Top: the top-wall boundary slice x𝑏 and the target subdomain yℎ of 𝑁 𝑠 consecutive wall-normal slices starting at normalized height ℎ = 𝑦 /𝛿 𝑐ℎ𝑎𝑛𝑛𝑒𝑙 . Bottom: forward corruption, EDM denoising via the probability-flow ODE, and EDM sampling, with conditioning c = (x𝑏 , ℎ, 𝑀 ) (see Sec. 3.2). 
+
+3.2. Conditional Diffusion Model (EDM) 
+
+For diffusion-based generative modeling, we adopt the Elucidating Diffusion Model (EDM) framework (Karras et al. 2022). In EDM, the forward process corrupts a clean sample yℎ
+
+with Gaussian noise at level 𝜎 ,
+
+yℎ, 𝜎 = yℎ + 𝒏 , 𝒏 ∼ N ( 0, 𝜎 2I), (3.3) and the model learns a denoiser 𝐷 𝜃 (yℎ, 𝜎 ; 𝜎, c) that predicts the clean sample from the noisy input. The conditioning vector is 
+
+c = (x𝑏 , ℎ, 𝑀 ), (3.4) i.e., the top-wall boundary slice, the normalized wall-normal height, and the freestream Mach number. To ensure well-conditioned training across noise levels, the denoiser adopts the precondi-tioning of Karras et al. (2022): 
+
+𝐷 𝜃 (yℎ, 𝜎 ; 𝜎, c) = 𝑐 skip (𝜎 ) yℎ, 𝜎 + 𝑐 out (𝜎 ) 𝐹 𝜃 
+
+ 𝑐 in (𝜎 ) yℎ, 𝜎 , 𝑐 noise (𝜎 ), c , (3.5) 7with 
+
+𝑐 skip (𝜎 ) = 𝜎 2data 
+
+𝜎 2 + 𝜎 2data 
+
+, 𝑐 out (𝜎 ) = 𝜎 𝜎 data √︃ 
+
+𝜎 2 + 𝜎 2data 
+
+,𝑐 in (𝜎 ) = 1√︃ 
+
+𝜎 2 + 𝜎 2data 
+
+, 𝑐 noise (𝜎 ) = 14 ln 𝜎. 
+
+(3.6) The network 𝐹 𝜃 is trained with the weighted EDM denoising loss, 
+
+LEDM (𝜃 ) = E(c,yℎ ), 𝜎, 𝒏 
+
+h
+
+𝜆 (𝜎 ) 𝐷 𝜃 (yℎ, 𝜎 ; 𝜎, c) − yℎ 22
+
+i
+
+, (3.7) where 𝜆 (𝜎 ) = (𝜎 2 + 𝜎 2data )/( 𝜎 𝜎 data )2 emphasizes low-noise regimes, and the training noise level is sampled as ln 𝜎 ∼ N ( 𝑃 mean , 𝑃 2std ).At inference, samples are drawn by integrating the probability-flow ODE 
+
+𝑑 ˆyℎ, 𝜎 
+
+𝑑𝜎 = ˆyℎ, 𝜎 − 𝐷 𝜃 ( ˆyℎ, 𝜎 ; 𝜎, c)
+
+𝜎 (3.8) from yℎ, 𝜎 max ∼ N ( 0, 𝜎 2max I) down to 𝜎 → 𝜎 𝑚𝑖𝑛 with the EDM deterministic sampler. Because the only stochasticity enters through the initial noise, we obtain an ensemble of plausible reconstructions by drawing multiple initial samples for the same conditioning c,which directly yields uncertainty estimates on all downstream statistics. The denoiser 𝐹 𝜃 is implemented as a SongUNet (Song et al. 2020), a U-Net with residual blocks and multi-head self-attention. The top-wall boundary slice x𝑏 is concatenated channel-wise to the scaled input 𝑐 in (𝜎 ) yℎ, 𝜎 , serving as a dense spatial conditioner. The normalized wall-normal height ℎ and freestream Mach number 𝑀 are projected through separate linear layers and added to the noise-level embedding: 
+
+e = e𝜎 + 𝜙 ℎ (ℎ) + 𝜙 𝑀 (𝑀 ), (3.9) where e𝜎 is the positional embedding of 𝑐 noise (𝜎 ), and 𝜙 ℎ, 𝜙 𝑀 are learned linear projec-tions. The combined embedding e is injected into each residual block via adaptive group normalization (AdaGN), modulating feature maps as a function of noise level, wall-normal position, and flow condition. Further EDM details are provided in Appendix A. The denoiser operates on two-dimensional ( 𝑥, 𝑧 ) feature maps. The 𝑁 𝑠 = 4 wall-normal slices of the subdomain and the six flow variables are stacked along the channel dimension before being fed to the network: a subdomain yℎ ∈ R6× 𝑁 𝑠 × 𝑁 𝑥 × 𝑁 𝑧 is reshaped into a tensor of shape (𝑁 𝑠 · 6) × 𝑁 𝑥 × 𝑁 𝑧 = 24 × 𝑁 𝑥 × 𝑁 𝑧 , and the conditioning slice x𝑏 ∈ R6× 𝑁 𝑥 × 𝑁 𝑧 
+
+is concatenated along the channel dimension to give a 30-channel input to the U-Net. The network output of shape 24 × 𝑁 𝑥 × 𝑁 𝑧 is reshaped back to 6 × 𝑁 𝑠 × 𝑁 𝑥 × 𝑁 𝑧 to recover the multivariate subdomain. Within this representation, all spatial convolutions act on the homogeneous (𝑥, 𝑧 ) plane, while wall-normal coherence within the subdomain is captured implicitly through the channel-mixing operations of the residual blocks, the self-attention layers, and the group normalization. 3.3. Bounded Binned Spectral-Power (BSP) Loss for Diffusion Model 
+
+Accurate high-wavenumber content is critical for turbulence reconstruction but is not directly penalized by the pointwise EDM loss. To explicitly encourage spectral fidelity, we augment training with a binned spectral-power (BSP) loss (Chakraborty et al. 2026 b) evaluated on binned one-dimensional energy spectra along the streamwise and spanwise directions. The 8original BSP loss takes the ratio form 
+
+Lratio BSP (𝑢, 𝑣 ) = 1
+
+𝑁 𝑘 𝐶 ∑︁ 
+
+> 𝑐 =1
+> 𝑁 𝑘
+
+∑︁ 
+
+> 𝑖 =1
+
+
+
+1 − 𝐸 bin  
+
+> 𝑢
+
+(𝑐, 𝑖 ) + 𝜖 𝐸 bin  
+
+> 𝑣
+
+(𝑐, 𝑖 ) + 𝜖 
+
+2
+
+, (3.10) where 𝑁 𝑘 is the number of wavenumber bins, 𝐶 is the number of channels, and 𝐸 bin  
+
+> 𝑢
+
+, 𝐸 bin 
+
+> 𝑣
+
+are binned energy spectra of the generated field 𝑢 and target 𝑣 .Because diffusion-based models are trained across a wide range of noise levels, the ratio form of Eq. (3.10) can become numerically problematic. Although the EDM preconditioner normalizes the denoiser output 𝐷 𝜃 to remain close to the data scale, the predicted spectrum 
+
+𝐸 𝑢 computed from 𝐷 𝜃 can still deviate substantially from the target spectrum 𝐸 𝑣 , particularly early in optimization when the denoiser has not yet converged and the per-bin spectral ratio 
+
+𝐸 𝑢 /𝐸 𝑣 can fluctuate widely. In these regimes, the ratio form produces noisy and potentially destabilizing gradient signals. To remedy this, we use a bounded, symmetric variant, 
+
+LBSP (𝑢, 𝑣 ) = 1
+
+𝐶 
+
+1
+
+𝑁 𝑘 𝐶 ∑︁ 
+
+> 𝑐 =1
+> 𝑁 𝑘
+
+∑︁ 
+
+> 𝑖 =1
+
+ 𝐸 bin  
+
+> 𝑢
+
+(𝑐, 𝑖, 𝜎 ) − 𝐸 bin  
+
+> 𝑣
+
+(𝑐, 𝑖, 𝜎 )
+
+𝐸 bin  
+
+> 𝑢
+
+(𝑐, 𝑖, 𝜎 ) + 𝐸 bin  
+
+> 𝑣
+
+(𝑐, 𝑖, 𝜎 ) + 𝜖 
+
+2
+
+, (3.11) which normalizes the difference by the sum rather than taking a ratio. Because (𝐸 𝑢 − 𝐸 𝑣 )2 ⩽
+
+(𝐸 𝑢 + 𝐸 𝑣 )2 for all 𝐸 𝑢 , 𝐸 𝑣 ⩾ 0, each term is bounded to [0, 1] regardless of the magnitude of 𝐸 𝑢 or 𝐸 𝑣 , yielding well-behaved gradients throughout optimization and across the entire noise schedule. In practice, we use the composite objective 
+
+L( 𝜃 ) = E(c,yℎ ), 𝜎, 𝒏 
+
+h
+
+𝜆 (𝜎 )
+
+
+
+𝐷 𝜃 (yℎ, 𝜎 ; 𝜎, c) − yℎ 22 + 𝛽 LnBSP (𝐷 𝜃 , yℎ)
+
+i 
+
+, (3.12) where 𝜆 (𝜎 ) = (𝜎 2 + 𝜎 2data )/( 𝜎 𝜎 data )2 is the EDM weighting (Sec. 3.2) and 𝛽 = 10 −3 is a scalar weight chosen empirically so that the two terms in the composite loss remain of comparable magnitude during training. The shared 𝜆 (𝜎 ) weighting ensures that both loss terms emphasize low-noise regimes, where the denoiser prediction is closest to the clean target and the spectral content is most physically meaningful, while downweighting the high-noise regime and further mitigating any residual sensitivity of the BSP loss to early training inaccuracies. 3.4. Full-Volume Reconstruction via Soft Overlap Inpainting 
+
+The subdomain-wise formulation yields samples over 𝑁 𝑠 -slice windows, which must be composed into a full wall-normal stack of 𝑁 𝑦 = 192 planes. We consider three strategies: 
+
+(i) No overlap. Adjacent subdomains are generated independently at non-overlapping heights and concatenated. This strategy is simple but produces visible discontinuities at subdomain interfaces because the model has no mechanism to enforce continuity across subdomains. 
+
+(ii) Overlap with averaging. Adjacent subdomains share a common overlap region in wall-normal space, and the overlap slices are replaced by the arithmetic average of the two independent predictions. This removes seams but, because averaging two stochastic samples reduces the variance of small-scale content, systematically damps turbulent fluctuations in the overlapping planes. 
+
+(iii) Soft overlap inpainting. To preserve continuity and statistical variability, we use a replacement-based inpainting scheme during the reverse diffusion process, inspired by RePaint Lugmayr et al. (2022) and adapted to subdomain-to-subdomain composition along the wall-normal direction. The idea is illustrated in Fig. 3. Consider the generation of the 
+
+(𝑘 +1)-th subdomain, which overlaps the previously generated 𝑘 -th subdomain on a set 9of wall-normal planes. We denote by z(𝑘 ) 
+
+> known
+
+the restriction of the already generated 𝑘 -th subdomain to this overlap region, which is treated here as a known ground-truth trajectory for the overlap. During sampling of the (𝑘 +1)-th subdomain, we maintain two streams at each noise level 
+
+𝜎 𝑡 (Fig. 3): (i) A known trajectory obtained by noising z(𝑘 ) 
+
+> known
+
+forward along the EDM schedule, 
+
+z(𝑘 ) 
+
+> known , 𝜎 𝑡
+
+= z(𝑘 ) 
+
+> known
+
++ 𝜖 (𝜎 𝑡 ), 𝜖 (𝜎 𝑡 ) ∼ N ( 0, 𝜎 2 
+
+> 𝑡
+
+I), (3.13) which provides a continuity anchor to the 𝑘 -th subdomain at every noise level. (ii) The model trajectory z(𝑘 ) 
+
+> 𝜎 𝑡
+
+, i.e., the restriction of the current reverse-diffusion sample of the (𝑘 +1)-th subdomain to the overlap region, produced by the probability-flow ODE of Sec. 3.2. At each reverse-diffusion step, after the ODE update, we replace the overlap region of the current subdomain with a soft blend of the two streams: 
+
+z(𝑘 ) 
+
+> 𝜎 𝑡
+
+← 𝛼 (𝜎 𝑡 ) z(𝑘 ) 
+
+> known , 𝜎 𝑡
+
++  1 − 𝛼 (𝜎 𝑡 ) z(𝑘 ) 
+
+> 𝜎 𝑡
+
+, (3.14) where 𝛼 (𝜎 𝑡 ) ∈ [ 0, 1] is a blending coefficient that controls how strongly the (𝑘 +1)-th subdomain is anchored to the 𝑘 -th subdomain in the overlap region. Early in the reverse process (large 𝜎 𝑡 , 𝛼 relatively large) the known trajectory dominates, enforcing inter-subdomain continuity; late in the process (small 𝜎 𝑡 , 𝛼 small) the model’s own prediction dominates, so that fine-scale turbulent variance is not erased. In practice, we use the cosine schedule 
+
+𝛼 (𝜎 𝑡 ) = 14
+
+
+
+1 + cos 𝜋 (𝑡 − 1)
+
+𝑁 𝑑 − 2
+
+
+
+, (3.15) where 𝑡 ∈ { 1, . . . , 𝑁 𝑑 −1} indexes the discretized noise levels along the probability-flow ODE and 𝑁 𝑑 is the total number of denoising steps. This schedule is monotonically decreasing in 𝑡 (i.e., monotonically decreasing along the reverse-diffusion direction), with 𝛼 = 12 at the start ( 𝑡 = 1) and 𝛼 = 0 at the end ( 𝑡 = 𝑁 𝑑 −1). Pseudo-code is provided in Appendix B. Figure 3 illustrates this mechanism: the top row is the reverse-diffusion (EDM sampling) trajectory of the (𝑘 +1)-th subdomain, from pure noise yℎ, 𝜎 max ∼ N ( 0, 𝜎 2max I) to the clean sample ˆ yℎ, 𝜎 𝑚𝑖𝑛 = ˆyℎ; the bottom row is the known trajectory obtained by noising the 𝑘 -th subdomain’s overlap region; the blending at each noise level follows Eq. (3.14) with the schedule (3.15). The two simpler strategies (no overlap and averaging) are direct baselines that require no additional illustration; the three are compared quantitatively on actual reconstructions in Sec. 4.1. 
+
+4. Results 
+
+We evaluate the proposed framework on the hypersonic Couette DNS dataset of Toki et al. 
+
+(2024). A single Mach-conditioned diffusion model is trained jointly on 𝑀 = 6, 7, 8 and evaluated at each of these three in-distribution Mach numbers. All evaluations throughout this section are performed on a held-out subset of DNS snapshots that is disjoint from the training data: at each Mach number, 80% of the available snapshots are used for training and the remaining 20% are withheld and used exclusively for sampling and evaluation. Throughout this section, the results are organized to isolate the two methodological axes introduced in this work. The composition strategy (Sec. 3.4) and the bounded BSP loss (Sec. 3.3) operate at different stages of the pipeline; the former during inference and the latter during training, so their effects can be examined independently. For the composition 10 EDM sampling          
+
+> Known trajectory
+> …
+> Figure 3: Soft overlap inpainting for subdomain-to-subdomain composition. Top (EDM sampling): reverse-diffusion trajectory of the (𝑘 +1)-th subdomain from pure noise. Bottom (known trajectory): noised versions of the overlap region z(𝑘 )
+> known inherited from the previously generated 𝑘 -th subdomain.
+
+ablation, we fix the training loss to EDM+BSP, since the bounded BSP loss is designed to improve spectral fidelity independently of how subdomains are assembled; its own effect on spectral statistics is isolated in a dedicated comparison immediately afterward. Section 4.1 reports results at the representative Mach number 𝑀 = 6, beginning with instantaneous fields and the composition-strategy comparison, followed by the loss ablation through spectral and statistical diagnostics, and concluding with profile uncertainty bands, spatial correlations, and uncertainty maps. Section 4.2 reports the same statistics at 𝑀 = 7 and 𝑀 = 8, documenting the performance of the single unified model across all training Mach numbers, and examines the Trettel-Larsson transformation (Trettel & Larsson 2016) as a compressibility-consistency diagnostic of the learned Mach conditioning. 4.1. Representative-Mach Results ( 𝑀 = 6)
+
+Statistical definitions. Throughout this section, statistics are computed from the recon-structed full volumes as follows. Mean velocity and temperature profiles use the Favre (density-weighted) average, ˜𝑞 = ⟨𝜌 𝑞 ⟩⟨𝜌 ⟩ , (4.1) where ⟨·⟩ denotes an average over the ensemble, streamwise, and spanwise directions. The mean density profile uses the Reynolds (unweighted) average ⟨𝜌 ⟩. Velocity and temperature fluctuations are defined relative to the Favre mean, 𝑞 ′′ = 𝑞 − ˜𝑞 , while density fluctuations use the Reynolds decomposition, 𝜌 ′ = 𝜌 − ⟨ 𝜌 ⟩. The RMS profile for velocity is calculated as √︃ ⟨𝜌 ⟩ 𝑢 ′′  
+
+> 𝑖
+
+𝑢 ′′  
+
+> 𝑖
+
+/𝜏 𝑤 , where 𝜏 𝑤 = 𝜇 𝑤 (d ˜ 𝑢 /d𝑦 )| 𝑤 is the wall shear stress evaluated at the bottom wall using Sutherland’s law for the viscosity. For the temperature and density RMS profiles, √︁ g𝑇 ′′ 2/e𝑇 and √︁ ⟨𝜌 ′2⟩/⟨ 𝜌 ⟩ are used, respectively. The Reynolds shear stress is reported as 
+
+−⟨ 𝜌𝑢 ′′ 𝑣 ′′ ⟩/ 𝜏 𝑤 . Two-point correlations are computed via FFT in the homogeneous streamwise and spanwise directions and normalized to unity at zero separation. The semi-local wall unit is defined as 𝑦 ∗ ≡ 𝑦 √︁ ⟨𝜌 ⟩| 𝜏 𝑤 |/⟨ 𝜇 ⟩, where ⟨𝜇 ⟩ is evaluated through Sutherland’s law from the local mean temperature (Huang et al. 1995). 
+
+Composition-strategy comparison. We first compare the three composition strategies introduced in Sec. 3.4. Since the bounded BSP loss is designed to improve spectral fidelity independently of how subdomains are assembled (Sec. 3.3), we fix the training loss to 
+
+# Rapids articles must not exceed this page length 11       
+
+> Figure 4: Full-volume wall-normal-spanwise slices of instantaneous streamwise velocity
+> 𝑈 (top row) and pressure 𝑃 (bottom row) at 𝑀 =6. From left to right: no overlap, overlap with averaging, soft overlap inpainting, and DNS ground truth (GT). The no-overlap reconstruction exhibits visible horizontal seams at subdomain interfaces, while both overlap-averaging and soft overlap inpainting produce visually continuous full-volume fields.
+
+EDM+BSP and vary only the composition strategy; the effect of the BSP loss itself is isolated in the spectral comparison that follows. Figure 4 shows full-volume wall-normal-spanwise slices of instantaneous streamwise velocity 𝑈 and pressure 𝑃 under the three strategies, alongside the DNS ground truth. The no-overlap reconstruction exhibits visible horizontal seams at subdomain interfaces, where independently sampled subdomains fail to align across the boundary. Both overlap averaging and soft overlap inpainting remove these seams and produce visually more continuous full-volume fields than the no-overlap reconstruction. The effect of the composition strategy on wall-normal statistics is quantified in Figs. 5-7. Mean profiles of streamwise velocity, temperature, and density (Fig. 5) are recovered accurately by all three strategies, which is expected, since first-order statistics are largely insensitive to local fluctuation amplitudes. Higher-order statistics, however, reveal the differences between the strategies. The RMS profiles of velocity components, temperature, and density (Fig. 6) show that overlap averaging systematically underestimates the fluctuation intensities throughout the boundary layer. The no-overlap and soft-inpainting strategies both recover the RMS levels of DNS closely across all three components, in contrast to the systematic underestimation of overlap averaging. The Reynolds shear stress and two-point correlations (Fig. 7) confirm and refine this picture. The Reynolds shear stress profile (left) is most sensitive to the composition strategy: overlap averaging substantially underestimates the Reynolds shear stress peak, consistent with the systematic damping of 𝑢 ′′ and 𝑣 ′′ amplitudes seen in Fig. 6, whereas soft overlap inpainting matches the DNS profile more closely. Meanwhile, the two-point correlations 𝑅 𝑢𝑢 (right) are recovered comparably well by all three strategies. In particular, all three reproduce the well-known anisotropy of wall-bounded turbulence, in which the spanwise correlation decays much more rapidly than the streamwise correlation, reflecting the elongated streamwise streaks. The insensitivity of the correlations to the composition strategy is expected, since two-point correlations are normalized by the local variance and therefore probe the spatial scales of the structures rather than their absolute amplitudes. The instantaneous wall-parallel structure of the reconstructed fluctuation fields is compared against DNS in Figs. 8 and 9 at two near-wall locations. Each figure shows four rows: the 12 
+
+Figure 5: Mean profiles of streamwise velocity (left), temperature (middle), and density (right) at 𝑀 = 6 for the three composition strategies compared against DNS (GT). First-order statistics are recovered accurately by all three strategies, consistent with their relative insensitivity to local fluctuation amplitudes. 
+
+Figure 6: RMS profiles of velocity components 𝑢 ′′ , 𝑣 ′′ , 𝑤 ′′ (left), temperature (middle), and density (right) at 𝑀 = 6 for the three composition strategies compared against DNS (GT). Overlap averaging systematically damps the fluctuation intensities throughout the boundary layer, while no overlap and soft overlap inpainting recover the DNS RMS levels closely across all three velocity components and the thermophysical variables. 
+
+Figure 7: Reynolds shear stress −⟨ 𝜌𝑢 ′′ 𝑣 ′′ ⟩/ 𝜏 𝑤 (left) and streamwise and spanwise two-point correlations 𝑅 𝑢𝑢 at 𝑦 /𝛿 = 0.0352 (right) at 𝑀 = 6 for the three composition strategies compared against DNS (GT). Overlap averaging substantially underestimates the Reynolds-shear peak, whereas soft overlap inpainting matches the DNS profile closely; the two-point correlations are reproduced comparably well by all three strategies and capture the expected streamwise-spanwise anisotropy. 13                         
+
+> Figure 8: Instantaneous wall-parallel contours at 𝑦 /𝛿 =0.0352 ( 𝑦 ∗≈11 .6), 𝑀 =6. From left to right: no overlap, overlap with averaging, soft overlap inpainting, and DNS ground truth (GT). Rows from top to bottom: Favre velocity fluctuation 𝑢 ′′ , Favre temperature fluctuation 𝑇 ′′ , Reynolds density fluctuation 𝜌 ′, and the second-order residual-velocity contribution to the SFS shear stress −¯𝜌 𝑢 ∗∗ 𝑣 ∗∗ obtained from a sharp spectral filter with cut-off wavenumbers (𝑘 𝑥 , 𝑘 𝑧 )=(32 ,16 ). All three composition strategies reproduce the dominant near-wall streaky structure in 𝑢 ′′ ,𝑇 ′′ , and 𝜌 ′.
+
+Favre velocity fluctuation 𝑢 ′′ , the Favre temperature fluctuation 𝑇 ′′ , the Reynolds density fluctuation 𝜌 ′, and the dominant second-order residual-velocity contribution to the sub-filter-scale (SFS) shear stress, − ¯𝜌 𝑢 ∗∗ 𝑣 ∗∗ , where ¯(·) denotes a sharp spectral filter retaining only modes with |𝑘 𝑥 | ⩽ 32 and |𝑘 𝑧 | ⩽ 16, ˇ 𝑞 = 𝜌𝑞 / ¯𝜌 is the corresponding filtered Favre quantity, and 𝑞 ∗∗ = 𝑞 − ˇ𝑞 is the sub-filter Favre fluctuation (Toki et al. 2024). The first three rows probe whether each composition strategy reproduces the large-scale near-wall structure of the flow, while the fourth row probes the small-scale momentum transport that is most sensitive to averaging-induced damping. At the lower wall-normal location (Fig. 8), all three composition strategies reproduce the dominant near-wall structure of the flow. The elongated streamwise streaks in 𝑢 ′′ , the closely correlated thermal streaks in 𝑇 ′′ , and the corresponding density fluctuations in 𝜌 ′
+
+are all consistent with DNS, including the well-known correlation between high-speed/high-temperature/low-density streaks and low-speed/low-temperature/high-density streaks (Piroz-zoli & Bernardini 2011; Toki & Bellan 2021; Toki et al. 2024). At the higher wall-normal location (Fig. 9), the same correlations weaken, where streamwise streaks broaden in spanwise spacing and the velocity-temperature similarity becomes less pronounced, and these features are also captured by all three strategies. The differences between strategies emerge in the SFS shear-stress contribution − ¯𝜌 𝑢 ∗∗ 𝑣 ∗∗ (bottom row): soft overlap inpainting reproduces the highly localized patchy structures of DNS with comparable amplitudes, whereas overlap averaging produces a weaker SFS pattern, consistent with the systematic variance damping observed in the RMS profiles of Fig. 6. Based on the above results, soft overlap inpainting is selected as the composition strategy: it eliminates the subdomain-interface seams of the no-overlap reconstruction (Fig. 4) while avoiding the systematic amplitude damping introduced by overlap averaging (Figs. 6, 7). All subsequent results use soft overlap inpainting. 
+
+Loss comparison: one-dimensional energy spectra and Reynolds-stress spectra. Having established soft overlap inpainting as the preferred composition strategy, we now fix it and compare the baseline EDM loss against the EDM+BSP variant to isolate the effect of the bounded spectral-binning loss. The one-dimensional streamwise energy spectrum of 𝑢 ′′ 
+
+𝐸 𝑢𝑢 (𝑘 𝑥 ) at a wall-normal location ℎ is computed from the Favre velocity fluctuation field 
+
+𝑢 ′′ (𝑥, 𝑧 ) on that plane by performing a one-dimensional FFT along the streamwise direction 14                      
+
+> Figure 9: Instantaneous wall-parallel contours at 𝑦 /𝛿 =0.1128 ( 𝑦 ∗≈32 .5), 𝑀 =6. From left to right: no overlap, overlap with averaging, soft overlap inpainting, and DNS ground truth (GT). Rows from top to bottom: Favre velocity fluctuation 𝑢 ′′ , Favre temperature fluctuation 𝑇 ′′ , Reynolds density fluctuation 𝜌 ′, and the second-order residual-velocity contribution to the SFS shear stress −¯𝜌 𝑢 ∗∗ 𝑣 ∗∗ obtained from a sharp spectral filter with cut-off wavenumbers (𝑘 𝑥 , 𝑘 𝑧 )=(32 ,16 ). At this higher wall-normal location the streaky structures broaden and the velocity-temperature similarity weakens, both of which are captured by all three strategies; the small-scale SFS shear-stress contribution (bottom row) separates the strategies, with soft overlap inpainting reproducing the DNS amplitudes and overlap averaging producing a weaker SFS pattern.
+
+at each spanwise location, taking the squared magnitude, and averaging over the ensemble of generated samples and over the homogeneous spanwise direction. The spanwise spectrum 
+
+𝐸 𝑢𝑢 (𝑘 𝑧 ) is computed analogously by FFT in the spanwise direction with averaging over the streamwise direction. The one-dimensional spectrum of the Reynolds shear stress is computed in the same way but applied to the instantaneous momentum-flux field 𝜌𝑢 ′′ 𝑣 ′′ , where 𝜌 is the full instantaneous density (not its mean), yielding 𝐸 𝜌𝑢 ′′ 𝑣 ′′ (𝑘 𝑥 ) and 𝐸 𝜌𝑢 ′′ 𝑣 ′′ (𝑘 𝑧 ) in the streamwise and spanwise directions, respectively. Figure 10 shows streamwise and spanwise one-dimensional energy spectra and Reynolds-stress spectra at a representative wall-normal location ( 𝑦 /𝛿 = 0.1128). The baseline EDM captures the low- to mid-wavenumber energy but displays a mild high-wavenumber excess. The EDM+BSP variant sharply suppresses this excess and brings the high-wavenumber tail into close agreement with DNS, without degrading the low-wavenumber behavior, consistent with the design of the bounded BSP loss of Eq. (3.11). The same qualitative improvement holds at other wall-normal locations and for the Reynolds-stress spectra. Although the framework is trained to reconstruct interior boundary-layer fields, wall shear stress 𝜏 𝑤 and wall heat flux 𝑞 𝑤 can be recovered directly from the generated near-wall velocity and temperature gradients. Figure 11 compares PDFs of streamwise wall shear stress 𝜏 𝑥 𝑦 and wall heat flux 𝑞 𝑤 at 𝑀 = 6. Both EDM and EDM+BSP reproduce the DNS distributions closely, with the ensemble mean values reported in the legend confirming quantitative agreement. Because we use the EDM deterministic sampler, the only stochasticity in the sampling process enters through the initial noise. Drawing multiple samples for the same conditioning 
+
+c therefore yields an ensemble whose spread directly quantifies the conditional posterior over 
+
+yℎ given c.Figure 12 shows ensemble mean profiles and ±2𝜎 uncertainty bands for 𝑈 , 𝑉 , 𝑊 , 𝜌 , and 𝑇 
+
+at 𝑀 = 6. The streamwise velocity, density, and temperature profiles are recovered with tight uncertainty bands that enclose the DNS profile, while the wall-normal and spanwise velocity components exhibit substantially wider bands. This contrast is physically consistent: 𝑉 and 15 
+
+Figure 10: One-dimensional energy spectra of 𝑢 ′′ (top row) and Reynolds shear stress (bottom row) in the streamwise (left) and spanwise (right) directions at 𝑦 /𝛿 = 0.1128, 
+
+𝑀 = 6: DNS (GT), EDM, and EDM+BSP, all using soft overlap inpainting. The bounded BSP loss suppresses the high-wavenumber excess of the baseline EDM and brings the high-wavenumber tail into close agreement with DNS in both directions, without degrading the low-wavenumber content. 
+
+Figure 11: PDFs of streamwise shear stress 𝜏 𝑥 𝑦 (left) and wall heat flux 𝑞 𝑤 (right) at 𝑀 = 6: DNS (GT), EDM, and EDM+BSP. Mean values for each distribution are reported in the legend. Both EDM and EDM+BSP reproduce the DNS distributions, with ensemble mean values in close quantitative agreement. 
+
+𝑊 have near-zero means and are dominated by fluctuations, so the conditional posterior is inherently broader for these components, and the model correctly reflects this. To examine the spatial distribution of predictive uncertainty, Fig. 13 displays, at a near-wall plane ( 𝑦 /𝛿 = 0.0352, 𝑦 ∗ ≈ 11 .6), instantaneous fluctuation fields 𝑢 ′′ and 𝑇 ′′ from a single generated sample (top row), the ensemble predictive standard deviation (middle row), and the absolute mean error (bottom row) for the streamwise velocity. The predictive standard 16                  
+
+> Figure 12: Ensemble mean profiles (dashed red) and ±2𝜎 uncertainty bands (shaded) for
+> 𝑈 ,𝑉 ,𝑊 ,𝜌 , and 𝑇 at 𝑀 =6, compared against DNS. Tight uncertainty bands enclose the DNS for 𝑈 ,𝜌 , and 𝑇 , while the fluctuation-dominated 𝑉 and 𝑊 components correctly exhibit substantially wider bands, reflecting the inherently broader conditional posterior of components with near-zero means.
+
+deviation of 𝑢 exhibits coherent spatial structure that mirrors the streaky structure of the velocity fluctuation field: elevated uncertainty concentrates along inter-streak boundaries where spanwise gradients of 𝑢 ′′ are strongest, while remaining lower within streak cores. This suggests that the model is more confident about the large-scale streak structure, which is partially constrained by the top-wall boundary conditioning, than about the precise lateral positioning and fine-scale modulation of streak boundaries. Importantly, the spatial distribution of predictive standard deviation closely mirrors that of the absolute mean error, indicating that the ensemble spread serves as a reliable indicator of local reconstruction fidelity. The same patterns are observed for temperature. Figure 14 shows the same analysis at a higher wall-normal location ( 𝑦 /𝛿 = 0.1128, 𝑦 ∗ ≈ 32 .5): the streaky structures broaden, the overall predictive uncertainty decreases relative to the near-wall plane, and the spatial correlation between predictive standard deviation and absolute mean error persists. 4.2. Multi-Mach Performance and Learned Compressibility Scaling 
+
+The model evaluated throughout this section is a single diffusion model trained jointly across 
+
+𝑀 = 6, 7, 8, with Mach number supplied through the embedding 𝜙 𝑀 (Sec. 3.2). In Sec. 4.1, we report its performance at the representative Mach number 𝑀 = 6; here we report the same statistics at the other two training Mach numbers, 𝑀 = 7 and 𝑀 = 8, to document the in-distribution performance of the unified model. We then use the Trettel-Larsson transformation as a compressibility-consistency diagnostic for the learned Mach conditioning. Figure 15 shows ensemble mean profiles and ±2𝜎 uncertainty bands for 𝑈 , 𝑉 , 𝑊 , 𝜌 ,and 𝑇 at 𝑀 = 7 and 𝑀 = 8, in the same format as Fig. 12. At both Mach numbers, the ensemble mean closely tracks the DNS profile across the entire channel, with tight uncertainty bands for 𝑈 , 𝜌 , and 𝑇 and substantially wider bands for the fluctuation-dominated 𝑉 and 𝑊 
+
+components. The qualitative behavior is identical to that observed at 𝑀 = 6, demonstrating 17 
+
+Figure 13: Spatial uncertainty analysis at 𝑦 /𝛿 = 0.0352 ( 𝑦 ∗ ≈ 11 .6), 𝑀 = 6. Top: instantaneous fluctuation fields 𝑢 ′′ (left) and 𝑇 ′′ (right) from a single generated sample. Middle: ensemble predictive standard deviation and Bottom: absolute mean error for the streamwise velocity and temperature. Predictive uncertainty concentrates along inter-streak boundaries and spatially correlates with the absolute mean error, indicating that the ensemble spread serves as a reliable indicator of local reconstruction fidelity. 
+
+Figure 14: Spatial uncertainty analysis at 𝑦 /𝛿 = 0.1128 ( 𝑦 ∗ ≈ 32 .5), 𝑀 = 6. Top: instantaneous fluctuation fields 𝑢 ′′ (left) and 𝑇 ′′ (right) from a single generated sample. Middle: ensemble predictive standard deviation and Bottom: absolute mean error for the streamwise velocity and temperature. At this higher wall-normal location the streaky structures broaden, and the spatial correlation between predictive standard deviation and absolute mean error persists. 
+
+that the single jointly-trained model recovers first-order statistics with consistent uncertainty across all three training Mach numbers. Figure 16 compares Reynolds shear stress and streamwise and spanwise two-point corre-lations against DNS at both Mach numbers. The Reynolds shear stress profiles are recovered, including the characteristic peak structure, and the two-point correlations exhibit two physically meaningful trends. First, at both Mach numbers, the spanwise correlation decays substantially faster than the streamwise correlation, reflecting the elongated streamwise streaks, a directional anisotropy that is well known in wall-bounded turbulence. Second, the streamwise correlation at large separations is noticeably lower at 𝑀 = 8 than at 𝑀 = 7, consistent with the higher friction Reynolds number 𝑅𝑒 𝜏 at 𝑀 = 8 (Toki et al. 2024), 18 
+
+Figure 15: Ensemble mean profiles (dashed) and ±2𝜎 uncertainty bands (shaded) of 𝑈 , 𝑉 ,
+
+𝑊 , 𝜌 , and 𝑇 at 𝑀 = 7 and 𝑀 = 8: generated (EDM+BSP with soft overlap inpainting) versus DNS (solid). At both Mach numbers, the ensemble mean closely tracks the DNS profile with tight bands for 𝑈 , 𝜌 , and 𝑇 and substantially wider bands for 𝑉 and 𝑊 , in the same pattern observed at 𝑀 = 6. 
+
+Figure 16: Reynolds shear stress (left) and streamwise and spanwise two-point correlations at 𝑦 /𝛿 = 0.0352 (right) for 𝑀 = 7 and 𝑀 = 8: generated versus DNS. The Reynolds-shear peak structure and the streamwise-spanwise correlation anisotropy are reproduced at both Mach numbers. 
+
+which makes the energy-containing eddies smaller relative to the streamwise domain length and hence more rapidly decorrelated within it. Both trends are reproduced by the generative model, demonstrating that the Mach conditioning captures the corresponding variations in the spatial structure of wall-bounded turbulence, in addition to the mean profile compressibility scaling discussed below. Figure 17 shows the corresponding one-dimensional energy and Reynolds-stress spectra at 𝑦 /𝛿 = 0.1128 for 𝑀 = 7 and 𝑀 = 8. As at 𝑀 = 6, the EDM+BSP model matches the 19           
+
+> Figure 17: One-dimensional energy spectra of 𝑢 ′′ (top row) and Reynolds shear stress (bottom row) in the streamwise (left) and spanwise (right) directions at 𝑦 /𝛿 =0.1128 for
+> 𝑀 =7 and 𝑀 =8: generated versus DNS. The EDM+BSP model matches the DNS spectra across the full wavenumber range at both Mach numbers, indicating that the spectral fidelity afforded by the bounded BSP loss extends across the training Mach range.
+
+DNS spectra across the full wavenumber range at both Mach numbers, demonstrating that the spectral fidelity afforded by the bounded BSP loss extends to the other training conditions. Figure 18 shows instantaneous wall-parallel contours at two near-wall heights for 𝑀 = 8. The model reproduces the elongated streamwise streaks and inter-variable correlations with fidelity comparable to the 𝑀 = 6 case (Figs. 8-9), confirming that the Mach-conditioning mechanism enables a single model to capture Mach-dependent flow structure. Figure 19 compares PDFs of streamwise wall shear stress 𝜏 𝑥 𝑦 and wall heat flux 𝑞 𝑤 at 
+
+𝑀 = 7 and 𝑀 = 8. The generated PDFs match the DNS distributions closely at both Mach numbers, with quantitative agreement in the mean values reported in the legends. To verify that the physically meaningful uncertainty observed at 𝑀 = 6 extends across Mach numbers, Figs. 20-21 show spatial uncertainty maps at two near-wall locations for 
+
+𝑀 = 8, in the same format as Figs. 13-14. The predictive standard deviation exhibits the same coherent spatial structure as at 𝑀 = 6: elevated uncertainty concentrates along inter-streak boundaries and spatially correlates with the absolute mean error, while the overall uncertainty decreases at the higher wall-normal location. This consistent behavior across the three training Mach numbers indicates that the physically meaningful uncertainty of the framework is a general property of the conditioning mechanism rather than specific to any single Mach number. Although all three Mach numbers are seen during training, the training loss does not impose any compressibility-scaling constraint: the model is free to fit each Mach case independently via its 𝜙 𝑀 embedding. We therefore use the Trettel-Larsson (TL) transformation (Trettel & Larsson 2016) as an independent diagnostic of whether the learned Mach conditioning 20 
+
+Figure 18: Instantaneous wall-parallel contours at two near-wall heights for 𝑀 = 8: generated (left) versus DNS (right). Rows from top to bottom: Favre velocity fluctuation 
+
+𝑢 ′′ , Favre temperature fluctuation 𝑇 ′′ , Reynolds density fluctuation 𝜌 ′, and the second-order residual-velocity contribution to the SFS shear stress − ¯𝜌 𝑢 ∗∗ 𝑣 ∗∗ obtained from a sharp spectral filter with cut-off wavenumbers (𝑘 𝑥 , 𝑘 𝑧 ) = (32 , 16 ). The model reproduces the elongated streamwise streaks, the inter-variable correlations, and the small-scale SFS patterns with fidelity comparable to the 𝑀 = 6 case (Figs. 8- 9). 
+
+encodes compressibility scaling consistently with known semi-empirical behavior. The TL transformation compensates for wall-normal variations in density and viscosity by defining a transformed velocity 
+
+𝑢 + 
+
+> 𝑇 𝐿
+
+=
+
+∫ 𝑢 +
+
+> 0
+
+ ⟨𝜌 ⟩⟨𝜌 𝑏𝑜𝑡 ⟩
+
+1/2 
+
+1 + 121
+
+⟨𝜌 ⟩
+
+𝜕 ⟨𝜌 ⟩
+
+𝜕𝑦 𝑦 − 1
+
+⟨𝜇 ⟩
+
+𝜕 ⟨𝜇 ⟩
+
+𝜕𝑦 𝑦 
+
+
+
+d𝑢 +, (4.2) plotted against the semi-local wall unit 𝑦 ∗ = ⟨𝜌 ⟩𝑢 ∗ 
+
+> 𝜏
+
+𝑦 /⟨ 𝜇 ⟩, where 𝑢 ∗ 
+
+> 𝜏
+
+=√︁ 𝜏 𝑤 /⟨ 𝜌 ⟩ (Huang et al. 
+
+1995). This transformation has been shown to collapse mean velocity profiles effectively in compressible Couette flows up to Mach 5 (Yao & Hussain 2023), and Toki et al. (2024) demonstrated that the collapse extends to hypersonic Couette flow at 𝑀 = 6 to 8 using the same DNS dataset employed here. Figure 22 shows that the TL-transformed mean streamwise velocity profiles from the 21                          
+
+> Figure 19: PDFs of streamwise shear stress 𝜏 𝑥 𝑦 (left) and wall heat flux 𝑞 𝑤 (right) at 𝑀 =7and 𝑀 =8: generated versus DNS. Mean values for each distribution are reported in the legend. The generated PDFs match the DNS distributions at both Mach numbers, with mean values in quantitative agreement.
+> Figure 20: Spatial uncertainty analysis at 𝑦 /𝛿 =0.0352 ( 𝑦 ∗≈9.9), 𝑀 =8. Top: instantaneous fluctuation fields 𝑢 ′′ (left) and 𝑇 ′′ (right) from a single generated sample. Middle: ensemble predictive standard deviation. Bottom: absolute mean error for the streamwise velocity and temperature. The predictive standard deviation again concentrates along inter-streak boundaries and spatially correlates with the absolute mean error, reproducing the behavior observed at 𝑀 =6.
+
+generative model collapse across 𝑀 = 6, 7, 8 and agree closely with the standard log law 
+
+𝑢 + 
+
+> 𝑇 𝐿
+
+= 2.5 ln 𝑦 ∗ + 5.2. Since Toki et al. (2024) already established that the DNS profiles collapse under this transformation, the key observation here is that the generated profiles exhibit the same collapse despite the absence of any compressibility-scaling constraint in the training loss. This suggests that the learned conditioning is compatible with compressibility scaling of wall turbulence statistics. 4.3. Generalization to unseen flow conditions 
+
+The results above establish the in-distribution performance of the unified Mach-conditioned model at the three training Mach numbers. We now probe two complementary aspects of generalization of our framework. The first is interpolation within the trained Mach range: the model is retrained on 𝑀 = 6 and 𝑀 = 8 only, with 𝑀 = 7 withheld and used as a test case. The second is extrapolation in Reynolds number: the jointly-trained 𝑀 = 6, 7, 8 model is evaluated on an independent 𝑀 = 8 DNS at a substantially higher friction Reynolds number 22 
+
+Figure 21: Spatial uncertainty analysis at 𝑦 /𝛿 = 0.1128 ( 𝑦 ∗ ≈ 29 .4), 𝑀 = 8. Top: instantaneous fluctuation fields 𝑢 ′′ (left) and 𝑇 ′′ (right) from a single generated sample. Middle: ensemble predictive standard deviation. Bottom: absolute mean error for the streamwise velocity and temperature. 
+
+Figure 22: Trettel-Larsson-transformed mean velocity profiles at 𝑀 = 6, 7, 8 with the reference log law 2 .5 ln 𝑦 ∗ + 5.2. The transformed profiles from the generative model collapse across the three Mach numbers onto the log law, despite the absence of any compressibility-scaling constraint in the training loss. 
+
+than any case seen during training (Toki et al. 2024, hereafter referred to as M8-R1), without any Reynolds-number conditioning. These two tests are designed to isolate generalization along the two principal axes spanned by the dataset, and the contrast between them clarifies which aspects of the underlying turbulent structure are captured by the present conditioning mechanism and which remain outside its current scope. 23                  
+
+> Figure 23: Ensemble mean profiles (dashed) and ±2𝜎 uncertainty bands (shaded) of 𝑈 ,
+> 𝑉 ,𝑊 ,𝜌 , and 𝑇 at the unseen Mach number 𝑀 =7: generated (EDM+BSP retrained on
+> 𝑀 =6,8 only, with soft overlap inpainting) versus DNS (solid). The ensemble mean tracks the DNS profile across the entire channel for all five variables, with tight uncertainty bands for 𝑈 ,𝜌 , and 𝑇 that enclose the ground truth.
+
+4.3.1. Mach number interpolation: unseen 𝑀 = 7For this test, the EDM+BSP model is retrained from scratch on 𝑀 = 6 and 𝑀 = 8 only, with all other architectural and training settings unchanged. Full-volume samples at the withheld Mach number are generated with the same soft overlap inpainting composition strategy introduced in Sec. 3.4, with the Mach embedding 𝜙 𝑀 evaluated at 𝑀 = 7 at inference time, so that the model must interpolate between the two training Mach numbers through the learned conditioning rather than reproduce a directly trained case. Figure 23 shows ensemble mean profiles and ±2𝜎 uncertainty bands of 𝑈 , 𝑉 , 𝑊 , 𝜌 , and 𝑇 
+
+at the unseen Mach number. The ensemble mean closely tracks the DNS profile across the entire channel, with tight bands for 𝑈 , 𝜌 , and 𝑇 that enclose the ground truth, and broader bands for the fluctuation-dominated 𝑉 and 𝑊 components, in the same pattern observed at the training Mach numbers (Figs. 12 and 15). The first-order structure of the boundary layer is therefore recovered at the unseen Mach number to a level visually comparable to the in-distribution cases. Figure 24 compares RMS profiles of the three velocity components, temperature, and density against DNS. The qualitative shape of all profiles is preserved: the generated curves exhibit the expected near-wall peak followed by a monotonic outer-layer decay, and the relative ordering of 𝑢 ′′ , 𝑣 ′′ , and 𝑤 ′′ matches the DNS. The peak amplitudes, however, are systematically underestimated. The streamwise velocity fluctuation 𝑢 ′′ shows the largest discrepancy, with the near-wall peak ( 𝑦 ∗ ≈ 10–20) reaching only about 75% of the DNS value; the wall-normal and spanwise components 𝑣 ′′ and 𝑤 ′′ , as well as the temperature and density RMS, exhibit a milder but consistent reduction in peak amplitude and a small shift of the peak location toward the wall. The deviation is most pronounced in the inner layer ( 𝑦 ∗ ≲ 20) and attenuates with wall distance, indicating that the withheld Mach setting preserves the wall-normal organization of fluctuations but loses some of their near-wall energy content. 24                   
+
+> Figure 24: RMS profiles of velocity components 𝑢 ′′ ,𝑣 ′′ ,𝑤 ′′ (left), temperature (middle), and density (right) at the unseen Mach number 𝑀 =7: generated versus DNS (GT). The wall-normal shape of all profiles is preserved, but peak amplitudes are systematically underestimated below 𝑦 ∗≈20, most prominently for 𝑢 ′′ .
+> Figure 25: PDFs of streamwise shear stress 𝜏 𝑥 𝑦 (left) and wall heat flux 𝑞 𝑤 (right) at the withheld Mach number 𝑀 =7: generated versus DNS. Mean values for each distribution are reported in the legend. The generated distributions are noticeably sharper than the DNS, with overestimated peak density and underestimated high-magnitude tails.
+
+Figure 25 compares PDFs of wall heat flux 𝑞 𝑤 and streamwise shear stress 𝜏 𝑥 𝑦 between the generated samples and the DNS. The generated PDFs are approximately centered on the DNS distributions: the peak locations coincide and the ensemble mean values reported in the legend are in reasonable quantitative agreement with the DNS. The shape of the generated PDFs, however, is noticeably sharper than the DNS in both cases: the peak density is overestimated by roughly 40% and the high-magnitude tails are correspondingly underestimated. This over-concentration is consistent with the underestimated near-wall fluctuation amplitudes observed in Fig. 24, since wall fluxes are dictated by near-wall velocity and temperature gradients whose tail behavior is set precisely by the high-amplitude excursions that are not fully captured at the withheld Mach number. Taken together, these results indicate that the learned Mach conditioning is not a discrete look-up across the training Mach numbers but a continuous representation that supports interpolation of first-order statistics: mean profiles and the bulk wall-normal organization of fluctuations are recovered at the unseen Mach number to a level comparable with the in-distribution cases, and the wall-quantity means are reproduced quantitatively. Higher-order near-wall statistics, by contrast, are systematically attenuated: peak RMS amplitudes are underestimated below 𝑦 ∗ ≈ 20, and the resulting wall-quantity PDFs are over-peaked 25 with underestimated tails. Two factors plausibly contribute to this attenuation, both of which are tied to the training setup of this particular test. First, the absence of 𝑀 = 7 from the training set removes direct supervision at the test Mach number, so the buffer- and viscous-sublayer structure must be reconstructed entirely from cross-Mach interpolation. Second, and arguably more limiting, the training set in this test contains only two Mach numbers, which is an inherently sparse sampling of the Mach axis: two anchor points convey no information about how near-wall fluctuation amplitudes vary nonlinearly between them, and intermediate behavior is therefore reconstructed solely from whatever interpolation bias is built into the embedding. A denser sampling along the Mach axis would be expected to relax this constraint substantially, and is a natural follow-up to the present experiment. We also note that the in-distribution evaluation in Secs. 4.1 and 4.2, where each of 𝑀 = 6, 7, and 8 is directly represented in the training data, recovers these same second-order near-wall statistics with high fidelity, which is consistent with this interpretation. 4.3.2. Reynolds number extrapolation: high-𝑅𝑒 𝜏 case 
+
+We next assess the behavior of the jointly-trained 𝑀 = 6, 7, 8 model when applied to flow conditions that lie outside the Reynolds-number range represented during training. The test case (M8-R1, Toki et al. 2024) is an independent DNS of hypersonic Couette flow at 
+
+𝑀 = 8 with 𝑅𝑒 𝜏 = 1278, approximately 1 .8 times the friction Reynolds number of the corresponding 𝑀 = 8 training case ( 𝑅𝑒 𝜏 = 713) and well above the largest training value across all three training Mach numbers ( 𝑅𝑒 𝜏 ∈ [ 621 , 713 ]). Full-volume samples at this condition are generated with the soft overlap inpainting composition described in Sec. 3.4. Reynolds number is not an explicit conditioning input in the present model, so this test probes how the framework responds when only the Mach embedding is matched while the underlying turbulent state corresponds to a regime well outside the training envelope. Figure 26 shows ensemble mean profiles and ±2𝜎 uncertainty bands of 𝑈 , 𝑉 , 𝑊 , 𝜌 ,and 𝑇 at the M8-R1 condition. In contrast to the withheld Mach test, the generated mean profiles exhibit a systematic offset from the DNS: the streamwise velocity boundary layer is recovered with a shifted profile shape, and analogous discrepancies are visible in the density and temperature fields. The predictive uncertainty bands do not inflate sufficiently to encompass the ground truth in most of the channel, indicating that the model is confidently biased toward the Reynolds-number regime of the training set rather than spontaneously broadening its posterior to reflect the regime mismatch. Figure 27 supports this picture for the second-order statistics: the generated RMS profiles of velocity, temperature, and density retain the qualitative shape of the training-Reynolds-number profiles, but the peak positions and amplitudes do not align with the M8-R1 DNS, particularly in the buffer and log layers where the wall-normal scaling is most strongly Reynolds-number dependent. The corresponding wall-quantity PDFs in Fig. 28 are shifted relative to the DNS for both 
+
+𝑞 𝑤 and 𝜏 𝑥 𝑦 , consistent with the near-wall gradient mismatch inferred from the profile-level diagnostics. These observations are consistent with the design of the present framework rather than evidence of a failure of the conditional-diffusion formulation itself: the model is conditioned on Mach number but not on Reynolds number, and the M8-R1 friction Reynolds number lies well outside the range spanned by the training data. The framework therefore general-izes along the explicitly-conditioned compressibility axis but not along the unconditioned Reynolds-number axis, which delineates the operating envelope of the model in its current form. This represents the limitations of our data-driven approach, reflecting the need for optimal experimental design for parameteric generalization. Read together, the two generalization experiments in this section point to a common operating principle: the fidelity of the reconstruction at unseen flow conditions is governed 26 
+
+Figure 26: Ensemble mean profiles (dashed) and ±2𝜎 uncertainty bands (shaded) of 𝑈 ,
+
+𝑉 , 𝑊 , 𝜌 , and 𝑇 at the M8-R1 test condition ( 𝑀 = 8, 𝑅𝑒 𝜏 = 1278, approximately 1 .8×
+
+the largest training 𝑅𝑒 𝜏 ): generated (EDM+BSP trained on 𝑀 = 6, 7, 8 with soft overlap inpainting) versus DNS (solid). The mean profiles exhibit a systematic offset from the DNS, and the predictive uncertainty bands do not inflate sufficiently to encompass the ground truth across most of the channel. 
+
+Figure 27: RMS profiles of velocity components 𝑢 ′′ , 𝑣 ′′ , 𝑤 ′′ (left), temperature (middle), and density (right) at the M8-R1 test condition: generated versus DNS (GT). The qualitative profile shape is retained, but peak locations and amplitudes do not align with the DNS, reflecting the absence of Reynolds-number conditioning in the trained model. 
+
+primarily by the density of training coverage along the relevant physical axis. In Sec. 4.3.1, sparse two-point sampling of the Mach axis was sufficient to interpolate mean structure but attenuated near-wall fluctuation amplitudes at the intermediate Mach number; here, the complete absence of Reynolds-number coverage, both in the conditioning and in the training data, produces a substantially more severe degradation. Both observations are consistent with the broader expectation that conditional generative models extrapolate poorly beyond their training support and interpolate accurately only when the parametric grid is sufficiently dense. They jointly motivate a single concrete extension, which we leave to future work: training the same subdomain-wise diffusion framework on a denser two-dimensional grid of Mach and Reynolds numbers, with the conditioning extended to include 𝑅𝑒 𝜏 (or an equivalent 27     
+
+> Figure 28: PDFs of streamwise shear stress 𝜏 𝑥 𝑦 (left) and wall heat flux 𝑞 𝑤 (right) at the M8-R1 test condition: generated versus DNS. Mean values for each distribution are reported in the legend. Both PDFs are systematically shifted relative to the DNS, consistent with the near-wall gradient mismatch inferred from the profile-level diagnostics.
+
+outer-scale parameter) alongside the existing Mach embedding. Such an extension would directly address the two limitations identified above and is expected to substantially broaden the Mach Reynolds envelope over which the framework can be deployed. 
+
+5. Conclusion 
+
+We have introduced a multiscale probabilistic reconstruction framework for hypersonic Couette flow built around two complementary ingredients: a subdomain-wise conditional diffusion generation strategy that samples the full volume as a collection of height- and Mach-conditioned wall-normal subdomains stitched together by soft overlap inpainting, and a spectral-binning training loss that explicitly supervises binned one-dimensional energy spectra in a bounded, numerically stable form compatible with the EDM noise schedule. The framework adapts and extends ideas from recent patch-trained and joint-diffusion work in the image and medical-imaging communities to the specific demands of compressible wall-bounded turbulence: physically heterogeneous wall-normal subdomains, a variance-preserving inpainting composition (in place of the arithmetic or Gaussian averaging common in prior joint-diffusion frameworks), and explicit multiscale spectral supervision. Together, these components make subdomain-wise generation tractable, keep inter-subdomain conti-nuity from collapsing small scale variance, and sharpen high-wavenumber spectral content of the generated fields. Across DNS benchmarks of hypersonic Couette flow at 𝑀 = 6, 7, and 8, the single jointly-trained Mach-conditioned framework recovers dominant streaky coherent structures, matches one-dimensional energy spectra and Reynolds stress spectra, reproduces PDFs of wall shear stress and heat flux, and supplies physically plausible uncertainty estimates on mean profiles, Reynolds-stress profiles, two-point correlations, and wall quantities, demonstrating that a single unified model can represent the three training Mach numbers through its conditioning mechanism. Moreover, the Trettel-Larsson-transformed mean velocity profiles collapse across the three Mach numbers onto the standard log law, indicating that the learned Mach conditioning is consistent with the known compressibility scaling of wall-bounded turbulence. These results also point to several directions for future work. Building on the generalization experiments with 𝑀 = 7 and high-𝑅𝑒 𝜏 in Sec. 4.3, a natural next step is to train the same framework on a denser two-dimensional grid of Mach and Reynolds numbers, with the 28 conditioning extended to include 𝑅𝑒 𝜏 (or an equivalent outer-scale parameter). Such an extension would directly address the two generalization-axis limitations identified in our assessments and would also allow a more systematic study of how the Trettel-Larsson collapse observed for the generated profiles transfers to unseen Mach-Reynolds regimes. In parallel, the reconstruction model should be coupled with CFD solvers, for example as a dynamic near-wall boundary condition for wall-modeled LES of hypersonic flows, where its a posteriori 
+
+effects on solver stability, accuracy, and computational cost can be assessed. A broader extension is to move beyond the idealized Couette configuration and apply the framework to turbulent boundary layers over curved and three-dimensional geometries, including non-equilibrium effects, shock/boundary-layer interactions, and transitional regimes. Finally, data-efficient conditioning remains an important practical question: future studies should examine how reliably the posterior can be sampled when the outer-layer information is replaced by sparser observations, such as wall-only sensors or low-fidelity LES interface data.    
+
+> Acknowledgements. This research used resources of the Argonne Leadership Computing Facility, which is a U.S. Department of Energy (DOE) Office of Science User Facility operated under Contract DE-AC02-06CH11357.
+> Funding. We acknowledge support from ARO cooperative agreement W911NF-25-2-0183 and an ARO ECP award from the Program ‘Modeling of Complex Systems’ (PM - Dr. Rob Martin).
+> Declaration of interests. The authors report no conflict of interest.
+
+Appendix A. EDM Training and Sampling Details 
+
+This appendix collects implementation details of the conditional EDM framework introduced in Sec. 3.2, including the noise schedule, the network architecture, the two-phase training procedure, and the deterministic sampler used at inference. A.1. Noise schedule and preconditioning 
+
+The training noise level 𝜎 is sampled from a log-normal distribution, ln 𝜎 ∼ N ( 𝑃 mean , 𝑃 2std ), (A 1) following Karras et al. (2022). At inference, the deterministic sampler integrates the probability-flow ODE of Eq. (3.8) from 𝜎 max down to 𝜎 min , with the discretized noise levels following the EDM Karras schedule 
+
+𝜎 𝑖 =
+
+
+
+𝜎 1/𝜌  
+
+> max
+
++ 𝑖 𝑁 𝑑 − 1
+
+ 𝜎 1/𝜌  
+
+> min
+
+− 𝜎 1/𝜌 
+
+> max
+
+𝜌 
+
+, 𝑖 = 0, 1, . . . , 𝑁 𝑑 − 1, (A 2) with 𝜌 = 7. Table 1 summarizes the key hyperparameters. A.2. Denoiser architecture 
+
+The denoiser 𝐹 𝜃 is implemented as a SongUNet (Song et al. 2020) with periodic (circular) padding to respect the streamwise and spanwise homogeneity of the flow. The base channel width is 128, with channel multipliers (1, 2, 2, 2, 2) across five resolution levels and four residual blocks per resolution. Multi-head self-attention is applied at the resolution corre-sponding to the smallest feature map size (32 × 16). Group normalization is used throughout, and a dropout rate of 0 .1 is applied within residual blocks. The total number of trainable parameters is approximately 80 million. The conditioning embedding 
+
+e = e𝜎 + 𝜙 ℎ (ℎ) + 𝜙 𝑀 (𝑀 ) (A 3) 29                 
+
+> Parameter Value
+> 𝜎 min 0.002
+> 𝜎 max 80 .0
+> 𝜎 data 1.0
+> 𝜌 (sampler schedule) 7
+> 𝑃 mean (Phase 2) −1.0
+> 𝑃 std (Phase 2) 1.2
+> 𝑁 𝑑 (sampler steps) 18
+> 𝛽 (BSP weight) 10 −3
+> 𝑁 𝑘 (BSP wavenumber bins per direction) 32 Table 1: EDM and BSP hyperparameters used in this work.
+
+is constructed as follows. The noise-level embedding e𝜎 is a sinusoidal positional encoding of 𝑐 noise (𝜎 ) = 14 ln 𝜎 followed by a two-layer MLP. The height embedding 𝜙 ℎ takes the normalized wall-normal height ℎ ∈ [ 0, 1] and the Mach embedding 𝜙 𝑀 takes the integer Mach number 𝑀 ∈ { 6, 7, 8}; both are passed through independent linear projections to the same dimensionality as e𝜎 . The combined embedding e is broadcast to every residual block via adaptive group normalization (AdaGN), where it produces per-block scale and shift parameters that modulate the feature maps as a function of noise level, wall-normal position, and flow condition. A.3. Training data 
+
+Each training example pairs a top-wall boundary slice x𝑏 ∈ R6×512 ×256 with a subdomain 
+
+yℎ ∈ R6× 𝑁 𝑠 ×512 ×256 of 𝑁 𝑠 = 4 consecutive wall-normal slices starting at a wall-normal index sampled from an exponential decay distribution biased toward near-wall positions, drawn from the same DNS snapshot. The Mach number 𝑀 ∈ { 6, 7, 8} is supplied as a scalar conditioner. Both the boundary slice and the subdomain are normalized to zero mean and unit variance using per-channel statistics computed over the full training set; sampled subdomains are de-normalized before composition into the full volume. At each Mach number, the dataset of DNS snapshots is split 80 /20 between training and held-out evaluation, with the 20% evaluation snapshots withheld from training and used exclusively for the sampling and statistical evaluation reported in Sec. 4. A.4. Two-phase training schedule 
+
+Training is performed in two phases. Phase 1 optimizes the EDM denoising loss alone (Eq. 3.7); Phase 2 resumes from the EMA weights of Phase 1 and adds the bounded BSP loss, training with the composite objective of Eq. (3.12). Both phases use AdamW with 
+
+(𝛽 1, 𝛽 2) = (0.9, 0.95 ), 𝜖 = 10 −6, learning rate 2 × 10 −4, and weight decay 10 −5; the learning rate schedule consists of a linear warm-up over the first 1000 kimg followed by cosine annealing down to 1% of the maximum value after a total of 23000 kimg. An exponential moving average of the network weights is maintained with a half-life of 50 kimg and used for all evaluation and sampling. The two phases differ only in the loss function and in the noise distribution parameters, as summarized in Table 2. The shift to a slightly more efficient noise distribution at the transition between Phase 1 and Phase 2 followed standard EDM practice for fine-tuning. 30                    
+
+> Setting Phase 1 Phase 2 Loss EDM only EDM +10 −3· L BSP
+> 𝑃 mean −0.5→ − 1.0−1.0
+> 𝑃 std 1.5→1.21.2BSP wavenumber bins 𝑁 𝑘 —32 (linearly spaced) Initialization From scratch From Phase 1 EMA weights Table 2: Training hyperparameters that differ between Phase 1 and Phase 2.
+
+Training is performed in distributed data-parallel fashion across 12 GPUs on Aurora (ALCF, Intel XPU), with a local batch size of 4 subdomains per GPU (global batch size of 48). A.5. Sampling 
+
+Inference uses Heun’s second-order deterministic sampler over the discretized noise schedule, as recommended by Karras et al. (2022). At each step, the denoiser is evaluated to predict the clean sample, followed by a corrector step that refines the update of the probability-flow ODE; this gives second-order accuracy. Sampling is performed without stochastic injection, so that the only stochasticity in the generated ensemble enters through the initial Gaussian noise 
+
+yℎ, 𝜎 max ∼ N ( 0, 𝜎 2max I). For the uncertainty quantification results (Sec. 4.1 and Sec. 4.2), an ensemble of multiple samples is generated for each conditioning c by drawing independent initial noise per sample. 
+
+Appendix B. Soft Overlap Inpainting Algorithm 
+
+This appendix provides the pseudo-code for the soft overlap inpainting scheme described in Sec. 3.4. The full wall-normal stack of 𝑁 𝑦 = 192 planes is generated as a sequence of overlapping subdomains of depth 𝑁 𝑠 = 4, traversed from the bottom wall toward the top wall with a sliding-window stride. The first subdomain advances by Δℎ0 = 2 planes ( first stride ); all subsequent subdomains advance by Δℎ = 1 plane ( stride ), so that consecutive subdomains overlap on 𝑁 𝑠 − Δℎ = 3 planes. Under this configuration, the full volume of 192 planes is assembled from 𝑁 𝑐 = 189 subdomains generated sequentially. The first subdomain is sampled unconstrained from pure noise. Each subsequent subdomain is sampled with the soft overlap inpainting scheme: at every step of the reverse-diffusion process, the planes shared with the previously generated subdomain are softly blended toward the corresponding noised values from the previous subdomain. The blending coefficient 
+
+𝛼 (𝜎 𝑡 ) follows the cosine schedule of Eq. (3.15) with 𝛼 start = 0.5 and 𝛼 end = 0, monotonically decreasing along the reverse-diffusion direction. Algorithm 1 summarizes the procedure for generating the (𝑘 +1)-th subdomain given the previously generated 𝑘 -th subdomain. After all 𝑁 𝑐 subdomains are sampled, the full volume is assembled by concatenating the non-overlapping leading slices of each subdomain. With Δℎ0 = 2 for the first subdomain and 
+
+Δℎ = 1 thereafter, this procedure yields the full stack of 𝑁 𝑦 = 192 planes.     
+
+> REFERENCES Amor ´ os-Trepat, Marc, Medrano-Navarro, Luis, Liu, Qiang, Guastoni, Luca & Thuerey, Nils 2026 Guiding diffusion models to reconstruct flow fields from sparse data. Physics of Fluids 38 (1).
+
+31 
+
+Algorithm 1 Soft overlap inpainting for the (𝑘 +1)-th subdomain 
+
+Require: Conditioning c = (x𝑏 , ℎ 𝑘 +1, 𝑀 ), denoiser 𝐷 𝜃 
+
+Require: Previously generated subdomain ˆ y(𝑘 ) 
+
+> ℎ
+
+, overlap depth 𝑁 𝑜 = 𝑁 𝑠 − Δℎ
+
+Require: Discretized noise schedule {𝜎 𝑡 }𝑁 𝑑 −1 
+
+> 𝑡 =0
+
+with 𝜎 0 = 𝜎 max and 𝜎 𝑁 𝑑 −1 = 𝜎 min 
+
+1: Extract overlap region z(𝑘 ) 
+
+> known
+
+← ˆy(𝑘 ) 
+
+> ℎ
+
+[ :, Δℎ : 𝑁 𝑠 , :, : ]
+
+2: Sample initial noise yℎ, 𝜎 0 ∼ N ( 0, 𝜎 20 I)
+
+3: for 𝑡 = 1, 2, . . . , 𝑁 𝑑 − 1 do 
+
+4: yℎ, 𝜎 𝑡 ← Heun ODE update from yℎ, 𝜎 𝑡 −1 using 𝐷 𝜃 ( · ; 𝜎 𝑡 , c)
+
+5: Sample 𝝐 ∼ N ( 0, 𝜎 2 
+
+> 𝑡
+
+I)
+
+6: z(𝑘 ) 
+
+> known , 𝜎 𝑡
+
+← z(𝑘 ) 
+
+> known
+
++ 𝝐 ⊲ noise the known trajectory to level 𝜎 𝑡 
+
+7: z(𝑘 ) 
+
+> 𝜎 𝑡
+
+← yℎ, 𝜎 𝑡 [ :, 0 : 𝑁 𝑜 , :, : ] ⊲ model trajectory in overlap region 
+
+8: 𝛼 𝑡 ← 14
+
+ 1 + cos (𝜋 (𝑡 − 1)/( 𝑁 𝑑 −2))  ⊲ cosine schedule with 𝛼 start = 0.5, 𝛼 end = 0
+
+9: z(𝑘 ) 
+
+> 𝜎 𝑡
+
+← 𝛼 𝑡 z(𝑘 ) 
+
+> known , 𝜎 𝑡
+
++ ( 1 − 𝛼 𝑡 ) z(𝑘 )
+
+> 𝜎 𝑡
+
+10: yℎ, 𝜎 𝑡 [ :, 0 : 𝑁 𝑜 , :, : ] ← z(𝑘 ) 
+
+> 𝜎 𝑡
+
+⊲ write blended overlap back 
+
+11: end for 
+
+12: return ˆy(𝑘 +1) 
+
+> ℎ
+
+← yℎ, 𝜎 𝑁 𝑑 −1
+
+Bar-Tal, Omer, Yariv, Lior, Lipman, Yaron & Dekel, Tali 2023 Multidiffusion: Fusing diffusion paths for controlled image generation, arXiv: 2302.08113. 
+
+Bieder, Florentin, Wolleb, Julia, Durrer, Alicia, Sandkuehler, Robin & Cattin, Philippe C 2024 Memory-efficient 3d denoising diffusion models for medical image processing. In Medical Imaging with Deep Learning , pp. 552–567. PMLR. 
+
+Bose, Sanjeeb T & Park, George Ilhwan 2018 Wall-modeled large-eddy simulation for complex turbulent flows. Annual review of fluid mechanics 50 , 535–561. 
+
+Chakraborty, Dibyajyoti, Kim, Hojin & Maulik, Romit 2026 a Adaptive diffusion posterior sampling for data and model fusion of complex nonlinear dynamical systems. arXiv preprint arXiv:2603.12635 .
+
+Chakraborty, Dibyajyoti, Mohan, Arvind T & Maulik, Romit 2026 b Binned spectral power loss for improved prediction of chaotic systems. Journal of Computational Physics p. 114866. 
+
+Chen, Yongkai & Scalo, Carlo 2021 a Effects of porous walls on near-wall supersonic turbulence. Physical Review Fluids 6 (8), 084607. 
+
+Chen, Yongkai & Scalo, Carlo 2021 b Trapped waves in supersonic and hypersonic turbulent channel flow over porous walls. Journal of Fluid Mechanics 920 , A24. 
+
+Choi, Haecheon & Moin, Parviz 2012 Grid-point requirements for large eddy simulation: Chapman’s estimates revisited. Physics of fluids 24 (1). 
+
+Du, Pan, Parikh, Meet Hemant, Fan, Xiantao, Liu, Xin-Yang & Wang, Jian-Xun 2024 Confild: Conditional neural field latent diffusion model generating spatiotemporal turbulence. arXiv preprint arXiv:2403.05940 .
+
+Fan, Xiantao, Parikh, Meet Hemant, Liu, Yi, Liu, Xin-Yang, Guo, Junyi, Wang, Meng & Wang, Jian-Xun 2025 Generative reconstruction of spatiotemporal wall-pressure in turbulent boundary layers via patchwise latent diffusion. arXiv preprint arXiv:2511.12455 .
+
+Fukami, Kai, Fukagata, Koji & Taira, Kunihiko 2019 Super-resolution reconstruction of turbulent flows with machine learning. Journal of Fluid Mechanics 870 , 106–120. 
+
+Fukami, Kai, Maulik, Romit, Ramachandra, Nesar, Fukagata, Koji & Taira, Kunihiko 2021 Global field reconstruction from sparse sensors with voronoi tessellation-assisted deep learning. Nature Machine Intelligence 3 (11), 945–951. 
+
+Gao, Han, Han, Xu, Fan, Xiantao, Sun, Luning, Liu, Li-Ping, Duan, Lian & Wang, Jian-Xun 2024 Bayesian conditional diffusion models for versatile spatiotemporal turbulence generation. Computer Methods in Applied Mechanics and Engineering 427 , 117023. 
+
+Guastoni, Luca, Balasubramanian, Arivazhagan G, Foroozan, Firoozeh, G ¨ uemes, Alejandro, Ianiro, Andrea, Discetti, Stefano, Schlatter, Philipp, Azizpour, Hossein & Vinuesa, Ricardo 
+
+2025 Fully convolutional networks for velocity-field predictions based on the wall heat flux in 32 
+
+turbulent boundary layers: L. guastoni et al. Theoretical and computational fluid dynamics 39 (1), 13. 
+
+Guastoni, Luca, G ¨ uemes, Alejandro, Ianiro, Andrea, Discetti, Stefano, Schlatter, Philipp, Azizpour, Hossein & Vinuesa, Ricardo 2021 Convolutional-network models to predict wall-bounded turbulence from wall quantities. Journal of Fluid Mechanics 928 , A27. 
+
+Ho, Jonathan, Jain, Ajay & Abbeel, Pieter 2020 Denoising diffusion probabilistic models. Advances in neural information processing systems 33 , 6840–6851. 
+
+Huang, PG, Coleman, Gary N & Bradshaw, P 1995 Compressible turbulent channel flows: Dns results and modelling. Journal of Fluid Mechanics 305 , 185–218. 
+
+Jiang, Yuchi, Wang, Yunpeng, Yang, Huiyu & Wang, Jianchun 2025 Integrating fourier neural operator with diffusion model for autoregressive predictions of three-dimensional turbulence. arXiv preprint arXiv:2512.12628 .
+
+Jim´ enez, ´ Alvaro Barbero 2023 Mixture of diffusers for scene composition and high resolution image generation. arXiv preprint arXiv:2302.02412 .
+
+Karras, Tero, Aittala, Miika, Aila, Timo & Laine, Samuli 2022 Elucidating the design space of diffusion-based generative models. Advances in neural information processing systems 35 , 26565– 26577. 
+
+Kohl, Georg, Chen, Li-Wei & Thuerey, Nils 2026 Benchmarking autoregressive conditional diffusion models for turbulent flow simulation. Neural Networks p. 108641. 
+
+Lee, Yuseung, Kim, Kunho, Kim, Hyunjin & Sung, Minhyuk 2023 Syncdiffusion: Coherent montage via synchronized joint diffusions. Advances in Neural Information Processing Systems 36 , 50648–50660. 
+
+Lienen, Marten, L ¨ udke, David, Hansen-Palmus, Jan & G ¨ unnemann, Stephan 2023 From zero to turbulence: Generative modeling for 3d flow simulation. arXiv preprint arXiv:2306.01776 .
+
+Lugmayr, Andreas, Danelljan, Martin, Romero, Andres, Yu, Fisher, Timofte, Radu & Van Gool, Luc 2022 Repaint: Inpainting using denoising diffusion probabilistic models. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pp. 11461–11471. 
+
+Nagarajan, Santhanam, Lele, Sanjiva K & Ferziger, Joel H 2003 A robust high-order compact method for large eddy simulation. Journal of Computational Physics 191 (2), 392–419. 
+
+Oommen, Vivek, Bora, Aniruddha, Zhang, Zhen & Karniadakis, George Em 2025 Integrating neural operators with diffusion models improves spectral representation in turbulence modelling. 
+
+Proceedings of the Royal Society A: Mathematical, Physical and Engineering Sciences 481 (2309). 
+
+Parikh, Meet Hemant, Fan, Xiantao & Wang, Jian-Xun 2025 Conditional flow matching for generative modeling of near-wall turbulence with quantified uncertainty. arXiv preprint arXiv:2504.14485 .
+
+Pirozzoli, Sergio & Bernardini, Matteo 2011 Turbulence in supersonic boundary layers at moderate reynolds number. Journal of Fluid Mechanics 688 , 120–168. 
+
+Shu, Dule, Li, Zijie & Farimani, Amir Barati 2023 A physics-informed diffusion model for high-fidelity flow field reconstruction. Journal of Computational Physics 478 , 111972. 
+
+Sillero, Juan A, Jim´ enez, Javier & Moser, Robert D 2014 Two-point statistics for turbulent boundary layers and channels at reynolds numbers up to 2000. Physics of Fluids 26 (10). 
+
+Song, Yang, Sohl-Dickstein, Jascha, Kingma, Diederik P, Kumar, Abhishek, Ermon, Stefano & Poole, Ben 2020 Score-based generative modeling through stochastic differential equations. arXiv preprint arXiv:2011.13456 .
+
+Steinbrenner, Fabian, Turan, Baris, Teng, Hao & Xiao, Heng 2026 Turbulence generation and data assimilation in wall-bounded flows with a latent diffusion model. arXiv preprint arXiv:2603.02143 .
+
+Toki, Takahiko & Bellan, Josette 2021 Investigation of species-mass diffusion in binary-species boundary layers at high pressure using direct numerical simulations. Journal of Fluid Mechanics 
+
+928 , A18. 
+
+Toki, Takahiko, Sousa, Victor CB, Chen, Yongkai & Scalo, Carlo 2024 Sub-filter-scale shear stress analysis in hypersonic turbulent couette flow. Journal of Fluid Mechanics 984 , A53. 
+
+Trettel, Andrew & Larsson, Johan 2016 Mean velocity scaling for compressible wall turbulence with heat transfer. Physics of Fluids 28 (2). 
+
+Wang, Haoshen, Liu, Zhentao, Sun, Kaicong, Wang, Xiaodong, Shen, Dinggang & Cui, Zhiming 
+
+2025 3d meddiffusion: A 3d medical latent diffusion model for controllable and high-quality medical image generation. IEEE Transactions on Medical Imaging .
+
+Wang, Zhendong, Jiang, Yifan, Zheng, Huangjie, Wang, Peihao, He, Pengcheng, Wang, Zhangyang, Chen, Weizhu, Zhou, Mingyuan & others 2023 Patch diffusion: Faster and more data-efficient training of diffusion models. Advances in neural information processing systems 36 , 72137–72154. 33 
+
+Yao, Jie & Hussain, Fazle 2023 Study of compressible turbulent plane couette flows via direct numerical simulation. Journal of Fluid Mechanics 964 , A29. 
+
+Yu, Yongrui, Gu, Yannian, Zhang, Shaoting & Zhang, Xiaofan 2024 Meddiff-fm: A diffusion-based foundation model for versatile medical image applications. arXiv preprint arXiv:2410.15432 .

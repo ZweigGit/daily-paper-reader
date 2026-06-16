@@ -1,0 +1,56 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-16T23:01:19.259146+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2606.15023v1",
+      "source": "arxiv",
+      "title": "Multiscale Hypersonic Boundary Layer Reconstruction via Spectral Binning and Subdomain-wise Conditional Diffusion",
+      "abstract": "We propose a multiscale probabilistic reconstruction framework for hypersonic Couette flow, where near-wall states are inferred from limited top-wall observations using conditional diffusion model. The boundary layer is divided into overlapping wall-normal subdomains, and a single height- and Mach-conditioned Elucidating Diffusion Model (EDM) is trained jointly for M=6,7,8 to sample velocity, density, pressure, and temperature fields conditioned on a top-wall boundary slice. A soft overlap inpainting strategy assembles subdomain predictions into full-volume reconstructions while maintaining inter-subdomain continuity and small-scale variability. To improve the spectral fidelity of the generated fields, we introduce a novel bounded binned spectral power (BSP) loss that preserves high-wavenumber content while remaining numerically stable across the diffusion noise schedule. Validation against direct numerical simulation data shows that the model recovers instantaneous structures, spectra, statistical profiles, correlations, and wall quantities across all training Mach numbers, while providing spatially structured uncertainty estimates. The reconstructed Mach-conditioned profiles also collapse under the Trettel-Larsson transformation, indicating consistency with compressibility scaling. These results establish the domain decomposed conditional diffusion model with a bounded binned spectral loss as an effective probabilistic surrogate for near-wall reconstruction in hypersonic wall-bounded turbulence.",
+      "authors": [
+        "Hojin Kim",
+        "Dibyajyoti Chakraborty",
+        "Takahiko Toki",
+        "Carlo Scalo",
+        "Romit Maulik"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn",
+        "cs.LG"
+      ],
+      "published": "2026-06-12T23:40:01+00:00",
+      "link": "https://arxiv.org/pdf/2606.15023v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "conditional diffusion model for hypersonic boundary layer reconstruction",
+      "llm_evidence_cn": "条件扩散模型用于高超音速边界层重建",
+      "llm_evidence": "条件扩散模型用于高超音速边界层重建",
+      "canonical_evidence": "条件扩散模型用于高超音速边界层重建",
+      "llm_tldr_en": "A multiscale conditional diffusion model reconstructs hypersonic Couette flow fields from limited top-wall observations, using subdomain-wise EDM and spectral binning to improve spectral fidelity.",
+      "llm_tldr_cn": "针对高超音速边界层中从有限观测推断全场状态的问题，本文提出多尺度条件扩散重建框架。将边界层划分为重叠子域，训练单一高度和马赫数条件EDM模型，结合软重叠修复策略装配全容积场，并通过谱分箱增强谱保真度。实验表明该方法能准确重建速度、密度、压力和温度场。",
+      "llm_tldr": "针对高超音速边界层中从有限观测推断全场状态的问题，本文提出多尺度条件扩散重建框架。将边界层划分为重叠子域，训练单一高度和马赫数条件EDM模型，结合软重叠修复策略装配全容积场，并通过谱分箱增强谱保真度。实验表明该方法能准确重建速度、密度、压力和温度场。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}

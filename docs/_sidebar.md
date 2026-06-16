@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-06-16 <!--dpr-date:20260616-->
+    * 精读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/16/2606.15023v1-multiscale-hypersonic-boundary-layer-reconstruction-via-spectral-binning-and-subdomain-wise-conditional-diffusion" data-sidebar-item="{&quot;title&quot;: &quot;Multiscale Hypersonic Boundary Layer Reconstruction via Spectral Binning and Subdomain-wise Conditional Diffusion&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.15023v1-multiscale-hypersonic-boundary-layer-reconstruction-via-spectral-binning-and-subdomain-wise-conditional-diffusion&quot;, &quot;score&quot;: &quot;10.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;条件扩散模型用于高超音速边界层重建&quot;}">Multiscale Hypersonic Boundary Layer Reconstruction via Spectral Binning and Subdomain-wise Conditional Diffusion</a>
   * 2026-06-15 <!--dpr-date:20260615-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/15/2606.13742v1-a-fully-gpu-based-workflow-for-building-physics-emulators-of-hypersonic-flows" data-sidebar-item="{&quot;title&quot;: &quot;A fully GPU-based workflow for building physics emulators of hypersonic flows&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.13742v1-a-fully-gpu-based-workflow-for-building-physics-emulators-of-hypersonic-flows&quot;, &quot;score&quot;: &quot;8.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;开发GPU工作流，结合神经仿真器和不确定性量化预测高超声速流场&quot;}">A fully GPU-based workflow for building physics emulators of hypersonic flows</a>
