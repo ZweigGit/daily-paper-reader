@@ -1,0 +1,54 @@
+{
+  "label": "2026-06-18",
+  "date": "2026-06-18",
+  "generated_at": "2026-06-18T21:52:43",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202606/18/2606.16610v1-diffusion-flow-matching-dimension-improved-kl-bounds-and-wasserstein-guarantees",
+      "section": "quick",
+      "title_en": "Diffusion Flow Matching: Dimension-Improved KL Bounds and Wasserstein Guarantees",
+      "authors": "Marta Gentiloni Silveri, Giovanni Conforti, Alain Durmus",
+      "date": "2026-06-15",
+      "pdf": "https://arxiv.org/pdf/2606.16610v1",
+      "score": "7.0",
+      "evidence": "流匹配理论，潜在应用于流体模拟",
+      "tldr": "扩散流匹配（DFM）是基于布朗运动的生成模型，其离散化误差的理论收敛性尚不完全清楚。本文在KL散度和2-Wasserstein距离下分析DFM的收敛界，通过施加有限矩条件和分数可积性假设，获得了维度依赖性改进的KL收敛界，达到当前最优。进一步在弱对数凹性条件下，得到与KL情况一致的Wasserstein距离收敛保证。该工作为DFM提供了更优的理论保障。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Diffusion Flow Matching (DFM) has recently emerged as a versatile framework for generative modeling, yet its theoretical convergence properties remain only partially understood. In this work, we provide refined and novel convergence guarantees for Brownian motion based DFMs, focusing on the discretization error. Our analysis is conducted under the Kullback-Leibler (KL) divergence and the 2-Wasserstein distance. Under finite-moment conditions and a mild score integrability assumption, we derive KL convergence bounds with improved dimensional dependence compared to prior work, achieving, up to our knowledge, state-of-the-art scaling under minimal conditions. We further extend the analysis to the 2-Wasserstein distance: under an additional first-order score integrability assumption and a weak log-concavity condition, we obtain convergence guarantees with dimensional dependence consistent with the KL case.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/18/2606.18290v1-stochastic-thermodynamics-and-sde-based-generative-models",
+      "section": "quick",
+      "title_en": "Stochastic Thermodynamics and SDE-based Generative Models",
+      "authors": "Yaowen Zhang",
+      "date": "2026-06-13",
+      "pdf": "https://arxiv.org/pdf/2606.18290v1",
+      "score": "7.0",
+      "evidence": "基于SDE的生成模型（包括扩散）的热力学视角",
+      "tldr": "基于随机微分方程的生成模型在信号处理中广泛应用，但缺乏从非平衡热力学的深入理解。本文建立了一个随机热力学框架，为扩散模型和薛定谔桥提供轨迹层面的功、热和熵产生定义，并推导出广义Jarzynski恒等式和第二定律不等式。该框架扩展了原始热力学设置，可处理时变浴温度和非保守力，为生成模型提供新的理论视角。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "SDE-based generative models, including diffusion models and the Schrödinger bridge, have found broad applications in signal processing tasks such as speech enhancement, image restoration, and time-series generation. This note presents a modeling framework for such models within the context of stochastic thermodynamics. The main results of this note are trajectory-level definitions of work, heat, and entropy production, along with a generalized Jarzynski identity and a second-law-like inequality. The proposed framework extends the original Jarzynski setup to accommodate time-dependent bath temperature and nonconservative driving forces. This thermodynamic perspective may deepen our understanding of diffusion models and the Schrödinger bridge from a nonequilibrium statistical mechanics viewpoint.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/18/2606.17465v1-perron--frobenius-operator-matching-for-generative-modeling",
+      "section": "quick",
+      "title_en": "Perron--Frobenius Operator Matching for Generative Modeling",
+      "authors": "Shiqi Zhang, Wuwei Wu, Jaemin Oh, Jie Chen, Xiaoning Qian",
+      "date": "2026-06-16",
+      "pdf": "https://arxiv.org/pdf/2606.17465v1",
+      "score": "6.0",
+      "evidence": "提出新的生成模型框架，可应用于流体动力学，但本文未涉及具体应用",
+      "tldr": "针对生成模型缺乏统一算子理论框架的问题，提出Perron-Frobenius算子匹配（PFOM），通过积分PF算子统一流、扩散和跳跃模型的密度演化。理论证明仅KL散度能保持密度级与样本条件目标等价，导出实用损失等价于Koopman路径匹配。采用Nesterov加速训练与采样稳定离散化。在Gaussian mixtures和two-moons上，PFOM实现更快的KL/W2/MMD下降和墙钟效率提升。该工作统一了算子辨识与生成建模，为自适应字典和高维应用奠定基础。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We introduce Perron--Frobenius Operator Matching (PFOM), a generative framework that matches density evolution via the integral PF operator, subsuming flow, diffusion, and jump models. We prove that among Bregman divergences, only Kullback--Leibler divergence preserves equality between density-level and sample-conditioned objectives, yielding a practical loss equivalent to Koopman path matching. We further develop Nesterov-accelerated training and sampling that stabilize discretization and accelerate convergence. %On Gaussian mixtures and two-moons, PFOM achieves faster KL/$W_2$/MMD decrease and improved wall-clock efficiency with empirical validation. PFOM unifies operator-theoretic identification with modern generative modeling and opens paths to adaptive dictionaries and high-dimensional applications.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
