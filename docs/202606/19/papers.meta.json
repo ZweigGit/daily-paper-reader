@@ -1,0 +1,54 @@
+{
+  "label": "2026-06-19",
+  "date": "2026-06-19",
+  "generated_at": "2026-06-19T21:39:53",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202606/19/2606.16765v1-a-validated-lbm-dataset-and-pipeline-for-surrogate-modeling-of-turbulent-3d-obstructed-channel-flows",
+      "section": "quick",
+      "title_en": "A Validated LBM Dataset and Pipeline for Surrogate Modeling of Turbulent 3D Obstructed Channel Flows",
+      "authors": "Lukas Schröder, Shubham Kavane, Harald Köstler",
+      "date": "2026-06-15",
+      "pdf": "https://arxiv.org/pdf/2606.16765v1",
+      "score": "7.0",
+      "evidence": "使用神经算子对湍流进行代理建模的管道",
+      "tldr": "评估神经算子处理3D湍流需要标准化验证数据集。本文提出可重复的管道，使用经实验验证的晶格玻尔兹曼方法生成Re=1,000-10,000的绕流数据。计划系统评估傅里叶神经算子和U-Net变体在预测、超分辨和误差修正任务上的表现，并用物理指标衡量能量级联表征。该管道为替代模型比较提供标准化基准。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Evaluating neural operators for 3D turbulent flow requires validated datasets with physical benchmarks. We present a reproducible pipeline generating training data for 3D channel flows around generated geometries at Re=1,000-10,000. Our lattice Boltzmann solver with cumulant collision operators is rigorously verified against experimental measurements (Strouhal number, drag coefficients, turbulent fluctuations) with comprehensive grid convergence studies at resolution 1024x512x512. Building upon an established framework, this validated pipeline enables standardized surrogate model comparison. We outline planned systematic evaluation of Fourier Neural Operator and U-Net variants on forecasting, super-resolution, and error correction tasks, using physics-informed metrics to assess turbulent energy cascade representation. Future work will compare computational efficiency between numerical solvers and neural surrogates, exploring practical application. We seek community feedback on our validation approach, planned benchmark methodology, and evaluation priorities for neural operators in turbulent flows.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/19/2606.18071v1-volterra-generative-models",
+      "section": "quick",
+      "title_en": "Volterra Generative Models",
+      "authors": "Yusen Jia, Bingyan Han",
+      "date": "2026-06-16",
+      "pdf": "https://arxiv.org/pdf/2606.18071v1",
+      "score": "7.0",
+      "evidence": "基于分数的生成模型，引入路径依赖噪声",
+      "tldr": "标准分数扩散模型采用布朗扰动，其反向动力学可解但噪声无记忆。本文提出Volterra生成模型，通过分数核注入路径依赖噪声，利用高斯求积和混合有限差分指数近似构造有限维马尔可夫提升，处理非马尔可夫与非半鞅动力学。证明了平方误差界，并解决由共享布朗因子导致的协方差和反向退化问题，提出了稳定条件化与高斯桥重建采样器。在MNIST和CIFAR-10上，少量马尔可夫提升的持久分数扰动改善生成，桥采样器增强大提升稳定性。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Score-based diffusion models typically use Brownian perturbations, which provide tractable reverse-time dynamics but impose memoryless noising. We introduce Volterra generative models, a continuous-time score-based framework whose forward process injects path-dependent noise through fractional kernels. To handle the non-Markovian and non-semimartingale dynamics, we construct finite-dimensional Markovian lifts using Gaussian quadrature in both regimes and a hybrid finite-difference exponential approximation in the smooth regime. We prove squared error bounds, derive an augmented linear-Gaussian forward process, and show that the learning can remain data-dimensional by considering residual states and analytic auxiliary Gaussian scores. We also identify covariance and reverse-time degeneracies caused by shared Brownian factors and signed smooth-regime weights. The degeneracy motivates stabilized conditioning and, for stiff larger lifts, a Gaussian-bridge reconstruction sampler. Experiments on MNIST and CIFAR-10 show that persistent fractional perturbations with small Markovian lifts can improve score-based generation on MNIST and provide a promising extension to natural images, while the bridge sampler provides a stability mechanism for larger lifts.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/19/2606.19562v1-advances-in-scientific-machine-learning-for-coupled-fluid-flow-and-transport",
+      "section": "quick",
+      "title_en": "Advances in Scientific Machine Learning for Coupled Fluid Flow and Transport",
+      "authors": "Gabriel F. Barros, Rômulo M. Silva, Alvaro L. G. A. Coutinho",
+      "date": "2026-06-17",
+      "pdf": "https://arxiv.org/pdf/2606.19562v1",
+      "score": "7.0",
+      "evidence": "综述了生成模型（β-VAE）在流体动力学中的应用",
+      "tldr": "针对不可压缩Navier-Stokes与标量输运耦合系统的强非线性和多尺度特性导致高保真模拟计算昂贵的问题，本文综述了科学机器学习（SciML）在构建高效替代模型方面的进展，涵盖线性降阶（SVD/DMD）与非线性神经网络（PINNs、β-VAE）方法，并结合高性能计算策略（自适应网格细化、浮点数据压缩）。新贡献包括：利用PINNs对浊流进行替代建模，以及采用β-VAE从热流中提取非纠缠非线性模态。在锁交换流和Rayleigh-Bénard对流基准测试中，这些方法在特定数据范围内实现了快速准确的近似，显著降低了计算成本。实时预测与不确定性量化仍是待探索方向。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "This chapter reviews recent advances in Scientific Machine Learning (SciML) for modeling coupled fluid flow and transport phenomena governed by the incompressible Navier-Stokes and scalar transport equations. Such systems, found in applications like turbidity currents and thermal convection, feature strong nonlinear coupling and multiscale behavior that make high-fidelity simulations computationally expensive. To address this, the chapter surveys state-of-the-art SciML methods for building efficient surrogate models, including linear reduced-order techniques based on Singular Value Decomposition (such as Dynamic Mode Decomposition) and nonlinear neural network approaches like Physics-Informed Neural Networks (PINNs) and $β$-Variational Autoencoders ($β$-VAEs). It first covers the authors' work combining these models with High Performance Computing strategies, including Adaptive Mesh Refinement/Coarsening (AMR/C) and scientific floating-point data compression. It then presents two new contributions: surrogate modeling of turbidity currents via PINNs, and the extraction of disentangled nonlinear modes from thermal flows using $β$-VAEs. Governing equations and representative benchmarks, including lock-exchange flows and Rayleigh-Bénard convection, illustrate these methodologies. The chapter is intentionally long, covering both the mathematical and physical foundations of coupled fluid flow and the computational aspects of state-of-the-art modeling. Overall, it demonstrates how SciML enables fast, accurate approximations of complex coupled systems within the specific data regimes and modeling assumptions considered, while substantially reducing computational cost relative to full-order simulations. Broader capabilities such as real-time prediction and uncertainty quantification remain active research directions whose feasibility depends strongly on the problem at hand.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

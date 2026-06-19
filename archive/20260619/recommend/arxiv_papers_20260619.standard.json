@@ -1,0 +1,130 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-19T21:36:47.951791+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.16765v1",
+      "source": "arxiv",
+      "title": "A Validated LBM Dataset and Pipeline for Surrogate Modeling of Turbulent 3D Obstructed Channel Flows",
+      "abstract": "Evaluating neural operators for 3D turbulent flow requires validated datasets with physical benchmarks. We present a reproducible pipeline generating training data for 3D channel flows around generated geometries at Re=1,000-10,000. Our lattice Boltzmann solver with cumulant collision operators is rigorously verified against experimental measurements (Strouhal number, drag coefficients, turbulent fluctuations) with comprehensive grid convergence studies at resolution 1024x512x512. Building upon an established framework, this validated pipeline enables standardized surrogate model comparison. We outline planned systematic evaluation of Fourier Neural Operator and U-Net variants on forecasting, super-resolution, and error correction tasks, using physics-informed metrics to assess turbulent energy cascade representation. Future work will compare computational efficiency between numerical solvers and neural surrogates, exploring practical application. We seek community feedback on our validation approach, planned benchmark methodology, and evaluation priorities for neural operators in turbulent flows.",
+      "authors": [
+        "Lukas Schröder",
+        "Shubham Kavane",
+        "Harald Köstler"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "physics.flu-dyn"
+      ],
+      "published": "2026-06-15T14:15:25+00:00",
+      "link": "https://arxiv.org/pdf/2606.16765v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "pipeline for surrogate modeling of turbulent flows using neural operators",
+      "llm_evidence_cn": "使用神经算子对湍流进行代理建模的管道",
+      "llm_evidence": "使用神经算子对湍流进行代理建模的管道",
+      "canonical_evidence": "使用神经算子对湍流进行代理建模的管道",
+      "llm_tldr_en": "Provides a validated dataset and pipeline for training neural operators on 3D turbulent channel flows, enabling standardized comparison of surrogate models for fluid dynamics.",
+      "llm_tldr_cn": "该论文提出了一个经过验证的LBM数据集和可重复管道，用于生成3D湍流障碍通道流的数据，支持神经算子（如FNO和U-Net）的标准化评估。通过严格的网格收敛性研究和实验验证，该管道为流体动力学中代理模型的训练和比较提供了可靠基础，计划用于预测、超分辨率等任务。",
+      "llm_tldr": "该论文提出了一个经过验证的LBM数据集和可重复管道，用于生成3D湍流障碍通道流的数据，支持神经算子（如FNO和U-Net）的标准化评估。通过严格的网格收敛性研究和实验验证，该管道为流体动力学中代理模型的训练和比较提供了可靠基础，计划用于预测、超分辨率等任务。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.18071v1",
+      "source": "arxiv",
+      "title": "Volterra Generative Models",
+      "abstract": "Score-based diffusion models typically use Brownian perturbations, which provide tractable reverse-time dynamics but impose memoryless noising. We introduce Volterra generative models, a continuous-time score-based framework whose forward process injects path-dependent noise through fractional kernels. To handle the non-Markovian and non-semimartingale dynamics, we construct finite-dimensional Markovian lifts using Gaussian quadrature in both regimes and a hybrid finite-difference exponential approximation in the smooth regime. We prove squared error bounds, derive an augmented linear-Gaussian forward process, and show that the learning can remain data-dimensional by considering residual states and analytic auxiliary Gaussian scores. We also identify covariance and reverse-time degeneracies caused by shared Brownian factors and signed smooth-regime weights. The degeneracy motivates stabilized conditioning and, for stiff larger lifts, a Gaussian-bridge reconstruction sampler. Experiments on MNIST and CIFAR-10 show that persistent fractional perturbations with small Markovian lifts can improve score-based generation on MNIST and provide a promising extension to natural images, while the bridge sampler provides a stability mechanism for larger lifts.",
+      "authors": [
+        "Yusen Jia",
+        "Bingyan Han"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-06-16T15:40:09+00:00",
+      "link": "https://arxiv.org/pdf/2606.18071v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Score-based generative model with path-dependent noise",
+      "llm_evidence_cn": "基于分数的生成模型，引入路径依赖噪声",
+      "llm_evidence": "基于分数的生成模型，引入路径依赖噪声",
+      "canonical_evidence": "基于分数的生成模型，引入路径依赖噪声",
+      "llm_tldr_en": "Introduces Volterra generative models extending score-based diffusion to path-dependent noise, with finite-dimensional Markovian lifts and proved error bounds.",
+      "llm_tldr_cn": "该论文提出了Volterra生成模型，将基于分数的扩散模型扩展到路径依赖噪声。通过构造有限维马尔可夫抬升处理非马尔可夫动力学，证明了平方误差界，并保持数据维度学习。该框架为生成模型提供了新的理论工具，可潜在地应用于流体动力学等领域的复杂分布建模。",
+      "llm_tldr": "该论文提出了Volterra生成模型，将基于分数的扩散模型扩展到路径依赖噪声。通过构造有限维马尔可夫抬升处理非马尔可夫动力学，证明了平方误差界，并保持数据维度学习。该框架为生成模型提供了新的理论工具，可潜在地应用于流体动力学等领域的复杂分布建模。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "score-based generative models for fluid flow",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.19562v1",
+      "source": "arxiv",
+      "title": "Advances in Scientific Machine Learning for Coupled Fluid Flow and Transport",
+      "abstract": "This chapter reviews recent advances in Scientific Machine Learning (SciML) for modeling coupled fluid flow and transport phenomena governed by the incompressible Navier-Stokes and scalar transport equations. Such systems, found in applications like turbidity currents and thermal convection, feature strong nonlinear coupling and multiscale behavior that make high-fidelity simulations computationally expensive. To address this, the chapter surveys state-of-the-art SciML methods for building efficient surrogate models, including linear reduced-order techniques based on Singular Value Decomposition (such as Dynamic Mode Decomposition) and nonlinear neural network approaches like Physics-Informed Neural Networks (PINNs) and $β$-Variational Autoencoders ($β$-VAEs). It first covers the authors' work combining these models with High Performance Computing strategies, including Adaptive Mesh Refinement/Coarsening (AMR/C) and scientific floating-point data compression. It then presents two new contributions: surrogate modeling of turbidity currents via PINNs, and the extraction of disentangled nonlinear modes from thermal flows using $β$-VAEs. Governing equations and representative benchmarks, including lock-exchange flows and Rayleigh-Bénard convection, illustrate these methodologies. The chapter is intentionally long, covering both the mathematical and physical foundations of coupled fluid flow and the computational aspects of state-of-the-art modeling. Overall, it demonstrates how SciML enables fast, accurate approximations of complex coupled systems within the specific data regimes and modeling assumptions considered, while substantially reducing computational cost relative to full-order simulations. Broader capabilities such as real-time prediction and uncertainty quantification remain active research directions whose feasibility depends strongly on the problem at hand.",
+      "authors": [
+        "Gabriel F. Barros",
+        "Rômulo M. Silva",
+        "Alvaro L. G. A. Coutinho"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "physics.flu-dyn"
+      ],
+      "published": "2026-06-17T20:02:13+00:00",
+      "link": "https://arxiv.org/pdf/2606.19562v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "reviews generative models (beta-VAE) applied to fluid dynamics",
+      "llm_evidence_cn": "综述了生成模型（β-VAE）在流体动力学中的应用",
+      "llm_evidence": "综述了生成模型（β-VAE）在流体动力学中的应用",
+      "canonical_evidence": "综述了生成模型（β-VAE）在流体动力学中的应用",
+      "llm_tldr_en": "Reviews SciML methods for fluid flow, including generative models like beta-VAE, directly relevant to applying generative models to fluid dynamics.",
+      "llm_tldr_cn": "该综述论文回顾了科学机器学习在耦合流体流动与输运问题中的进展，重点介绍了基于奇异值分解的线性降阶技术和基于神经网络的非线性方法，包括β-变分自编码器等生成模型。它为解决高保真仿真计算昂贵的问题提供了高效替代模型，对将生成模型应用于流体动力学问题具有直接参考价值。",
+      "llm_tldr": "该综述论文回顾了科学机器学习在耦合流体流动与输运问题中的进展，重点介绍了基于奇异值分解的线性降阶技术和基于神经网络的非线性方法，包括β-变分自编码器等生成模型。它为解决高保真仿真计算昂贵的问题提供了高效替代模型，对将生成模型应用于流体动力学问题具有直接参考价值。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
