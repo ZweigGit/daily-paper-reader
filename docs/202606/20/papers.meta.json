@@ -1,0 +1,39 @@
+{
+  "label": "2026-06-20",
+  "date": "2026-06-20",
+  "generated_at": "2026-06-20T21:12:17",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202606/20/2606.19894v1-score-approximation-for-diffusion-models-on-arbitrary-low-dimensional-structures",
+      "section": "quick",
+      "title_en": "Score Approximation for Diffusion Models on Arbitrary Low-Dimensional Structures",
+      "authors": "Xinhe Mu, Zaijiu Shang, Zhaoqi Zhou, Chuan Zhou, Qi Meng, Guiying Yan, Zhiming Ma",
+      "date": "2026-06-18",
+      "pdf": "https://arxiv.org/pdf/2606.19894v1",
+      "score": "6.0",
+      "evidence": "为基于分数的扩散模型提供理论基础，可应用于流体动力学",
+      "tldr": "现有扩散模型理论假设数据光滑或流形支撑，但真实数据常含奇异点、尖锐边界和不连续簇。本文提出通用分数近似定理，使用离散混合公式和ReLU网络，证明分数函数复杂度仅取决于数据的上Minkowski维数d，而非环境维度。结合反向SDE求解理论，表明扩散模型能适应任意不规则、非光滑的紧支撑分布，解释了其在真实生成任务中的成功。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "The remarkable success of score-based diffusion models has spurred significant efforts to establish their theoretical foundations. However, existing complexity bounds for score approximation rely heavily on restrictive assumptions like Lipschitz continuous densities or smooth manifold supports, which are routinely violated by the singularities, sharp boundaries, and disjoint clusters inherent to real-world perceptual data. This work establishes a universal score approximation theorem that works for any distribution supported on any compact set of upper Minkowski dimension $d$. Using a novel discrete-mixture formulation, we prove that the score function can be approximated with a ReLU network whose complexity grows exponentially only with $d$, thus breaking the exponential curse of ambient dimensionality. Combined with existing theories on accurately solving the backward diffusion SDE for arbitrary compact distributions, our work shows that diffusion models readily adapt to irregular, non-smooth data structures, explaining their competence in real-world generative tasks.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/20/2606.20131v1-triflow-generating-artist-like-3d-mesh-topology-via-nearest-vertex-vector-fields",
+      "section": "quick",
+      "title_en": "TriFlow: Generating Artist-Like 3D Mesh Topology via Nearest-Vertex Vector Fields",
+      "authors": "Haoxuan Li, Ziya Erkoç, Daniele Sirigatti, Vladislav Rosov, Lei Li, Angela Dai, Matthias Nießner",
+      "date": "2026-06-18",
+      "pdf": "https://arxiv.org/pdf/2606.20131v1",
+      "score": "6.0",
+      "evidence": "使用流匹配生成网格拓扑，方法可迁移至流体问题",
+      "tldr": "现有方法生成3D网格拓扑时质量差或依赖模板，难以产生类艺术家风格。本文提出TriFlow，通过最近顶点向量场（NVF）表示拓扑，用潜流匹配模型合成该场，再经聚类和带拓扑感知的约束QEM简化提取网格。实验显示拓扑质量显著优于SOTA，查默斯距离降低90%，速度提升8倍。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We present TriFlow, a new generative approach for producing compact 3D meshes with artist-like triangle topology directly from input geometry conditions such as signed distance fields. Our key insight is to represent mesh topology as a nearest-vertex vector field (NVF) defined over the surface, where each point encodes its association to the nearest triangle vertex in the local barycentric frame. We train a latent flow-matching model to synthesize this field, enabling topology generation conditioned on the input geometry. To extract a coherent mesh, we cluster surface regions using the generated NVF and guide a constrained quadric error metric (QEM) mesh simplification with topology-aware optimization. This yields output meshes that closely match the input geometry while exhibiting structured, artist-like connectivity. Experiments demonstrate that TriFlow achieves stronger generalization and significantly improved topology quality compared to state-of-the-art learning-based approaches, alongside 90% lower Chamfer Distance and an 8x speedup.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

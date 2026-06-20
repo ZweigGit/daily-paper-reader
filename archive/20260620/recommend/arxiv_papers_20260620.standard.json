@@ -1,0 +1,100 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-20T21:10:31.582803+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.19894v1",
+      "source": "arxiv",
+      "title": "Score Approximation for Diffusion Models on Arbitrary Low-Dimensional Structures",
+      "abstract": "The remarkable success of score-based diffusion models has spurred significant efforts to establish their theoretical foundations. However, existing complexity bounds for score approximation rely heavily on restrictive assumptions like Lipschitz continuous densities or smooth manifold supports, which are routinely violated by the singularities, sharp boundaries, and disjoint clusters inherent to real-world perceptual data. This work establishes a universal score approximation theorem that works for any distribution supported on any compact set of upper Minkowski dimension $d$. Using a novel discrete-mixture formulation, we prove that the score function can be approximated with a ReLU network whose complexity grows exponentially only with $d$, thus breaking the exponential curse of ambient dimensionality. Combined with existing theories on accurately solving the backward diffusion SDE for arbitrary compact distributions, our work shows that diffusion models readily adapt to irregular, non-smooth data structures, explaining their competence in real-world generative tasks.",
+      "authors": [
+        "Xinhe Mu",
+        "Zaijiu Shang",
+        "Zhaoqi Zhou",
+        "Chuan Zhou",
+        "Qi Meng",
+        "Guiying Yan",
+        "Zhiming Ma"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-18T07:51:33+00:00",
+      "link": "https://arxiv.org/pdf/2606.19894v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Provides theoretical foundation for score-based diffusion models, applicable to fluid dynamics",
+      "llm_evidence_cn": "为基于分数的扩散模型提供理论基础，可应用于流体动力学",
+      "llm_evidence": "为基于分数的扩散模型提供理论基础，可应用于流体动力学",
+      "canonical_evidence": "为基于分数的扩散模型提供理论基础，可应用于流体动力学",
+      "llm_tldr_en": "Establishes a universal score approximation theorem for diffusion models on low-dimensional structures, with complexity scaling only with intrinsic dimension. Can guide score-based generative models in fluid mechanics.",
+      "llm_tldr_cn": "该论文建立了任意低维紧集上扩散模型分数函数的通用逼近定理，证明了使用ReLU网络逼近分数函数的复杂度仅依赖于数据的本征维数而非环境维数。该理论突破了传统Lipschitz连续密度假设的限制，为将基于分数的生成模型应用于流体力学中具有奇异边界和复杂结构的流动数据提供了理论基础。",
+      "llm_tldr": "该论文建立了任意低维紧集上扩散模型分数函数的通用逼近定理，证明了使用ReLU网络逼近分数函数的复杂度仅依赖于数据的本征维数而非环境维数。该理论突破了传统Lipschitz连续密度假设的限制，为将基于分数的生成模型应用于流体力学中具有奇异边界和复杂结构的流动数据提供了理论基础。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.20131v1",
+      "source": "arxiv",
+      "title": "TriFlow: Generating Artist-Like 3D Mesh Topology via Nearest-Vertex Vector Fields",
+      "abstract": "We present TriFlow, a new generative approach for producing compact 3D meshes with artist-like triangle topology directly from input geometry conditions such as signed distance fields. Our key insight is to represent mesh topology as a nearest-vertex vector field (NVF) defined over the surface, where each point encodes its association to the nearest triangle vertex in the local barycentric frame. We train a latent flow-matching model to synthesize this field, enabling topology generation conditioned on the input geometry. To extract a coherent mesh, we cluster surface regions using the generated NVF and guide a constrained quadric error metric (QEM) mesh simplification with topology-aware optimization. This yields output meshes that closely match the input geometry while exhibiting structured, artist-like connectivity. Experiments demonstrate that TriFlow achieves stronger generalization and significantly improved topology quality compared to state-of-the-art learning-based approaches, alongside 90% lower Chamfer Distance and an 8x speedup.",
+      "authors": [
+        "Haoxuan Li",
+        "Ziya Erkoç",
+        "Daniele Sirigatti",
+        "Vladislav Rosov",
+        "Lei Li",
+        "Angela Dai",
+        "Matthias Nießner"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.GR"
+      ],
+      "published": "2026-06-18T11:55:00+00:00",
+      "link": "https://arxiv.org/pdf/2606.20131v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Uses flow matching for generative mesh topology, method transferable to fluid problems",
+      "llm_evidence_cn": "使用流匹配生成网格拓扑，方法可迁移至流体问题",
+      "llm_evidence": "使用流匹配生成网格拓扑，方法可迁移至流体问题",
+      "canonical_evidence": "使用流匹配生成网格拓扑，方法可迁移至流体问题",
+      "llm_tldr_en": "Introduces TriFlow, a flow-matching model to generate compact 3D mesh topology from geometry conditions. The approach is a generative framework that could be adapted for fluid simulation.",
+      "llm_tldr_cn": "该论文提出TriFlow，一种基于流匹配（flow matching）的生成方法，用于从输入几何条件（如符号距离场）直接生成具有艺术家风格的低面数三角网格拓扑。核心创新在于将网格拓扑表示为表面上的最近顶点矢量场，并通过潜在流匹配模型生成该场。虽然应用于计算机图形学，但其流匹配框架可作为一种通用生成工具，为流体动力学中的网格生成或流场采样提供方法论参考。",
+      "llm_tldr": "该论文提出TriFlow，一种基于流匹配（flow matching）的生成方法，用于从输入几何条件（如符号距离场）直接生成具有艺术家风格的低面数三角网格拓扑。核心创新在于将网格拓扑表示为表面上的最近顶点矢量场，并通过潜在流匹配模型生成该场。虽然应用于计算机图形学，但其流匹配框架可作为一种通用生成工具，为流体动力学中的网格生成或流场采样提供方法论参考。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
