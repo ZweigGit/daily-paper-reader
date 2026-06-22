@@ -1,0 +1,253 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-22T22:08:10.151752+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 6,
+    "quick_skim_target": 11,
+    "quick_selected": 6
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.15897v1",
+      "source": "arxiv",
+      "title": "Topological Flow Matching",
+      "abstract": "Flow matching is a powerful generative modeling framework, valued for its simplicity and strong empirical performance. However, its standard formulation treats signals on structured spaces, such as fMRI data on brain graphs, as points in Euclidean space, overlooking the rich topological features of their domains. To address this, we introduce topological flow matching, a topology-aware generalization of flow matching. We interpret flow matching as a framework for solving a degenerate Schrödinger bridge problem and inject topological information by augmenting the reference process with a Laplacian-derived drift. This principled modification captures the structure of the underlying domain while preserving the desirable properties of flow matching: a stable, simulation-free objective and deterministic sample paths. As a result, our framework serves as a drop-in replacement for standard flow matching. We demonstrate its effectiveness on diverse structured datasets, including brain fMRIs, ocean currents, seismic events, and traffic flows.",
+      "authors": [
+        "Kacper Wyrwal",
+        "İsmail İlkan Ceylan",
+        "Alexander Tong"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "stat.ML"
+      ],
+      "published": "2026-06-14T16:29:33+00:00",
+      "link": "https://arxiv.org/pdf/2606.15897v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Topological flow matching generalizes flow matching to structured domains, applicable to fluid dynamics",
+      "llm_evidence_cn": "拓扑流匹配将流匹配推广到结构化领域，可应用于流体动力学",
+      "llm_evidence": "拓扑流匹配将流匹配推广到结构化领域，可应用于流体动力学",
+      "canonical_evidence": "拓扑流匹配将流匹配推广到结构化领域，可应用于流体动力学",
+      "llm_tldr_en": "Topological flow matching generalizes flow matching by incorporating Laplacian-derived drift to capture domain topology, preserving simulation-free training, and is directly applicable to fluid flow simulation on complex geometries.",
+      "llm_tldr_cn": "标准流匹配忽略信号域的结构拓扑，限制了其在图等结构化数据上的应用。本文提出拓扑流匹配，通过拉普拉斯漂移注入拓扑信息，保持无模拟训练等优点。该方法可用于流体动力学中带有复杂几何边界的流动模拟。",
+      "llm_tldr": "标准流匹配忽略信号域的结构拓扑，限制了其在图等结构化数据上的应用。本文提出拓扑流匹配，通过拉普拉斯漂移注入拓扑信息，保持无模拟训练等优点。该方法可用于流体动力学中带有复杂几何边界的流动模拟。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.18765v1",
+      "source": "arxiv",
+      "title": "SpectralDiT: Timestep-Conditioned Spectral Residual Correction for Flow-Matching DiTs",
+      "abstract": "We propose SpectralDiT, a lightweight modification to flow-matching Diffusion Transformers that adds timestep-conditioned spectral correction to the MLP residual branch. The module decomposes each residual update into low- and high-frequency components on the patch-token grid, then learns a zero-initialized additive gate so the model initially matches the baseline DiT. On CIFAR-10 pixel-space generation, SpectralDiT improves FID from 20.78 to 19.71 at patch size 1 and reduces the radial Fourier spectrum gap. Furthermore, we scale our method to latent diffusion on ImageNet-100. With 0.6% additional theoretical FLOPs and 1.36% additional parameters, SpectralDiT improves latent flow-matching, achieving an 8.7% relative FID reduction under classifier-free guidance (CFG 2.0). All reported results are averaged over five seeds. Ablations and gate visualizations on CIFAR-10 reveal stable block-specific spectral correction patterns.",
+      "authors": [
+        "Jiayu Tian"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-06-17T07:25:24+00:00",
+      "link": "https://arxiv.org/pdf/2606.18765v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Improves flow-matching DiT with spectral correction, transferable to fluid flow simulation",
+      "llm_evidence_cn": "通过频谱修正改进流匹配DiT，可迁移至流体流动模拟",
+      "llm_evidence": "通过频谱修正改进流匹配DiT，可迁移至流体流动模拟",
+      "canonical_evidence": "通过频谱修正改进流匹配DiT，可迁移至流体流动模拟",
+      "llm_tldr_en": "SpectralDiT adds timestep-conditioned spectral residual correction to flow-matching DiTs, improving FID on CIFAR-10 by 5% and reducing Fourier spectrum gap, with potential for fluid dynamics.",
+      "llm_tldr_cn": "扩散Transformer（DiT）在图像生成中优异，但频谱偏差影响高频细节。本文提出SpectralDiT，在流匹配DiT的MLP残差分支中添加时步条件频谱修正，分解残差为高低频成分。在CIFAR-10上FID降低5%，在ImageNet-100上相对FID降低8.7%，且参数小幅增加。该方法可推广到流体动力学中的频谱偏移问题。",
+      "llm_tldr": "扩散Transformer（DiT）在图像生成中优异，但频谱偏差影响高频细节。本文提出SpectralDiT，在流匹配DiT的MLP残差分支中添加时步条件频谱修正，分解残差为高低频成分。在CIFAR-10上FID降低5%，在ImageNet-100上相对FID降低8.7%，且参数小幅增加。该方法可推广到流体动力学中的频谱偏移问题。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching for fluid flow simulation",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.19894v1",
+      "source": "arxiv",
+      "title": "Score Approximation for Diffusion Models on Arbitrary Low-Dimensional Structures",
+      "abstract": "The remarkable success of score-based diffusion models has spurred significant efforts to establish their theoretical foundations. However, existing complexity bounds for score approximation rely heavily on restrictive assumptions like Lipschitz continuous densities or smooth manifold supports, which are routinely violated by the singularities, sharp boundaries, and disjoint clusters inherent to real-world perceptual data. This work establishes a universal score approximation theorem that works for any distribution supported on any compact set of upper Minkowski dimension $d$. Using a novel discrete-mixture formulation, we prove that the score function can be approximated with a ReLU network whose complexity grows exponentially only with $d$, thus breaking the exponential curse of ambient dimensionality. Combined with existing theories on accurately solving the backward diffusion SDE for arbitrary compact distributions, our work shows that diffusion models readily adapt to irregular, non-smooth data structures, explaining their competence in real-world generative tasks.",
+      "authors": [
+        "Xinhe Mu",
+        "Zaijiu Shang",
+        "Zhaoqi Zhou",
+        "Chuan Zhou",
+        "Qi Meng",
+        "Guiying Yan",
+        "Zhiming Ma"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-18T07:51:33+00:00",
+      "link": "https://arxiv.org/pdf/2606.19894v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Score approximation theory for diffusion models, transferable to fluid dynamics",
+      "llm_evidence_cn": "扩散模型得分逼近理论，可迁移至流体动力学",
+      "llm_evidence": "扩散模型得分逼近理论，可迁移至流体动力学",
+      "canonical_evidence": "扩散模型得分逼近理论，可迁移至流体动力学",
+      "llm_tldr_en": "This paper proves a universal score approximation theorem for diffusion models on compact sets with upper Minkowski dimension d, using a discrete-mixture formulation and ReLU networks, providing theoretical support for applying score-based models to fluid dynamics.",
+      "llm_tldr_cn": "现有得分逼近理论依赖光滑性假设，而实际数据常有奇异点。该工作建立了适用于任意紧致低维结构的通用得分逼近定理，通过离散混合公式和ReLU网络实现指数复杂度仅依赖于维数d。该理论为扩散模型在复杂数据（包括流体动力学）中的应用提供了坚实基础。",
+      "llm_tldr": "现有得分逼近理论依赖光滑性假设，而实际数据常有奇异点。该工作建立了适用于任意紧致低维结构的通用得分逼近定理，通过离散混合公式和ReLU网络实现指数复杂度仅依赖于维数d。该理论为扩散模型在复杂数据（包括流体动力学）中的应用提供了坚实基础。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "score-based generative models for fluid flow",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.19802v1",
+      "source": "arxiv",
+      "title": "Flow Map Denoisers: Traversing the Distortion-Perception Plane for Inverse Problems",
+      "abstract": "Image restoration faces a fundamental tradeoff: methods that minimize error produce blurry reconstructions, while those that maximize perceptual quality yield sharp but less faithful images. Existing approaches either commit to a single operating point on this distortion perception (DP) frontier or require paired-data supervision, auxiliary models, or hyperparameter tuning of the sampler to access different points. We show that flow map models, a recent extension of flow matching for few-step sampling that learns an average field, implicitly define a one-parameter family of denoisers that continuously spans the DP frontier. The lookahead parameter t acts as a control knob between the MMSE and perceptual regimes. For Gaussian targets, we prove that varying t exactly recovers the optimal DP frontier; for natural images, we observe similar behavior empirically. Within a Plug-and-Play solver, the same mechanism extends to general inverse problems, where it controls a tradeoff between perceptual alignment and data consistency. Despite the lack of exact optimality guarantees in this setting, a single trained flow map spans the DP tradeoff, matching or exceeding specialized baselines at both extremes. Extensive experiments on CelebA ($128\\times 128$) and AFHQ ($256\\times 256$) across several linear and nonlinear inverse tasks validate our findings.",
+      "authors": [
+        "Nicolas Zilberstein",
+        "Morteza Mardani",
+        "Santiago Segarra"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.CV"
+      ],
+      "published": "2026-06-18T05:15:43+00:00",
+      "link": "https://arxiv.org/pdf/2606.19802v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Flow map models for image restoration, methodology transferable to fluid inverse problems",
+      "llm_evidence_cn": "流映射模型用于图像恢复，方法论可迁移至流体逆问题",
+      "llm_evidence": "流映射模型用于图像恢复，方法论可迁移至流体逆问题",
+      "canonical_evidence": "流映射模型用于图像恢复，方法论可迁移至流体逆问题",
+      "llm_tldr_en": "Flow map models, a variant of flow matching, provide a one-parameter family of denoisers spanning the distortion-perception frontier in inverse problems, applicable to fluid dynamics inverse problems.",
+      "llm_tldr_cn": "图像恢复中失真和感知质量难以兼得。本文证明流映射模型（流匹配的扩展）通过前视角参数t隐式定义一族去噪器，可连续覆盖失真-感知前沿。该工作为逆问题提供灵活控制方法，其框架可推广到流体动力学中的反问题。",
+      "llm_tldr": "图像恢复中失真和感知质量难以兼得。本文证明流映射模型（流匹配的扩展）通过前视角参数t隐式定义一族去噪器，可连续覆盖失真-感知前沿。该工作为逆问题提供灵活控制方法，其框架可推广到流体动力学中的反问题。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching for fluid flow simulation",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.20209v1",
+      "source": "arxiv",
+      "title": "FlowMaps: Modeling Long-Term Multimodal Object Dynamics with Flow Matching",
+      "abstract": "Joint spatial and temporal understanding of 3D scenes is a crucial requirement for robots deployed in everyday household environments. Such agents must not only comprehend and navigate spatial layouts, but also reason about how these spaces evolve over time. In particular, humans interact with objects daily, causing them to change position throughout the environment and making it difficult for robots to reliably associate current observations with previously seen objects. However, these interactions are not random: human habits and routines induce spatio-temporally consistent patterns in object locations, which robotic agents can potentially learn and then exploit for downstream tasks such as navigation. To this end, we introduce FlowMaps, a latent flow matching model for estimating multimodal distributions over the future locations of dynamic objects in a continuous 3D space. By learning the implicit dependencies among objects and their temporal evolution, FlowMaps predicts likely changes in object locations conditioned on past human interactions, while supporting generalization across previously unseen environments that share similar object routines. To demonstrate the utility of this method, we deploy FlowMaps in a downstream dynamic Object Navigation task in both simulated and real-world environments. Across more than 600 episodes, FlowMaps outperforms state-of-the-art approaches, showing that modeling object dynamics through continuous, multimodal spatio-temporal distributions improves robotic search and navigation in changing household environments. Code and additional material is available at https://fra-tsuna.github.io/flowmaps/.",
+      "authors": [
+        "Francesco Argenziano",
+        "Miguel Saavedra-Ruiz",
+        "Sacha Morin",
+        "Charlie Gauthier",
+        "Daniele Nardi",
+        "Liam Paull"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-06-18T13:21:40+00:00",
+      "link": "https://arxiv.org/pdf/2606.20209v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Flow matching applied to object dynamics, method directly transferable to fluid flow simulation",
+      "llm_evidence_cn": "流匹配应用于物体动态，方法可直接迁移至流体流动模拟",
+      "llm_evidence": "流匹配应用于物体动态，方法可直接迁移至流体流动模拟",
+      "canonical_evidence": "流匹配应用于物体动态，方法可直接迁移至流体流动模拟",
+      "llm_tldr_en": "FlowMaps uses flow matching to model long-term multimodal object location dynamics in 3D scenes, enabling robots to predict future positions; the flow matching framework is directly transferable to fluid dynamics.",
+      "llm_tldr_cn": "机器人需要预测物体位置随时间的变化，现有方法难以建模长期多模态分布。本文提出FlowMaps，利用流匹配（flow matching）学习物体位置的时空动态，在潜空间中生成未来物体位置场。实验表明该方法能有效捕捉物体运动模式，其流匹配框架可直接应用于流体动力学中的粒子轨迹模拟。",
+      "llm_tldr": "机器人需要预测物体位置随时间的变化，现有方法难以建模长期多模态分布。本文提出FlowMaps，利用流匹配（flow matching）学习物体位置的时空动态，在潜空间中生成未来物体位置场。实验表明该方法能有效捕捉物体运动模式，其流匹配框架可直接应用于流体动力学中的粒子轨迹模拟。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching for fluid flow simulation",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.20131v1",
+      "source": "arxiv",
+      "title": "TriFlow: Generating Artist-Like 3D Mesh Topology via Nearest-Vertex Vector Fields",
+      "abstract": "We present TriFlow, a new generative approach for producing compact 3D meshes with artist-like triangle topology directly from input geometry conditions such as signed distance fields. Our key insight is to represent mesh topology as a nearest-vertex vector field (NVF) defined over the surface, where each point encodes its association to the nearest triangle vertex in the local barycentric frame. We train a latent flow-matching model to synthesize this field, enabling topology generation conditioned on the input geometry. To extract a coherent mesh, we cluster surface regions using the generated NVF and guide a constrained quadric error metric (QEM) mesh simplification with topology-aware optimization. This yields output meshes that closely match the input geometry while exhibiting structured, artist-like connectivity. Experiments demonstrate that TriFlow achieves stronger generalization and significantly improved topology quality compared to state-of-the-art learning-based approaches, alongside 90% lower Chamfer Distance and an 8x speedup.",
+      "authors": [
+        "Haoxuan Li",
+        "Ziya Erkoç",
+        "Daniele Sirigatti",
+        "Vladislav Rosov",
+        "Lei Li",
+        "Angela Dai",
+        "Matthias Nießner"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.GR"
+      ],
+      "published": "2026-06-18T11:55:00+00:00",
+      "link": "https://arxiv.org/pdf/2606.20131v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Flow matching for mesh topology generation, method applicable to fluid mesh generation",
+      "llm_evidence_cn": "流匹配用于网格拓扑生成，方法可应用于流体网格生成",
+      "llm_evidence": "流匹配用于网格拓扑生成，方法可应用于流体网格生成",
+      "canonical_evidence": "流匹配用于网格拓扑生成，方法可应用于流体网格生成",
+      "llm_tldr_en": "TriFlow uses latent flow matching to generate nearest-vertex vector fields for 3D mesh topology, producing artist-like compact meshes; the flow matching approach is applicable to computational fluid dynamics mesh generation.",
+      "llm_tldr_cn": "3D网格生成中紧凑拓扑是关键，但现有方法难以自动生成。本文提出TriFlow，将网格拓扑表示为最近顶点矢量场，并用潜流匹配模型合成该场，再通过聚类和简化得到网格。该方法生成的网格接近艺术家手工效果。其流匹配框架可扩展到流体动力学中的计算网格生成。",
+      "llm_tldr": "3D网格生成中紧凑拓扑是关键，但现有方法难以自动生成。本文提出TriFlow，将网格拓扑表示为最近顶点矢量场，并用潜流匹配模型合成该场，再通过聚类和简化得到网格。该方法生成的网格接近艺术家手工效果。其流匹配框架可扩展到流体动力学中的计算网格生成。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching for fluid flow simulation",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
