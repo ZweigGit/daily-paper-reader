@@ -6,41 +6,31 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-22
-- 运行时间：2026-06-22 22:13:16 UTC
+- 最新运行日期：2026-06-23
+- 运行时间：2026-06-23 20:59:23 UTC
 - 运行状态：成功
-- 本次总论文数：6
-- 精读区：0
-- 速读区：6
+- 本次总论文数：3
+- 精读区：2
+- 速读区：1
 
 ### 今日简报（AI）
-1) 今日速读6篇论文，聚焦拓扑流匹配、扩散模型得分近似及长期多模态物体动态建模。
-2) 重点推荐《Topological Flow Matching》与《Score Approximation for Diffusion Models》，前者引入拓扑保真流匹配，后者突破低维结构得分近似瓶颈。
-3) 建议优先关注流匹配与拓扑结构结合的创新点，尤其适合需要保空间拓扑的长时动态预测任务。
-- 详情：[/202606/22/README](/202606/22/README)
+今日聚焦生成式流匹配与算子混合模型，从稀疏传感器重建壁面压力是高分亮点。  
+最值得看《Patched Flow Matching》，该工作突破训练域尺度限制，实现高精度压力场重建，9.0分领跑。  
+建议普通读者优先关注生成模型在物理场稀疏重建方向，未来可探索多源数据融合提升泛化能力。
+- 详情：[/202606/23/README](/202606/23/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [Patched Flow Matching: Generative Wall-Pressure Reconstruction Beyond Training-Domain Scales from Sparse Sensors](/202606/23/2606.22084v1-patched-flow-matching-generative-wall-pressure-reconstruction-beyond-training-domain-scales-from-sparse-sensors)  
+   标签：评分：9.0/10、query:genmod-fluid
+   evidence：流匹配用于湍流壁面压力重建
+2. [$Ω$: Operator-based Mixture Ensemble for Generative Assimilation](/202606/23/2606.20920v1--operator-based-mixture-ensemble-for-generative-assimilation)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：利用分数学习进行非线性系统的生成式同化
 
 ### 速读区论文标签
-1. [Topological Flow Matching](/202606/22/2606.15897v1-topological-flow-matching)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：拓扑流匹配将流匹配推广到结构化领域，可应用于流体动力学
-2. [Score Approximation for Diffusion Models on Arbitrary Low-Dimensional Structures](/202606/22/2606.19894v1-score-approximation-for-diffusion-models-on-arbitrary-low-dimensional-structures)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：扩散模型得分逼近理论，可迁移至流体动力学
-3. [FlowMaps: Modeling Long-Term Multimodal Object Dynamics with Flow Matching](/202606/22/2606.20209v1-flowmaps-modeling-long-term-multimodal-object-dynamics-with-flow-matching)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：流匹配应用于物体动态，方法可直接迁移至流体流动模拟
-4. [SpectralDiT: Timestep-Conditioned Spectral Residual Correction for Flow-Matching DiTs](/202606/22/2606.18765v1-spectraldit-timestep-conditioned-spectral-residual-correction-for-flow-matching-dits)  
+1. [FlowObject: Flow Steering for Bridging Generative Priors and Reconstruction Fidelity](/202606/23/2606.19019v1-flowobject-flow-steering-for-bridging-generative-priors-and-reconstruction-fidelity)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：通过频谱修正改进流匹配DiT，可迁移至流体流动模拟
-5. [Flow Map Denoisers: Traversing the Distortion-Perception Plane for Inverse Problems](/202606/22/2606.19802v1-flow-map-denoisers-traversing-the-distortion-perception-plane-for-inverse-problems)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：流映射模型用于图像恢复，方法论可迁移至流体逆问题
-6. [TriFlow: Generating Artist-Like 3D Mesh Topology via Nearest-Vertex Vector Fields](/202606/22/2606.20131v1-triflow-generating-artist-like-3d-mesh-topology-via-nearest-vertex-vector-fields)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：流匹配用于网格拓扑生成，方法可应用于流体网格生成
+   evidence：基于Flow-Matching的三维重建方法，可迁移至流体动力学
 
 
 <div class="dpr-home-promo-card">

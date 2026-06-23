@@ -1,0 +1,132 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-23T20:54:57.246187+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2606.22084v1",
+      "source": "arxiv",
+      "title": "Patched Flow Matching: Generative Wall-Pressure Reconstruction Beyond Training-Domain Scales from Sparse Sensors",
+      "abstract": "Characterizing the complete wall-pressure spectrum in turbulent wall-bounded flows requires simultaneous access to the viscous-scale high-wavenumber content and the outer-layer low-wavenumber content -- a requirement that neither short-domain direct numerical simulation (DNS) nor sparse experimental measurements alone can satisfy. We propose Patched Flow Matching (Patched FM), a generative framework that fuses these two complementary sources by learning a patch-local prior over inner-scaled wall-pressure statistics from short-domain DNS and assimilating sparse sensor measurements at inference time through training-free posterior sampling. The patch-additive decomposition of the flow matching vector field decouples the generative prior from the global domain size, enabling reconstruction on domains arbitrarily larger than the training configuration. By expressing the patch prior in inner-scaled coordinates, where high-wavenumber wall-pressure statistics are approximately Reynolds-number invariant, the framework extends to higher Reynolds numbers through hierarchical transfer learning with as few as $500$ short-domain snapshots ($2.5\\%$ of the base training data) at a fraction of the scratch-training cost. Applied to compressible channel-flow DNS at $Re_τ= 180$, $500$, and $1000$, Patched FM reconstructs full-resolution wall-pressure fields on a domain four times larger than the training configuration ($L_x^L = 16πδ$ versus $L_x^S = 4πδ$) from sensor coverage as low as $0.25\\%$, recovering the low-wavenumber spectral content inaccessible to short-domain DNS with high fidelity in both streamwise and spanwise directions. Zero-shot generalization to unseen Reynolds numbers and ablation studies further confirm the role of inner scaling as a physical prerequisite for data-efficient Reynolds-number transfer.",
+      "authors": [
+        "Meet Hemant Parikh",
+        "Yi Liu",
+        "Jian-Xun Wang"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn",
+        "cs.LG"
+      ],
+      "published": "2026-06-20T15:01:37+00:00",
+      "link": "https://arxiv.org/pdf/2606.22084v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Flow Matching for wall-pressure reconstruction in turbulent flow",
+      "llm_evidence_cn": "流匹配用于湍流壁面压力重建",
+      "llm_evidence": "流匹配用于湍流壁面压力重建",
+      "canonical_evidence": "流匹配用于湍流壁面压力重建",
+      "llm_tldr_en": "Proposes Patched Flow Matching, a generative framework fusing short-domain DNS and sparse sensor data for complete wall-pressure spectrum reconstruction in turbulent flows.",
+      "llm_tldr_cn": "该论文提出Patched Flow Matching（Patched FM）生成框架，通过从短域DNS学习局部先验并在推理时同化稀疏传感器测量，实现了湍流壁面压力谱的完整重建。方法采用逐块加性分解解耦流匹配向量场，有效融合互补数据源。实验证明该方法能超越训练域尺度，生成高保真壁面压力统计量。该工作直接展示了生成式流匹配方法在流体动力学中的应用。",
+      "llm_tldr": "该论文提出Patched Flow Matching（Patched FM）生成框架，通过从短域DNS学习局部先验并在推理时同化稀疏传感器测量，实现了湍流壁面压力谱的完整重建。方法采用逐块加性分解解耦流匹配向量场，有效融合互补数据源。实验证明该方法能超越训练域尺度，生成高保真壁面压力统计量。该工作直接展示了生成式流匹配方法在流体动力学中的应用。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.20920v1",
+      "source": "arxiv",
+      "title": "$Ω$: Operator-based Mixture Ensemble for Generative Assimilation",
+      "abstract": "Characterizing non-Gaussian posterior distributions in partially observed high-dimensional nonlinear systems remains a fundamental challenge in data assimilation. Ensemble Kalman filters rely on Gaussian approximations that can be inaccurate for strongly non-Gaussian posteriors, whereas particle filters suffer from severe scalability limitations. Recent score-based generative approaches improve posterior characterization but typically require supervised training with ground-truth posterior samples, which are unavailable in most practical applications. We introduce $Ω$ (Operator-based Mixture Ensemble for Generative Assimilation), a scalable framework that integrates conditional Gaussian surrogate modeling, unsupervised score learning, and generative sampling. The conditional Gaussian surrogate provides a nonlinear non-Gaussian baseline approximation while admitting closed-form conditional posterior distributions for the unresolved variables. First, $Ω$ exploits these closed-form conditional distributions to analytically recover the high-dimensional unobserved component, reducing computational cost and mitigating the curse of dimensionality. Second, $Ω$ learns only the residual discrepancy beyond an analytical baseline through denoising score matching using ensemble trajectories alone, eliminating the need for ground-truth posterior samples and substantially reducing the learning burden. Third, $Ω$ reconstructs the full non-Gaussian posterior distribution of both observed and unobserved variables via a Gaussian mixture representation, capturing multimodal, skewed, and heavy-tailed statistics. Finally, $Ω$ employs annealed Langevin sampling to iteratively refine ensemble members from the baseline toward the target posterior. $Ω$ is validated on several turbulent models with intermittency and extreme events, consistently improving posterior accuracy.",
+      "authors": [
+        "Pouria Behnoudfar",
+        "Nan Chen"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.DS"
+      ],
+      "published": "2026-06-18T20:19:44+00:00",
+      "link": "https://arxiv.org/pdf/2606.20920v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "generative assimilation using score learning for nonlinear systems",
+      "llm_evidence_cn": "利用分数学习进行非线性系统的生成式同化",
+      "llm_evidence": "利用分数学习进行非线性系统的生成式同化",
+      "canonical_evidence": "利用分数学习进行非线性系统的生成式同化",
+      "llm_tldr_en": "Introduces Omega framework for generative data assimilation in high-dimensional nonlinear systems using unsupervised score learning and ensemble sampling.",
+      "llm_tldr_cn": "提出了Omega框架，整合条件高斯代理建模、无监督分数学习和生成采样，用于高维非线性系统中的非高斯后验估计，可应用于流体数据同化。",
+      "llm_tldr": "提出了Omega框架，整合条件高斯代理建模、无监督分数学习和生成采样，用于高维非线性系统中的非高斯后验估计，可应用于流体数据同化。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.19019v1",
+      "source": "arxiv",
+      "title": "FlowObject: Flow Steering for Bridging Generative Priors and Reconstruction Fidelity",
+      "abstract": "Recovering complete 3D representations of objects from few casual image captures remains a significant challenge. Recent 3D generative models, particularly those based on Flow-Matching (FM), can synthesize high-quality textured assets; however, they often suffer from ''synthetic bias'' where learned priors override observational evidence, alongside a lack of alignment with the observed instance. Conversely, optimization-based methods like 3D Gaussian Splatting (3DGS) provide high fidelity on visible surfaces but fail to reason about unobserved geometry. In this paper, we present FlowObject, a framework that reformulates sparse-view 3D reconstruction as a training-free, guided inverse problem. Our approach applies a dual-space guidance strategy to steer the Ordinary Differential Equation (ODE) trajectory of a flow-matching model, enabling the completion of unseen regions through learned generative priors while enforcing strict consistency with real-world observations. By integrating a 3DGS refinement stage, FlowObject further bridges the gap between ''synthetic-looking'' generative outputs and photorealistic reconstructions. Comprehensive benchmarks on synthetic and real-world datasets demonstrate that current state-of-the-art methods often struggle to achieve geometric completeness and observational consistency simultaneously, especially under severe occlusions. In contrast, our method significantly outperforms state-of-the-art generative models and optimization-based frameworks in both geometric completeness and view-dependent appearance fidelity.",
+      "authors": [
+        "Yuchen Rao",
+        "Xuqian Ren",
+        "Yinyu Nie",
+        "Sayan Deb Sarkar",
+        "Biao Zhang",
+        "Vincent Lepetit",
+        "Friedrich Fraundorfer"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-06-17T12:42:09+00:00",
+      "link": "https://arxiv.org/pdf/2606.19019v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Flow-Matching for 3D reconstruction, transferable to fluid dynamics",
+      "llm_evidence_cn": "基于Flow-Matching的三维重建方法，可迁移至流体动力学",
+      "llm_evidence": "基于Flow-Matching的三维重建方法，可迁移至流体动力学",
+      "canonical_evidence": "基于Flow-Matching的三维重建方法，可迁移至流体动力学",
+      "llm_tldr_en": "Proposes FlowObject, a training-free guided inverse problem using Flow-Matching for sparse-view 3D reconstruction, bridging generative priors and reconstruction fidelity.",
+      "llm_tldr_cn": "该论文提出FlowObject框架，将稀疏视角三维重建重新表述为无需训练、引导式的逆问题，利用Flow-Matching的先验与观测数据进行双空间引导。方法在保留生成先验的同时提高了与真实实例的对齐度。该框架展示了Flow-Matching在物理逆问题中的潜力，对流体动力学中的流匹配应用具有方法论启发。",
+      "llm_tldr": "该论文提出FlowObject框架，将稀疏视角三维重建重新表述为无需训练、引导式的逆问题，利用Flow-Matching的先验与观测数据进行双空间引导。方法在保留生成先验的同时提高了与真实实例的对齐度。该框架展示了Flow-Matching在物理逆问题中的潜力，对流体动力学中的流匹配应用具有方法论启发。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
