@@ -6,31 +6,28 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-23
-- 运行时间：2026-06-23 20:59:23 UTC
+- 最新运行日期：2026-06-24
+- 运行时间：2026-06-24 20:47:22 UTC
 - 运行状态：成功
-- 本次总论文数：3
-- 精读区：2
+- 本次总论文数：2
+- 精读区：1
 - 速读区：1
 
 ### 今日简报（AI）
-今日聚焦生成式流匹配与算子混合模型，从稀疏传感器重建壁面压力是高分亮点。  
-最值得看《Patched Flow Matching》，该工作突破训练域尺度限制，实现高精度压力场重建，9.0分领跑。  
-建议普通读者优先关注生成模型在物理场稀疏重建方向，未来可探索多源数据融合提升泛化能力。
-- 详情：[/202606/23/README](/202606/23/README)
+1) 今日精读一篇高分论文，聚焦基于流退火后验采样的函数空间逆问题求解方法。  
+2) 最值得关注的方向是流模型在逆问题与混沌系统中的应用，其中精读论文评分8.0/10。  
+3) 建议优先阅读精读论文，掌握流退火采样在函数空间中的优势，再结合速读论文理解双向条件流匹配在混沌逆问题中的扩展。
+- 详情：[/202606/24/README](/202606/24/README)
 
 ### 精读区论文标签
-1. [Patched Flow Matching: Generative Wall-Pressure Reconstruction Beyond Training-Domain Scales from Sparse Sensors](/202606/23/2606.22084v1-patched-flow-matching-generative-wall-pressure-reconstruction-beyond-training-domain-scales-from-sparse-sensors)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：流匹配用于湍流壁面压力重建
-2. [$Ω$: Operator-based Mixture Ensemble for Generative Assimilation](/202606/23/2606.20920v1--operator-based-mixture-ensemble-for-generative-assimilation)  
+1. [Flow Annealing Posterior Sampling for Function-Space Regression and Inverse Problems](/202606/24/2606.22346v1-flow-annealing-posterior-sampling-for-function-space-regression-and-inverse-problems)  
    标签：评分：8.0/10、query:genmod-fluid
-   evidence：利用分数学习进行非线性系统的生成式同化
+   evidence：提出基于流匹配的后验采样用于PDE反问题，可应用于流体动力学
 
 ### 速读区论文标签
-1. [FlowObject: Flow Steering for Bridging Generative Priors and Reconstruction Fidelity](/202606/23/2606.19019v1-flowobject-flow-steering-for-bridging-generative-priors-and-reconstruction-fidelity)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：基于Flow-Matching的三维重建方法，可迁移至流体动力学
+1. [Solving Inverse Problems of Chaotic Systems with Bidirectional Conditional Flow Matching](/202606/24/2606.24824v1-solving-inverse-problems-of-chaotic-systems-with-bidirectional-conditional-flow-matching)  
+   标签：评分：7.0/10、query:genmod-fluid
+   evidence：双向条件流匹配用于混沌系统（与流体力学相关）
 
 
 <div class="dpr-home-promo-card">

@@ -1,0 +1,39 @@
+{
+  "label": "2026-06-24",
+  "date": "2026-06-24",
+  "generated_at": "2026-06-24T20:47:29",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202606/24/2606.22346v1-flow-annealing-posterior-sampling-for-function-space-regression-and-inverse-problems",
+      "section": "deep",
+      "title_en": "Flow Annealing Posterior Sampling for Function-Space Regression and Inverse Problems",
+      "authors": "Yaozhong Shi, Zachary E. Ross, Yisong Yue",
+      "date": "2026-06-21",
+      "pdf": "https://arxiv.org/pdf/2606.22346v1",
+      "score": "8.0",
+      "evidence": "提出基于流匹配的后验采样用于PDE反问题，可应用于流体动力学",
+      "tldr": "随机过程回归与偏微分方程反问题缺乏统一的函数空间后验采样框架。本文提出FAPS方法，利用预训练函数空间流匹配先验，通过朗之万校正与低秩协方差预条件器实现似然引导的后验推断。在非高斯过程回归与多种PDE反问题中，FAPS生成相干后验样本，不确定性量化准确。相比现有方法，FAPS显著提升性能并降低测试时采样成本。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Principled regression for stochastic processes is a long-standing challenge with deep connections to scientific inverse problems. We introduce Flow Annealing Posterior Sampling (FAPS), to our knowledge the first function-space posterior sampling framework that unifies stochastic-process regression and PDE inverse problems. Built on pretrained function-space flow-matching priors, FAPS enables likelihood-guided posterior inference from sparse and noisy observations, supports variable query discretizations, and avoids explicit prior-density evaluation. Its Langevin correction uses a low-rank covariance preconditioner to exploit dominant function-space correlations across discretizations. Across Gaussian and non-Gaussian stochastic-process regression benchmarks and diverse PDE inverse problems, FAPS produces coherent posterior samples with accurate uncertainty quantification, significantly outperforming existing functional regression baselines and achieving competitive or better PDE noisy inverse performance than diffusion-based posterior samplers while reducing test-time sampling cost.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/24/2606.24824v1-solving-inverse-problems-of-chaotic-systems-with-bidirectional-conditional-flow-matching",
+      "section": "quick",
+      "title_en": "Solving Inverse Problems of Chaotic Systems with Bidirectional Conditional Flow Matching",
+      "authors": "Peiyan Hu, Jian Zhang, Jiashu Pan, Ruiqi Feng, Tao Zhang, Zhi-Ming Ma, Yuan-Sen Ting, Gongjie Li, Tailin Wu",
+      "date": "2026-06-23",
+      "pdf": "https://arxiv.org/pdf/2606.24824v1",
+      "score": "7.0",
+      "evidence": "双向条件流匹配用于混沌系统（与流体力学相关）",
+      "tldr": "混沌系统的逆问题（从终态推断初态）因不适定性、非唯一性和混沌时间反演动力学而极具挑战。本文提出双向条件流匹配（Bi-CFM），通过学习初态和终态分布之间的双向映射，有效捕获混沌演化的随机性并减轻误差指数累积；对守恒系统进一步扩展为CBi-CFM。在Lorenz、电路、Lorenz 96及三体行星散射等系统上，Bi-CFM/CBi-CFM在分布级指标上超越基线，计算加速超两个数量级，且守恒误差与真实值相当。在真实球状星团（100亿年演化）数据上，该方法取得了准确性突破，为长期真实混沌系统的逆问题提供了可扩展的高效解法。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Modeling chaotic systems is crucial yet challenging. Inverse problems in chaotic dynamics, namely inferring initial conditions from final states, remain largely unsolved because of ill-posedness, non-uniqueness, instability, and potentially chaotic time-reverse dynamics. We address this open problem with Bidirectional Conditional Flow Matching (Bi-CFM), which learns bidirectional mappings between distributions of initial and final states to capture the stochasticity of chaotic evolution and mitigate exponential error accumulation over time. Furthermore, for systems with conservation laws, we extend it to Conservation-constrained Bi-CFM (CBi-CFM). Across the classic Lorenz, Circuit, and high-dimensional Lorenz 96 systems, Bi-CFM improves five distribution-level metrics over baselines while achieving a speedup of more than two orders of magnitude. In the three-body planet-planet scattering problem in planetary dynamics, CBi-CFM better respects conservation laws, with conservation errors comparable to those of the ground truth. Finally, on real observations of globular clusters, collisional million-body systems shaped by $\\sim 10^{10}$ years (10 Gyr) of evolution, our method represents an advance in accuracy, establishing a scalable route to solving inverse problems of long-timescale real-world chaotic dynamics.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

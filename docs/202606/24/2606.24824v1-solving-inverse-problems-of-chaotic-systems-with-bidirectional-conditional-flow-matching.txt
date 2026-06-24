@@ -1,0 +1,3097 @@
+Title: Solving Inverse Problems of Chaotic Systems with Bidirectional Conditional Flow Matching
+
+URL Source: https://arxiv.org/pdf/2606.24824v1
+
+Published Time: Wed, 24 Jun 2026 01:24:01 GMT
+
+Number of Pages: 50
+
+Markdown Content:
+# Solving Inverse Problems of Chaotic Systems with Bidirectional Conditional Flow Matching 
+
+Peiyan Hu 3‡, Jian Zhang 7, Jiashu Pan 1, Ruiqi Feng 1, Tao Zhang 1,Zhi-Ming Ma 3, Yuan-Sen Ting 4,5,6 , Gongjie Li 2* , Tailin Wu 1* 
+
+> 1
+
+Department of Artificial Intelligence, School of Engineering, Westlake University, Hangzhou, Zhejiang, 310030, China. 
+
+> 2
+
+Center for Relativistic Astrophysics, School of Physics, Georgia Institute of Technology, Atlanta, GA 30313, USA. 
+
+> 3
+
+Academy of Mathematics and Systems Science, Chinese Academy of Sciences, Beijing, 100190, China. 
+
+> 4
+
+Max-Planck-Institut f¨ ur Astronomie, K¨ onigstuhl, D-69117 Heidelberg, Germany. 
+
+> 5
+
+Department of Astronomy, The Ohio State University, Columbus, OH 43210, USA. 
+
+> 6
+
+Center for Cosmology and AstroParticle Physics (CCAPP), The Ohio State University, Columbus, OH 43210, USA. 
+
+> 7
+
+School of Astronomy and Space Sciences, Chinese Academy of Sciences, Beijing, 100049, China. *Corresponding author(s). E-mail(s): gongjie.li@physics.gatech.edu; wutailin@westlake.edu.cn; Contributing authors: hupeiyan@westlake.edu.cn; zhangjian191@mails.ucas.ac.cn; panjiashu@westlake.edu.cn; fengruiqi@westlake.edu.cn; zhangtao@westlake.edu.cn; mazm@amt.ac.cn; ting.74@osu.edu; 
+
+> ‡
+
+Work done as an intern at Westlake University. 
+
+Abstract 
+
+Modeling chaotic systems is crucial yet challenging. Inverse problems in chaotic dynamics, namely inferring initial conditions from final states, remain largely unsolved because of ill-posedness, non-uniqueness, instability, and potentially chaotic time-reverse dynamics. We address this open problem with Bidirectional 
+
+1            
+
+> arXiv:2606.24824v1 [cs.AI] 23 Jun 2026 Conditional Flow Matching (Bi-CFM), which learns bidirectional mappings between distributions of initial and final states to capture the stochasticity of chaotic evolution and mitigate exponential error accumulation over time. Furthermore, for systems with conservation laws, we extend it to Conservation-constrained Bi-CFM (CBi-CFM). Across the classic Lorenz, Circuit, and high-dimensional Lorenz 96 systems, Bi-CFM improves five distribution-level metrics over baselines while achieving a speedup of more than two orders of magnitude. In the three-body planet-planet scattering problem ∗in planetary dynamics, CBi-CFM better respects conservation laws, with conservation errors comparable to those of the ground truth. Finally, on real observations of globular clusters, col-lisional million-body systems shaped by ∼10 10 years (10 Gyr) of evolution, our method represents an advance in accuracy, establishing a scalable route to solving inverse problems of long-timescale real-world chaotic dynamics.
+> Keywords: Chaotic system, Inverse problem, Generative model
+
+# 1 Introduction 
+
+Chaotic systems are important yet complex nonlinear physical systems, arising in elec-trical systems [1, 2], climate systems [3, 4], astronomy [5–7], and biology [8, 9]. Their intrinsic complexity poses fundamental challenges for modelling and analysis, primar-ily because small perturbations in the initial state can be amplified exponentially over time, as illustrated in Fig. 1 c, where trajectories initialized with perturbations of order 10 −6 rapidly diverge. In this work, we focus on the inverse problem of chaotic systems, namely, inferring initial conditions from target final observations. This long-standing challenge has broad implications in science [10–12] and engineering [13, 14], as recover-ing initial states is essential for understanding the mechanisms and histories of chaotic physical systems [15]. Despite its significance, this task is challenging, mainly due to three fundamental reasons. First, such inverse problems are ill-posed, meaning that their solutions may be non-unique or unstable [16]. Second, one of the goals of inverse problems is to infer initial states whose evolved final states are close to target final states. However, errors in the initial states amplify during the forward evolution, lead-ing to larger deviations from the target final states. Third, inverse inference may suffer from information loss when certain bodies or components of the system vanish during evolution. For example, a planet may be scattered out of the planetary system [17– 19], which causes the loss of its information and makes the reconstruction rely solely on the remaining components. For a deterministic and non-chaotic physical system, once the governing equations of motion are known, traditional numerical methods can infer the initial conditions with small numerical errors. The convergence properties of these methods ensure that by starting from the target final state and integrating the system backward in time, one can obtain a high-fidelity estimate of the initial state whose forward evolution 
+
+> ∗Planet-planet scattering is the process that planets gravitationally perturb each other, which leads to orbital variations and instability.
+
+2closely matches the target [20–22]. However, in chaotic systems, randomness arises because deterministic nonlinear dynamics amplify infinitesimal perturbations in the initial conditions into unpredictable behaviors. Consequently, traditional numerical approaches fail to accurately recover the initial state even when the equations are known and integrated backward. In particular, when information loss occurs dur-ing forward evolution, for example, when certain bodies or components vanish from the system, traditional numerical methods may become entirely inapplicable. Recent progress in deep learning has opened new possibilities for addressing this challenge. Neural networks have shown the capability to model chaotic dynamics with accelera-tion, accuracy, and efficiency, leading to a growing number of approaches in this area. However, existing studies mainly focus on other tasks of chaotic systems, such as the prediction task [23–26]. Several studies have also focused on using deep learning to solve inverse problems, but they have not focused on the more challenging setting of chaotic systems [27–31]. In this work, as shown in Fig. 1, we propose Bidirectional Conditional Flow Matching (Bi-CFM), an algorithm for the inverse problem of chaotic systems, and its extended version, Conservation-constrained Bi-CFM (CBi-CFM), which enforces conservation laws when conservation quantities are known in the system. We analyze and address the inverse problem of chaotic systems systematically. The method builds upon the probabilistic generative model Conditional Flow Matching (CFM) [32, 33], the advantages of which stem from two key insights. First, under limited computa-tional resources, a chaotic system can be regarded as a stochastic system [34–36], and we therefore learn the distribution of its states rather than the deterministic trajec-tory. This probabilistic modeling framework is also more suitable for addressing the ill-posed problem, since the solutions may not be unique. Second, we directly learn the end-to-end mapping between initial and final states, rather than relying on time-dependent iterative updates as in traditional numerical solvers. This design avoids repeatedly accumulating numerical errors along the temporal dimension, making the inference error more controllable even as the horizon length increases. Without itera-tions proportional to the horizon length, this design mitigates the error accumulation in chaotic dynamics. In addition, we introduce a bidirectional modeling framework that jointly learns both forward and reverse dynamics, which allows the model to capture the global structure of chaotic systems rather than focusing solely on repro-ducing initial states. By enforcing mutual consistency between the forward evolution and the time-reverse dynamics, our approach mitigates the amplification of errors dur-ing forward evolution that typically arise in chaotic systems. Furthermore, for physical systems governed by conservation laws, we extend this framework to CBi-CFM, which enforces the learned probability flow path to evolve within the conservation manifold defined by the conservation principles. This extension enables the model to generate physically consistent solutions under chaotic conditions. We demonstrate the effectiveness of our method through experiments across diverse chaotic systems, including the classic and real-world ones. On the classic Lorenz sys-tem, Circuit system, and high-dimensional Lorenz 96 system, our proposed method outperforms other baselines under five distribution-level metrics, including the reverse integration based on traditional numerical solvers. Additionally, in the challenging 3…
+
+…                       
+
+> 𝐮 0
+> gt
+> 𝜖
+> 𝐮 𝑇
+> gt
+> 𝜖
+> 𝑣 𝜃 =(𝟎 ,𝜖 𝜃 )
+> 𝐮 𝑇
+> gt
+> 𝐮 0
+> gt
+> 𝐮 𝑇
+> gt
+> 𝐮 0
+> gt
+> 𝐮 𝑇
+> gt
+> 𝐮 𝑇
+> ′𝐮 0
+> 𝑣 𝜃
+> 𝑣 𝜃
+> ′
+> 𝐱 0=(𝐮 0
+> gt ,𝜖 )𝐱 1=(𝐮 0
+> gt ,𝐮 𝑇
+> gt )𝐱 Δ𝑡 =(𝐮 0
+> gt ,(𝛼 Δ𝑡 +𝜂 Δ𝑡 )𝜖 +𝛽 Δ𝑡 𝐮 𝑇
+> gt )
+> Conservation Manifold
+> ℳ={𝐮 :𝐻 (𝐮 )=𝐻 (𝐮 𝑇
+> gt )
+
+a
+
+b                          
+
+> 𝐱 𝜏 =(𝐮 0
+> gt ,
+> (𝛼 𝜏 +𝜂 𝜏 )𝜖 +𝛽 𝜏 𝐮 𝑇
+> gt )
+> Tangent Space 𝒯 𝐮 𝜏 ℳ
+> 𝐮 𝜏
+> 𝐱 0=(𝜖 ,𝐮 𝑇
+> gt )𝐱 Δ𝑡 =((𝛼 Δ𝑡 +𝜂 Δ𝑡 )𝜖 +𝛽 Δ𝑡 𝐮 0
+> gt ,𝐮 𝑇
+> gt )𝐱 1=(𝐮 0
+> gt ,𝐮 𝑇
+> gt )
+> Learn forward dynamics
+> Learn reverse dynamics
+> 𝐮 0
+> 𝜖
+> 𝐮 𝑇
+> ′
+> ℳ
+> Random Walk Projection Correction Velocity Field
+
+cFig. 1 : Schematic illustration of Bi-CFM and CBi-CFM, and the sensitive dependence on initial conditions. a. Bi-CFM framework. Bi-CFM extends Conditional Flow Matching by jointly learning the forward and inverse conditional distribution p(ugt 
+
+T |ugt 0 ) (upper panel) and p(ugt 0 |ugt 
+
+T ) (lower panel). The noise-free conditioning state is concatenated with the current flow state as model input. b. CBi-CFM framework. CBi-CFM constrains the probability flow within the con-servation manifold M to enforce conservation quantity H. The prior distribution is sampled via random walks on M, after which the projection correction is applied to mitigate numerical errors. In addition, the velocity is projected onto the tangent space 
+
+Tu′ 
+
+> t
+
+M, ensuring conservation throughout the flow. c. Exponential sensitivity. In the Lorenz system, perturbations of order 10 −6 are rapidly amplified, causing initially nearby trajectories to diverge across the chaotic attractor. three-body planetary system with scattering and collision, the inverse problem spans up to 10 6 orbital periods and contains information loss. Our method successfully infers the distribution and causal relationships close to the ground truth. Moreover, CBi-CFM preserves energy conservation at the same order as the original data. To test our method in a real-world setting, we further study the inverse problem of long-term globular-cluster evolution from observational data. As ancient dense stellar 4systems whose initial states have been reshaped over ∼ 10 Gyr of dynamical evolu-tion, globular clusters encode the assembly history of the Milky Way and provide a challenging testbed for Galactic archaeology. Compared with a state-of-the-art Monte Carlo method, Bi-CFM yields final simulated profiles that better match the observa-tions, both visually and quantitatively. These results show that Bi-CFM can serve as a scalable tool for solving inverse problems in long-timescale chaotic systems. 
+
+# 2 Results 
+
+The overview of our proposed model is shown in Fig. 1. The Bi-CFM framework in Fig. 1a is based on CFM, which learns the velocity field vθ that defines the flow path from Gaussian noise to the data distribution. Building upon this, we introduce a bidirec-tional modeling strategy that simultaneously learns the forward and reverse dynamics. As for the Conservation-constrained Bi-CFM (CBi-CFM) framework in Fig. 1 b, we constrain the entire flow path within the conservation manifold M defined by the con-servation law, ensuring that the inferred initial states satisfy the conserved quantity 
+
+H. Specifically, we first obtain a prior distribution that satisfies the conservation law. Then, we constrain the velocity field to lie within the tangent plane Tuτ M of the con-servation manifold M, ensuring that the entire probability flow remains within M.More details are given in the Method Section (Section 4). For clarity, we summarize here the notation used throughout this paper. The ground-truth trajectory is denoted as ugt  
+
+> t
+
+for t = 0 , . . . , T , and the initial state inferred by the algorithm is represented as u0. The trajectory obtained by forward evolving 
+
+u0 using the same high-precision numerical solver is written as g(u0, t ), where g(·, t )denotes the mapping from the initial state to the state at time t. In addition, the eval-uation metrics for solving inverse problems consist of three main aspects. The first measures how close the inferred initial state u0 is to the ground-truth initial state 
+
+ugt 0 . The second evaluates whether the final state obtained by forward evolving u0,denoted as g(u0, T ), remains close to the target final state ugt  
+
+> T
+
+. The third is about the causal relationship between the states at different time steps. 
+
+2.1 Evaluation on Three Classic Chaotic Systems 
+
+We first evaluate Bi-CFM on the Lorenz [37], Circuit [38], and Lorenz 96 [39] systems with increasing complexity, covering low-dimensional, multi-lobe, and high-dimensional chaotic dynamics. CBi-CFM is not applied because these systems do not impose conservation constraints. The experiment setups and baselines are introduced in Section 4.5 and 4.6. 
+
+Evaluation metrics. Due to the randomness and unpredictability caused by chaos, deterministic metrics become meaningless as the evolution time increases [26, 34]. Therefore, we utilize distribution-level metrics, specifically the Wasserstein-2 distance (W-2 distance) and Kullback-Leibler divergence (KL divergence), to compare distributions. For the W-2 distance, we compare several sets of distribution distances, including between u0 and ugt 0 , between uT and ugt  
+
+> T
+
+, between the entire trajectory (u0, g (u0, 1) , . . . , g (u0, T )) and ( ugt 0 , ugt 1 , . . . , ugt  
+
+> T
+
+), and between the pairs of initial and 5target final states ( u0, ugt  
+
+> T
+
+) and ( ugt 0 , ugt  
+
+> T
+
+). Here, we highlight that it is also impor-tant to assess whether the causal relationship between states at different time points conforms to the system’s dynamics, as reflected in the last two metrics with states at different T . Furthermore, we consider the KL divergence between the pairs of ini-tial and target final states, ( u0, ugt  
+
+> T
+
+) and ( ugt 0 , ugt  
+
+> T
+
+), to further measure how well the inferred initial state aligns with the target final state in terms of the system’s dynamic correlations. Details are given in Section 4.4. 
+
+Results. We evaluate different methods on the Lorenz, Circuit, and Lorenz 96 systems under several horizon lengths T (measured in units of the number of periods), to examine how their ability to solve the inverse problem changes as the prediction horizon increases. The quantitative results are reorganized in Fig. 2. Fig. 2 a shows the evolution of representative metrics across different horizon lengths. These include the W-2 distance of the inferred initial state distribution, the W-2 distance of the forward-evolved final state distribution, and the KL divergence of the paired initial and target final states. They respectively assess the accuracy of the inferred initial conditions, the accuracy of the final states obtained by forward evolving these initial conditions, and whether the causal relationship between the initial and final states is consistent with the underlying physical dynamics. The remaining distribution-level metrics, including the W-2 distances of trajectories and initial–final state pairs when not shown in the main text, are provided in Supplementary Note C. These additional W-2 metrics show trends similar to the KL divergence. To provide a compact and explicit comparison across metrics, Fig. 2 b shows radar plots at the longest horizon for each system. The values of each metric are normalized by the same metric-specific constant. Backward Integration is not shown in these radar plots because its values lie outside the displayed range. As for the Lorenz and Circuit system, on the W-2 distances of initial and final state distributions, Bi-CFM performs close to Random, indicating that it successfully matches the target marginal distributions, since Random is constructed to match these marginals. However, Random ignores the causal relationship between the initial and final states. As a result, it performs poorly on metrics that depend on the joint or trajectory-level distributions, including the distributions of entire trajectories and initial–final state pairs. In contrast, Bi-CFM achieves better performance on these causal metrics. Besides, the superior performance of Bi-CFM over Backbone highlights the advantage of probabilistic generative modelling and bidirectional learning. The dependence on horizon length further reveals the instability of iterative reverse-time numerical methods. Backward Integration can perform reasonably well when the horizon is short, where the system behaves more deterministically. However, as T increases and chaoticity becomes more pronounced, its performance deterio-rates rapidly. These results suggest that error accumulation in chaotic systems makes methods that repeatedly integrate over the time dimension less effective than end-to-end learned mappings, particularly at long horizons. By contrast, both Backbone and Bi-CFM remain comparatively stable as T increases. For the Lorenz 96 system, Bi-CFM also achieves the best overall performance, with the most notable advantage in matching the inferred initial state distribution. This is consistent with the training objective of CFM, which directly learns the target 6a
+
+> b
+
+Fig. 2 : Evaluation metrics on the Lorenz, Circuit, and Lorenz 96 systems. a. 
+
+Evaluation metrics of different methods with respect to the horizon length T . Shaded bands denote the 5–95% range across repeated subsampling. b. Normalized results of evaluation metrics at the longest horizon. Results of Backward Integration lie entirely outside the circle. distribution of the inferred state. However, Backward Integration performs better than Random and other methods in the W-2 distance of the final state at smaller T . Since Random represents an optimal marginal baseline for this metric, this indicates that they all capture the final-state marginal distribution reasonably well. We also find that Backbone, Random, and Bi-CFM achieve comparable errors on the initial–final state-pair metrics, which is consistent with the low-dimensional visualizations discussed below. Nevertheless, Bi-CFM still outperforms the baselines in the remaining aspects. We next visualize the distributions in Fig. 3. Fig. 3 a shows the three-dimensional t-SNE embeddings of paired inferred initial states and target final states. The 720 0 20 
+
+> t-SNE 1
+> 25
+> 0
+> 25
+> t-SNE 2
+> 25
+> 0
+> 25
+> t-SNE 3
+
+Ground Truth   
+
+> 20 020
+> t-SNE 1
+> 25
+> 0
+> 25
+> t-SNE 2
+> 25
+> 0
+> 25
+> t-SNE 3
+
+Bi-CFM   
+
+> 020
+> t-SNE 1 25
+> 0
+> 25
+> t-SNE 2
+> 25
+> 0
+> 25
+> t-SNE 3
+
+Backbone   
+
+> 25 025
+> t-SNE 1
+> 25
+> 0
+> 25
+> t-SNE 2
+> 25
+> 0
+> 25
+> t-SNE 3
+
+Backward Integration   
+
+> 20 020
+> t-SNE 1
+> 20
+> 0
+> 20
+> t-SNE 2
+> 20
+> 0
+> 20
+> t-SNE 3
+
+Random 
+
+Initial & GT Final State (t-SNE) 25 0 25 
+
+> t-SNE 1
+> 25
+> 025
+> t-SNE 2
+> 25
+> 0
+> 25
+> t-SNE 3
+
+Ground Truth   
+
+> 25 025
+> t-SNE 1
+> 25
+> 025
+> t-SNE 2
+> 25
+> 0
+> 25
+> t-SNE 3
+
+Bi-CFM   
+
+> 25 025
+> t-SNE 1
+> 25
+> 0
+> 25
+> t-SNE 2
+> 25
+> 0
+> 25
+> t-SNE 3
+
+Backbone  
+
+> 50 0
+> 50
+> t-SNE 1
+> 25
+> 025
+> t-SNE 2
+> 25
+> 0
+> 25
+> t-SNE 3
+
+Backward Integration   
+
+> 25 025
+> t-SNE 1
+> 25
+> 025
+> t-SNE 2
+> 25
+> 0
+> 25
+> t-SNE 3
+
+Random 
+
+Initial & GT Final State (t-SNE) 0.30             
+
+> 0.40
+> 0.50
+> 0.60
+> 0.70
+> Density
+> Ground Truth, t = 0.0 Bi-CFM, t = 0.0 Backbone, t = 0.0 Backward Integration, t = 0.0
+> Ground Truth, t = 3.0 Bi-CFM, t = 3.0 Backbone, t = 3.0 Backward Integration, t = 3.0 0.00
+> 0.00
+> 0.01
+> 0.01
+> 0.01
+> Density
+> Ground Truth, t = 0.0 Bi-CFM, t = 0.0 Backbone, t = 0.0 Backward Integration, t = 0.0
+> Ground Truth, t = 1.4 Bi-CFM, t = 1.4 Backbone, t = 1.4 Backward Integration, t = 1.4
+
+a
+
+b Lorenz Circuit Lorenz Circuit Fig. 3 : Visualizations of distributions on the Lorenz and Circuit systems. a. 
+
+3D t-SNE [40] visualizations of paired inferred initial and target final states ( u0, ugt 
+
+T )at a middle time step. b. Density isosurfaces of inferred initial states u0 and evolved final states g(u0, T ). dimensionality reduction is performed using t-SNE [40], which provides an intuitive comparison between the joint causal distributions produced by different algorithms and the ground-truth distribution. For both systems, Bi-CFM closely matches the ground-truth distribution, whereas other methods exhibit visible deviations. In the Circuit system, Backward Integration shows the largest discrepancy. The magnitude of these discrepancies is consistent with the quantitative distributional metrics reported in Fig. 2. For Lorenz 96, owing to the high dimensionality and chaoticity of the system [41], both the selected three-dimensional projections of the final states and the t-SNE embeddings of the initial–final state pairs do not show clearly discernible differences among methods. These visualizations reflect the intrinsic limitation of low-dimensional projections in revealing high-dimensional causal differences [42, 43]. Fig. 3 b further compares the three-dimensional density isosurfaces of the inferred initial states and corresponding final states. For both the initial and final states, 81 0 1x 0
+
+> 1
+> 2
+
+y
+
+> 1
+> 0
+> 1
+
+z
+
+T=0.00   
+
+> 101
+
+x 0
+
+> 1
+> 2
+
+y
+
+> 1
+> 0
+> 1
+
+z 
+
+> 10
+> 1
+
+x 0
+
+> 1
+> 2
+
+y
+
+> 1
+> 0
+> 1
+
+z 
+
+> 200000 0200000
+
+x 2.5 
+
+> 0.0
+> 2.5
+> 1e8
+
+y
+
+> 2.5
+> 0.0
+> 2.5
+> 1e8
+
+z  
+
+> 20 020
+
+x 25 
+
+> 0
+> 25
+
+y 
+
+> 0
+> 20
+> 40
+
+z
+
+T=0.43   
+
+> 20 020
+
+x 25 
+
+> 0
+> 25
+
+y 
+
+> 0
+> 20
+> 40
+
+z  
+
+> 20 020
+
+x 25 
+
+> 0
+> 25
+
+y 
+
+> 0
+> 20
+> 40
+
+z 
+
+> 2500 02500
+
+x
+
+> 0
+> 1
+> 1e7
+
+y
+
+> 0
+> 2
+> 4
+> 1e7
+
+z 
+
+> 10 0
+> 10
+
+x 10 
+
+> 0
+> 10
+
+y 
+
+> 26
+> 28
+
+z
+
+T=0.87  
+
+> 10 0
+> 10
+
+x 10 
+
+> 0
+> 10
+
+y 
+
+> 26
+> 28
+
+z 
+
+> 10 0
+> 10
+
+x 10 
+
+> 0
+> 10
+
+y 
+
+> 26
+> 28
+
+z  
+
+> 50 050
+
+x
+
+> 100000
+> 0
+
+y
+
+> 0.0
+> 2.5
+> 5.0
+> 1e6
+
+z 
+
+> 10 0
+> 10
+
+x 10 
+
+> 0
+> 10
+
+y 
+
+> 26
+> 28
+
+z
+
+T=1.30  
+
+> 10 0
+> 10
+
+x 10 
+
+> 0
+> 10
+
+y 
+
+> 26
+> 28
+
+z 
+
+> 10 0
+> 10
+
+x 10 
+
+> 0
+> 10
+
+y 
+
+> 26
+> 28
+
+z  
+
+> 10 010
+
+x 1000 
+
+> 0
+
+y
+
+> 0
+> 500000
+
+z 
+
+> 10 0
+> 10
+
+x 10 
+
+> 0
+> 10
+
+y 
+
+> 24
+> 26
+> 28
+
+z
+
+T=1.73  
+
+> 10 0
+> 10
+
+x 10 
+
+> 0
+> 10
+
+y 
+
+> 24
+> 26
+> 28
+
+z 
+
+> 10 0
+> 10
+
+x 10 
+
+> 0
+> 10
+
+y 
+
+> 24
+> 26
+> 28
+
+z  
+
+> 10 010
+
+x 10 
+
+> 0
+> 10
+
+y
+
+> 0
+> 50000
+> 100000
+
+z 
+
+> 10 0
+> 10
+
+x 10 
+
+> 0
+> 10
+
+y 
+
+> 25.0
+> 27.5
+
+z
+
+T=2.17  
+
+> 10 0
+> 10
+
+x 10 
+
+> 0
+> 10
+
+y 
+
+> 25.0
+> 27.5
+
+z 
+
+> 10 0
+> 10
+
+x 10 
+
+> 0
+> 10
+
+y 
+
+> 25.0
+> 27.5
+
+z  
+
+> 10 010
+
+x 20 
+
+> 0
+
+y
+
+> 0
+> 5000
+> 10000
+
+z  
+
+> Ground Truth Bi-CFM Backbone
+> Backward
+> Integration 0.0 2.5 5.0
+
+x
+
+> 5
+> 0
+
+y
+
+> 2.5
+> 0.0
+> 2.5
+
+z
+
+T=0.00   
+
+> 0.0 2.5 5.0
+
+x
+
+> 5
+> 0
+
+y
+
+> 2.5
+> 0.0
+> 2.5
+
+z  
+
+> 0.0 2.5 5.0
+
+x
+
+> 5
+> 0
+
+y
+
+> 2.5
+> 0.0
+> 2.5
+
+z   
+
+> 101
+> 1e6
+
+x
+
+> 25000
+> 0
+> 25000
+
+y
+
+> 250000
+> 0
+> 250000
+
+z 
+
+> 10 0
+> 10
+
+x 5
+
+> 0
+> 5
+
+y
+
+> 5
+> 0
+> 5
+
+z
+
+T=0.23  
+
+> 10 0
+> 10
+
+x 5
+
+> 0
+> 5
+
+y
+
+> 5
+> 0
+> 5
+
+z 
+
+> 10 0
+> 10
+
+x 5
+
+> 0
+> 5
+
+y
+
+> 5
+> 0
+> 5
+
+z 
+
+> 20 0
+
+x 5
+
+> 0
+> 5
+
+y
+
+> 0
+> 5
+
+z  
+
+> 10 010
+
+x 10 
+
+> 0
+
+y 
+
+> 10
+> 0
+
+z
+
+T=0.47   
+
+> 10 010
+
+x 10 
+
+> 0
+
+y 
+
+> 10
+> 0
+
+z  
+
+> 10 010
+
+x 10 
+
+> 0
+
+y 
+
+> 10
+> 0
+
+z  
+
+> 10 010
+
+x 10 
+
+> 0
+
+y 
+
+> 10
+> 0
+
+z  
+
+> 10 010
+
+x 10 
+
+> 0
+
+y 
+
+> 10
+> 0
+
+z
+
+T=0.70   
+
+> 10 010
+
+x 10 
+
+> 0
+
+y 
+
+> 10
+> 0
+
+z  
+
+> 10 010
+
+x 10 
+
+> 0
+
+y 
+
+> 10
+> 0
+
+z  
+
+> 10 010
+
+x 10 
+
+> 0
+
+y 
+
+> 5
+> 0
+> 5
+
+z  
+
+> 10 010
+
+x 10 
+
+> 0
+
+y
+
+> 10
+> 0
+> 10
+
+z
+
+T=0.93   
+
+> 10 010
+
+x 10 
+
+> 0
+
+y
+
+> 10
+> 0
+> 10
+
+z  
+
+> 10 010
+
+x 10 
+
+> 0
+
+y
+
+> 10
+> 0
+> 10
+
+z  
+
+> 10 010
+
+x 10 
+
+> 0
+
+y
+
+> 10
+> 0
+> 10
+
+z  
+
+> 10 010
+
+x 10 
+
+> 0
+
+y
+
+> 10
+> 0
+> 10
+
+z
+
+T=1.17   
+
+> 10 010
+
+x 10 
+
+> 0
+
+y
+
+> 10
+> 0
+> 10
+
+z  
+
+> 10 010
+
+x 10 
+
+> 0
+
+y
+
+> 10
+> 0
+> 10
+
+z  
+
+> 10 010
+
+x 10 
+
+> 0
+
+y
+
+> 10
+> 0
+> 10
+
+z
+
+> Ground Truth Bi-CFM Backbone
+> Backward
+> Integration
+
+a Lorenz 
+
+b Circuit Fig. 4 : Evolved trajectories g(u0, t ) on the test set, starting from inferred initial states u 0. a. Trajectories of the Lorenz system. b. Trajectories of the Circuit system. Bi-CFM produces distributions that are closest to the ground truth. Backbone pro-duces distributions deviated from the ground truth, reflecting the limitation of a deterministic mapping. The corresponding two-dimensional ( x, y ) distributions are provided in Supplementary Note C, where Backbone further shows a collapse towards a lower-dimensional one-dimensional manifold, essentially a line segment. Backward Integration is unstable, with inferred initial states showing the largest deviation from the target distribution. Finally, we visualize the evolved trajectories in Fig. 4. Fig. 4 a shows the Lorenz system at T = 2 .6, which is chosen as an intermediate horizon between T = 2 .0 and 
+
+T = 3 .0. Fig. 4 b shows the Circuit system at T = 1 .4. In both cases, we visualize 95000 trajectory points from the ground truth and from the forward-evolved trajecto-ries g(u0, t ) of different algorithms. Bi-CFM produces trajectory distributions whose shapes are almost identical to the ground truth, whereas Backbone produces narrower distributions. Backward Integration yields unrealistic distributions with a much larger range, reaching the 10 5 scale, and both its initial and final states deviate substantially from the target distributions. Nevertheless, in the Circuit system, despite its unreal-istic initial states, its final distribution partially resembles the three-lobe attractor, highlighting the ill-posed nature of the inverse problem: substantially different initial states can lead to similar final-state distributions. For the Lorenz 96 system, trajectory visualizations are provided in Supplementary Note C. 
+
+2.2 Evaluation on Three-body Planetary Systems 
+
+In this section, we apply the Bi-CFM and CBi-CFM methods to an astrophysical problem involving planet-planet dynamical interactions, including both scattering and collision events, as illustrated in Fig. 5 a. This process is a natural consequence of plan-etary formation within protoplanetary disks, where nascent planets migrate inward and interact gravitationally, ultimately driving dynamical instabilities, close encoun-ters, scattering, and collisions as the disks disperse [18, 44, 45]. Previous studies have shown that planet-planet scattering and collisions can explain the origin of a wide range of planetary architectures, including misaligned hot Jupiters in close proximity to their host stars, eccentric wide-orbit planets, and systems shaped by giant impacts [17, 19, 46–51]. However, the initial dynamical states of planetary systems prior to instability remain poorly constrained. Determining these initial conditions will shed light on the origin of planets, which gives rise to a wide diversity of planetary systems, as well as a better understanding of the uniqueness of the solar system in the universe. 
+
+Experiment setups. For simulations, we considered systems consisting of three planets orbiting a solar-mass host star following the previous work [19]. The scattering simulations are performed with REBOUND and REBOUNDx , incorporating general-relativistic corrections, mass- and momentum-conserving collisions, and planetary ejection. Further details of the system are presented in Section 4.5 and Supplementary Note A. Analyzing and understanding this system is meaningful, but solving its inverse problem is challenging because of the information loss phenomenon: once a planet is ejected or collides, part of the system becomes unobservable, and the initial conditions must be inferred solely from the remaining observable states. Although certain tra-ditional numerical algorithms are time-reversible in principle [21], reverse integration cannot be applied here due to the partial unobservability of the system. Consequently, the Backward Integration baseline is not applicable in this experiment. In this system, energy conservation, i.e. , that the total energy of the initial and final states is the same, serves as a fundamental physical constraint, and satisfying this conservation law is essential for accurately solving both the forward and inverse problems. We note that structure-preserving solvers, specifically symplectic integra-tors, are widely used in planetary dynamics [52, 53]. To account for this property, we evaluate the performance of CBi-CFMs, which explicitly enforces the conservation of energy in both the training and sampling process. 10 Collision   
+
+> P3 P1 P2
+> Star
+
+Scattering Initial Orbit 
+
+> Planet 1
+> Planet 2
+> Planet 3
+> P1
+> P2
+> P3
+> Star 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Backbone
+> Random
+> Bi-CFM
+> CBi-CFM
+
+Relative Conservation 
+
+Error 
+
+Initial State 
+
+W Distance 
+
+Final State 
+
+W Distance 
+
+Trajectory 
+
+W Distance 
+
+Initial & GT Final 
+
+State W Distance 
+
+Initial & GT 
+
+Final State KL −7.5 −5.0 −2.5 0.0 2.5 
+
+log 10 Relative Conservation Error  
+
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Cumulative Fraction
+> Ground Truth
+> Bi-CFM
+> CBi-CFM
+> Backbone
+> Random Ground Truth
+> Bi-CFM
+> CBi-CFM
+> Backbone
+> 0
+> 1
+> 2
+> 3
+> Mass
+> 1e 3
+> Ground Truth
+> Bi-CFM
+> CBi-CFM
+> Backbone
+> 0.00
+> 0.02
+> 0.04
+> 0.06
+> Eccentricity
+> Ground Truth
+> Bi-CFM
+> CBi-CFM
+> Backbone
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> Semi-major Axis
+
+Initial States of All Trajectories Ground Truth  
+
+> Bi-CFM
+> CBi-CFM
+> Backbone
+> 1
+> 0
+> 1
+> 2
+> 3
+> Mass
+> 1e 3
+> Ground Truth
+> Bi-CFM
+> CBi-CFM
+> Backbone
+> 0.01
+> 0.02
+> 0.03
+> 0.04
+> 0.05
+> Eccentricity
+> Ground Truth
+> Bi-CFM
+> CBi-CFM
+> Backbone
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> Semi-major Axis
+
+Initial States of Trajectories Containing Scattering 0.00 0.05 0.10 0.15 0.20 
+
+Semi-major Axis a0
+
+> 0
+> 100
+> 200
+> 300
+> 400
+> 500
+> Count
+
+a0 < 0.05 
+
+Ground Truth 
+
+CBi-CFM     
+
+> 0.0 0.1 0.2 0.3 0.4
+
+Semi-major Axis a0
+
+> 0
+> 25
+> 50
+> 75
+> 100
+> 125
+> 150
+> Count
+
+0.1 < a0 < 0.2      
+
+> 0.0 0.1 0.2 0.3 0.4 0.5
+
+Semi-major Axis a0
+
+> 0
+> 20
+> 40
+> 60
+> 80
+> Count
+
+a0 > 0.25 0.00    
+
+> 0.05
+> 0.10
+> 0.15
+> EGT, init
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> EBi − CFM, init
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> ECBi − CFM, init
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> EBackbone, init
+> 0.00 0.05 0.10 0.15
+
+EGT, final 
+
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> ERandom, init
+
+a b c
+
+d
+
+eFig. 5 : Visualizations, evaluation metrics, distributions, and energy conser-vations on the star-planet system. a. Visualizations of the collision and scattering. 
+
+b. As Fig. 2 b but for the star-planet system with another metric, Relative Conserva-tion Error. c. Cumulative distributions of Relative Conservation Error, and calibration scatter plots comparing inferred initial energy against ground-truth final energy. d. 
+
+Distributions of the inferred initial features, mass, semi-major axis, and eccentric-ity of all trajectories and trajectories containing scattering. e. Distributions of the inferred initial semi-major axis a0 on trajectories with small ( a0 < 0.05), medium (0 .1 < a 0 < 0.2), and large ( a0 > 0.25) initial ground truth semi-major axis agt 0 .
+
+Evaluation metrics. As for the evaluation metrics, due to the requirement of enforcing conservation constraints, we introduce a new metric, termed the Relative Conservation Error (RCE). It quantifies how well the conservation law is satisfied and is defined as RCE = |H − Hgt ||Hgt | ,
+
+where H denotes the conserved quantity ( e.g. , total energy) computed from the inferred state, and Hgt is the corresponding ground truth value. 11 Results. Our experimental results are organized into four parts that correspond to the subpanels in Fig. 5. In the subpanel Fig. 5 b, we provide quantitative results for all methods across all metrics. The range of RCE of Random is beyond the normalized circle, and hence is omitted. First, we observe that Bi-CFM and CBi-CFM achieve the best performance, except for the Initial State W-2 distance, where Random matches the target initial distribution and thus is slightly better than Bi-CFM. Second, com-paring CBi-CFM with Bi-CFM, we find that CBi-CFM attains a lower RCE, which indicates that constraining the prior distribution and the velocity field improves com-pliance with the conservation law. At the same time, CBi-CFM is slightly worse than Bi-CFM on distribution-based distances. This suggests a tradeoff between enforcing conservation and retaining distributional accuracy, likely because the conservation constraints reduce model expressiveness. Then, in Fig. 5 c’s two subplots, to assess whether each reconstruction preserves the conserved energy of the scattering system, we compare the energy of the inferred initial state with the energy of the target final state. The empirical cumulative dis-tribution of the log-scaled Relative Conservation Error summarizes this comparison over the full test set. Curves that rise more rapidly toward one at smaller error values indicate that a larger fraction of samples have low energy mismatch. Since the ground-truth trajectories are produced by numerical integration, their conservation error is not exactly zero because of finite-step and floating-point errors. We observe that CBi-CFM preserves energy at a level nearly comparable to this numerical ground-truth error. Bi-CFM achieves the next best performance, followed by Backbone, whereas Random exhibits the largest deviation. On the other hand, the calibration plots pro-vide a complementary sample-wise view. Each point corresponds to one test trajectory, with the horizontal axis showing the target final-state energy and the vertical axis showing the inferred initial-state energy. The dashed diagonal denotes perfect energy agreement. It can be seen that CBi-CFM still performs comparably to the ground truth. The points of CBi-CFM lie closest to the diagonal, followed by Bi-CFM and then Backbone, whereas the points of Random are barely aligned with the diagonal. Next, in Fig. 5 d, we visualize the distributions of representative features of the inferred initial states for the first body under different methods. We separately consider the distributions over all trajectories and over trajectories that contain scattering events. First, the ground truth distributions for all trajectories and those containing scattering differ across several features, which are selected to be presented in the figure. We observe that CBi-CFM, Bi-CFM, and Backbone all distinguish between these two types of trajectories. Second, for each distribution, the closest match to the target distribution is achieved by either Bi-CFM or CBi-CFM, demonstrating their superior ability to capture the dynamics over Backbone. In particular, for the important feature eccentricity, although all methods struggle to fit the distribution, the distribution generated by Backbone is noticeably narrower than Bi-CFM and CBi-CFM over both types of trajectories, revealing the limitation of deterministic models. Finally, in Fig. 5 e, we examine whether CBi-CFM can correctly infer the corre-sponding interval of the initial semi-major axis based on the final state. The results of Bi-CFM and Backbone are recorded in Fig. C10 of Supplementary Note C. Specifi-cally, we divide all trajectories into three groups according to their initial semi-major 12 axis: small ( a0 < 0.05), medium (0 .1 < a 0 < 0.2), and large ( a0 > 0.25). The results demonstrate that CBi-CFM infers the correct intervals of a0, and the inferred distri-butions closely match the ground truth, which shows that CBi-CFM can capture the causal relationships within the dynamical system. 
+
+2.3 Evaluation on Real-world Million-body Globular Cluster Systems 
+
+To test Bi-CFM in a real observational setting, we apply it to the inverse problem of long-term globular-cluster (GC) evolution. Milky Way GCs are ancient, dense, self-gravitating stellar systems, typically containing 10 4–10 6 stars and evolving over timescales of order ∼ 10 Gyr or longer [54–56]. As tracers of the early assembly history of the Milky Way, they provide a natural testbed for Galactic archaeology [57]. Given the observed surface brightness profiles (SBPs), velocity dispersion profiles (VDPs), and ages of present-day clusters, the goal is to infer initial dynamical states whose forward evolution reproduces the observations. This inverse problem is challenging because ∼ 10 Gyr of stellar evolution, two-body relaxation, mass segregation, tidal stripping, binary interactions, and possible core collapse can erase or strongly reshape the memory of the birth state, leav-ing a degenerate mapping from initial cluster parameters to present-day observables [58–61]. Traditional direct and Monte Carlo simulations have been central tools for modelling GC evolution, but brute-force inverse inference over large initial-condition spaces remains computationally prohibitive [62–65]. This setting therefore provides a stringent real-world test for a distributional, simulation-trained approach such as Bi-CFM. Additional astrophysical background and computational details are provided in Supplementary Note A. 
+
+Experiment setups. We consider a set of observed Milky Way GCs identified by their New General Catalogue (NGC) designations. We show the observational data of NGC 3201 in Fig. 6 a. The observation data are constructed from their present-day structural and kinematic properties reported in the literature, which encode infor-mation about the long-term dynamical evolution. In this work, the observational constraints are based primarily on projected SBPs, VDPs, and ages. Together, these observables provide complementary constraints on each cluster: the SBP traces the projected distribution of stellar light, the VDP constrains the internal kinematics and dynamical mass distribution, and the age sets the evolutionary time at which the sim-ulated cluster should be compared with the observed system. More details of the data are provided in Section 4.5. 
+
+Baselines and metrics. Based on these fundamental experimental settings, we compare our method with the state-of-the-art Monte Carlo method [66]. Since the simulations are performed with N = 4 × 10 5 particles, we follow the inference in Rui et al. [66] and conduct the baseline comparison on the ten clusters whose initial particle numbers are most likely to be N = 4 × 10 5. To quantify the agreement between simulated and observed globular-cluster profiles, we compare the simulated and observed profiles using uncertainty-weighted χ2 statistics for the SBP and VDP following previous works [66–68]. These quantities are reported as the SBP and VDP profile errors (See details in Section 4.4). 13 4.8 km/s 
+
+4 2 0 2 4
+
+x (pc) 
+
+4
+
+2
+
+0
+
+2
+
+4
+
+> y (pc)
+
+Simulated Cluster Snapshot 
+
+10 3
+
+10 2
+
+10 1
+
+10 0
+
+10 1
+
+10 2
+
+> Luminosity ( L )
+
+10 −3 10 −2 10 −1 
+
+χ2SBP 
+
+10 0
+
+10 1
+
+10 2
+
+> χ2VDP
+
+NGC 1261 
+
+NGC 3201 
+
+NGC 5897 
+
+NGC 6121 
+
+NGC 6352 
+
+NGC 6362 
+
+NGC 6366 
+
+NGC 6397 
+
+NGC 6779 
+
+NGC 7099 
+
+Monte Carlo 
+
+Bi-CFM 10 −1 10 0 10 1 10 2 10 3
+
+Radius, R (arcsec) 
+
+20 
+
+25 
+
+30 
+
+35 
+
+> Surface Brightness
+
+NGC 3201 SBP 
+
+Observed 
+
+Observed Interpolation 
+
+Monte Carlo 
+
+Bi-CFM 10 −1 10 0 10 1 10 2 10 3
+
+Radius, R (arcsec) 
+
+20.0 
+
+22.5 
+
+25.0 
+
+27.5 
+
+30.0 
+
+32.5 
+
+35.0 
+
+> Surface Brightness
+
+NGC 5897 SBP 
+
+Observed 
+
+Observed Interpolation 
+
+Monte Carlo 
+
+Bi-CFM 10 −1 10 0 10 1 10 2 10 3
+
+Radius, R (arcsec) 
+
+20.0 
+
+22.5 
+
+25.0 
+
+27.5 
+
+30.0 
+
+32.5 
+
+35.0 
+
+> Surface Brightness
+
+NGC 6362 SBP 
+
+Observed 
+
+Observed Interpolation 
+
+Monte Carlo 
+
+Bi-CFM 10 −1 10 0 10 1 10 2 10 3
+
+Radius, R (arcsec) 
+
+2 × 10 0
+
+3 × 10 0
+
+4 × 10 0
+
+> Velocity Dispersion
+
+NGC 3201 VDP 
+
+Observed 
+
+Observed Interpolation 
+
+Monte Carlo 
+
+Bi-CFM 10 −1 10 0 10 1 10 2 10 3
+
+Radius, R (arcsec) 
+
+10 0
+
+2 × 10 0
+
+3 × 10 0
+
+4 × 10 0
+
+> Velocity Dispersion
+
+NGC 5897 VDP 
+
+Observed 
+
+Observed Interpolation 
+
+Monte Carlo 
+
+Bi-CFM 10 −1 10 0 10 1 10 2 10 3
+
+Radius, R (arcsec) 
+
+10 0
+
+> Velocity Dispersion
+
+NGC 6362 VDP 
+
+Observed 
+
+Observed Interpolation 
+
+Monte Carlo 
+
+Bi-CFM Bi-CFM 
+
+CBi-CFM 
+
+Backward 
+
+Integration 
+
+Backbone 
+
+Lorenz 
+
+Circuit 
+
+Lorenz96 
+
+Planet 
+
+0.3158 34.39 0.0004 
+
+0.3316 65.84 0.0003 
+
+0.323 291.5 0.0003 
+
+0.3252 2.971 0.0003 
+
+Inference Time 
+
+> 50
+> 100
+> 150
+> 200
+> 250
+> Time (s)
+
+10 2 10 7 10 12 10 17 
+
+Initial State W-2 Distance 
+
+Bi-CFM 
+
+Backbone 
+
+Backward 
+
+Integration 
+
+Random 
+
+0.0124 
+
+0.143 
+
+6.11 × 10 16 
+
+0.00476 
+
+10 0 10 3 10 6 10 9
+
+Final State W-2 Distance 
+
+0.00377 
+
+0.241 
+
+1.86 × 10 8
+
+0.0477 
+
+10 0 10 1 10 2 10 3
+
+Initial & GT Final State 
+
+Normalized KL Divergence 
+
+0.408 
+
+4.8 
+
+129 
+
+1.73 a b c
+
+d
+
+e f
+
+NGC 3201 Fig. 6 : Observational data, simulation data, evaluation metrics, and pro-files on million-body globular cluster systems, and ablation analysis of inference time and robustness. a. The visualization of observational data. b. The visualizations of simulation data. c. SBP and VDP errors of the Monte Carlo method and Bi-CFM. d. Surface brightness profiles and velocity dispersion profiles of observa-tional data, Monte Carlo method, and Bi-CFM. e. Inference time of different methods on different systems. f. Evaluation metrics of different methods on noisy data of the Lorenz system. 
+
+Results. Overall, we perform simulations from the inferred initial states of differ-ent methods, and compare the resulting final states with the observational data using 
+
+χ2 errors. For some simulations, the cluster disrupts before reaching the age reported by the literature. In such cases, we use the final simulated state to compute the error. The observed SBPs and VDPs are measured at cluster-dependent radii, whereas the simulation profiles are represented on fixed radial grids. We therefore interpolate the 14 observational profiles and evaluate them on the same radial grids as the training data, so that the observed clusters can be used as inputs to the model. However, the observed radii are often concentrated within limited radial ranges and do not uniformly cover the full simulation grid. As a result, interpolation can be unreliable in sparsely observed regions, which may introduce inaccurate profile values into the inference procedure. To reduce the influence of poorly constrained radial regions, we construct three radial-coverage variants of the training data. Together with two choices of simulation data sources, this gives six training datasets in total. For each cluster, we report the best-performing Bi-CFM result among the corresponding six trained models. We find that the half-grid variants generally achieve the best overall performance, likely because this radial range better matches the region where the observed radii are most densely sampled (See more details in Section 4.5). We summarize the results of the baseline and Bi-CFM on the clusters in Fig. 6 c
+
+with the results for the same cluster connected by line segments. Points closer to the lower-left corner indicate smaller errors in both SBP and VDP. It can be seen that Bi-CFM generally outperforms the baseline Monte Carlo method, except for one cluster where the two methods achieve comparable performance. To provide a more detailed comparison of the performance, in Fig. 6 d, we visualize the profiles of three clusters, including NGC 3201, which corresponds to Fig. 6 a, as well as NGC 5897 and NGC 6362. The triangles denote the observational data points, and the vertical intervals indicate their uncertainties. The dashed curves represent the profiles obtained by linear interpolation of the observational data points. The green and yellow curves correspond to the final states evolved from the initial states inferred by the Monte Carlo method and Bi-CFM, respectively. As shown in the figure, the results obtained by Bi-CFM fit the observational data points more closely and better agree with the profiles obtained by linear interpolation. We can observe that Bi-CFM infers physically more consistent initial conditions whose long-term evolution better matches the observations. Because, unlike the Monte Carlo method, which searches over the initial-condition space through a finite set of forward simulations, Bi-CFM learns the distribution-level physical corre-spondence between initial and final states. Its success on this long-timescale problem further suggests that the proposed end-to-end bidirectional design effectively mitigates the error accumulation inherent to chaotic dynamics. This experiment demonstrates that our proposed method can serve as a new tool for inverse problems in GCs, a large-scale, chaotic, and long-timescale system, outperforming traditional approaches. 
+
+2.4 Analysis of Inference Time and Robustness 
+
+Inference time. In Fig. 6 e, we record different methods’ inference times for one sam-ple. The horizon T of the Lorenz, Circuit, and Lorenz 96 systems is 3, 1.5, and 7, respectively. Nevertheless, the inference time of Bi-CFM on the GC task is comparable to that observed in the other systems. The times are calculated as the average of 50 batches with batch size = 1 after warm-up. The results of deep-learning methods are conducted on GPUs, while the Backward Integration is on CPUs because the imple-mentation is not applicable on GPUs. We note that the development of traditional numerical solvers on GPUs can accelerate the process of Backward Implementation in the future. From Fig. 6 e, we observe that compared with Backward Integration, 15 CFM achieves a speedup of more than two orders of magnitude. But it is slower than Backbone because the sampling process takes several sampling steps. Also, the time of Backward Integration increases a lot as the number of dimensions increases, while the deep learning methods’ inference times are almost consistent. This demonstrates deep learning methods’ potential to deal with high-dimensional problems. Addition-ally, CBi-CFM takes a longer time compared with Bi-CFM, which is mainly because the sampling from the prior distribution involves random walks and the projection, which need additional matrix multiplications. 
+
+Robustness evaluation. On the Lorenz system, we further evaluate the robust-ness of different methods under noisy observations. Specifically, to mimic uncertainty in the observed final states, we add Gaussian noise with a scale of 0 .1 to the target final states at T = 2 .4 and re-evaluate all distribution-level metrics. Three represen-tative metrics are reported in Fig. 6 f, while the remaining two metrics are provided in Supplementary Note C. The results show that Bi-CFM remains robust under noisy targets and consistently achieves the best performance among all baselines. In con-trast, Backward Integration exhibits the largest performance degradation after noise is added, indicating its strong sensitivity to perturbations in the final state. This is con-sistent with the nature of chaotic inverse problems, where small observational errors can be amplified during reverse-time integration, whereas the end-to-end distributional modelling of Bi-CFM mitigates such error accumulation. 
+
+# 3 Discussion 
+
+In this work, we propose Bi-CFM, a probabilistic and physically grounded approach for solving the inverse problems of chaotic systems. The extensive experiments demon-strate its effectiveness and reveal the potential of deep generative modeling in tackling the ill-posed inverse problems. On the one hand, Bi-CFM tackles one of the cen-tral challenges in chaotic systems, the exponential accumulation of errors over time, through end-to-end learning and bidirectional modelling. On the other hand, its proba-bilistic formulation captures the stochasticity and non-uniqueness of chaotic evolution. Its conservation-constrained extension, CBi-CFM, further incorporates a key physical principle by enforcing conserved quantities during inverse modelling. In addition, as the system dimension increases, the inference time of the deep learning-based meth-ods remains nearly unchanged, suggesting their potential to mitigate the curse of dimensionality [69]. Together, Bi-CFM and CBi-CFM provide a potential route to high-dimensional, long-timescale inverse problems in Galactic archaeology, planetary dynamics, and other chaotic physical systems. In a series of systematic experiments, we observe several interesting phenomena that could provide insights for future work. Firstly, we found that some initial states u0
+
+generated by Backward Integration and their corresponding ground truth ugt 0 from the dataset differ significantly in magnitude, yet the final states obtained through forward evolution g are close. This reflects the ill-posedness and multi-solvability of inverse problems and suggests that there are reasonable solutions far beyond the data distri-bution, which could lead to important scientific discoveries. However, to enable deep learning methods to uncover these solutions, enhancing generalization is necessary, 16 which can be achieved by incorporating physical constraints and priors. Secondly, we observe a degradation when conservation constraints are imposed in CBi-CFM. This tradeoff reflects the inherent tension between enforcing physical laws and maintain-ing representational flexibility, particularly in high-dimensional chaotic systems. We anticipate that future theoretical developments will offer understandings and solutions to this phenomenon. Also, future work may explore adaptive or learnable conserva-tion constraints, where the strength of the physical constraint can be dynamically adjusted during training. Such an approach could balance physical consistency and expressiveness according to the requirements and specific settings. In addition, there are several possible improvements worth studying in future work. Firstly, we find that Bi-CFM maintains an advantage in modeling the initial-state distribution compared with the final-state, which can be attributed to its direct optimization objective focusing on the initial distribution. A potential improvement could be achieved by introducing additional constraints on the final states during training, for example, by evolving the inferred initial states through the learned dynamics. Secondly, although Bi-CFM achieves a hundredfold acceleration over tra-ditional backward-integration-based numerical solvers, it is still slower than the base model Backbone. This is mainly because the sampling process in CFM involves mul-tiple iterative steps. However, this limitation can be alleviated by adopting improved flow matching approaches, such as one-step methods, such as Short-cut Models [70] or MeanFlow [71]. Another possible solution is to distill the current model into a smaller and more efficient version [72, 73], thereby reducing the sampling steps and accelerat-ing the inference of each sampling step. Finally, another interesting research direction is to provide explicit confidence estimates for the inferred states. In future work, we can compute the probability estimates by solving the probability-flow equation with numerical solvers. This enhancement could make the model more interpretable and reliable. In the future, equipping generative frameworks with confidence estimates may unlock potential for applying generative learning to chaotic physical systems. We aim to systematically investigate these directions in our future study. 
+
+# 4 Methods 
+
+4.1 Conditional Flow Matching 
+
+Conditional Flow Matching (CFM) [32, 33] has emerged as a state-of-the-art frame-work for generative modeling. To sample from the target probability distribution, the CFM framework constructs a probability “flow” path pτ that starts from an easy-to-sample source distribution p0 (e.g. , a Gaussian distribution) at τ = 0, and ends at the target distribution p1 at τ = 1. The goal of CFM is to learn the velocity field vτ along this flow path, so that samples x0 drawn from p0 can be transformed into samples x1
+
+from the target distribution by integrating the following ODE 
+
+dxτ
+
+dτ = vτ (xτ ) (1) 17 from τ = 0 to τ = 1. Consequently, the model vθ(τ, xτ ) needs to regress to the velocity using the marginal loss 
+
+Lmarginal := Eτ ∼p(τ ),xτ ∼pτ (xτ )
+
+∥vθ(τ, xτ ) − vτ (xτ )∥22
+
+ .
+
+This marginal velocity field in the above equation is the expectation of conditional velocities vτ (xτ |z) as 
+
+vτ (xτ ) = Ez∼p(z|xτ )[vτ (xτ |z)] ,
+
+where z is the condition and pτ (xτ |z) is a conditional probability path. The conditional probability path is typically much simpler than the marginal one pt(xt), because z
+
+usually includes the start or end point of the path. Conditioned on the known z,one can construct conditional probability paths without high-dimensional integration introduced by the expectation operation. As a result, compared with the marginal one, the conditional velocity vt(xt|z) is tractable, which leads to the tractable conditional 
+
+training loss 
+
+Lconditional := Eτ ∼p(τ ),xτ ∼pτ (xτ ),z∼p(z|xτ )
+
+∥vθ (τ, xτ ) − vτ (xτ |z)∥22
+
+ .
+
+Additionally, this conditional loss is proven to be equivalent to the marginal training loss when used to optimize the model parameters θ [32, 33], i.e. ,∇θ Lconditional =
+
+∇θ Lmarginal , so we can take the conditional loss as the training objective. Compared to other flow-based generative models, such as the normalizing flow [74], the conditional loss grants CFM the effectiveness of training and scalability to complex probability distributions and large datasets. Consequently, we adopt it to model the distribution of chaotic systems. In this paper, we choose p0 = N (0; I) and z = ( x0, x1) pair. In this case, the constructed conditional probability path is degraded into effectively an interpola-tion between two samples: xτ = α(τ )x0 + β(τ )x1 + η(τ )ϵ where α(τ ), β (τ ) are the time-dependent interpolation coefficients, while η(τ ) is a small random noise scale to maintain stochasticity. The source and target samples can be coupled in this case, allowing more flexible flow mappings. As for the sampling process, since the sampling in CFM involves simulating an ODE (Eq. 1), different numerical solvers can be used. In this study, we adopt the Dormand–Prince (RKDP) method [75] with 100 steps. 
+
+4.2 Bidirectional Modeling 
+
+The bidirectional modeling strategy is an approach we introduce to learn both forward and reverse dynamics of chaotic systems jointly, which is motivated by the error accu-mulation in chaotic systems. Empirically, in the experiments, we observe that although the model can accurately approximate the initial state distribution p(ugt 0 ) ( ugt 0 ∈ Rn), the inferred initial states u0 often exhibit amplified errors when evolved to g(u0, T ), resulting in large deviations in the final states. The bidirectional formulation mitigates this issue by improving consistency between forward and reverse dynamics, thereby enabling the model to learn a more complete and physically consistent representation of the underlying chaotic dynamics. 18 Specifically, our goal is to learn both the reverse dynamics represented by the conditional distribution p(ugt 0 | ugt  
+
+> T
+
+) and the forward dynamics corresponding to p(ugt  
+
+> T
+
+|
+
+ugt 0 ). In practice, we let the model learn to generate pairs ( ugt  
+
+> T
+
+, ugt 0 ) in the space R2n.During training, we randomly select a portion of sample pairs where the positions of ugt  
+
+> T
+
+are used as conditions, i.e. , noise-free variables, while the corresponding ugt 0
+
+positions are still trained to learn how to denoise from Gaussian noise towards the ground truth ugt 0 with conditioned vθ (τ, ·, ugt  
+
+> T
+
+). The corresponding time pair of these samples is ( τ1, τ 2) = ( τ, 1), where τ2 = 1 denotes that the ugt  
+
+> T
+
+position is noise-free. For the remaining samples, the roles are reversed: ugt 0 serves as the condition, and ugt 
+
+> T
+
+is trained to denoise with vθ (τ, ugt 0 , ·). The corresponding time pair of these samples is ( τ1, τ 2) = (1 , τ ). The details of the conditional CFM and the implementation of bidirectional training are reported in Supplementary Note B. During sampling, our target is to sample from p(u0 | ugt  
+
+> T
+
+). Thus, we set τ2 = 1 and τ1 gradually increasing from 0 to 1 with probability flowing from p(N (0; I) | ugt  
+
+> T
+
+)to p(u0 | ugt  
+
+> T
+
+). Through this bidirectional sampling and training scheme, the model jointly learns both forward and reverse dynamics, enabling a consistent representation of the system’s evolution across directions. 
+
+4.3 Conservation Law Constraint 
+
+Conservation laws play an important role in physics by constraining the evolution of a system and ensuring the consistency of its dynamics. According to Noether’s theorem [76], every continuous symmetry of a physical system corresponds to a conserved quan-tity: translational symmetry leads to conservation of momentum, rotational symmetry to conservation of angular momentum, and time invariance to conservation of energy. These conservation laws not only simplify complex dynamics but also encode causal relationships between symmetry and physical invariants. Enforcing such constraints in data-driven models guides the learned dynamics to remain physically consistent. As a result, we propose an approach to constrain Bi-CFM to follow the conservation laws, which can be applied to any system in which the conserved quantities can be computed from the observed states. To infer an initial state u0 that satisfies the conservation law, we constrain p(u0)to lie on the conservation manifold , the data manifold constrained by the conservation law. This is achieved by imposing conservation constraints on both the prior distri-bution and the velocity field as illustrated in Fig. 1 b. We first constrain the prior distribution to lie within the conservation-constrained manifold, and then restrict the velocity field to remain tangent to this manifold. In doing so, the entire probability flow is constrained to evolve within the conservation manifold. Mathematically, suppose the system admits a conserved quantity H. For example, in an N -body planet-star system, the total energy is conserved and can be written as 
+
+H = −
+
+> N
+
+X
+
+> i=1
+
+GM m j
+
+2ai
+
+,
+
+19 where mi and ai denote the mass and semi-major axis of the i-th body, respectively, and M is the mass of the central star. For a trajectory ( u0, u1, . . . , uT ), the con-servation law requires that H(ut) remains constant for all t = 0 , . . . , T . Therefore, for a given target final state ugt  
+
+> T
+
+, our goal is to infer an initial state u0 such that 
+
+H(u0) = H(ugt  
+
+> T
+
+), ensuring that the inferred initial condition lies on the same conser-vation manifold as the target state. Since our objective is to ensure that the generated 
+
+u0 satisfies the conservation law, all the following operations are applied to the u0
+
+component within the bidirectional modeling framework. In the following descriptions, we also omit the notation denoting the condition ugt  
+
+> T
+
+for brevity. 
+
+Conservation-constrained prior distribution. To sample within the conser-vation manifold of u defined by H(u) = H(uT ), we perform random walks along the tangent space of the conservation manifold starting from uT , and finally apply the projection correction to mitigate numerical errors. Specifically, we initialize u = ugt 
+
+> T
+
+and iteratively update as follows: at each step, we sample a random vector r from the Gaussian distribution, project it onto the tangent space of the conservation manifold via r · P (u), and update the current state by u′ = u + r · P (u)∆ r, where ∆ r denotes the step size. The projection matrix P (u) associated with the conserved quantity H
+
+is defined as 
+
+P (u) = I − ∇H(u)∇H(u)⊤
+
+∥∇ H(u)∥2 . (2) We provide a proposition to guarantee that r · P (u) is in the tangent space of the conservation manifold, with its proof included in Supplementary Note D.                                
+
+> Proposition 1 Let H:Rn→Rbe continuously differentiable, and let the conservation manifold be defined as
+> M={u∈Rn:H(u) = H(ugt
+> T)},
+> with ∇H(u)̸=0. With Pdefined as Eq. 2, for any r∈Rn, the vector r·P(u)lies in the tangent space TuMof the manifold at u.
+
+Although the proposition guarantees that r · P (u) lies in the tangent space, we observe a tradeoff between accuracy and efficiency when updating with u′ = u + r∆r.If ∆ r is large, the update introduces a nonnegligible numerical error that pushes u
+
+away from the conservation manifold, and the deviation accumulates over iterations. If ∆ r is too small, the random walk remains confined to a small neighborhood around 
+
+uT , which limits the diversity of the prior distribution and the expressiveness of the algorithm. As a result, we mitigate this tradeoff by combining the projection correc-tion. The projection step is also iterative. At each iteration, the goal is to correct the current state u so that its conserved quantity H(u) moves closer to the target value 
+
+H(uT ). This correction is performed along the gradient direction of H, leading to the following update rule: 
+
+u′ = u − H(u) − H(uT )
+
+∥∇ H(u)∥2 ∇H(u).
+
+20 Each iteration reduces the deviation | H(u′) − H(uT ) | and gradually brings u back to the conservation manifold. In practice, a few iterations are typically sufficient to achieve a reduction in numerical error. 
+
+Conservation-constrained velocity field. To ensure that the learned flow remains within the conservation manifold, we further constrain the model-predicted velocity field to lie in the tangent space of the conservation manifold. Specifically, this is achieved by projecting the velocity field onto the tangent space. In both the training and sampling process, we multiply the velocity field with the projection matrix P (u)in Eq. 2. Theoretical justification for this operation is provided by Proposition 1, which guarantees that vθ · P (u) always resides within the tangent space of the conservation manifold. Additionally, during training, the loss Lconditional of CFM is defined on con-ditional velocities vt(u | z), so we can only enforce the constraint on these conditional velocities. We point out that the marginal velocity, as the expectation of conditional velocities, remains in the tangent space as well, since both the expectation operator and the tangent space are linear. 
+
+4.4 Evaluation Metrics 
+
+As described in Section 2.1, we evaluate the performance of different methods using distribution-level distances. Specifically, we employ two classic and widely used met-rics: the Wasserstein distance and the KL divergence. Additionally, for the globular cluster systems, we use χ2 statistics for SBPs and VDPs as evaluation metrics. 
+
+Wasserstein distance. Formally, for two probability distributions q1 and q2
+
+defined on a metric space with cost function d(·, ·), the Wasserstein distance (W-p
+
+distance) is defined as: 
+
+Wp(q1, q 2) = 
+
+
+
+inf  
+
+> γ∈Π( q1,q 2)
+
+E(x,y )∼γ [ 1
+
+p d(x, y )p]
+
+1/p 
+
+,
+
+where Π( q1, q 2) denotes the set of all joint distributions with marginals q1 and q2.In our implementation, we adopt the case of p = 2, corresponding to the squared Euclidean cost d(x, y ) = ∥x − y∥2. The Wasserstein distance measures the minimal cost of transporting one probability distribution to another, providing a meaningful metric that captures both the geometry and global structure of distributions. For numerical stability and efficiency, we compute the W-2 distance using an entropy-regularized approximation, namely the Sinkhorn divergence [77], with the package GeomLoss [78]. Sinkhorn divergence adds an entropic regularization term to the original optimal transport problem, making it convex and efficiently solvable via the Sinkhorn-Knopp algorithm [79]. In GeomLoss , the entropy regularization term is controlled by the parameter blur . In our experiments, we set blur = 0 .01, which provides a stable and differentiable estimation of the W-2 distance. 
+
+KL divergence. The KL divergence quantifies the relative entropy between two distributions, reflecting how much information is lost when q is used to approximate 
+
+p. It is defined as: 
+
+DKL (p ∥ q) = 
+
+Z
+
+p(x) log p(x)
+
+q(x) dx. (3) 21 Unlike the W-2 distance, it is asymmetric and does not satisfy the triangle inequality, but it provides a sensitive measure of local mismatches between distributions. We estimate the KL divergence between two empirical distributions using the 
+
+k-nearest-neighbor-based estimator [80]. This nonparametric method estimates local probability densities from the distances to the k nearest neighbors of each sample and computes divergence directly from these density ratios. In our implementation, we set 
+
+k = 5 and use 2500 samples for each distribution pair. To quantify uncertainty, we perform 100 bootstrap resamplings of the data and recompute the divergence esti-mates for each trial. This procedure yields a robust, sample-efficient estimate of KL divergence that is suitable for comparing high-dimensional dynamical distributions. 
+
+Normalization. For the distribution-level metrics over states at different time steps, to prevent any distribution at a single time step from dominating the overall distance, we normalize the distributions of different steps by subtracting the mean and dividing by the standard deviation. 
+
+χ2 statistics. In globular cluster systems, we use uncertainty-weighted χ2 statis-tics following previous works [66–68, 81, 82]. We estimate an effective uncertainty from the catalogue quality weights [83]. For the i-th SBP point, we define 
+
+δμ V,i = δμ V, 0
+
+wi
+
+, (4) where wi is the catalogue quality weight. The normalization is estimated from the residuals of the tabulated third-order Chebyshev fit, 
+
+δμ V, 0 =
+
+"
+
+1
+
+NSBP 
+
+X
+
+> i
+
+w2 
+
+> i
+
+ϵ2
+
+> μ,i
+
+#1/2
+
+, (5) where ϵμ,i is the residual of the observed SBP point relative to the Chebyshev fit, and 
+
+NSBP is the number of valid SBP observational radial points. Points with non-positive weights are excluded. The resulting inverse-variance weights are then normalized before constructing the interpolated observational profile. For the VDP data, we use the reported upper and lower observational uncertainties from the radial-velocity or proper-motion measurements in the Baumgardt compilation [84, 85]. Because the profile statistic uses a single symmetric weight per point, we define an effective uncertainty 
+
+δσ i = δσ i, + + δσ i, −
+
+2 . (6) This gives the inverse-uncertainty weight used in the observational profile construction. The discrepancies between a simulated profile and the corresponding observed profile are evaluated at the observed radii. The simulated profile is linearly interpolated to each observed radius, and we compute 
+
+χ2SBP = 1
+
+NSBP 
+
+X
+
+> i
+
+W SBP  
+
+> i
+
+[μV, sim (Ri) − μV, obs (Ri)] 2 , (7) 22 and 
+
+χ2VDP = 1
+
+NVDP 
+
+X
+
+> i
+
+ σsim (Ri) − σobs (Ri)
+
+δσ i
+
+2
+
+, (8) where W SBP  
+
+> i
+
+= ωiP  
+
+> jωj
+
+, denotes the normalized SBP weight. 
+
+4.5 Experiment Setups 
+
+Three classic chaotic systems. First, we consider the Lorenz system, a canonical three-dimensional chaotic system originally introduced as a simplified model of atmo-spheric convection [37]. We use the standard chaotic parameter setting, under which the system exhibits the well-known butterfly-shaped strange attractor and strong sen-sitivity to initial conditions. Second, we study a three-dimensional autonomous chaotic system that has been used in applications such as secure communication and encryp-tion [38]. This system can generate multi-lobe chaotic attractors by varying a single parameter. Finally, we consider the Lorenz 96 system, a high-dimensional chaotic sys-tem widely used as a benchmark for nonlinear dynamics and atmospheric modelling [39]. It captures complex interactions among multiple variables under periodic bound-ary conditions and is commonly used to study high-dimensional chaos. We adopt the forcing parameter F = 20 and set the dimension to N = 10. More details are provided in Supplementary Note A. 
+
+Three-body planetary systems. To sample a wide range of initial conditions, we set the mass of the planets ranging from Earth-size to a few Jupiter masses, and we set the initial semi-major axis of the innermost planet to be drawn log-uniformly between 0.02 and 0.4 AU. The semi-major axes of the other two planets were then assigned to allow efficient scattering. We initialize the planets on nearly circular and coplanar orbits, as expected from disk-planet interactions during the early stages of system formation. We use REBOUND to run the N-body scattering simulations [86], with general relativ-ity correction, using the gr-potential option in REBOUNDx [87]. In addition, we assume the bodies collide by conserving mass and momentum, as in the built-in REBOUND collision routine, and we eject (or remove) the planets when they reach the escape distance of 1000 AU. Further details of the system are presented in Supplementary Note A. 
+
+Real-world million-body globular cluster systems. 
+
+We compile observational SBPs, VDPs, and ages from standard Milky Way globular-cluster catalogues. Specifically, the observational data are collected from the observational compilation used in [66], the SBPs are taken from the catalogue of Trager et al. [83], which remains one of the standard large compilations for Milky Way glob-ular cluster structure studies. The VDPs are adopted from the 4th version of the GC database assembled by Holger Baumgardt 1 [84, 85, 88], which combines large samples of line of sight velocities and Gaia proper motions to provide kinematic profiles for a substantial fraction of the Milky Way globular cluster population. We further use age estimates from the literature, based on colour magnitude diagrams, eclipsing binaries, horizontal branch constraints, and HST photometry [89–95]. 
+
+> 1https://people.smp.uq.edu.au/HolgerBaumgardt/globular/veldis.html
+
+23 As for the corresponding simulation data for training, we collect simulation data from the previous study [65] and further generate additional data using the same solver, as shown in Fig. 6 b. In detail, we perform a suite of star-cluster simulations using Cluster Monte Carlo (CMC) code 2, a state-of-the-art code for simulating col-lisional star-cluster dynamics [64, 96]. CMC follows the H´ enon-type Monte Carlo approach, in which two-body relaxation is modeled statistically by representing the cumulative effect of many weak gravitational encounters over a timestep as an effective encounter between neighboring particles [96, 97]. To reduce the effect of poorly constrained radial regions, we construct three vari-ants of the training data by evaluating each profile over different radial intervals. Specifically, for each profile, we extract its values on the original full radial grid, on a subset covering approximately one half of the radial range, and on a subset covering approximately one quarter of the radial range. As for the physical parameters of simulations, our choices are based on the compar-ison between the CMC Cluster Catalog [65] and observations by Rui et al. [66], who fit 59 Milky Way GCs using observed SBPs and VDPs and show that a substantial subset of the catalog models can reproduce present-day Galactic GCs. We therefore choose parameter ranges that broadly cover the cluster-scale properties of most Milky Way GCs, while keeping the simulation suite computationally feasible. Specifically, we fix the initial number of particles to N = 4 × 10 5 and vary three cluster-scale parame-ters: the initial virial radius rv, the Galactocentric radius Rg, and the metallicity. All other initial conditions follow Kremer et al. [65]. Each model is evolved to 13.8 Gyr unless the cluster disrupts. 
+
+4.6 Baseline Methods 
+
+In Section 2.1 and 2.2, we consider three main baselines. The first is the Backward Integration with the traditional numerical algorithm mentioned in Section 1. For deter-ministic, non-chaotic systems, it can infer the initial state with low numerical errors when the time step is sufficiently small. In practice, we observe that the performance first increases and then decreases as the number of time steps grows. When the num-ber of steps is small, the model struggles to converge accurately. When it becomes too large, error accumulation dominates. In our experiments, we select the time step size that yields the best performance, and the detailed results are provided in Supple-mentary Note B. Additionally, we note that this baseline requires explicit knowledge of the governing equations, which is not needed by Bi-CFM. The second is Backbone ,the base neural architecture of the CFM algorithm. The input of it is the target final states, while the output is the inferred initial states. The third baseline is selecting initial states from the ground truth dataset randomly, which we refer to as Random 
+
+hereafter. The distribution of initial states u0 obtained from this baseline and the distribution of the corresponding g(u0, T ) is the same as the ground truth p(ugt 0 )and p(ugt  
+
+> T
+
+), respectively. However, it fails to capture the causal relationships between states at different time points. We report more details of baseline implementation in Supplementary Note B. 
+
+> 2https://clustermontecarlo.github.io/CMC-COSMIC/index.html
+
+24 In Section 2.3, we consider the state-of-the-art Monte Carlo approach as a base-line [66]. The method infers the initial conditions of an observed cluster by searching over a set of forward-evolved cluster models. Each candidate is initialized with a pre-scribed set of physical parameters and evolved to old ages using cluster simulations. Its projected SBPs and VDPs are then computed and compared with the corresponding observational profiles. The candidate whose final snapshot yields the smallest pro-file discrepancy is taken as the best-matching evolutionary analogue, and its initial parameters are adopted as the inferred initial conditions of the observed cluster. 
+
+# 5 Acknowledgements 
+
+We gratefully acknowledge the support of Westlake University Research Center for Industries of the Future; Westlake University Center for High-performance Comput-ing. The content is solely the responsibility of the authors and does not necessarily represent the official views of the funding entities. 
+
+# Appendix A Detailed Settings of Systems in Experiments 
+
+We herein introduce the detailed settings of the systems on which we conduct experiments. 
+
+A.1 Lorenz System 
+
+The Lorenz system is a classic example of chaotic dynamical systems, originally studied as a simplified model for atmospheric convection [37]. It consists of a system of three coupled, nonlinear ordinary differential equations (ODEs): 
+
+
+
+˙x = σ(y − x),
+
+˙y = x(ρ − z) − y, 
+
+˙z = xy − βz, 
+
+where x(t), y (t), z (t) are the state variables, and σ, ρ, and β are system parameters controlling the rate of diffusion, buoyancy, and dissipation, respectively. A commonly studied setting is σ = 10, ρ = 28, and β = 8 /3. Under these parameters, the system exhibits the well-known butterfly-shaped strange attractor, characterized by sensitive dependence on initial conditions and a positive largest Lyapunov exponent. During data generation in this experiment, we generate 50000 trajectories in total. Among them, 45000 trajectories are used for training and 5000 for testing. We sam-ple initial conditions from the uniform distribution on [ −1, 1] × [0 , 2] × [−1, 1], i.e. ,
+
+U([ −1, 1] × [0 , 2] × [−1, 1]). We take the Runge–Kutta method (RK45) [98] with ∆t = 10 −5 to solve the equation numerically with the package scipy [99]. The visual-ization of the trajectory’s ( x, y ) value is provided in Fig. A1, which shows the classical two-lobe attractor. 25 20 15 10 5 0 5 10 15 
+
+> x
+> 30
+> 20
+> 10
+> 0
+> 10
+> 20
+> y
+> Lorenz
+
+Fig. A1 : Visualization of one trajectory in the Lorenz system dataset. 
+
+A.2 Circuit System 
+
+The next system we consider is a three-dimensional autonomous chaotic system, which has implications for practical applications such as communication, encryption tech-nologies, and secure information transmission [38]. By varying a single parameter, this system can generate two-lobe, three-lobe, and four-lobe chaotic attractors. The system is described as follows. 
+
+˙x = y − ax + byz, 
+
+˙y = cy − xz + z, 
+
+˙z = dxy − hz, 
+
+where x(t), y (t), z (t) are the state variables, and a, b, c, d, h are positive constant parameters. Here, we choose a = 3 , b = 2 .7, c = 1 .7, d = 2, and h = 9. In this experiment, we use 90000 trajectories for training and 10000 trajectories for evaluation. The initial states of the trajectories are sampled from the Gaussian distribution N ((1 , −3, 1); I). We adopt an explicit Runge-Kutta method of order 8 DOP853 [100] as the numerical solver, whose implementation is from scipy and time step size ∆ t = 10 −5. Fig. A2 is the ( x, y ) visualization of this system, demonstrating the three-lobe structure of the attractor. 
+
+A.3 Lorenz96 System 
+
+Finally, we consider the high-dimensional Lorenz 96 system, widely studied in non-linear dynamics and originally proposed to represent the atmospheric convection in large-scale weather models [39]. The Lorenz 96 system is particularly useful for studying chaos in large systems and is often used as a benchmark in studies of high-dimensional chaos, where interactions between multiple variables lead to complex, unpredictable dynamics. The system is governed by the following equations. ˙ui = ( ui+1 − ui−2)ui−1 − ui + F, i = 1 , 2, . . . , N, 
+
+26 10 5 0 5 10 
+
+> x
+> 8
+> 6
+> 4
+> 2
+> 0
+> 2
+> 4
+> y
+> Circuit
+
+Fig. A2 : Visualization of one trajectory in the circuit system dataset. 15 10 5 0 5 10 15 20 
+
+> x
+> 15
+> 10
+> 5
+> 0
+> 5
+> 10
+> 15
+> 20
+> 25
+> y
+> Lorenz 96
+
+Fig. A3 : Visualization of one trajectory in the dataset of the Lorenz96 system. 
+
+where ui represents the state at the i-th variable, and N is the number of variables in the system. The parameter F is a forcing term that controls the level of external forcing or input, and the system is typically considered in a periodic boundary condition, i.e. ,
+
+u0 = uN and uN +1 = u1. In our experiments, we adopt F = 20 and N = 10, which means the system is 10-dimensional. In this 10-dimensional system, we generate 50000 trajectories in total. The training set contains 45000 data, and the test set contains 5000. The distribution of the initial states follows the uniform distribution U([ −2, 2] 10 ). As for the numerical solver, we take DOP853, the explicit Runge-Kutta method of order 8. In implementation, we use scipy and the time step size ∆ t = 10 −5. The ( u1, u 2) trajectory of this system is plotted in Fig. A3. 27 A.4 Planetary System 
+
+In this experiment, we generate 49999 trajectories of the 3-body star–planet system consisting of one central star and three planets, considering the scattering events and collisions. We take 45000 trajectories for training and the remaining 4999 as the test set. All quantities are expressed in astronomically convenient units: stellar mass in solar masses (M ⊙), planet mass in solar masses, distances in astronomical units (AU), and angles in radians unless otherwise noted. The initial states of this system are as follows. 
+
+Central star. The stellar mass and radius are fixed as M⋆ = 1 .0 M ⊙, R⋆ =0.00465 AU .
+
+Planet masses and radii. Let M Jup = 10 −3 M⊙ denote one Jupiter mass. We first draw the mass of the innermost planet m1 from a log-uniform prior, m1 ∼
+
+LogUniform  10 −3, 3 × MJup , and set the next two planet masses within ±10% of m1:
+
+m2 = m1 u2, m 3 = m1 u3, where u2, u 3 ∼ U (0 .9, 1.1) . Planetary radii are assigned using a three-regime broken power law following M¨ uller et al. [101], derived from the PlanetS catalog, which includes only planets with reliably measured masses and radii: 
+
+R(m) = 
+
+
+
+1.02 
+
+ m
+
+0.003 M Jup 
+
+0.27 
+
+, m < 4.37 × 0.003 M Jup ,
+
+0.56 
+
+ m
+
+0.003 M Jup 
+
+0.67 
+
+, 4.37 × 0.003 M Jup ≤ m < 127 × 0.003 M Jup ,
+
+18 .6
+
+ m
+
+0.003 M Jup 
+
+−0.06 
+
+, m ≥ 127 × 0.003 M Jup ,
+
+where R is in units of Earth radius. Applying R(m) to (m1, m 2, m 3) yields (R1, R 2, R 3). 
+
+Semi-major axes. The innermost semi-major axis is drawn log-uniformly, a1 ∼
+
+LogUniform(0 .02 , 0.40) AU . The outer planets are initialized by enforcing a fixed spacing of K mutual Hill radii between adjacent orbits. We adopt K = 4 to pro-mote efficient dynamical scattering; the resulting orbital distribution remains largely insensitive to the precise spacing, provided that instability and scattering occur [19]. Specifically, let ak and ak+1 be adjacent semi-major axes with planet masses mk
+
+and mk+1 Their mutual Hill radius is RH,mut =
+
+ mk +mk+1 
+
+> 3M⋆
+
+1/3 ak +ak+1  
+
+> 2
+
+. We choose 
+
+ak+1 > a k such that ak+1 − ak = K R H,mut , K = 4 , which implicitly defines a2 from (a1, m 1, m 2) and a3 from ( a2, m 2, m 3). 
+
+Orbital elements. Eccentricities, mean anomalies, arguments of pericenter, inclinations, and longitudes of ascending node are sampled independently as 
+
+ej ∼ U (0 .01 , 0.05) , Mj ∼ U (0 , 2π), ωj ∼ U (0 , 2π),ij ∼ U (0 ◦, 3◦), Ωj ∼ U (0 , 2π), j = 1 , 2, 3.
+
+As for the numerical solver, we use TRACE [21], a hybrid reversible integrator for planetary dynamics with arbitrary close encounters, in the N-body package REBOUND [86]. The collision is performed with 28 sim.collision = ‘direct’; sim.collision_resolve = ‘merge’ in REBOUND . If a planet’s distance from the star exceeds 1000 AU, then it will be considered ejected and removed from the simulation. With the gr-potential option in REBOUNDx , we also include the effects of apsidal precession due to general relativity [87]. 
+
+A.5 Real-world Globular Cluster System 
+
+Astrophysical background. Globular clusters (GCs) are massive, dense, self-gravitating stellar systems that typically contain about 10 4–10 6 stars together with a population of stellar remnants [54, 55]. They are among the oldest stellar systems surviving in the present-day Universe, with typical ages of order ∼ 10 Gyr or older [56]. Because their ages, metallicities, orbits, and dynamical properties retain informa-tion about early star formation and accretion events, Galactic GCs are thought to be closely linked to the early assembly history of the Milky Way, including both in-situ formation and accretion through early galaxy mergers [57]. GCs also provide unique laboratories for studying stellar dynamics in dense envi-ronments [102]. Their high stellar densities make close encounters, binary interactions, mergers, and physical collisions dynamically important over long timescales. These processes can form or transform exotic stellar populations, including blue straggler stars [103], low-mass X-ray binaries [104], millisecond pulsars [105], and possibly intermediate-mass black holes [106, 107]. These properties make GCs an important astrophysical system for studying the coupled effects of long-term relaxation, stellar evolution, binary dynamics, and external tidal fields. 
+
+Existing approaches and computational challenges. A central goal in GC studies is to infer the initial conditions and evolutionary histories that could have pro-duced the present-day cluster population. This inverse problem has been approached for decades through models of GC mass-function evolution, direct and Monte Carlo dynamical simulations, and formation models linking present-day GC systems to high-redshift star formation and galaxy assembly [59, 61, 108–111]. However, a Hubble time of stellar evolution, two-body relaxation, mass segregation, binary interactions, tidal stripping, and possible core collapse can erase or strongly reshape memory of the birth state, making the mapping from initial cluster parameters to present-day observables highly degenerate [58–61]. Forward modelling GC evolution is itself a major challenge in theoretical astro-physics. GCs are collisional gravothermal systems, for which the cumulative effects of distant gravitational encounters must be modelled over many relaxation times [112]. Direct N -body simulations of realistic GCs are computationally demanding, with the computational cost increasing steeply with particle number, approximately as N 7/3
+
+per dynamical time [113, 114]. Monte Carlo methods therefore provide a practical alternative by statistically modelling the cumulative effects of two-body relaxation and reproducing the bulk evolution of direct N -body models with greatly reduced com-putational cost [62–64]. Nevertheless, realistic Monte Carlo models can still require hundreds to thousands of CPU hours for Hubble-time integrations and scale rapidly with particle number and added physical ingredients [65, 115]. These costs make brute-force inverse inference over large initial-condition spaces prohibitive and motivate a distributional, simulation-trained approach such as Bi-CFM. 29 Simulation details. We simulated 124 initial conditions and augmented the resulting sample with 33 publicly available trajectories from previous studies. For each trajectory, we retained snapshots at ages of at least 9 Gyr to construct the dataset. As for the sampling of physical parameters, the initial virial radius rv is sampled log-uniformly over 0 .5–4 .0 pc. The Galactocentric radius Rg is sampled uniformly over 2.0–25 .0 kpc. And the metallicity is sampled uniformly over −2.0 ≤ [M /H] ≤ 0.0. All other initial conditions follow Kremer et al. [65]: clusters are initialized as King mod-els with W0 = 5, a Kroupa initial mass function, and an initial binary fraction of 
+
+fb = 5%. Binary secondary masses are drawn from a flat mass-ratio distribution over 0.1 ≤ q ≤ 1, orbital periods are drawn from a log-flat distribution, and eccentricities follow a thermal distribution. 
+
+# Appendix B Details of Model Implementations 
+
+In this section, we introduce the details of model implementations, including compu-tational resources and implementations of our method and baselines. 
+
+B.1 Computational Resources 
+
+All GPU experiments are conducted on a single NVIDIA A6000 card. The server is equipped with two Intel third-generation Ice Lake processors, each running at a base frequency of at least 2.6 GHz and a thermal design power (TDP) of no less than 250 W, providing a total of 128 CPU cores. 
+
+B.2 Bi-CFM and CBi-CFM 
+
+Details of the conditional CFM and the implementation of bidirectional training. To begin with, we introduce the CFM for generating the conditional prob-ability p(x | c). We note that, in this conditional generation p(x|c), c represents an external condition provided by the user ( e.g. , a label or context), whereas in the orig-inal CFM as stated in Section 4.1, the condition z = ( x0, x1) is the endpoints of the flow path used to compute the conditional vector field instead of the marginal vector field. Following the formulation of CFM introduced in Section 4.1, we can extend all intermediate quantities, namely pτ (x), pτ (x | z), vτ (x), vτ (x | z), and vθ (τ, x), to be conditioned on c. As a result, these quantities become pτ (x | c), pτ (x | z, c), vτ (x | c), 
+
+vτ (x | z, c), and vθ (τ, x, c), while the derivation still holds. This conditioning allows the model to approximate the target distribution p(x | c), so the corresponding loss function is 
+
+Lp(x|c) = Eτ ∼p(τ ),(xτ ,z,c)∼pτ (xτ |z,c)p(z)p(c)
+
+∥vθ (τ, xτ , c) − vτ (xτ |z, c)∥22
+
+ . (B1) Next, we describe how to jointly learn p(ugt 0 | ugt  
+
+> T
+
+) and p(ugt  
+
+> T
+
+| ugt 0 ) in detail. For a batch of paired data {(ugt 
+
+> k, 0
+
+, ugt  
+
+> k,T
+
+)}Kk=1 , where k is the index of data, we randomly select k0 samples to train p(ugt  
+
+> T
+
+| ugt 0 ) and use the remaining K − k0 samples to train 
+
+p(ugt 0 | ugt  
+
+> T
+
+). Specifically, we treat each pair ( ugt 0 , ugt  
+
+> T
+
+) as a single sample, so that both x
+
+and vτ belong to R2n in this formulation. For each sample, we assign the corresponding 30 Table B1 : Hyperparameters of Bi-CFM and CBi-CFM.                         
+
+> Phase Hyperparameter Lorenz, Circuit, Lorenz96 Planetary Training
+> η(t)10 −510 −5
+> Batch Size 1024 1024 Learning Rate 10 −410 −4
+> Number of Updates 600000 600000 Gradient Clip -1Prior Distribution of CBi-CFM Number of Random Walks -6Step Size ∆ r-0.002 Number of Projection Steps -5Sampling Number of Sampling Steps 100 100 Solver Dormand–Prince Dormand–Prince
+
+time pair ( τ1, τ 2) to it, where ( τ1, τ 2) represents the temporal variables associated with each sample. For the first k0 samples, we interpolate ugt  
+
+> T
+
+along the probability path ˜uT = α(τ2)x0 + β(τ2)ugt  
+
+> T
+
++ η(τ2)ϵ, where τ2 is sampled from p(τ ) and τ1 = 1, indicating that ugt 0 serves as a clean conditioning variable. For the remaining K − k0
+
+samples, we apply a symmetric procedure to learn the reverse conditional distribution 
+
+p(ugt 0 | ugt  
+
+> T
+
+). In this case, we interpolate ugt 0 along the path α(τ1)x0 +β(τ1)ugt 0 +η(τ1)ϵ
+
+, where τ1 is sampled from p(t) and τ2 = 1, representing that uT now acts as the clean conditioning variable. 
+
+Hyperparameters. We normalize the data by subtracting the mean value and dividing by the standard deviation of different features. As for the model architec-ture, we adopt the Multilayer Perception (MLP) as the base model. The time of CFM is repeated and concatenated to other inputs as a channel. We set the MLP to have 6 layers with 1024 nodes. The activation function is the Scaled Exponential Linear Unit (SELU), which induces self-normalizing properties [116]. The hyperparameters are presented in Table B1. During training, we take η(t) = 10 −5, batch size = 1024, learning rate 10 −4, and 600000 updates. As for the prior distribution, on the planetary system, we take 6 random walks with step size = 0 .002 and 5 projection steps. During sampling, we set the number of sampling steps to 100 and use the Dormand–Prince (RKDP) method [75] in Torchdyn [117]. In addition, in the planetary system experi-ment, in order to make the optimization stable, we clip the gradient of optimization to 1. Additionally, we post-process the output of sampling by clipping its upper bound to the maximum value of the training dataset, allowing us to filter out outliers. 
+
+B.3 Baselines 
+
+Below, we report the details of the baseline implementation. 
+
+Backward Integration. We take the same traditional solver as the one used for data generation in each system. And we set the time step size to be 10 −5, which corresponds to the best performance. In addition, in order to accelerate this inference time, we use the multiprocessing package to fully leverage multiple processors. 31 Backward Integration Backbone Random Bi-CFM 2.0 2.2 2.4 2.6 2.8 3.0      
+
+> Number of Periods
+> 10 −1
+> 10 2
+> 10 5
+> 10 8
+> 10 11
+> 10 14
+> 10 17
+> Normalized W-2 Distance
+> Initial & GT Final State (W-2) 2.0 2.2 2.4 2.6 2.8 3.0
+> Number of Periods
+> 10 0
+> 10 3
+> 10 6
+> 10 9
+> 10 12
+> 10 15
+> Normalized W-2 Distance
+> Trajectory
+
+Fig. B4 : Evaluation metrics versus horizon length on the Lorenz system. Backward Integration Backbone Random Bi-CFM 1.0 1.1 1.2 1.3 1.4 1.5      
+
+> Number of Periods
+> 10 0
+> 10 2
+> 10 4
+> 10 6
+> 10 8
+> 10 10
+> Normalized W-2 Distance
+> Initial & GT Final State (W-2) 1.0 1.1 1.2 1.3 1.4 1.5
+> Number of Periods
+> 10 1
+> 10 3
+> 10 5
+> 10 7
+> 10 9
+> Normalized W-2 Distance
+> Trajectory
+
+Fig. B5 : Evaluation metrics versus horizon length on the circuit system. 
+
+Backbone. We normalize the data in the same way as Bi-CFM. And we utilize the same model architecture as the base model of Bi-CFM and CBi-CFM for fair comparison. The number of nodes and layers is also the same. During training, the batch size is 2048, the learning rate is 10 −4, and the number of updates is 10000. 
+
+Random. We perform Random by randomly changing the order of states at dif-ferent time steps, so that the correspondence is changed, while the distributions at each time step remains the same as the ground truth. 
+
+# Appendix C Other Visualizations 
+
+Evaluation metrics of three chaotic systems. Owing to space limitations in the main text, in Fig. B4, B5, and B6, we report the other evaluation metrics for the three chaotic systems, including the W-2 distance between paired initial and target final states and the Wasserstein-2 distance between trajectories. As illustrated in the figures, across different systems and evaluation metrics, Bi-CFM consistently achieves the lowest error. Moreover, its error increases only gradually over time, whereas that of Backward Integration grows exponentially. 32 Backward Integration Backbone Random Bi-CFM 3 4 5 6 7    
+
+> Number of Periods
+> 10 2
+> 10 4
+> 10 6
+> 10 8
+> 10 10
+> Normalized W-2 Distance
+> Initial & GT Final State (W-2) 34567
+> Number of Periods
+> 10 3
+> 10 5
+> 10 7
+> 10 9
+> Normalized W-2 Distance
+> Trajectory
+
+Fig. B6 : Evaluation metrics versus horizon length on the Lorenz 96 system. 1 0 1         
+
+> x
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> y
+> Ground Truth
+> 101
+> x
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> y
+> Bi-CFM
+> 101
+> x
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> y
+> Backbone
+> 42024
+> x1e8
+> 2
+> 0
+> 2
+> y
+> 1e8
+> Backward Integration
+
+Initial State 10 0 10         
+
+> x
+> 10
+> 5
+> 0
+> 5
+> 10
+> y
+> Ground Truth
+> 10 010
+> x
+> 10
+> 5
+> 0
+> 5
+> 10
+> y
+> Bi-CFM
+> 10 50510
+> x
+> 10
+> 5
+> 0
+> 5
+> 10
+> y
+> Backbone
+> 10 010
+> x
+> 15
+> 10
+> 5
+> 0
+> 5
+> 10
+> y
+> Backward Integration
+
+Final State 
+
+Fig. B7 : Visualization of ( x, y )-value distributions of the Lorenz system. 
+
+Visualizations of the (x, y )-value of the inferred initial and evolved final states. To provide complementary perspectives on the distributions of initial and final states obtained by different methods, we present the distributions in the ( x, y ) plane for the Lorenz and Circuit systems in Fig. B7 and B8, respectively. From these two figures, we both observe that Bi-CFM closely matches the distribution of the ground truth on both systems, while the other two mismatch the ground truth. Especially, the range of Backward Integration’s value is larger than the ground truth. And the initial distributions of Backbone on both systems are close to a combination of line segments. 
+
+Trajectories of (u0, u 1, u 2)-value of the Lorenz 96 system. Because of space limitations in the main text, we provide the trajectory visualizations for the Lorenz 96 system in Fig. B9. Since Lorenz 96 is high-dimensional, we visualize only its first three dimensions. At T = 0, only Bi-CFM produces a state distribution consistent with the ground truth, whereas at later times the results of different methods become 33 4 2 0 2 4 6
+
+x
+
+> 6
+> 4
+> 2
+> 0
+> y
+
+Ground Truth     
+
+> 2.5 0.0 2.5 5.0 7.5
+
+x
+
+> 8
+> 6
+> 4
+> 2
+> 0
+> y
+
+Bi-CFM    
+
+> 2024
+
+x
+
+> 5
+> 4
+> 3
+> 2
+> 1
+> y
+
+Backbone     
+
+> 1.5 1.0 0.5 0.0 0.5
+
+x 1e6 
+
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> y
+
+1e6 
+
+Backward Integration 
+
+Initial State 10 0 10 
+
+x
+
+> 15
+> 10
+> 5
+> 0
+> 5
+> 10
+> y
+
+Ground Truth    
+
+> 10 010 20
+
+x
+
+> 15
+> 10
+> 5
+> 0
+> 5
+> 10
+> y
+
+Bi-CFM     
+
+> 10 50510
+
+x
+
+> 10
+> 5
+> 0
+> 5
+> 10
+> y
+
+Backbone     
+
+> 10 50510
+
+x
+
+> 10
+> 5
+> 0
+> 5
+> y
+
+Backward Integration 
+
+Final State Fig. B8 : Visualization of ( x, y )-value distributions of the Circuit system. 2 0 2                                                    
+
+> x2
+> 0
+> 2
+> 4
+> y
+> 2
+> 0
+> 2
+> 4
+> z
+> T=0.00
+> 202
+> x2
+> 0
+> 2
+> 4
+> y
+> 2
+> 0
+> 2
+> 4
+> z
+> 202
+> x2
+> 0
+> 2
+> 4
+> y
+> 2
+> 0
+> 2
+> 4
+> z
+> 5000 05000 x5000
+> 0
+> 5000
+> y
+> 5000
+> 0
+> 5000
+> 10000
+> z
+> 020
+> x
+> 0
+> 20
+> y
+> 20
+> 0
+> 20
+> z
+> T=0.67
+> 020
+> x
+> 0
+> 20
+> y
+> 20
+> 0
+> 20
+> z
+> 020
+> x
+> 0
+> 20
+> y
+> 20
+> 0
+> 20
+> z
+> 100 0100
+> x100
+> 0
+> 100
+> y
+> 200
+> 100
+> 0
+> 100
+> z
+> 20 020
+> x
+> 0
+> 20
+> y
+> 20
+> 0
+> 20
+> z
+> T=1.33
+> 20 020
+> x
+> 0
+> 20
+> y
+> 20
+> 0
+> 20
+> z
+> 20 020
+> x
+> 0
+> 20
+> y
+> 20
+> 0
+> 20
+> z
+> 20 020
+> x20
+> 0
+> 20
+> y
+> 20
+> 0
+> 20 z
+> 0
+> 20
+> x
+> 0
+> 20
+> y
+> 20
+> 0
+> 20
+> z
+> T=2.00
+> 0
+> 20
+> x
+> 0
+> 20
+> y
+> 20
+> 0
+> 20
+> z
+> 0
+> 20
+> x
+> 0
+> 20
+> y
+> 20
+> 0
+> 20
+> z
+> 20 020
+> x20
+> 0
+> 20
+> y
+> 20
+> 0
+> 20 z
+> 020
+> x20
+> 0
+> 20
+> y
+> 0
+> 20
+> z
+> T=2.67
+> 020
+> x20
+> 0
+> 20
+> y
+> 0
+> 20
+> z
+> 020
+> x20
+> 0
+> 20
+> y
+> 0
+> 20
+> z
+> 20 020
+> x20
+> 0
+> 20
+> y
+> 20
+> 0
+> 20 z
+> 20 020
+> x20
+> 0
+> 20
+> y
+> 0
+> 20
+> z
+> T=3.33
+> 20 020
+> x20
+> 0
+> 20
+> y
+> 0
+> 20
+> z
+> 20 020
+> x20
+> 0
+> 20
+> y
+> 0
+> 20
+> z
+> 20 020
+> x20
+> 0
+> 20
+> y
+> 20
+> 0
+> 20
+> z
+> Ground Truth Bi-CFM Backbone
+> Backward
+> Integration
+
+Fig. B9 : Trajectories of (u0, u 1, u 2)-value of the Lorenz 96 system. 
+
+visually similar. This may be because the high dimensionality and chaoticity of the system make it difficult to distinguish different methods using such low-dimensional visualizations alone. 
+
+Results of inferring the corresponding interval with Backbone and Bi-CFM on the planetary system. In addition to the CBi-CFM results presented in the main text, we also examine whether Bi-CFM and Backbone can correctly infer which interval of the initial semi-major axis a0 corresponds to a given final state. From visualizations of the inferred a0 in Fig. B10, we can observe that both Bi-CFM and Backbone can distinguish the interval of agt 0 according to the final states. However, 34 0.00 0.05 0.10 0.15 0.20  
+
+> Semi-major Axis a0
+> 0
+> 100
+> 200
+> 300
+> 400
+> Count
+
+a0 < 0.05      
+
+> Ground Truth
+> Bi-CFM
+> 0.0 0.1 0.2 0.3 0.4
+> Semi-major Axis a0
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> 120
+> 140
+> Count
+
+0.1 < a0 < 0.2       
+
+> Ground Truth
+> Bi-CFM
+> 0.0 0.1 0.2 0.3 0.4 0.5
+> Semi-major Axis a0
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> 120
+> Count
+
+a0 > 0.25      
+
+> Ground Truth
+> Bi-CFM 0.00 0.05 0.10 0.15 0.20
+> Semi-major Axis a0
+> 0
+> 100
+> 200
+> 300
+> 400
+> Count
+
+a0 < 0.05      
+
+> Ground Truth
+> Backbone
+> 0.0 0.1 0.2 0.3 0.4
+> Semi-major Axis a0
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> 120
+> 140
+> 160
+> Count
+
+0.1 < a0 < 0.2       
+
+> Ground Truth
+> Backbone
+> 0.0 0.1 0.2 0.3 0.4 0.5
+> Semi-major Axis a0
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> 120
+> Count
+
+a0 > 0.25 
+
+> Ground Truth
+> Backbone
+
+Fig. B10 : Distributions of inferred initial semi-major axis by Bi-CFM and Backbone, according to trajectories with small, middle, and large ground truth initial semi-major axis. 10 1 10 5 10 9 10 13 10 17 
+
+Initial & GT Final State 
+
+Normalized W-2 Distance 
+
+Bi-CFM 
+
+Backbone 
+
+Backward 
+
+Integration 
+
+Random 
+
+0.0236 
+
+0.26 
+
+1.1 × 10 17 
+
+0.15 
+
+10 2 10 6 10 10 10 14 
+
+Trajectory Normalized W-2 Distance 
+
+0.0433 
+
+0.311 
+
+1.1 × 10 17 
+
+3.6 
+
+Fig. B11 : W-2 distance of initial-final state pairs and trajectories on the Lorenz system with noise. 
+
+as shown, the Backbone infers more a0 values outside the corresponding interval, leading to a broader distribution compared with the ground truth. In contrast, the distributions obtained by Bi-CFM fit better with the ground truth, indicating that Bi-CFM learns the causal relationship more effectively than the base model Backbone. 
+
+Results of robustness analysis. After adding Gaussian noise with a scale of 0.1 to the target final states, we re-evaluate all metrics. In the main text, we report the results for three metrics, while the remaining two are provided in Fig. B11. Bi-CFM still maintains the lowest error level, whereas Backward Integration performs the worst. 
+
+# Appendix D Proof of Proposition 1 
+
+Below, we provide the proof of Proposition 1 in the Method section (Section 4). 35 Proposition 2 Let H : Rn → R be continuously differentiable, and let the conservation manifold be defined as 
+
+M = {u ∈ Rn : H(u) = H(ugt  
+
+> T
+
+)},
+
+with ∇H(u)̸ = 0. With P defined as 
+
+P (u) = I − ∇H(u) ∇H(u)⊤
+
+∥∇ H(u)∥2 ,
+
+for any r ∈ Rn, the vector r · P (u) lies in the tangent space TuM of the manifold at u.Proof For the manifold M, the tangent space at u ∈ M is 
+
+TuM = {v ∈ Rn : v∇H(u) = 0 }.
+
+Let v = rP (u) for an arbitrary r ∈ Rn. Using the definition of P (u), we have 
+
+v∇H(u) = rP (u)∇H(u)= r
+
+
+
+∇H(u) − ∇H(u)∇H(u)⊤∇H(u)
+
+∥∇ H(u)∥2
+
+
+
+=  ∇H(u) − ∇ H(u)r
+
+= 0.
+
+Hence v ∈ TuM, which proves that P (u) r lies in the tangent plane of the conservation manifold at u. □
+
+# Appendix E Analyze Chaoticity with the Lyapunov Spectrum 
+
+In this section, we introduce the Lyapunov spectrum analysis, which is a tool for analyzing the chaoticity. With it, we further discuss the chaotic behaviors of forward and reverse dynamics. 
+
+E.1 Asymmetric Chaoticity of Forward and Reverse Dynamics 
+
+Herein, we analyze the asymmetric chaotic behaviors of forward and reverse dynam-ics with Lyapunov Spectrum Analysis. For a dynamical system with the governing equation ˙u = f (u), u ∈ Rn,
+
+the Lyapunov spectrum {λ1, λ 2, . . . , λ n} (λ1 ≥ λ2 ≥ · · · ≥ λn) provides a measure of the system’s stability and degree of chaos by quantifying the exponential rates at which nearby trajectories diverge or converge in different directions of the tangent space. Below, we discuss the Lyapunov spectrum of the forward and reverse dynamics theoretically to demonstrate that the degrees of the two dynamics’ chaos are asym-metric and the reverse dynamics can be more chaotic than the forward dynamics. The Lyapunov spectrum is defined from the solution Φ( t) of the variational equation ˙Φ( t) = J(u(t))Φ( t), Φ(0) = I, (E2) 36 where J(x) = Df (x) is the Jacobian matrix of the system and I is the identity matrix. Φ( t) characterizes the evolution of perturbations through 
+
+δ ˙u(t) = Φ( t) δu(t),
+
+and the magnitude of δu(t) consequently grows as exp(Φ( t)). Then, the Lyapunov matrix Λ is defined as Λ = lim 
+
+> t→∞
+
+12t log Φ( t)Φ T (t) ,
+
+and the Lyapunov exponents λi (i = 1 , · · · , n ) are given by the eigenvalues of Λ [118, 119]. The maximal Lyapunov exponent λ1 quantifies the exponential rate of diver-gence along the most unstable direction, thus it characterizes the dominant mode of sensitivity to initial conditions, which is the hallmark of chaos. A system is there-fore considered chaotic if its largest Lyapunov exponent is positive, indicating that infinitesimal perturbations grow exponentially in at least one direction, leading to unpredictable long-term behavior. Now consider the time-reversed dynamics governed by ˙u = −f (u), u ∈ Rn.
+
+Then the variational equation is given by ˙Ψ( t) = −J(u(t))Ψ( t), Ψ(0) = I. (E3) Denote the new Lyapunov matrix as Σ = lim 
+
+> t→∞
+
+12t log Ψ( t)Ψ T (t) ,
+
+and the corresponding Lyapunov exponents as σ1 ≥ σ2 ≥ · · · ≥ σn.We can then compare Φ( t) and Ψ( t). Specifically, according to the Dyson series, the solutions of Eq. E2 and Eq. E3 are given by Φ( t) = I +
+
+Z t
+
+> 0
+
+J(t1)dt 1 +
+
+Z t
+
+> 0
+
+dt 1
+
+Z t1
+
+> 0
+
+dt 2J(t1)J(t2)+
+
+Z t
+
+> 0
+
+dt 1
+
+Z t1
+
+> 0
+
+dt 2
+
+Z t2
+
+> 0
+
+dt 3J(t1)J(t2)J(t3) + · · · ,
+
+Ψ( t) = I −
+
+Z t
+
+> 0
+
+J(t1)dt 1 +
+
+Z t
+
+> 0
+
+dt 1
+
+Z t1
+
+> 0
+
+dt 2J(t1)J(t2)
+
+−
+
+Z t
+
+> 0
+
+dt 1
+
+Z t1
+
+> 0
+
+dt 2
+
+Z t2
+
+> 0
+
+dt 3J(t1)J(t2)J(t3) + · · · ,
+
+37 from which we can see that Φ( t) and Ψ( t) generally do not have an explicit analytical relationship. This observation further implies that the chaoticity of the forward and reverse evolutions is not identical but inherently unbalanced, leading to our proposed bidirectional modeling strategy. Next, we consider a special case to illustrate the relationship between the max-imal Lyapunov exponent of the reverse process and that of the forward process. In particular, since Φ( t)−1 = I −
+
+Z t
+
+> 0
+
+J(t1)dt 1 +
+
+Z t
+
+> 0
+
+dt 1
+
+Z t1
+
+> 0
+
+dt 2J(t2)J(t1)
+
+−
+
+Z t
+
+> 0
+
+dt 1
+
+Z t1
+
+> 0
+
+dt 2
+
+Z t2
+
+> 0
+
+dt 3J(t3)J(t2)J(t1) + · · · 
+
+when J(t) is commutative, that is, when J(t1)J(t2) = J(t2)J(t1) for any t1 and t2,we have Ψ( t) = Φ( t)−1. By applying singular value decomposition, we obtain the following proposition. 
+
+Proposition 3 When J(t) is commutative, Ψ( t) = Φ( t)−1. Thus, Σ = −Λ, and σ1 =
+
+σmax = −λmin = −λn.Proof Let Φ( t) admit the singular value decomposition Φ( t) = U (t)Σ( t)V (t)T,
+
+where the diagonal entries of Σ( t) are the singular values si(t). Then we have Φ( t)Φ( t)T = U (t) Σ( t)2 U (t)T, Ψ( t) = Φ( t)−1 = V (t) Σ( t)−1 U (t)T,
+
+and consequently, Ψ( t)Ψ( t)T = V (t) Σ( t)−2 V (t)T.
+
+Therefore, the Lyapunov matrices Λ = lim 
+
+> t→∞
+
+12t log  Φ( t)Φ( t)T, Σ = lim 
+
+> t→∞
+
+12t log  Ψ( t)Ψ( t)T,
+
+have eigenvalues given respectively by 
+
+λi = lim 
+
+> t→∞
+
+1
+
+t log si(t), σi = − lim 
+
+> t→∞
+
+1
+
+t log si(t).
+
+It follows that Σ = −Λ, and thus σi = −λi. In particular, the maximal exponent satisfies 
+
+σmax = −λmin .
+
+□
+
+In this case, if the forward dynamic has at least one contracting direction ( λn < 0), the corresponding reverse dynamic will exhibit an expansion, leading to σ0 > 0. 38 E.2 Numerical Algorithm of Computing the Lyapunov Spectrum 
+
+Based on the above derivations, the Lyapunov spectrum can be computed numeri-cally with discretization. The numerical computational workflow is outlined as follows. Given an arbitrary dynamical system described by ˙ u = f (u), we augment the original state with the variational matrix Φ( t) ∈ Rd×d that satisfies ˙Φ = J(u(t))Φ( t), where 
+
+J(u(t)) = ∂f /∂ u is the Jacobian of the system. The algorithm proceeds through the following stages: 1. Augmented system construction. For any given right-hand-side function f (u), the code constructs the extended system by concatenating u and the vectorized Φ( t) into a single state vector. The Jacobian J(u(t)) is approximated via finite differences. 2. Initialization. The initial variational matrix is set to Φ(0) = I. The extended initial condition X0 = [ u0, Φ(0)] is integrated over the time interval [0 , t max ] with discrete reorthogonalization steps of size ∆ t.3. Segment-wise integration. Within each interval [ tk, t k+1 ], the system is inte-grated using the adaptive Runge–Kutta method (RK45) [98] with tolerances 
+
+rtol = 10 −6 and atol = 10 −9. At the end of each segment, the current Φ matrix is extracted. 4. QR reorthogonalization. The matrix Φ is decomposed as Φ = QR with QR-decomposition in numpy.linalg [120], and the logarithms of the absolute diagonal entries of R are accumulated as local stretching rates. The next segment then starts from the reorthogonalized basis Φ ← Q to maintain numerical stability. 5. Exponent estimation. After all time segments, the Lyapunov exponents are obtained as 
+
+λi = 1
+
+tmax 
+
+X
+
+> k
+
+log |R(k) 
+
+> ii
+
+|, i = 1 , . . . , d. 
+
+The resulting exponents are sorted in descending order to yield the Lyapunov spectrum. 
+
+E.3 Examples 
+
+Below, we present two representative examples that correspond to cases where the reverse dynamics exhibit stronger chaos than the forward process, and where the forward and reverse dynamics possess equivalent levels of chaoticity. 
+
+Example 1. We apply the proposed numerical procedure to the classical chaotic Lorenz system [37] to compute both the forward and backward Lyapunov spectra. The results show that in the Lorenz system with σ = 10, ρ = 28, and β = 8 /3starting from u(0) = (0 , 1, 0), the forward Lyapunov spectrum is ( λ1, λ 2, λ 3) =(0 .607 , 0.068 , −14 .341). In contrast, the reverse Lyapunov spectrum is ( σ1, σ 2, σ 3) = (13 .898 , 0.947 , −1.180), exhibiting a larger maximum exponent than the forward one. Also, we find that the maximal Lyapunov exponent of the inverse process is approxi-mately equal to the negative of the minimal one of the forward process. This finding 39 reveals that the backward dynamics display even stronger chaotic behavior, indicat-ing an intrinsic asymmetry in the degree of chaoticity between forward and inverse evolutions. 
+
+Example 2. Next, we consider another classical chaotic system, the three-body problem. Denote the positions of the three mutually gravitating bodies as ri =(xi, y i, z i), then the governing equation of forward dynamics is 
+
+
+
+¨r1 = −Gm 2 r1−r2 
+
+> ∥r1−r2∥3
+
+− Gm 3 r1−r3 
+
+> ∥r1−r3∥3
+
+,
+
+¨r2 = −Gm 3 r2−r3 
+
+> ∥r2−r3∥3
+
+− Gm 1 r2−r1 
+
+> ∥r2−r1∥3
+
+,
+
+¨r3 = −Gm 1 r3−r1 
+
+> ∥r3−r1∥3
+
+− Gm 2 r3−r2 
+
+> ∥r3−r2∥3
+
+,
+
+where mi is the mass and G is the gravitational constant [121]. Considering its back-ward dynamics, we find that since each ri involves the second-order time derivative, the reverse dynamics satisfy exactly the same evolution equations as the forward ones. Consequently, the Lyapunov exponents of the forward and backward dynamics are identical. This implies that the backward dynamics of the three-body system are also chaotic, exhibiting the same degree of chaoticity as the forward evolution. 
+
+# References 
+
+[1] Hasler, M.J.: Electrical circuits with chaotic behavior. Proceedings of the IEEE 
+
+75 (8), 1009–1021 (2005) [2] Sprott, J.C.: Simple chaotic systems and circuits. American Journal of Physics 
+
+68 (8), 758–763 (2000) [3] Tsonis, A., Elsner, J.: Chaos, strange attractors, and weather. Bulletin of the American Meteorological Society 70 (1), 14–23 (1989) [4] Broecker, W.S.: Chaotic climate. Scientific American 273 (5), 62–68 (1995) [5] Laskar, J., Robutel, P.: The chaotic obliquity of the planets. Nature 361 (6413), 608–612 (1993) [6] Contopoulos, G.: Order and Chaos in Dynamical Astronomy vol. 21. Springer, Heidelberg (2002) [7] Barrow, J.D.: A chaotic cosmology. Nature 267 (5607), 117–120 (1977) [8] Olsen, L.F., Degn, H.: Chaos in an enzyme reaction. Nature 267 (5607), 177–178 (1977) [9] Chialvo, D.R., Gilmour Jr, R.F., Jalife, J.: Low dimensional chaos in cardiac tissue. Nature 343 (6259), 653–657 (1990) 40 [10] Pecora, L.M., Carroll, T.L.: Synchronization in chaotic systems. Physical review letters 64 8 , 821–824 (1990) [11] Kantas, N., Beskos, A., Jasra, A.: Sequential monte carlo methods for high-dimensional inverse problems: A case study for the navier-stokes equations. SIAM/ASA J. Uncertain. Quantification 2, 464–489 (2013) [12] Ouannas, A., Azar, A.T., Radwan, A.G.: On inverse problem of generalized synchronization between different dimensional integer-order and fractional-order chaotic systems. 2016 28th International Conference on Microelectronics (ICM), 193–196 (2016) [13] Bennett, A.F., Chua, B.S., Leslie, L.M.: Generalized inversion of a global numeri-cal weather prediction model. Meteorology and Atmospheric Physics 60 , 165–178 (1996) [14] Gallet, A., Rigby, S., Tallman, T., Kong, X., Hajirasouliha, I., Liew, A., Liu, D., Chen, L., Hauptmann, A., Smyl, D.J.: Structural engineering from an inverse problems perspective. Proceedings. Mathematical, Physical, and Engineering Sciences 478 (2021) [15] Jung, C., Lipp, C., Seligman, T.: The inverse scattering problem for chaotic hamiltonian systems. Annals of Physics 275 (2), 151–189 (1999) [16] Kaipio, J.P., Somersalo, E.: Statistical and Computational Inverse Problems. Springer, New York (2005) [17] Rasio, F.A., Ford, E.B.: Dynamical instabilities and the for-mation of extrasolar planetary systems. Science 274 (5289), 954–956 (1996) https://doi.org/10.1126/science.274.5289.954 https://www.science.org/doi/pdf/10.1126/science.274.5289.954 [18] Goldreich, P., Lithwick, Y., Sari, R.: Final stages of planet formation. The Astrophysical Journal 614 (1), 497 (2004) [19] Chatterjee, S., Ford, E.B., Matsumura, S., Rasio, F.A.: Dynamical outcomes of planet-planet scattering. The Astrophysical Journal 686 (1), 580–602 (2008) https://doi.org/10.1086/590227 [20] LeVeque, R.J.: Finite difference methods for differential equations. Draft version for use in AMath 585 (6), 112 (1998) [21] Lu, T., Hernandez, D.M., Rein, H.: Trace: a code for time-reversible astrophysi-cal close encounters. Monthly Notices of the Royal Astronomical Society 533 (3), 3708–3723 (2024) [22] Binev, P., Dahmen, W., DeVore, R.: Adaptive finite element methods with 41 convergence rates. Numerische Mathematik 97 (2), 219–268 (2004) [23] Du, P., Parikh, M.H., Fan, X., Liu, X.-Y., Wang, J.-X.: Conditional neural field latent diffusion model for generating spatiotemporal turbulence. Nature Communications 15 (1), 10416 (2024) [24] Hu, P., Wang, R., Zheng, X., Zhang, T., Feng, H., Feng, R., Wei, L., Wang, Y., Ma, Z.-M., Wu, T.: Wavelet diffusion neural operator. In: The Thirteenth International Conference on Learning Representations (2024) [25] Alibert, Y., Davoult, J., Marques, S.: A transformer-based generative model for planetary systems. Astronomy & Astrophysics 701 , 149 (2025) [26] Wang, M., Li, J.: Interpretable predictions of chaotic dynamical systems using dynamical system deep learning. Scientific Reports 14 (1), 3143 (2024) [27] Raissi, M., Perdikaris, P., Karniadakis, G.E.: Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations. Journal of Computational physics 378 ,686–707 (2019) [28] Yang, L., Meng, X., Karniadakis, G.E.: B-pinns: Bayesian physics-informed neu-ral networks for forward and inverse pde problems with noisy data. Journal of Computational Physics 425 , 109913 (2021) [29] Bastek, J.-H., Kochmann, D.M.: Inverse design of nonlinear mechanical metama-terials via video denoising diffusion models. Nature Machine Intelligence 5(12), 1466–1475 (2023) [30] Molinaro, R., Yang, Y., Engquist, B., Mishra, S.: Neural inverse operators for solving pde inverse problems. In: International Conference on Machine Learning, pp. 25105–25139 (2023). PMLR [31] Huang, J., Yang, G., Wang, Z., Park, J.J.: Diffusionpde: Generative pde-solving under partial observation. Advances in Neural Information Processing Systems 
+
+37 , 130291–130323 (2024) [32] Lipman, Y., Chen, R.T., Ben-Hamu, H., Nickel, M., Le, M.: Flow matching for generative modeling. In: The Eleventh International Conference on Learning Representations (2023) [33] Liu, X., Gong, C., et al. : Flow straight and fast: Learning to generate and transfer data with rectified flow. In: The Eleventh International Conference on Learning Representations (2023) [34] Berliner, L.M.: Statistics, probability and chaos. Statistical Science, 69–90 (1992) 42 [35] Leith, C.E.: Stochastic models of chaotic systems. Physica D: Nonlinear Phe-nomena 98 (2), 481–491 (1996) https://doi.org/10.1016/0167-2789(96)00107-8 . Nonlinear Phenomena in Ocean Dynamics [36] Stone, N.C., Leigh, N.W.: A statistical solution to the chaotic, non-hierarchical three-body problem. Nature 576 (7787), 406–410 (2019) [37] Lorenz, E.N.: Deterministic nonperiodic flow 1. In: Universality in Chaos, 2nd Edition, pp. 367–378. Routledge, Cambridge (2017) [38] Dadras, S., Momeni, H.R.: A novel three-dimensional autonomous chaotic sys-tem generating two, three and four-scroll attractors. Physics Letters A 373 (40), 3637–3642 (2009) [39] Lorenz, E.N.: Predictability: A problem partly solved. In: Proc. Seminar on Predictability, vol. 1, pp. 1–18 (1996). Reading [40] Maaten, L., Hinton, G.E.: Visualizing data using t-sne. Journal of Machine Learning Research 9, 2579–2605 (2008) [41] Karimi, A., Paul, M.R.: Extensive chaos in the lorenz-96 model. Chaos: An interdisciplinary journal of nonlinear science 20 (4) (2010) [42] Maaten, L., Hinton, G.: Visualizing data using t-sne. Journal of machine learning research 9(11) (2008) [43] Wattenberg, M., Vi´ egas, F., Johnson, I.: How to use t-sne effectively. Distill (2016) https://doi.org/10.23915/distill.00002 [44] Kokubo, E., Ida, S.: Formation of protoplanet systems and diversity of planetary systems. The Astrophysical Journal 581 (1), 666 (2002) [45] Ida, S., Lin, D.N.: Toward a deterministic model of planetary formation. i. a desert in the mass and semimajor axis distributions of extrasolar planets. The Astrophysical Journal 604 (1), 388 (2004) [46] Chambers, J.E., Wetherill, G.W., Boss, A.P.: The stability of multi-planet systems. Icarus 119 (2), 261–268 (1996) https://doi.org/10.1006/icar.1996.0019 [47] Lin, D., Ida, S.: On the origin of massive eccentric planets. The Astrophysical Journal 477 (2), 781 (1997) [48] Adams, F.C., Laughlin, G.: Migration and dynamical relaxation in crowded systems of giant planets. Icarus 163 (2), 290–306 (2003) https://doi.org/10.1016/ s0019-1035(03)00081-2 [49] Scharf, C., Menou, K.: Long-period exoplanets from dynamical relaxation. The Astrophysical Journal 693 (2), 113 (2009) 43 [50] Boss, A.P.: On the formation of gas giant planets on wide orbits. The Astrophysical Journal 637 (2), 137 (2006) https://doi.org/10.1086/500613 [51] Mustill, A.J., Davies, M.B., Johansen, A.: The effects of exter-nal planets on inner systems: multiplicities, inclinations and pathways to eccentric warm jupiters. Monthly Notices of the Royal Astronomical Society 468 (3), 3000–3023 (2017) https://doi. org/10.1093/mnras/stx693 https://academic.oup.com/mnras/article-pdf/468/3/3000/13628841/stx693.pdf [52] Rein, H., Tamayo, D.: Whfast: a fast and unbiased implementation of a symplec-tic wisdom–holman integrator for long-term gravitational simulations. Monthly Notices of the Royal Astronomical Society 452 (1), 376–388 (2015) [53] Mikkola, S., Tanikawa, K.: Explicit symplectic algorithms for time-transformed hamiltonians. Celestial Mechanics and Dynamical Astronomy 74 (4), 287–295 (1999) [54] Harris, W.E.: A Catalog of Parameters for Globular Clusters in the Milky Way. The Astronomical Journal 112 , 1487 (1996) https://doi.org/10.1086/118116 [55] Heggie, D.C.: The Gravitational Million-Body Problem. In: Makino, J., Hut, P. (eds.) Astrophysical Supercomputing Using Particle Simulations. IAU Sympo-sium, vol. 208, p. 81 (2003). https://doi.org/10.48550/arXiv.astro-ph/0111045 [56] VandenBerg, D.A., Brogaard, K., Leaman, R., Casagrande, L.: The Ages of 55 Globular Clusters as Determined Using an Improved ∆V HB TO Method along with Color-Magnitude Diagram Constraints, and Their Implications for Broader Issues. The Astrophysical Journal 775 (2), 134 (2013) https://doi.org/10.1088/ 0004-637X/775/2/134 arXiv:1308.2257 [astro-ph.GA] [57] Massari, D., Koppelman, H.H., Helmi, A.: Origin of the system of globular clusters in the Milky Way. Astronomy & Astrophysics 630 , 4 (2019) https: //doi.org/10.1051/0004-6361/201936135 arXiv:1906.08271 [astro-ph.GA] [58] Vesperini, E., Heggie, D.C.: On the effects of dynamical evolution on the initial mass function of globular clusters. Monthly Notices of the Royal Astronom-ical Society 289 (4), 898–920 (1997) https://doi.org/10.1093/mnras/289.4.898 arXiv:astro-ph/9705073 [astro-ph] [59] Baumgardt, H., Makino, J.: Dynamical evolution of star clusters in tidal fields. Monthly Notices of the Royal Astronomical Society 340 (1), 227–246 (2003) https://doi.org/10.1046/j.1365-8711.2003.06286.x arXiv:astro-ph/0211471 [astro-ph] [60] Giersz, M., Heggie, D.C.: Monte Carlo simulations of star clusters - VII. The 44 globular cluster 47 Tuc. Monthly Notices of the Royal Astronomical Soci-ety 410 (4), 2698–2713 (2011) https://doi.org/10.1111/j.1365-2966.2010.17648.x arXiv:1008.3048 [astro-ph.GA] [61] Pijloo, J.T., Portegies Zwart, S.F., Alexander, P.E.R., Gieles, M., Larsen, S.S., Groot, P.J., Devecchi, B.: The initial conditions of observed star clusters -I. Method description and validation. Monthly Notices of the Royal Astro-nomical Society 453 (1), 605–637 (2015) https://doi.org/10.1093/mnras/stv1546 arXiv:1507.04372 [astro-ph.SR] [62] H´ enon, M.: Monte Carlo Models of Star Clusters (Part of the Proceedings of the IAU Colloquium No. 10, held in Cambridge, England, August 12-15, 1970.). Astrophysics and Space Science 13 (2), 284–299 (1971) https://doi.org/10.1007/ BF00649159 [63] Giersz, M., Heggie, D.C., Hurley, J.R., Hypki, A.: MOCCA code for star cluster simulations - II. Comparison with N-body simulations. Monthly Notices of the Royal Astronomical Society 431 (3), 2184–2199 (2013) https://doi.org/10.1093/ mnras/stt307 arXiv:1112.6246 [astro-ph.GA] [64] Rodriguez, C.L., Morscher, M., Wang, L., Chatterjee, S., Rasio, F.A., Spurzem, R.: Million-body star cluster simulations: comparisons between Monte Carlo and direct N-body. Monthly Notices of the Royal Astronomical Society 463 (2), 2109– 2118 (2016) https://doi.org/10.1093/mnras/stw2121 arXiv:1601.04227 [astro-ph.IM] [65] Kremer, K., Ye, C.S., Rui, N.Z., Weatherford, N.C., Chatterjee, S., Fragione, G., Rodriguez, C.L., Spera, M., Rasio, F.A.: Modeling Dense Star Clusters in the Milky Way and Beyond with the CMC Cluster Catalog. The Astrophysical Jour-nal Supplement Series 247 (2), 48 (2020) https://doi.org/10.3847/1538-4365/ ab7919 arXiv:1911.00018 [astro-ph.HE] [66] Rui, N.Z., Kremer, K., Weatherford, N.C., Chatterjee, S., Rasio, F.A., Rodriguez, C.L., Ye, C.S.: Matching Globular Cluster Models to Observa-tions. The Astrophysical Journal 912 (2), 102 (2021) https://doi.org/10.3847/ 1538-4357/abed49 arXiv:2103.05033 [astro-ph.GA] [67] Heggie, D.C., Giersz, M.: Monte carlo simulations of star clus-ters – v. the globular cluster m4. Monthly Notices of the Royal Astronomical Society 389 (4), 1858–1870 (2008) https://doi.org/10. 1111/j.1365-2966.2008.13702.x https://academic.oup.com/mnras/article-pdf/389/4/1858/3870208/mnras0389-1858.pdf [68] Heggie, D.C., Giersz, M.: Mocca code for star cluster simulations–iii. stellar-mass black holes in the globular cluster m22. Monthly Notices of the Royal Astronomical Society 439 (3), 2459–2467 (2014) 45 [69] Bellman, R.: Dynamic programming. science 153 (3731), 34–37 (1966) [70] Frans, K., Hafner, D., Levine, S., Abbeel, P.: One step diffusion via shortcut mod-els. In: The Thirteenth International Conference on Learning Representations (2025) [71] Zhengyang, G., Mingyang, D., Xingjian, B., J. Zico, K., Kaiming, H.: Mean flows for one-step generative modeling. In: The Thirty-Ninth Annual Conference on Neural Information Processing Systems (2025) [72] Song, Y., Dhariwal, P., Chen, M., Sutskever, I.: Consistency models. In: International Conference on Machine Learning, pp. 32211–32252 (2023). PMLR [73] Meng, C., Rombach, R., Gao, R., Kingma, D., Ermon, S., Ho, J., Salimans, T.: On distillation of guided diffusion models. In: Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pp. 14297–14306 (2023) [74] Rezende, D., Mohamed, S.: Variational inference with normalizing flows. In: International Conference on Machine Learning, pp. 1530–1538 (2015). PMLR [75] Dormand, J.R., Prince, P.J.: A family of embedded runge-kutta formulae. Journal of Computational and Applied Mathematics 6(1), 19–26 (1980) https: //doi.org/10.1016/0771-050X(80)90013-3 [76] Noether, E.: Invariante variationsprobleme. In: Gesammelte Abhandlungen-Collected Papers, pp. 231–239. Springer, ??? (1983) [77] Cuturi, M.: Sinkhorn distances: Lightspeed computation of optimal transport. Advances in neural information processing systems 26 (2013) [78] Feydy, J., S´ ejourn´ e, T., Vialard, F.-X., Amari, S.-i., Trouv´ e, A., Peyr´ e, G.: Inter-polating between optimal transport and mmd using sinkhorn divergences. In: The 22nd International Conference on Artificial Intelligence and Statistics, pp. 2681–2690 (2019). PMLR [79] Sinkhorn, R.: A relationship between arbitrary positive matrices and doubly stochastic matrices. The annals of mathematical statistics 35 (2), 876–879 (1964) [80] Wang, Q., Kulkarni, S.R., Verd´ u, S.: Divergence estimation for multidimensional densities via k-nearest-neighbor distances. IEEE Transactions on Information Theory 55 (5), 2392–2405 (2009) [81] Kremer, K., Ye, C.S., Chatterjee, S., Rodriguez, C.L., Rasio, F.A.: How black holes shape globular clusters: modeling ngc 3201. The Astrophysical Journal Letters 855 (2), 15 (2018) [82] Ye, C.S., Kremer, K., Chatterjee, S., Rodriguez, C.L., Rasio, F.A.: Millisecond 46 pulsars and black holes in globular clusters. The Astrophysical Journal 877 (2), 122 (2019) [83] Trager, S.C., King, I.R., Djorgovski, S.: Catalogue of Galactic Globular-Cluster Surface-Brightness Profiles. The Astronomical Journal 109 , 218 (1995) https: //doi.org/10.1086/117268 [84] Baumgardt, H., Hilker, M.: A catalogue of masses, structural parameters, and velocity dispersion profiles of 112 Milky Way globular clusters. Monthly Notices of the Royal Astronomical Society 478 (2), 1520–1557 (2018) https://doi.org/ 10.1093/mnras/sty1057 arXiv:1804.08359 [astro-ph.GA] [85] Baumgardt, H., Hilker, M., Sollima, A., Bellini, A.: Mean proper motions, space orbits, and velocity dispersion profiles of Galactic globular clusters derived from Gaia DR2 data. Monthly Notices of the Royal Astronomi-cal Society 482 (4), 5138–5155 (2019) https://doi.org/10.1093/mnras/sty2997 arXiv:1811.01507 [astro-ph.GA] [86] Rein, H., Liu, S.-F.: Rebound: an open-source multi-purpose n-body code for collisional dynamics. Astronomy & Astrophysics 537 , 128 (2012) [87] Tamayo, D., Rein, H., Shi, P., Hernandez, D.M.: Reboundx: a library for adding conservative and dissipative forces to otherwise symplectic n-body integrations. Monthly Notices of the Royal Astronomical Society 491 (2), 2885–2901 (2020) [88] Vasiliev, E., Baumgardt, H.: Gaia EDR3 view on galactic globular clusters. Monthly Notices of the Royal Astronomical Society 505 (4), 5978–6002 (2021) https://doi.org/10.1093/mnras/stab1475 arXiv:2102.09568 [astro-ph.GA] [89] Faria, D., Feltzing, S.: The Age of the Metal-Rich Globular Cluster NGC 6352. In: Lejeune, T., Fernandes, J. (eds.) Observed HR Diagrams and Stellar Evo-lution. Astronomical Society of the Pacific Conference Series, vol. 274, p. 373 (2002) [90] Correnti, M., Gennaro, M., Kalirai, J.S., Cohen, R.E., Brown, T.M.: The Age of the Old Metal-poor Globular Cluster NGC 6397 Using WFC3/IR Photom-etry. The Astrophysical Journal 864 (2), 147 (2018) https://doi.org/10.3847/ 1538-4357/aad805 arXiv:1807.10142 [astro-ph.SR] [91] Ying, J.M., Chaboyer, B., Du, W.: The Absolute Age of NGC 3201 Derived from Detached Eclipsing Binaries and the Hess Diagram. The Astrophys-ical Journal 970 (2), 184 (2024) https://doi.org/10.3847/1538-4357/ad59a9 arXiv:2406.12206 [astro-ph.SR] [92] Kaluzny, J., Thompson, I.B., Rozyczka, M., Dotter, A., Krzeminski, W., Pych, W., Rucinski, S.M., Burley, G.S., Shectman, S.A.: The Cluster AgeS Experi-ment (CASE). V. Analysis of Three Eclipsing Binaries in the Globular Cluster 47 M4. The Astronomical Journal 145 (2), 43 (2013) https://doi.org/10.1088/ 0004-6256/145/2/43 arXiv:1301.2946 [astro-ph.SR] [93] Campos, F., Kepler, S.O., Bonatto, C., Ducati, J.R.: Multichromatic colour-magnitude diagrams of the globular cluster NGC 6366. Monthly Notices of the Royal Astronomical Society 433 (1), 243–250 (2013) https://doi.org/10.1093/ mnras/stt719 arXiv:1307.4499 [astro-ph.SR] [94] VandenBerg, D.A., Denissenkov, P.A.: Constraints on the Distance Moduli, Helium and Metal Abundances, and Ages of Globular Clusters from their RR Lyrae and Non-variable Horizontal-branch Stars. III. M55 and NGC 6362. The Astrophysical Journal 862 (1), 72 (2018) https://doi.org/10.3847/1538-4357/ aaca9b arXiv:1806.02916 [astro-ph.SR] [95] Aguado-Agelet, F., Massari, D., Monelli, M., Cassisi, S., Gallart, C., Ceccarelli, E., Gonz´ alez Koda, Y.K., Ruiz-Lara, T., Pancino, E., Saracino, S., Salaris, M.: Cluster Ages to Reconstruct the Milky Way Assembly (CARMA): II. The age-metallicity relation of Gaia-Sausage-Enceladus globular clusters. Astronomy and Astrophysics 704 , 255 (2025) https://doi.org/10.1051/0004-6361/202554262 arXiv:2502.20436 [astro-ph.GA] [96] Rodriguez, C.L., Weatherford, N.C., Coughlin, S.C., Amaro-Seoane, P., Breivik, K., Chatterjee, S., Fragione, G., Kıro˘ glu, F., Kremer, K., Rui, N.Z., Ye, C.S., Zevin, M., Rasio, F.A.: Modeling Dense Star Clusters in the Milky Way and beyond with the Cluster Monte Carlo Code. The Astrophysical Journal Sup-plement Series 258 (2), 22 (2022) https://doi.org/10.3847/1538-4365/ac2edf arXiv:2106.02643 [astro-ph.GA] [97] H´ enon, M.H.: The Monte Carlo Method (Papers appear in the Proceedings of IAU Colloquium No. 10 Gravitational N-Body Problem (ed. by Myron Lecar), R. Reidel Publ. Co. , Dordrecht-Holland.). Astrophysics and Space Science 14 (1), 151–167 (1971) https://doi.org/10.1007/BF00649201 [98] Dormand, J.R., Prince, P.J.: A family of embedded runge-kutta formulae. Journal of computational and applied mathematics 6(1), 19–26 (1980) [99] Virtanen, P., Gommers, R., Oliphant, T.E., Haberland, M., Reddy, T., Cour-napeau, D., Burovski, E., Peterson, P., Weckesser, W., Bright, J., et al. : Scipy 1.0: fundamental algorithms for scientific computing in python. Nature methods 
+
+17 (3), 261–272 (2020) [100] Hairer, E., Wanner, G., Nørsett, S.P.: Solving Ordinary Differential Equations I: Nonstiff Problems. Springer, Heidelberg (1993) [101] M¨ uller, S., Baron, J., Helled, R., Bouchy, F., Parc, L.: The mass-radius relation of exoplanets revisited. Astronomy & Astrophysics 686 , 296 (2024) 48 [102] Hut, P., McMillan, S., Goodman, J., Mateo, M., Phinney, E.S., Pryor, C., Richer, H.B., Verbunt, F., Weinberg, M.: Binaries in Globular Clusters. Publications of the Astronomical Society of the Pacific 104 , 981 (1992) https://doi.org/10. 1086/133085 [103] Bailyn, C.D.: Blue Stragglers and Other Stellar Anomalies:Implications for the Dynamics of Globular Clusters. Annual Review of Astronomy and Astrophysics 
+
+33 , 133–162 (1995) https://doi.org/10.1146/annurev.aa.33.090195.001025 [104] Pooley, D., Lewin, W.H.G., Anderson, S.F., Baumgardt, H., Filippenko, A.V., Gaensler, B.M., Homer, L., Hut, P., Kaspi, V.M., Makino, J., Margon, B., McMillan, S., Portegies Zwart, S., van der Klis, M., Verbunt, F.: Dynamical Formation of Close Binary Systems in Globular Clusters. The Astrophys-ical Journal Letters 591 (2), 131–134 (2003) https://doi.org/10.1086/377074 arXiv:astro-ph/0305003 [astro-ph] [105] Ransom, S.M.: Pulsars in Globular Clusters. In: Vesperini, E., Giersz, M., Sills, A. (eds.) Dynamical Evolution of Dense Stellar Systems. IAU Symposium, vol. 246, pp. 291–300 (2008). https://doi.org/10.1017/S1743921308015810 [106] Miller, M.C., Hamilton, D.P.: Production of intermediate-mass black holes in globular clusters. Monthly Notices of the Royal Astronomical Society 330 (1), 232–240 (2002) https://doi.org/10.1046/j.1365-8711.2002.05112.x arXiv:astro-ph/0106188 [astro-ph] [107] Mezcua, M.: Observational evidence for intermediate-mass black holes. Interna-tional Journal of Modern Physics D 26 (11), 1730021 (2017) https://doi.org/10. 1142/S021827181730021X arXiv:1705.09667 [astro-ph.GA] [108] Vesperini, E.: Evolution of the mass function of the Galactic globu-lar cluster system. Monthly Notices of the Royal Astronomical Society 
+
+299 (4), 1019–1039 (1998) https://doi.org/10.1046/j.1365-8711.1998.01837.x arXiv:astro-ph/9805308 [astro-ph] [109] Chatterjee, S., Umbreit, S., Fregeau, J.M., Rasio, F.A.: Understanding the dynamical state of globular clusters: core-collapsed versus non-core-collapsed. Monthly Notices of the Royal Astronomical Society 429 (4), 2881–2893 (2013) https://doi.org/10.1093/mnras/sts464 arXiv:1207.3063 [astro-ph.GA] [110] Kruijssen, J.M.D.: Globular clusters as the relics of regular star formation in ‘normal’ high-redshift galaxies. Monthly Notices of the Royal Astronomi-cal Society 454 (2), 1658–1686 (2015) https://doi.org/10.1093/mnras/stv2026 arXiv:1509.02163 [astro-ph.GA] [111] Forbes, D.A., Bastian, N., Gieles, M., Crain, R.A., Kruijssen, J.M.D., Larsen, S.S., Ploeckinger, S., Agertz, O., Trenti, M., Ferguson, A.M.N., Pfeffer, J., 49 Gnedin, O.Y.: Globular cluster formation and evolution in the context of cos-mological galaxy assembly: open questions. Proceedings of the Royal Society of London Series A 474 (2210), 20170616 (2018) https://doi.org/10.1098/rspa. 2017.0616 arXiv:1801.05818 [astro-ph.GA] [112] Spitzer, L.: Dynamical Evolution of Globular Clusters, (1987) [113] Makino, J., Hut, P.: Performance Analysis of Direct N-Body Calculations. The Astrophysical Journal Supplement Series 68 , 833 (1988) https://doi.org/10. 1086/191306 [114] Wang, L., Spurzem, R., Aarseth, S., Giersz, M., Askar, A., Berczik, P., Naab, T., Schadow, R., Kouwenhoven, M.B.N.: The DRAGON simulations: globular cluster evolution with a million stars. Monthly Notices of the Royal Astronom-ical Society 458 (2), 1450–1465 (2016) https://doi.org/10.1093/mnras/stw274 arXiv:1602.00759 [astro-ph.SR] [115] Gonz´ alez Prieto, E., Weatherford, N.C., Fragione, G., Kremer, K., Rasio, F.A.: Intermediate-mass Black Hole Progenitors from Stellar Collisions in Dense Star Clusters. The Astrophysical Journal 969 (1), 29 (2024) https://doi.org/10.3847/ 1538-4357/ad43d6 arXiv:2404.11646 [astro-ph.GA] [116] Klambauer, G., Unterthiner, T., Mayr, A., Hochreiter, S.: Self-normalizing neural networks. Advances in neural information processing systems 30 (2017) [117] Poli, M., Massaroli, S., Yamashita, A., Asama, H., Park, J., Ermon, S.: Torchdyn: implicit models and neural numerical methods in pytorch. In: Neural Information Processing Systems, Workshop on Physical Reasoning and Inductive Biases for the Real World, vol. 2 (2021) [118] Lyapunov, A.M.: The general problem of motion stability. Annals of Mathemat-ics Studies 17 (1892), 1892 (1892) [119] Oseledets, V.I.: A multiplicative ergodic theorem. characteristic ljapunov, expo-nents of dynamical systems. Trudy Moskovskogo Matematicheskogo Obshch-estva 19 , 179–210 (1968) [120] Harris, C.R., Millman, K.J., Walt, S.J., Gommers, R., Virtanen, P., Courna-peau, D., Wieser, E., Taylor, J., Berg, S., Smith, N.J., Kern, R., Picus, M., Hoyer, S., Kerkwijk, M.H., Brett, M., Haldane, A., R´ ıo, J.F., Wiebe, M., Peter-son, P., G´ erard-Marchant, P., Sheppard, K., Reddy, T., Weckesser, W., Abbasi, H., Gohlke, C., Oliphant, T.E.: Array programming with NumPy. Nature 
+
+585 (7825), 357–362 (2020) https://doi.org/10.1038/s41586-020-2649-2 [121] Marchal, C., Yoshida, J., Yi-Sui, S.: Three-body problem. Celestial mechanics 
+
+34 (1-4), 65–93 (1984) 50
