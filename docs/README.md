@@ -6,28 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-24
-- 运行时间：2026-06-24 20:47:22 UTC
+- 最新运行日期：2026-06-25
+- 运行时间：2026-06-25 21:43:03 UTC
 - 运行状态：成功
 - 本次总论文数：2
-- 精读区：1
-- 速读区：1
+- 精读区：0
+- 速读区：2
 
 ### 今日简报（AI）
-1) 今日精读一篇高分论文，聚焦基于流退火后验采样的函数空间逆问题求解方法。  
-2) 最值得关注的方向是流模型在逆问题与混沌系统中的应用，其中精读论文评分8.0/10。  
-3) 建议优先阅读精读论文，掌握流退火采样在函数空间中的优势，再结合速读论文理解双向条件流匹配在混沌逆问题中的扩展。
-- 详情：[/202606/24/README](/202606/24/README)
+今天速读了两篇6分论文，聚焦流匹配在物理场生成及其Wasserstein空间几何基础。
+值得关注的两个方向：路径依赖物理场的单步流匹配生成，以及扩散/流匹配的梯度流与测地线几何解释。
+建议从一篇速读内容入手精读，深入理解流匹配的理论动机与实际实现细节。
+- 详情：[/202606/25/README](/202606/25/README)
 
 ### 精读区论文标签
-1. [Flow Annealing Posterior Sampling for Function-Space Regression and Inverse Problems](/202606/24/2606.22346v1-flow-annealing-posterior-sampling-for-function-space-regression-and-inverse-problems)  
-   标签：评分：8.0/10、query:genmod-fluid
-   evidence：提出基于流匹配的后验采样用于PDE反问题，可应用于流体动力学
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Solving Inverse Problems of Chaotic Systems with Bidirectional Conditional Flow Matching](/202606/24/2606.24824v1-solving-inverse-problems-of-chaotic-systems-with-bidirectional-conditional-flow-matching)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：双向条件流匹配用于混沌系统（与流体力学相关）
+1. [One-Step Flow Matching for Generative Modeling of Path-Dependent Physical Fields](/202606/25/2606.22752v1-one-step-flow-matching-for-generative-modeling-of-path-dependent-physical-fields)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：流匹配用于路径相关物理场生成
+2. [The Geometry Behind Diffusion and Flow Matching: Gradient Flows and Geodesics in Wasserstein Space](/202606/25/2606.24157v1-the-geometry-behind-diffusion-and-flow-matching-gradient-flows-and-geodesics-in-wasserstein-space)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：从Wasserstein几何统一扩散和流匹配的理论
 
 
 <div class="dpr-home-promo-card">

@@ -1,0 +1,39 @@
+{
+  "label": "2026-06-25",
+  "date": "2026-06-25",
+  "generated_at": "2026-06-25T21:43:10",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202606/25/2606.22752v1-one-step-flow-matching-for-generative-modeling-of-path-dependent-physical-fields",
+      "section": "quick",
+      "title_en": "One-Step Flow Matching for Generative Modeling of Path-Dependent Physical Fields",
+      "authors": "Yijing Zhou, Jasmin Jelovica",
+      "date": "2026-06-22",
+      "pdf": "https://arxiv.org/pdf/2606.22752v1",
+      "score": "6.0",
+      "evidence": "流匹配用于路径相关物理场生成",
+      "tldr": "物理模拟路径依赖本构模型计算成本高。现有扩散模型需数百步采样且难应用于塑性场。本文提出基于Transformer的流匹配模型，在VAE潜空间将塑性场模拟视为视频合成任务，设计非高斯源分布减少路径交叉，实现一步生成高分辨率应力场。相比有限元分析，CPU加速6-7倍，GPU加速约两个数量级。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Physical simulations for intricate geometries with path-dependent constitutive models face difficulties due to the enormous computational cost they require. Recently, the emergence of generative AI models, which succeed in image and video synthesis tasks, has provided a promise to further improve simulations. Although U-Net-based denoising diffusion probabilistic models (DDPMs) have been adopted for elastic stress field generation, they typically require hundreds of sampling steps, and applications of generative models to path-dependent, e.g. plastic, stress fields remain very limited. In this work, we propose a novel flow matching (FM) model based on a transformer backbone for high-resolution path-dependent stress field generation with stochastic loading-unloading paths and geometry. The proposed model operates within the latent space of a variational autoencoder (VAE) and formulates the simulation of plastic fields as a video synthesis task, directly generating the stress fields across all time steps. Meanwhile, we design a non-Gaussian source distribution for flow matching, such that crossings among conditional transport paths are reduced during training. This enables our model to generate satisfactory samples in one step without relying on distillation. In addition, we introduce token-level loading embeddings and two auxiliary networks to further enhance the model performance in path-dependent simulation. The results demonstrate that, even with a limited training dataset, our model can accurately generate high-resolution path-dependent fields. It is much more computationally efficient than finite element analysis, providing a speedup of 6 to 7 times over FEM on CPUs and approximately two orders of magnitude speedup on consumer-grade GPUs.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/25/2606.24157v1-the-geometry-behind-diffusion-and-flow-matching-gradient-flows-and-geodesics-in-wasserstein-space",
+      "section": "quick",
+      "title_en": "The Geometry Behind Diffusion and Flow Matching: Gradient Flows and Geodesics in Wasserstein Space",
+      "authors": "Yian Yao, Weiwei Zhang",
+      "date": "2026-06-23",
+      "pdf": "https://arxiv.org/pdf/2606.24157v1",
+      "score": "6.0",
+      "evidence": "从Wasserstein几何统一扩散和流匹配的理论",
+      "tldr": "扩散模型和流匹配都基于Wasserstein空间的几何结构。扩散模型对应自由能的梯度流，即Fokker-Planck方程，其隐式欧拉离散化（JKO格式）可统一DDPM、DDIM等。流匹配则对应Wasserstein测地线，即最优传输路径，生成过程为确定性ODE。两者在同一流形上，扩散是初值问题，流匹配是边值问题，最终达到相同目标分布但路径不同。这一框架揭示了两种方法的几何本质，并提供了统一的理论基础。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "The space $\\mathcal{P}_2(\\mathbb{R}^d$) of probability measures with finite second moment carries a natural geometry: the quadratic Wasserstein distance W_2 makes it a complete metric space and, following Otto, a (formal) Riemannian manifold whose geodesics are the optimal-transport interpolations. On this manifold, the gradient flow of the free energy F(rho) = KL(rho || π) is exactly the Fokker-Planck equation, and its implicit-Euler discretization is the JKO scheme. This is the geometry underlying diffusion models: the forward process descends the free energy, and each denoising step realizes one JKO step, which recovers DDPM, DDIM, NCSN/SMLD, and Energy Matching; this is one scheme, not separate theories. The same manifold supports a second variational principle. Its geodesics - the minimum-action curves of the Benamou-Brenier formula - are precisely the optimal-transport paths that Flow Matching learns. Fixing both endpoints and following the geodesic, generation becomes a deterministic ODE along a straight line, hence far fewer sampling steps. Placing both families of models on one manifold makes their relationship exact: diffusion follows a free-energy gradient flow, an initial-value problem; optimal-transport Flow Matching follows a Wasserstein geodesic, a boundary-value problem. The two reach the same endpoints along different paths.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
