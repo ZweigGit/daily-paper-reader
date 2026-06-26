@@ -1,0 +1,39 @@
+{
+  "label": "2026-06-26",
+  "date": "2026-06-26",
+  "generated_at": "2026-06-26T21:54:11",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202606/26/2606.26592v1-latent-diffusion-posterior-sampling-with-surrogate-likelihood-guidance-for-pde-inverse-problems",
+      "section": "deep",
+      "title_en": "Latent Diffusion Posterior Sampling with Surrogate Likelihood Guidance for PDE Inverse Problems",
+      "authors": "Yuanzhe Wang, Alexandre M. Tartakovsky",
+      "date": "2026-06-25",
+      "pdf": "https://arxiv.org/pdf/2606.26592v1",
+      "score": "9.0",
+      "evidence": "使用潜在扩散模型求解PDE反问题，可应用于流体流动",
+      "tldr": "针对PDE反问题中的隐式先验、高维参数和高计算成本挑战，提出潜在空间扩散后验采样（L-DPS）。该方法通过VAE降维、潜在扩散模型学习先验，并利用代理似然梯度引导后验采样，避免重复调用数值求解器。在达西流反问题中，L-DPS产生准确鲁棒解，推理成本低于全空间DPS，在稀疏噪声设置下优于条件潜在扩散和逆FNO基线。贡献在于提供高效贝叶斯反演框架，缓解正向求解器重复调用瓶颈。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We propose latent-space diffusion posterior sampling (L-DPS), an approximate Bayesian framework for high-dimensional inverse problems governed by partial differential equations (PDEs). The method addresses three challenges in PDE-constrained inversion: implicit sample-based priors without tractable densities, high-dimensional spatially distributed parameters, and the high cost of repeated forward-model evaluations during posterior sampling. L-DPS combines a variational autoencoder, an unconditional latent diffusion model, diffusion posterior sampling, and a differentiable neural surrogate. The VAE maps the parameter field to a lower-dimensional latent space, the diffusion model learns an implicit prior score in this latent space, and DPS combines this learned prior with likelihood-based guidance. The likelihood gradient is evaluated through the decoder-surrogate composition, avoiding repeated calls to the full numerical PDE solver. We evaluate the method on an inverse Darcy flow problem with an unknown spatially distributed permeability field inferred from sparse and noisy pressure observations. L-DPS produces accurate and robust inverse solutions, reduces inference cost relative to full-space DPS, and outperforms amortized inverse baselines such as conditional latent diffusion and inverse FNO in sparse and noisy regimes. We further compare L-DPS with a KLE-MAP baseline and study mixed-prior generalization and the sensitivity of inversion accuracy to surrogate forward-model error.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/26/2606.22696v1-nullflow-one-step-generative-reconstruction",
+      "section": "quick",
+      "title_en": "NullFlow: One-Step Generative Reconstruction",
+      "authors": "Xiao Shi, Edward P. Chandler, Chicago Y. Park, Shirin Shoushtari, Ulugbek S. Kamilov",
+      "date": "2026-06-21",
+      "pdf": "https://arxiv.org/pdf/2606.22696v1",
+      "score": "7.0",
+      "evidence": "提出了一种用于一步生成的流匹配框架",
+      "tldr": "针对现有生成重建方法需要多步推理的问题，提出NullFlow框架。通过将生成流约束在测量一致子空间，消除了单独的数据保真校正。学习流的平均速度实现单步网络评估采样，理论证明其全局最小值为后验采样器。在图像修复上，以单步推理达到扩散模型的SOTA质量。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We propose NullFlow, a principled framework for one-step generative image reconstruction. Our key idea is to confine the generative flow to a measurement-consistent subspace. Because the flow never leaves this subspace, NullFlow needs no separate data-fidelity corrections, unlike existing solvers. NullFlow samples in a single network evaluation by learning the flow's average velocity, avoiding the step-by-step integration of traditional flow matching methods. We prove that the average velocity of this constrained flow yields a training objective whose global minimizer is a one-step posterior sampler. We show on image inpainting that NullFlow matches state-of-the-art diffusion solvers while cutting inference from hundreds of network evaluations to one.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

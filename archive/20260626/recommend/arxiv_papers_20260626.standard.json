@@ -1,0 +1,93 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-26T21:51:44.084633+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2606.26592v1",
+      "source": "arxiv",
+      "title": "Latent Diffusion Posterior Sampling with Surrogate Likelihood Guidance for PDE Inverse Problems",
+      "abstract": "We propose latent-space diffusion posterior sampling (L-DPS), an approximate Bayesian framework for high-dimensional inverse problems governed by partial differential equations (PDEs). The method addresses three challenges in PDE-constrained inversion: implicit sample-based priors without tractable densities, high-dimensional spatially distributed parameters, and the high cost of repeated forward-model evaluations during posterior sampling. L-DPS combines a variational autoencoder, an unconditional latent diffusion model, diffusion posterior sampling, and a differentiable neural surrogate. The VAE maps the parameter field to a lower-dimensional latent space, the diffusion model learns an implicit prior score in this latent space, and DPS combines this learned prior with likelihood-based guidance. The likelihood gradient is evaluated through the decoder-surrogate composition, avoiding repeated calls to the full numerical PDE solver. We evaluate the method on an inverse Darcy flow problem with an unknown spatially distributed permeability field inferred from sparse and noisy pressure observations. L-DPS produces accurate and robust inverse solutions, reduces inference cost relative to full-space DPS, and outperforms amortized inverse baselines such as conditional latent diffusion and inverse FNO in sparse and noisy regimes. We further compare L-DPS with a KLE-MAP baseline and study mixed-prior generalization and the sensitivity of inversion accuracy to surrogate forward-model error.",
+      "authors": [
+        "Yuanzhe Wang",
+        "Alexandre M. Tartakovsky"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE",
+        "cs.LG"
+      ],
+      "published": "2026-06-25T04:33:44+00:00",
+      "link": "https://arxiv.org/pdf/2606.26592v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "uses latent diffusion model for PDE inverse problems, applicable to fluid flow",
+      "llm_evidence_cn": "使用潜在扩散模型求解PDE反问题，可应用于流体流动",
+      "llm_evidence": "使用潜在扩散模型求解PDE反问题，可应用于流体流动",
+      "canonical_evidence": "使用潜在扩散模型求解PDE反问题，可应用于流体流动",
+      "llm_tldr_en": "Proposes latent-space diffusion posterior sampling (L-DPS) for PDE inverse problems, combining VAE, latent diffusion model, diffusion posterior sampling, and neural surrogate to handle high-dimensional parameter fields and expensive forward models.",
+      "llm_tldr_cn": "本文提出潜在空间扩散后验采样（L-DPS），用于偏微分方程控制的高维反问题。该方法结合变分自编码器、无条件潜在扩散模型、扩散后验采样和可微神经替代模型，高效处理隐式先验、高维参数和昂贵的正演模型。实验表明L-DPS在多种PDE反问题中具有优势，为计算流体动力学中的生成式建模提供了强有力工具。",
+      "llm_tldr": "本文提出潜在空间扩散后验采样（L-DPS），用于偏微分方程控制的高维反问题。该方法结合变分自编码器、无条件潜在扩散模型、扩散后验采样和可微神经替代模型，高效处理隐式先验、高维参数和昂贵的正演模型。实验表明L-DPS在多种PDE反问题中具有优势，为计算流体动力学中的生成式建模提供了强有力工具。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.22696v1",
+      "source": "arxiv",
+      "title": "NullFlow: One-Step Generative Reconstruction",
+      "abstract": "We propose NullFlow, a principled framework for one-step generative image reconstruction. Our key idea is to confine the generative flow to a measurement-consistent subspace. Because the flow never leaves this subspace, NullFlow needs no separate data-fidelity corrections, unlike existing solvers. NullFlow samples in a single network evaluation by learning the flow's average velocity, avoiding the step-by-step integration of traditional flow matching methods. We prove that the average velocity of this constrained flow yields a training objective whose global minimizer is a one-step posterior sampler. We show on image inpainting that NullFlow matches state-of-the-art diffusion solvers while cutting inference from hundreds of network evaluations to one.",
+      "authors": [
+        "Xiao Shi",
+        "Edward P. Chandler",
+        "Chicago Y. Park",
+        "Shirin Shoushtari",
+        "Ulugbek S. Kamilov"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-06-21T22:21:43+00:00",
+      "link": "https://arxiv.org/pdf/2606.22696v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "proposes a flow matching framework for one-step generation",
+      "llm_evidence_cn": "提出了一种用于一步生成的流匹配框架",
+      "llm_evidence": "提出了一种用于一步生成的流匹配框架",
+      "canonical_evidence": "提出了一种用于一步生成的流匹配框架",
+      "llm_tldr_en": "NullFlow introduces a one-step generative reconstruction method based on flow matching, confining the flow to a measurement-consistent subspace to avoid iterative refinements, achieving state-of-the-art image inpainting with a single network evaluation.",
+      "llm_tldr_cn": "针对现有生成式重建方法需要多步迭代或后处理的问题，本文提出NullFlow框架，将生成流约束在测量一致子空间中，学习流的平均速度以实现单步采样。该方法避免了传统流匹配的逐步积分，在图像修复任务上达到与扩散模型相当的效果，推理速度提升数十倍。该框架为流匹配在高效采样方面的应用提供了新思路，有望推广到其他逆问题。",
+      "llm_tldr": "针对现有生成式重建方法需要多步迭代或后处理的问题，本文提出NullFlow框架，将生成流约束在测量一致子空间中，学习流的平均速度以实现单步采样。该方法避免了传统流匹配的逐步积分，在图像修复任务上达到与扩散模型相当的效果，推理速度提升数十倍。该框架为流匹配在高效采样方面的应用提供了新思路，有望推广到其他逆问题。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
