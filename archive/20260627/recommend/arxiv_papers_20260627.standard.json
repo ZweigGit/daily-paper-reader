@@ -1,0 +1,99 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-27T21:06:35.301804+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2606.26389v1",
+      "source": "arxiv",
+      "title": "Sampling sea state using a diffusion model",
+      "abstract": "Sea state prediction is essential for operational maritime applications and coupled earth system modeling, yet current spectral wave models remain computationally prohibitive for many use cases, including online coupling to climate simulations and making probabilistic (ensemble-based) predictions. While deep learning has recently demonstrated strong performance in weather forecasting, existing AI-based wave models are predominantly deterministic and largely limited to bulk variables such as significant wave height, leaving probabilistic sea state estimation largely unexplored. In this work, we propose a diffusion-based generative model for global sea state estimation that conditions on a relatively long history (5 days) of global wind forcing. This generative model directly samples the complex conditional distribution of sea state without autoregressive time-stepping. Unlike prior approaches, our framework naturally extends beyond bulk variables to estimate partition-related variables and derived quantities, such as Stokes drift and mean square slope. Trained on a 30-year global WAVEWATCH-III hindcast, the model achieves substantial computational acceleration compared with numerical spectral models while delivering skillful predictions and a calibrated ensemble spread for the bulk variables. Our results suggest that diffusion-based sea state sampling offers a promising path toward probabilistic wave forecasting and efficient coupling of sea state information into broader earth system models.",
+      "authors": [
+        "Jiarong Wu",
+        "Bertrand Chapron",
+        "Laure Zanna"
+      ],
+      "primary_category": "physics.ao-ph",
+      "categories": [
+        "physics.ao-ph",
+        "cs.AI"
+      ],
+      "published": "2026-06-24T21:19:59+00:00",
+      "link": "https://arxiv.org/pdf/2606.26389v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "diffusion model for sea state estimation (fluid dynamics)",
+      "llm_evidence_cn": "扩散模型用于海况估计（流体动力学）",
+      "llm_evidence": "扩散模型用于海况估计（流体动力学）",
+      "canonical_evidence": "扩散模型用于海况估计（流体动力学）",
+      "llm_tldr_en": "Proposes a diffusion-based generative model for global sea state estimation conditioned on wind forcing, enabling probabilistic sea state prediction with reduced computational cost.",
+      "llm_tldr_cn": "该论文提出了一种基于扩散模型的全球海况估计方法，以五天全球风场为条件，直接生成概率性海况样本。解决了传统谱波模型计算代价高、难以用于耦合气候模拟和集合预报的问题。实验表明该模型能有效捕捉海况不确定性，为海洋动力学提供了一种高效的生成式建模工具。",
+      "llm_tldr": "该论文提出了一种基于扩散模型的全球海况估计方法，以五天全球风场为条件，直接生成概率性海况样本。解决了传统谱波模型计算代价高、难以用于耦合气候模拟和集合预报的问题。实验表明该模型能有效捕捉海况不确定性，为海洋动力学提供了一种高效的生成式建模工具。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.23489v1",
+      "source": "arxiv",
+      "title": "MeshFlow: Mesh Generation with Equivariant Flow Matching",
+      "abstract": "Meshes are among the most common 3D scene representations, but directly generating meshes is challenging because the representation contains important symmetries, including permutation invariance of faces and vertices. MeshFlow learns to generate triangle meshes directly as triangle soups, avoiding the need to serialize meshes into long autoregressive sequences. We adopt equivariant optimal-transport flow matching models that respect the key symmetries of triangle soups: arbitrary permutations of faces and permutations of the vertices within each face.   Toward this goal, we propose a simple yet effective modification to the Diffusion Transformer architecture, resulting in a scalable network capable of modeling a velocity field while maintaining the desired equivariance. We further introduce an optimal-transport-based training objective that improves convergence by eliminating supervision signals that violate these symmetries. MeshFlow achieves mesh quality comparable to state-of-the-art autoregressive mesh generators while providing about an 18$\\times$ speedup during inference. Project page is at https://qiisun.github.io/MeshFlow/.",
+      "authors": [
+        "Qi Sun",
+        "Kiyohiro Nakayama",
+        "Jing Nathan Yan",
+        "Qixing Huang",
+        "Alexander Rush",
+        "Leonidas Guibas",
+        "Gordon Wetzstein",
+        "Jing Liao",
+        "Guandao Yang"
+      ],
+      "primary_category": "cs.GR",
+      "categories": [
+        "cs.GR",
+        "cs.CV"
+      ],
+      "published": "2026-06-22T15:35:30+00:00",
+      "link": "https://arxiv.org/pdf/2606.23489v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "flow matching applied to mesh generation, relevant to CFD preprocessing",
+      "llm_evidence_cn": "流匹配方法应用于网格生成，与计算流体动力学前处理相关",
+      "llm_evidence": "流匹配方法应用于网格生成，与计算流体动力学前处理相关",
+      "canonical_evidence": "流匹配方法应用于网格生成，与计算流体动力学前处理相关",
+      "llm_tldr_en": "MeshFlow uses equivariant optimal-transport flow matching to generate triangle meshes directly, respecting permutation symmetries of faces and vertices, enabling scalable mesh generation without autoregressive serialization.",
+      "llm_tldr_cn": "现有网格生成方法通常需要序列化处理或依赖固定拓扑结构，难以处理网格的排列对称性。本文提出MeshFlow，利用等变最优传输流匹配直接生成三角形网格，通过改进扩散Transformer架构保持面对顶点的任意置换不变性。实验证明该方法无需自回归解码即可高效生成高质量网格，为三维图形学提供了可扩展的生成方案。",
+      "llm_tldr": "现有网格生成方法通常需要序列化处理或依赖固定拓扑结构，难以处理网格的排列对称性。本文提出MeshFlow，利用等变最优传输流匹配直接生成三角形网格，通过改进扩散Transformer架构保持面对顶点的任意置换不变性。实验证明该方法无需自回归解码即可高效生成高质量网格，为三维图形学提供了可扩展的生成方案。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

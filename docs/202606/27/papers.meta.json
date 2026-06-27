@@ -1,0 +1,39 @@
+{
+  "label": "2026-06-27",
+  "date": "2026-06-27",
+  "generated_at": "2026-06-27T21:09:11",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202606/27/2606.26389v1-sampling-sea-state-using-a-diffusion-model",
+      "section": "deep",
+      "title_en": "Sampling sea state using a diffusion model",
+      "authors": "Jiarong Wu, Bertrand Chapron, Laure Zanna",
+      "date": "2026-06-24",
+      "pdf": "https://arxiv.org/pdf/2606.26389v1",
+      "score": "9.0",
+      "evidence": "扩散模型用于海况估计（流体动力学）",
+      "tldr": "现有谱波模型计算成本高，难以用于概率预报和地球系统耦合，而确定性深度学习模型局限于集成变量。本文提出以5天风场为条件的扩散生成模型，直接采样海况条件分布，无需自回归步进，并可估计分区变量和衍生量。在30年全球后报数据上训练，模型相比数值方法大幅加速，且对集成变量输出校准的集合离散度。该工作为概率波预报及海况信息高效耦合到地球系统模型开辟了新路径。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Sea state prediction is essential for operational maritime applications and coupled earth system modeling, yet current spectral wave models remain computationally prohibitive for many use cases, including online coupling to climate simulations and making probabilistic (ensemble-based) predictions. While deep learning has recently demonstrated strong performance in weather forecasting, existing AI-based wave models are predominantly deterministic and largely limited to bulk variables such as significant wave height, leaving probabilistic sea state estimation largely unexplored. In this work, we propose a diffusion-based generative model for global sea state estimation that conditions on a relatively long history (5 days) of global wind forcing. This generative model directly samples the complex conditional distribution of sea state without autoregressive time-stepping. Unlike prior approaches, our framework naturally extends beyond bulk variables to estimate partition-related variables and derived quantities, such as Stokes drift and mean square slope. Trained on a 30-year global WAVEWATCH-III hindcast, the model achieves substantial computational acceleration compared with numerical spectral models while delivering skillful predictions and a calibrated ensemble spread for the bulk variables. Our results suggest that diffusion-based sea state sampling offers a promising path toward probabilistic wave forecasting and efficient coupling of sea state information into broader earth system models.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/27/2606.23489v1-meshflow-mesh-generation-with-equivariant-flow-matching",
+      "section": "quick",
+      "title_en": "MeshFlow: Mesh Generation with Equivariant Flow Matching",
+      "authors": "Qi Sun, Kiyohiro Nakayama, Jing Nathan Yan, Qixing Huang, Alexander Rush, Leonidas Guibas, Gordon Wetzstein, Jing Liao, Guandao Yang",
+      "date": "2026-06-22",
+      "pdf": "https://arxiv.org/pdf/2606.23489v1",
+      "score": "6.0",
+      "evidence": "流匹配方法应用于网格生成，与计算流体动力学前处理相关",
+      "tldr": "网格生成需处理面与顶点的置换对称性，现有自回归方法速度慢。MeshFlow提出等变最优传输流匹配模型，直接生成三角形网格汤，避免序列化。通过改进Diffusion Transformer架构实现等变速度场建模，并采用最优传输目标优化。网格质量媲美自回归方法，推理加速18倍，为高效网格生成确立新范式。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Meshes are among the most common 3D scene representations, but directly generating meshes is challenging because the representation contains important symmetries, including permutation invariance of faces and vertices. MeshFlow learns to generate triangle meshes directly as triangle soups, avoiding the need to serialize meshes into long autoregressive sequences. We adopt equivariant optimal-transport flow matching models that respect the key symmetries of triangle soups: arbitrary permutations of faces and permutations of the vertices within each face.   Toward this goal, we propose a simple yet effective modification to the Diffusion Transformer architecture, resulting in a scalable network capable of modeling a velocity field while maintaining the desired equivariance. We further introduce an optimal-transport-based training objective that improves convergence by eliminating supervision signals that violate these symmetries. MeshFlow achieves mesh quality comparable to state-of-the-art autoregressive mesh generators while providing about an 18$\\times$ speedup during inference. Project page is at https://qiisun.github.io/MeshFlow/.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

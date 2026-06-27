@@ -1,6 +1,11 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-06-27 <!--dpr-date:20260627-->
+    * 精读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/27/2606.26389v1-sampling-sea-state-using-a-diffusion-model" data-sidebar-item="{&quot;title&quot;: &quot;Sampling sea state using a diffusion model&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.26389v1-sampling-sea-state-using-a-diffusion-model&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;扩散模型用于海况估计（流体动力学）&quot;}">Sampling sea state using a diffusion model</a>
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/27/2606.23489v1-meshflow-mesh-generation-with-equivariant-flow-matching" data-sidebar-item="{&quot;title&quot;: &quot;MeshFlow: Mesh Generation with Equivariant Flow Matching&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.23489v1-meshflow-mesh-generation-with-equivariant-flow-matching&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;流匹配方法应用于网格生成，与计算流体动力学前处理相关&quot;}">MeshFlow: Mesh Generation with Equivariant Flow Matching</a>
   * 2026-06-26 <!--dpr-date:20260626-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/26/2606.26592v1-latent-diffusion-posterior-sampling-with-surrogate-likelihood-guidance-for-pde-inverse-problems" data-sidebar-item="{&quot;title&quot;: &quot;Latent Diffusion Posterior Sampling with Surrogate Likelihood Guidance for PDE Inverse Problems&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.26592v1-latent-diffusion-posterior-sampling-with-surrogate-likelihood-guidance-for-pde-inverse-problems&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;使用潜在扩散模型求解PDE反问题，可应用于流体流动&quot;}">Latent Diffusion Posterior Sampling with Surrogate Likelihood Guidance for PDE Inverse Problems</a>

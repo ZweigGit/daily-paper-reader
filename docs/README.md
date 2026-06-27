@@ -6,28 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-26
-- 运行时间：2026-06-26 21:54:04 UTC
+- 最新运行日期：2026-06-27
+- 运行时间：2026-06-27 21:09:05 UTC
 - 运行状态：成功
 - 本次总论文数：2
 - 精读区：1
 - 速读区：1
 
 ### 今日简报（AI）
-1) 今日精读1篇高分论文，速读1篇，聚焦扩散模型在PDE逆问题与一步生成重建中的应用。  
-2) 最值得关注的是精读论文中的潜扩散后验采样结合替代似然引导方法，显著提升了PDE逆问题的求解精度（9.0分）。  
-3) 建议优先精读该高分论文，并关注速读中“NullFlow”的一步生成效率，后续可尝试将二者结合以平衡速度与精度。
-- 详情：[/202606/26/README](/202606/26/README)
+今日精读一篇高分解码海洋状态的扩散模型论文，速读一篇网格生成新方法。最值得关注的是扩散模型在海洋采样中的创新应用，思路新颖且评分9.0。建议深入阅读该精读论文，了解其实际应用潜力。
+- 详情：[/202606/27/README](/202606/27/README)
 
 ### 精读区论文标签
-1. [Latent Diffusion Posterior Sampling with Surrogate Likelihood Guidance for PDE Inverse Problems](/202606/26/2606.26592v1-latent-diffusion-posterior-sampling-with-surrogate-likelihood-guidance-for-pde-inverse-problems)  
+1. [Sampling sea state using a diffusion model](/202606/27/2606.26389v1-sampling-sea-state-using-a-diffusion-model)  
    标签：评分：9.0/10、query:genmod-fluid
-   evidence：使用潜在扩散模型求解PDE反问题，可应用于流体流动
+   evidence：扩散模型用于海况估计（流体动力学）
 
 ### 速读区论文标签
-1. [NullFlow: One-Step Generative Reconstruction](/202606/26/2606.22696v1-nullflow-one-step-generative-reconstruction)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：提出了一种用于一步生成的流匹配框架
+1. [MeshFlow: Mesh Generation with Equivariant Flow Matching](/202606/27/2606.23489v1-meshflow-mesh-generation-with-equivariant-flow-matching)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：流匹配方法应用于网格生成，与计算流体动力学前处理相关
 
 
 <div class="dpr-home-promo-card">
