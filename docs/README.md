@@ -6,26 +6,22 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-27
-- 运行时间：2026-06-27 21:09:05 UTC
+- 最新运行日期：2026-06-28
+- 运行时间：2026-06-28 20:24:13 UTC
 - 运行状态：成功
-- 本次总论文数：2
-- 精读区：1
-- 速读区：1
+- 本次总论文数：0
+- 精读区：0
+- 速读区：0
 
 ### 今日简报（AI）
-今日精读一篇高分解码海洋状态的扩散模型论文，速读一篇网格生成新方法。最值得关注的是扩散模型在海洋采样中的创新应用，思路新颖且评分9.0。建议深入阅读该精读论文，了解其实际应用潜力。
-- 详情：[/202606/27/README](/202606/27/README)
+> 今日无新推荐，系统未产出可展示论文。
+- 详情：[/202606/28/README](/202606/28/README)
 
 ### 精读区论文标签
-1. [Sampling sea state using a diffusion model](/202606/27/2606.26389v1-sampling-sea-state-using-a-diffusion-model)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：扩散模型用于海况估计（流体动力学）
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [MeshFlow: Mesh Generation with Equivariant Flow Matching](/202606/27/2606.23489v1-meshflow-mesh-generation-with-equivariant-flow-matching)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：流匹配方法应用于网格生成，与计算流体动力学前处理相关
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">
