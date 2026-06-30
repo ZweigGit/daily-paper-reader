@@ -1,0 +1,132 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-30T21:58:30.612599+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2606.29843v1",
+      "source": "arxiv",
+      "title": "Gappy Reconstruction of Bubbly Flows by Guided Diffusion Models",
+      "abstract": "Experiments in multiphase flows are often limited in their ability to simultaneously obtain velocity measurements in different phases. At the same time, flow reconstruction from phase-limited measurements is a challenging problem due to the substantially different velocity statistics across the phases. We address this problem for buoyancy-driven bubbly flows in the pseudo-turbulence regime by using a guided diffusion model. We train the model using two-dimensional slices of the velocity field extracted from fully resolved three-dimensional direct numerical simulations. The model generates physically realistic velocity fields both unconditionally and when conditioned on the surrounding liquid flow. The reconstructed bubble-phase velocity field accurately reproduces key statistical features of the flow. We further show that a simple patching procedure for adjacent two-dimensional slices enables a reasonable reconstruction of the three-dimensional flow inside a bubble. These results establish the potential of diffusion models to serve as generative priors for three-dimensional turbulent multiphase flows, opening a route toward the reconstruction of unobserved or experimentally inaccessible velocity fields from sparse, partial, or phase-limited measurements.",
+      "authors": [
+        "Hridey Narula",
+        "Tianyi Li",
+        "Michele Buzzicotti",
+        "Luca Biferale",
+        "Prasad Perlekar"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn",
+        "cond-mat.soft"
+      ],
+      "published": "2026-06-29T06:30:28+00:00",
+      "link": "https://arxiv.org/pdf/2606.29843v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "guided diffusion model for bubbly flow reconstruction",
+      "llm_evidence_cn": "使用引导扩散模型进行气泡流重建",
+      "llm_evidence": "使用引导扩散模型进行气泡流重建",
+      "canonical_evidence": "使用引导扩散模型进行气泡流重建",
+      "llm_tldr_en": "Proposes a guided diffusion model to reconstruct velocity fields in bubbly flows from liquid-phase measurements, trained on 2D slices of 3D DNS data, generating accurate bubble-phase velocity.",
+      "llm_tldr_cn": "该论文针对多相流实验中相受限速度测量的难题，提出使用引导扩散模型进行气泡流的速度场重建。模型基于完全分辨的三维直接数值模拟数据，提取二维切片训练扩散模型，能够无条件或有条件地以周围液体流场为条件生成物理真实的流场。重建的气泡相速度场准确再现了统计特性，验证了扩散模型在流体动力学间隙重建中的有效性。该方法有望推广到其他多相流问题。",
+      "llm_tldr": "该论文针对多相流实验中相受限速度测量的难题，提出使用引导扩散模型进行气泡流的速度场重建。模型基于完全分辨的三维直接数值模拟数据，提取二维切片训练扩散模型，能够无条件或有条件地以周围液体流场为条件生成物理真实的流场。重建的气泡相速度场准确再现了统计特性，验证了扩散模型在流体动力学间隙重建中的有效性。该方法有望推广到其他多相流问题。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.24157v1",
+      "source": "arxiv",
+      "title": "The Geometry Behind Diffusion and Flow Matching: Gradient Flows and Geodesics in Wasserstein Space",
+      "abstract": "The space $\\mathcal{P}_2(\\mathbb{R}^d$) of probability measures with finite second moment carries a natural geometry: the quadratic Wasserstein distance W_2 makes it a complete metric space and, following Otto, a (formal) Riemannian manifold whose geodesics are the optimal-transport interpolations. On this manifold, the gradient flow of the free energy F(rho) = KL(rho || π) is exactly the Fokker-Planck equation, and its implicit-Euler discretization is the JKO scheme. This is the geometry underlying diffusion models: the forward process descends the free energy, and each denoising step realizes one JKO step, which recovers DDPM, DDIM, NCSN/SMLD, and Energy Matching; this is one scheme, not separate theories. The same manifold supports a second variational principle. Its geodesics - the minimum-action curves of the Benamou-Brenier formula - are precisely the optimal-transport paths that Flow Matching learns. Fixing both endpoints and following the geodesic, generation becomes a deterministic ODE along a straight line, hence far fewer sampling steps. Placing both families of models on one manifold makes their relationship exact: diffusion follows a free-energy gradient flow, an initial-value problem; optimal-transport Flow Matching follows a Wasserstein geodesic, a boundary-value problem. The two reach the same endpoints along different paths.",
+      "authors": [
+        "Yian Yao",
+        "Weiwei Zhang"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-06-23T05:25:24+00:00",
+      "link": "https://arxiv.org/pdf/2606.24157v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "theoretical foundations of diffusion and flow matching in Wasserstein space",
+      "llm_evidence_cn": "扩散与流匹配在Wasserstein空间中的理论基础",
+      "llm_evidence": "扩散与流匹配在Wasserstein空间中的理论基础",
+      "canonical_evidence": "扩散与流匹配在Wasserstein空间中的理论基础",
+      "llm_tldr_en": "Provides a unified geometric view of diffusion models and flow matching as gradient flows in Wasserstein space, showing that popular methods like DDPM and flow matching are instances of the same scheme.",
+      "llm_tldr_cn": "该论文从几何角度统一解释了扩散模型与流匹配方法。作者指出，在Wasserstein空间中，扩散过程等价于自由能的梯度流，而常见的DDPM、DDIM、NCSN以及流匹配等算法，都是该梯度流JKO离散化的不同实例。这一理论框架揭示了看似不同方法之间的深层联系，为生成模型的应用，包括流体动力学中的概率建模，提供了坚实的数学基础。",
+      "llm_tldr": "该论文从几何角度统一解释了扩散模型与流匹配方法。作者指出，在Wasserstein空间中，扩散过程等价于自由能的梯度流，而常见的DDPM、DDIM、NCSN以及流匹配等算法，都是该梯度流JKO离散化的不同实例。这一理论框架揭示了看似不同方法之间的深层联系，为生成模型的应用，包括流体动力学中的概率建模，提供了坚实的数学基础。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.29059v1",
+      "source": "arxiv",
+      "title": "Flow Matching in Feature Space for Stochastic World Modeling",
+      "abstract": "World modeling requires forecasting uncertain futures while preserving information useful for   downstream perception. Existing visual world models often struggle to satisfy both goals:   VAE-based stochastic models operate in low-dimensional reconstruction latents, which can   limit perception performance, while deterministic predictors using strong pretrained features   collapse multimodal futures into a single blurry mean. In this work, we propose FlowWM, a   stochastic world model that performs flow matching directly within pretrained feature space   (e.g., DINOv3). This is challenging because pretrained features are substantially   high-dimensional, making standard diffusion recipes suboptimal. To address this, we   investigate the design choices needed for feature-space flow matching and introduce a   differentiable one-step projection mechanism that enables efficient training with temporal   consistency and task-driven objectives. We evaluate FlowWM on two benchmarks: a synthetic   benchmark for systematic evaluation of accuracy and diversity, and a real-world benchmark   FuturePerception. FlowWM improves perception performance, mode coverage, and horizon   robustness, validating our proposed design for stochastic world modeling in high-dimensional   feature spaces.",
+      "authors": [
+        "Francois Porcher",
+        "Nicolas Carion",
+        "Karteek Alahari",
+        "Shizhe Chen"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-06-27T19:35:27+00:00",
+      "link": "https://arxiv.org/pdf/2606.29059v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "flow matching in feature space for world modeling, method could transfer to fluid",
+      "llm_evidence_cn": "特征空间中的流匹配用于世界建模，方法可迁移至流体",
+      "llm_evidence": "特征空间中的流匹配用于世界建模，方法可迁移至流体",
+      "canonical_evidence": "特征空间中的流匹配用于世界建模，方法可迁移至流体",
+      "llm_tldr_en": "Proposes FlowWM for stochastic world modeling using flow matching in pretrained feature space; though applied to vision, the flow matching technique is directly transferable to fluid simulation.",
+      "llm_tldr_cn": "该论文提出FlowWM框架，在预训练特征空间中直接进行流匹配，用于随机世界建模。尽管应用于视觉领域，但其核心的流匹配方法可直接迁移至流体动力学仿真中，解决高维特征空间中的生成问题。研究探索了多种设计选择，为后续在流体中应用流匹配奠定了基础。",
+      "llm_tldr": "该论文提出FlowWM框架，在预训练特征空间中直接进行流匹配，用于随机世界建模。尽管应用于视觉领域，但其核心的流匹配方法可直接迁移至流体动力学仿真中，解决高维特征空间中的生成问题。研究探索了多种设计选择，为后续在流体中应用流匹配奠定了基础。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching for fluid flow simulation",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

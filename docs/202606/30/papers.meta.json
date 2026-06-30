@@ -1,0 +1,54 @@
+{
+  "label": "2026-06-30",
+  "date": "2026-06-30",
+  "generated_at": "2026-06-30T22:00:47",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202606/30/2606.29843v1-gappy-reconstruction-of-bubbly-flows-by-guided-diffusion-models",
+      "section": "deep",
+      "title_en": "Gappy Reconstruction of Bubbly Flows by Guided Diffusion Models",
+      "authors": "Hridey Narula, Tianyi Li, Michele Buzzicotti, Luca Biferale, Prasad Perlekar",
+      "date": "2026-06-29",
+      "pdf": "https://arxiv.org/pdf/2606.29843v1",
+      "score": "9.0",
+      "evidence": "使用引导扩散模型进行气泡流重建",
+      "tldr": "多相流实验难以同时测量不同相的速度，相位有限测量下的流场重建因相间速度统计差异大而极具挑战。本文针对浮力驱动的气泡流伪湍流区域，采用引导扩散模型，利用从三维直接数值模拟中提取的二维切片进行训练。模型能无条件或基于周围液体流条件生成物理真实流场，重建的气泡相速度场准确复现关键统计特征。此外，通过简单修补相邻切片可合理重建气泡内三维流。结果表明扩散模型可作为三维湍流多相流的生成先验，为从稀疏、部分或相位有限测量中重建不可观测速度场开辟新途径。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Experiments in multiphase flows are often limited in their ability to simultaneously obtain velocity measurements in different phases. At the same time, flow reconstruction from phase-limited measurements is a challenging problem due to the substantially different velocity statistics across the phases. We address this problem for buoyancy-driven bubbly flows in the pseudo-turbulence regime by using a guided diffusion model. We train the model using two-dimensional slices of the velocity field extracted from fully resolved three-dimensional direct numerical simulations. The model generates physically realistic velocity fields both unconditionally and when conditioned on the surrounding liquid flow. The reconstructed bubble-phase velocity field accurately reproduces key statistical features of the flow. We further show that a simple patching procedure for adjacent two-dimensional slices enables a reasonable reconstruction of the three-dimensional flow inside a bubble. These results establish the potential of diffusion models to serve as generative priors for three-dimensional turbulent multiphase flows, opening a route toward the reconstruction of unobserved or experimentally inaccessible velocity fields from sparse, partial, or phase-limited measurements.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/30/2606.24157v1-the-geometry-behind-diffusion-and-flow-matching-gradient-flows-and-geodesics-in-wasserstein-space",
+      "section": "quick",
+      "title_en": "The Geometry Behind Diffusion and Flow Matching: Gradient Flows and Geodesics in Wasserstein Space",
+      "authors": "Yian Yao, Weiwei Zhang",
+      "date": "2026-06-23",
+      "pdf": "https://arxiv.org/pdf/2606.24157v1",
+      "score": "7.0",
+      "evidence": "扩散与流匹配在Wasserstein空间中的理论基础",
+      "tldr": "扩散模型与流匹配是两类主流生成模型，看似不同。本文揭示它们在Wasserstein测度空间中的统一几何基础：扩散模型是自由能的梯度流，每一步去噪对应JKO隐式欧拉离散化，统一了DDPM、DDIM等；流匹配则是最优传输的测地线，沿直线ODE生成，采样步数更少。两者在同一流形上遵循不同的路径但到达相同终点，为生成模型提供了统一的理论框架。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "The space $\\mathcal{P}_2(\\mathbb{R}^d$) of probability measures with finite second moment carries a natural geometry: the quadratic Wasserstein distance W_2 makes it a complete metric space and, following Otto, a (formal) Riemannian manifold whose geodesics are the optimal-transport interpolations. On this manifold, the gradient flow of the free energy F(rho) = KL(rho || π) is exactly the Fokker-Planck equation, and its implicit-Euler discretization is the JKO scheme. This is the geometry underlying diffusion models: the forward process descends the free energy, and each denoising step realizes one JKO step, which recovers DDPM, DDIM, NCSN/SMLD, and Energy Matching; this is one scheme, not separate theories. The same manifold supports a second variational principle. Its geodesics - the minimum-action curves of the Benamou-Brenier formula - are precisely the optimal-transport paths that Flow Matching learns. Fixing both endpoints and following the geodesic, generation becomes a deterministic ODE along a straight line, hence far fewer sampling steps. Placing both families of models on one manifold makes their relationship exact: diffusion follows a free-energy gradient flow, an initial-value problem; optimal-transport Flow Matching follows a Wasserstein geodesic, a boundary-value problem. The two reach the same endpoints along different paths.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/30/2606.29059v1-flow-matching-in-feature-space-for-stochastic-world-modeling",
+      "section": "quick",
+      "title_en": "Flow Matching in Feature Space for Stochastic World Modeling",
+      "authors": "Francois Porcher, Nicolas Carion, Karteek Alahari, Shizhe Chen",
+      "date": "2026-06-27",
+      "pdf": "https://arxiv.org/pdf/2606.29059v1",
+      "score": "6.0",
+      "evidence": "特征空间中的流匹配用于世界建模，方法可迁移至流体",
+      "tldr": "世界建模需同时处理预测不确定性和保持感知信息。现有VAE随机模型限于低维潜变量，限制感知性能；确定性预测器使用强预训练特征导致多模态坍塌。本文提出FlowWM，直接在预训练特征空间（如DINOv3）进行流匹配，克服高维挑战，并引入可微分一步投影机制实现高效时序一致性训练。在合成和真实世界FuturePerception基准上，FlowWM提升了感知性能、模式覆盖和鲁棒性，验证了高维特征空间随机世界模型的有效性。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "World modeling requires forecasting uncertain futures while preserving information useful for   downstream perception. Existing visual world models often struggle to satisfy both goals:   VAE-based stochastic models operate in low-dimensional reconstruction latents, which can   limit perception performance, while deterministic predictors using strong pretrained features   collapse multimodal futures into a single blurry mean. In this work, we propose FlowWM, a   stochastic world model that performs flow matching directly within pretrained feature space   (e.g., DINOv3). This is challenging because pretrained features are substantially   high-dimensional, making standard diffusion recipes suboptimal. To address this, we   investigate the design choices needed for feature-space flow matching and introduce a   differentiable one-step projection mechanism that enables efficient training with temporal   consistency and task-driven objectives. We evaluate FlowWM on two benchmarks: a synthetic   benchmark for systematic evaluation of accuracy and diversity, and a real-world benchmark   FuturePerception. FlowWM improves perception performance, mode coverage, and horizon   robustness, validating our proposed design for stochastic world modeling in high-dimensional   feature spaces.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
