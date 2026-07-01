@@ -6,29 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-30
-- 运行时间：2026-06-30 22:00:41 UTC
+- 最新运行日期：2026-07-01
+- 运行时间：2026-07-01 21:10:07 UTC
 - 运行状态：成功
-- 本次总论文数：3
-- 精读区：1
+- 本次总论文数：2
+- 精读区：0
 - 速读区：2
 
 ### 今日简报（AI）
-今日推荐3篇扩散与流匹配论文，精读聚焦气泡流间隙重建；最值得关注是扩散模型引导间隙重建（9分）和Wasserstein空间几何视角（7分）；建议优先精读间隙重建论文，再通过几何理论理解扩散模型底层原理。
-- 详情：[/202606/30/README](/202606/30/README)
+1) 今日速读2篇，聚焦扩散模型与流匹配的几何基础及随机微分方程的变分视角。  
+2) 值得关注《The Geometry Behind Diffusion and Flow Matching》揭示Wasserstein空间中的梯度流与测地线，为生成模型提供新视角。  
+3) 建议深入理解Wasserstein几何与SDE变分框架的联系，可尝试将几何直觉融入实际生成任务中。
+- 详情：[/202607/01/README](/202607/01/README)
 
 ### 精读区论文标签
-1. [Gappy Reconstruction of Bubbly Flows by Guided Diffusion Models](/202606/30/2606.29843v1-gappy-reconstruction-of-bubbly-flows-by-guided-diffusion-models)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：使用引导扩散模型进行气泡流重建
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [The Geometry Behind Diffusion and Flow Matching: Gradient Flows and Geodesics in Wasserstein Space](/202606/30/2606.24157v1-the-geometry-behind-diffusion-and-flow-matching-gradient-flows-and-geodesics-in-wasserstein-space)  
+1. [The Geometry Behind Diffusion and Flow Matching: Gradient Flows and Geodesics in Wasserstein Space](/202607/01/2606.24157v1-the-geometry-behind-diffusion-and-flow-matching-gradient-flows-and-geodesics-in-wasserstein-space)  
    标签：评分：7.0/10、query:genmod-fluid
-   evidence：扩散与流匹配在Wasserstein空间中的理论基础
-2. [Flow Matching in Feature Space for Stochastic World Modeling](/202606/30/2606.29059v1-flow-matching-in-feature-space-for-stochastic-world-modeling)  
+   evidence：通过Wasserstein几何统一扩散与流匹配的理论
+2. [Introduction to Stochastic Differential Equations for Generative Machine Learning: A Variational Perspective](/202607/01/2606.31576v1-introduction-to-stochastic-differential-equations-for-generative-machine-learning-a-variational-perspective)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：特征空间中的流匹配用于世界建模，方法可迁移至流体
+   evidence：从变分视角涵盖扩散模型、评分匹配和流匹配，为流体动力学中的生成模型提供基础方法。
 
 
 <div class="dpr-home-promo-card">

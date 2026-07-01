@@ -1,0 +1,93 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-01T21:08:55.884810+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.24157v1",
+      "source": "arxiv",
+      "title": "The Geometry Behind Diffusion and Flow Matching: Gradient Flows and Geodesics in Wasserstein Space",
+      "abstract": "The space $\\mathcal{P}_2(\\mathbb{R}^d$) of probability measures with finite second moment carries a natural geometry: the quadratic Wasserstein distance W_2 makes it a complete metric space and, following Otto, a (formal) Riemannian manifold whose geodesics are the optimal-transport interpolations. On this manifold, the gradient flow of the free energy F(rho) = KL(rho || π) is exactly the Fokker-Planck equation, and its implicit-Euler discretization is the JKO scheme. This is the geometry underlying diffusion models: the forward process descends the free energy, and each denoising step realizes one JKO step, which recovers DDPM, DDIM, NCSN/SMLD, and Energy Matching; this is one scheme, not separate theories. The same manifold supports a second variational principle. Its geodesics - the minimum-action curves of the Benamou-Brenier formula - are precisely the optimal-transport paths that Flow Matching learns. Fixing both endpoints and following the geodesic, generation becomes a deterministic ODE along a straight line, hence far fewer sampling steps. Placing both families of models on one manifold makes their relationship exact: diffusion follows a free-energy gradient flow, an initial-value problem; optimal-transport Flow Matching follows a Wasserstein geodesic, a boundary-value problem. The two reach the same endpoints along different paths.",
+      "authors": [
+        "Yian Yao",
+        "Weiwei Zhang"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-06-23T05:25:24+00:00",
+      "link": "https://arxiv.org/pdf/2606.24157v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "theoretical unification of diffusion and flow matching via Wasserstein geometry",
+      "llm_evidence_cn": "通过Wasserstein几何统一扩散与流匹配的理论",
+      "llm_evidence": "通过Wasserstein几何统一扩散与流匹配的理论",
+      "canonical_evidence": "通过Wasserstein几何统一扩散与流匹配的理论",
+      "llm_tldr_en": "This paper reveals the shared geometric structure of diffusion models and flow matching as gradient flows in Wasserstein space, providing a unifying perspective that bridges multiple generative frameworks.",
+      "llm_tldr_cn": "本文揭示了扩散模型和流匹配在Wasserstein空间中的共享几何结构，将其统一为梯度流，解释了DDPM、DDIM、NCSN等方法的等价性。该理论为理解和设计新的生成模型提供了基础，对流体动力学中的生成建模有重要启示。",
+      "llm_tldr": "本文揭示了扩散模型和流匹配在Wasserstein空间中的共享几何结构，将其统一为梯度流，解释了DDPM、DDIM、NCSN等方法的等价性。该理论为理解和设计新的生成模型提供了基础，对流体动力学中的生成建模有重要启示。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.31576v1",
+      "source": "arxiv",
+      "title": "Introduction to Stochastic Differential Equations for Generative Machine Learning: A Variational Perspective",
+      "abstract": "The use of ordinary and stochastic differential equations has led to substantial progress in generative machine learning with applications to, for example, image, video and biomolecule generation. This paper provides a self-contained and informal introduction to the differential equations, the probabilistic framework for using them in generative modeling and the Fokker--Planck equation that governs the temporal evolution of the marginal distribution of the stochastic variables of the differential equations. The variational lower bound on the log-likelihood (the evidence lower bound, ELBO) is derived and used as a general starting point for a discussion of diffusion models, score matching, and flow matching. All of these approaches may be viewed as specific parameterizations of the most general variational approach. A one-dimensional density modeling problem is used as a simple example to compare different parameterizations.",
+      "authors": [
+        "Ole Winther",
+        "Paul Jeha",
+        "Sander Dieleman",
+        "Andriy Mnih",
+        "Manfred Opper",
+        "Andrea Dittadi"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-30T12:34:16+00:00",
+      "link": "https://arxiv.org/pdf/2606.31576v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Covers diffusion models, score matching, flow matching from a variational perspective; provides foundational methods for generative models in fluid dynamics.",
+      "llm_evidence_cn": "从变分视角涵盖扩散模型、评分匹配和流匹配，为流体动力学中的生成模型提供基础方法。",
+      "llm_evidence": "从变分视角涵盖扩散模型、评分匹配和流匹配，为流体动力学中的生成模型提供基础方法。",
+      "canonical_evidence": "从变分视角涵盖扩散模型、评分匹配和流匹配，为流体动力学中的生成模型提供基础方法。",
+      "llm_tldr_en": "This paper introduces stochastic differential equations for generative ML, deriving the evidence lower bound for diffusion, score matching, and flow matching, offering a unified theoretical foundation that can underpin generative methods applied to fluid dynamics.",
+      "llm_tldr_cn": "该论文从变分视角介绍了生成机器学习中的随机微分方程，推导了扩散模型、评分匹配和流匹配的证据下界。它提供了一个自包含的理论框架，阐明了这些方法的等效性。虽然未直接应用于流体，但其方法构成了将生成模型用于流体动力学问题的基础，为后续研究提供了关键技术支撑。",
+      "llm_tldr": "该论文从变分视角介绍了生成机器学习中的随机微分方程，推导了扩散模型、评分匹配和流匹配的证据下界。它提供了一个自包含的理论框架，阐明了这些方法的等效性。虽然未直接应用于流体，但其方法构成了将生成模型用于流体动力学问题的基础，为后续研究提供了关键技术支撑。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
