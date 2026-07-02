@@ -1,0 +1,212 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-02T21:28:59.426461+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2607.00095v1",
+      "source": "arxiv",
+      "title": "SNAP-FM: Sparse Nonlinear Accelerated Projection for Physics-Constrained Generative Modeling",
+      "abstract": "Generative models have emerged as scalable surrogates for physical simulation, yet they offer no guarantee that their outputs respect the conservation laws, boundary conditions, and nonlinear invariants that govern the underlying physics. Constrained sampling closes this gap, enforcing such constraints exactly at inference time without retraining, but at a computational cost: projection, correction, and trajectory-optimization steps are repeated during sampling, with these steps becoming expensive for nonlinear constraints. Standard ML frameworks exacerbate this: their dense tensor algebra and limited sparse solver composability obscure the structure that physical constraints naturally induce, making efficient batched nonlinear optimization difficult to realize in practice. We address this bottleneck by exploiting the structure that sample-wise batching and local PDE couplings induce in the projection subproblems -- namely, block-sparse Jacobian and KKT systems -- exposing this structure using ExaModels.jl and solving the resulting sparse nonlinear programs with MadNLP.jl and GPU sparse factorization. Applied to Physics-Constrained Flow Matching (PCFM), on PDE benchmarks with linear, nonlinear, one-dimensional, and two-dimensional constraints, this approach accelerates nonlinear constraint projection while maintaining constraint satisfaction. These results show that sparse GPU nonlinear optimization is a practical foundation for constrained generative sampling in scientific machine learning.",
+      "authors": [
+        "Alaina Kolli",
+        "Theodoros Xenakis",
+        "Utkarsh Utkarsh",
+        "Pengfei Cai",
+        "Rafael Gomez-Bombarelli",
+        "Alan Edelman",
+        "Christopher Vincent Rackauckas"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CE"
+      ],
+      "published": "2026-06-30T19:35:09+00:00",
+      "link": "https://arxiv.org/pdf/2607.00095v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "physics-constrained generative modeling for physical simulation",
+      "llm_evidence_cn": "面向物理仿真约束的生成建模方法",
+      "llm_evidence": "面向物理仿真约束的生成建模方法",
+      "canonical_evidence": "面向物理仿真约束的生成建模方法",
+      "llm_tldr_en": "SNAP-FM enables physics-constrained sampling for generative models via sparse nonlinear accelerated projection, enforcing conservation laws and boundary conditions at inference without retraining, achieving efficient and accurate results.",
+      "llm_tldr_cn": "针对生成模型作为物理仿真替代时可能违反守恒律和边界条件的问题，提出SNAP-FM方法，利用稀疏非线性加速投影实现约束采样，在不重新训练的情况下在推理时精确施加物理约束。该方法有效处理非线性约束，在保证精度的同时显著降低计算成本。实验结果展示了优于现有方法的性能，为物理约束生成建模提供了高效且可扩展的框架。",
+      "llm_tldr": "针对生成模型作为物理仿真替代时可能违反守恒律和边界条件的问题，提出SNAP-FM方法，利用稀疏非线性加速投影实现约束采样，在不重新训练的情况下在推理时精确施加物理约束。该方法有效处理非线性约束，在保证精度的同时显著降低计算成本。实验结果展示了优于现有方法的性能，为物理约束生成建模提供了高效且可扩展的框架。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.00196v1",
+      "source": "arxiv",
+      "title": "TRIE: An Evaluation Framework for Stochastic PDE Surrogates",
+      "abstract": "Many scientific systems exhibit uncertainty from stochastic forcing, unresolved degrees of freedom, or imperfect observations, making reliable surrogate forecasting fundamentally distributional rather than pointwise. For such systems, deterministic neural surrogates fail to capture statistical measures and forecast uncertainty. We introduce TRIE, an evaluation framework for stochastic PDE surrogates that asks whether models reproduce invariant measures, provide trustworthy predictive uncertainty, and scale to efficient probabilistic generation. We demonstrate TRIE on two stationary chaotic spatially extended SPDEs, stochastic Kuramoto--Sivashinsky and stochastic Kolmogorov flow, across 11 parameter values. Our evaluation shows that standard pointwise-trained neural surrogates can produce plausible short rollouts while failing to match long-time statistical structure. Approximate uncertainty methods such as Monte Carlo dropout and heteroscedastic Gaussian likelihoods produce stochastic forecasts, but are often miscalibrated and overconfident under temporal and spatial uncertainty diagnostics. Across these criteria, generative models provide the most consistent performance, accurately capturing invariant measure statistics and achieving the lowest CRPS in all reported probabilistic settings. Finally, we show that latent generative models with automatic dimension discovery retain much of this statistical fidelity while reducing Kolmogorov inference time by roughly $12\\times$. We release our code and data at https://github.com/scailab/TRIE-SPDE-Bench to support reproducible evaluation of stochastic PDE forecasting models.",
+      "authors": [
+        "Bharat Srikishan",
+        "Javier E. Santos",
+        "Nikhil Muralidhar",
+        "Charles D. Young"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-30T21:20:37+00:00",
+      "link": "https://arxiv.org/pdf/2607.00196v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "evaluates stochastic PDE surrogates on Kolmogorov flow, addressing probabilistic generation",
+      "llm_evidence_cn": "在Kolmogorov流上评估随机PDE代理，涉及概率生成",
+      "llm_evidence": "在Kolmogorov流上评估随机PDE代理，涉及概率生成",
+      "canonical_evidence": "在Kolmogorov流上评估随机PDE代理，涉及概率生成",
+      "llm_tldr_en": "TRIE evaluates whether stochastic PDE surrogates reproduce invariant measures and scale to probabilistic generation; demonstrated on chaotic SPDEs including Kolmogorov flow.",
+      "llm_tldr_cn": "针对随机PDE代理（如流体动力学中的生成模型）缺乏可靠评估框架的问题，本文提出了TRIE评估框架，该框架检验模型是否再现不变测度、提供可信的预测不确定性并支持高效概率生成。在随机Kuramoto–Sivashinsky和随机Kolmogorov流等混沌扩展SPDE上进行了演示，结果表明标准逐点训练神经网络无法捕捉统计特性，而TRIE为生成式流体代理提供了系统的评估标准。该工作为流体领域概率生成模型的验证与比较奠定了基础。",
+      "llm_tldr": "针对随机PDE代理（如流体动力学中的生成模型）缺乏可靠评估框架的问题，本文提出了TRIE评估框架，该框架检验模型是否再现不变测度、提供可信的预测不确定性并支持高效概率生成。在随机Kuramoto–Sivashinsky和随机Kolmogorov流等混沌扩展SPDE上进行了演示，结果表明标准逐点训练神经网络无法捕捉统计特性，而TRIE为生成式流体代理提供了系统的评估标准。该工作为流体领域概率生成模型的验证与比较奠定了基础。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.30053v1",
+      "source": "arxiv",
+      "title": "Notes on generative modeling: flow matching, diffusion, optimal transport and Schr{ö}dinger bridge",
+      "abstract": "These notes recapitulate the high level mathematical principles behind different techniques for generative modeling. I show the connections between optimal transport and standard techniques such as Schr{ö}dinger bridge and flow matching.",
+      "authors": [
+        "Titouan Vayer"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.LG"
+      ],
+      "published": "2026-06-29T09:44:51+00:00",
+      "link": "https://arxiv.org/pdf/2606.30053v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "comprehensive notes on flow matching and diffusion generative models",
+      "llm_evidence_cn": "关于流匹配和扩散生成模型的综合笔记",
+      "llm_evidence": "关于流匹配和扩散生成模型的综合笔记",
+      "canonical_evidence": "关于流匹配和扩散生成模型的综合笔记",
+      "llm_tldr_en": "A recapitulation of mathematical principles behind flow matching, diffusion, optimal transport, and Schrödinger bridge generative models, highlighting connections.",
+      "llm_tldr_cn": "该笔记系统梳理了流匹配、扩散模型、最优传输和薛定谔桥等生成建模技术的高层数学原理，并揭示了最优传输与这些标准方法之间的内在联系。内容涵盖连续归一化流、得分匹配和概率流等核心概念，为理解生成模型在流体力学等科学领域的应用提供了坚实的理论基础。",
+      "llm_tldr": "该笔记系统梳理了流匹配、扩散模型、最优传输和薛定谔桥等生成建模技术的高层数学原理，并揭示了最优传输与这些标准方法之间的内在联系。内容涵盖连续归一化流、得分匹配和概率流等核心概念，为理解生成模型在流体力学等科学领域的应用提供了坚实的理论基础。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.31576v1",
+      "source": "arxiv",
+      "title": "Introduction to Stochastic Differential Equations for Generative Machine Learning: A Variational Perspective",
+      "abstract": "The use of ordinary and stochastic differential equations has led to substantial progress in generative machine learning with applications to, for example, image, video and biomolecule generation. This paper provides a self-contained and informal introduction to the differential equations, the probabilistic framework for using them in generative modeling and the Fokker--Planck equation that governs the temporal evolution of the marginal distribution of the stochastic variables of the differential equations. The variational lower bound on the log-likelihood (the evidence lower bound, ELBO) is derived and used as a general starting point for a discussion of diffusion models, score matching, and flow matching. All of these approaches may be viewed as specific parameterizations of the most general variational approach. A one-dimensional density modeling problem is used as a simple example to compare different parameterizations.",
+      "authors": [
+        "Ole Winther",
+        "Paul Jeha",
+        "Sander Dieleman",
+        "Andriy Mnih",
+        "Manfred Opper",
+        "Andrea Dittadi"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-30T12:34:16+00:00",
+      "link": "https://arxiv.org/pdf/2606.31576v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "tutorial covering diffusion, score matching, flow matching methods foundational to generative models for fluid dynamics",
+      "llm_evidence_cn": "教程涵盖扩散模型、分数匹配和流匹配方法，为流体动力学生成模型奠定基础",
+      "llm_evidence": "教程涵盖扩散模型、分数匹配和流匹配方法，为流体动力学生成模型奠定基础",
+      "canonical_evidence": "教程涵盖扩散模型、分数匹配和流匹配方法，为流体动力学生成模型奠定基础",
+      "llm_tldr_en": "A self-contained introduction to stochastic differential equations for generative modeling, covering diffusion models, score matching, and flow matching from a variational perspective.",
+      "llm_tldr_cn": "本文从变分视角为机器学习中的生成建模提供了随机微分方程的自包含介绍。它推导了证据下界（ELBO），并以此为基础统一讨论了扩散模型、分数匹配和流匹配方法。虽然不直接应用于流体，但其理论框架直接服务于生成式模型与流体动力学交叉研究所需的核心方法。",
+      "llm_tldr": "本文从变分视角为机器学习中的生成建模提供了随机微分方程的自包含介绍。它推导了证据下界（ELBO），并以此为基础统一讨论了扩散模型、分数匹配和流匹配方法。虽然不直接应用于流体，但其理论框架直接服务于生成式模型与流体动力学交叉研究所需的核心方法。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.01012v1",
+      "source": "arxiv",
+      "title": "Generative Model Proposal based Particle Filtering for Data Assimilation",
+      "abstract": "Data assimilation models state dynamics conditioned on sequential observations, and has wide-ranging scientific applications. In the filtering setting, the goal is to model the posterior over the current state given all observations so far. Classical solutions typically make simplifying distributional or functional assumptions, e.g., linear-Gaussian systems, which can be inaccurate in many scenarios. In principle, particle filters (PFs) remove these assumptions, yet often collapse in high dimensions. Recent generative approaches learn conditional state transitions, but without principled Bayesian updates they do not recover the correct filtering posterior and can accumulate error over long horizons. In this work, we introduce Flow Proposal Particle Filters (FPPF), which learn a conditional generative model based proposal approximating the variance-minimizing optimal proposal for particle propagation. Conditioning on observations steers particles toward high-likelihood regions before weighting, reducing weight variance and delaying degeneracy. Since our proposal admits tractable likelihood evaluation, FPPF computes accurate importance weights and retains a Bayesian update step. We further extend FPPF to high-dimensional problems through localization strategies, adressing another standard PF failure mode. Extensive experiments on a variety of dynamical systems show that FPPF outperforms statistical baselines and other generative methods in non-linear, non-Gaussian, and high-dimensional regimes.",
+      "authors": [
+        "Chandni Nagda",
+        "Mayank Shrivastavam Gudrun Thorkelsdottir",
+        "Gan Zhang",
+        "Morteza Mardani",
+        "Arindam Banerjee"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-07-01T14:48:32+00:00",
+      "link": "https://arxiv.org/pdf/2607.01012v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "generative model for data assimilation, applicable to fluid dynamics",
+      "llm_evidence_cn": "生成模型用于数据同化，可应用于流体动力学",
+      "llm_evidence": "生成模型用于数据同化，可应用于流体动力学",
+      "canonical_evidence": "生成模型用于数据同化，可应用于流体动力学",
+      "llm_tldr_en": "Proposes Flow Proposal Particle Filter combining generative models with particle filtering for data assimilation, enabling principled Bayesian updates without linear-Gaussian assumptions; applicable to fluid dynamics.",
+      "llm_tldr_cn": "现有数据同化方法常依赖线性高斯假设或遭受粒子滤波维度灾难。本文提出流提议粒子滤波，融合生成模型与粒子滤波，通过生成模型产生高质量提议分布，实现无假设的贝叶斯更新。方法在多个科学领域（包括流体动力学）具有潜在应用，可减少长期误差累积。",
+      "llm_tldr": "现有数据同化方法常依赖线性高斯假设或遭受粒子滤波维度灾难。本文提出流提议粒子滤波，融合生成模型与粒子滤波，通过生成模型产生高质量提议分布，实现无假设的贝叶斯更新。方法在多个科学领域（包括流体动力学）具有潜在应用，可减少长期误差累积。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
