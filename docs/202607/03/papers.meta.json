@@ -1,0 +1,54 @@
+{
+  "label": "2026-07-03",
+  "date": "2026-07-03",
+  "generated_at": "2026-07-03T20:51:46",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202607/03/2606.29287v1-beyond-trajectory-matching-reflow-with-marginal-distribution-alignment",
+      "section": "deep",
+      "title_en": "Beyond Trajectory Matching: Reflow with Marginal Distribution Alignment",
+      "authors": "Chen Wang, Peiran Yun, Pan Xie, Ke Deng",
+      "date": "2026-06-28",
+      "pdf": "https://arxiv.org/pdf/2606.29287v1",
+      "score": "8.0",
+      "evidence": "提出改进的基于reflow的蒸馏方法用于流匹配，可直接应用于流体流动模拟",
+      "tldr": "现有reflow蒸馏通过轨迹匹配加速扩散模型，但存在理论缺陷：轨迹匹配不能唯一确定学生模型诱导的分布，导致生成质量差异。本文提出边缘对齐正则化，通过跟踪学生ODE的对数密度变化，利用冻结教师模型的分数计算惩罚项，强制学生末端分布与教师分布一致。理论证明局部边缘对齐控制最终分布差异的总变差界。实验表明该方法在少步生成中显著提升质量，无需额外网络或对抗优化。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Diffusion and continuous-flow generative models achieve high-quality generation, and their deterministic sampling can be formulated as solving learned ODE dynamics. However, accurate ODE discretization often requires many steps, making efficient few-step generation a key challenge. Among acceleration strategies, reflow-based distillation simplifies teacher ODE trajectories so that a student model can approximate the teacher transport with fewer steps. We identify a theoretical limitation of this paradigm, namely that trajectory matching can under-determine the distribution induced by the student model. In particular, two student models can attain the same trajectory-matching loss while inducing different endpoint marginal distributions, which may lead to different generation quality. To address this limitation, we introduce a marginal-alignment regularizer that penalizes the discrepancy between the student-induced marginal and the corresponding teacher marginal at the endpoint of each distillation interval. The regularizer is computed by tracking log-density changes along the ODE induced by the student model and evaluating scores from the frozen teacher model, without requiring auxiliary trainable networks or adversarial optimization. The resulting framework applies uniformly to the reflow family, including vanilla reflow and piecewise reflow. We further prove a telescoping total-variation bound showing that local marginal alignment controls the final-time discrepancy between the student-induced and teacher-induced distributions. Experiments on benchmark backbones demonstrate the effectiveness of the proposed method for few-step generation.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/03/2607.00196v1-trie-an-evaluation-framework-for-stochastic-pde-surrogates",
+      "section": "quick",
+      "title_en": "TRIE: An Evaluation Framework for Stochastic PDE Surrogates",
+      "authors": "Bharat Srikishan, Javier E. Santos, Nikhil Muralidhar, Charles D. Young",
+      "date": "2026-06-30",
+      "pdf": "https://arxiv.org/pdf/2607.00196v1",
+      "score": "7.0",
+      "evidence": "评估包括流体流动在内的随机PDE生成代理模型",
+      "tldr": "随机PDE系统因随机强迫等存在不确定性，需要分布型预测。现有确定性神经网络代理无法捕捉长期统计特性。为此提出TRIE评估框架，从不变测度、不确定性校准和概率生成扩展性三方面评估随机PDE代理。在随机Kuramoto-Sivashinsky和Kolmogorov流上的实验表明，点训练神经网络短期合理但长期统计偏差大；MC dropout等方法校准不良且过度自信。生成模型在所有指标上表现一致，CRPS最低。潜在生成模型在保持统计保真度的同时，将Kolmogorov推理时间减少约12倍。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Many scientific systems exhibit uncertainty from stochastic forcing, unresolved degrees of freedom, or imperfect observations, making reliable surrogate forecasting fundamentally distributional rather than pointwise. For such systems, deterministic neural surrogates fail to capture statistical measures and forecast uncertainty. We introduce TRIE, an evaluation framework for stochastic PDE surrogates that asks whether models reproduce invariant measures, provide trustworthy predictive uncertainty, and scale to efficient probabilistic generation. We demonstrate TRIE on two stationary chaotic spatially extended SPDEs, stochastic Kuramoto--Sivashinsky and stochastic Kolmogorov flow, across 11 parameter values. Our evaluation shows that standard pointwise-trained neural surrogates can produce plausible short rollouts while failing to match long-time statistical structure. Approximate uncertainty methods such as Monte Carlo dropout and heteroscedastic Gaussian likelihoods produce stochastic forecasts, but are often miscalibrated and overconfident under temporal and spatial uncertainty diagnostics. Across these criteria, generative models provide the most consistent performance, accurately capturing invariant measure statistics and achieving the lowest CRPS in all reported probabilistic settings. Finally, we show that latent generative models with automatic dimension discovery retain much of this statistical fidelity while reducing Kolmogorov inference time by roughly $12\\times$. We release our code and data at https://github.com/scailab/TRIE-SPDE-Bench to support reproducible evaluation of stochastic PDE forecasting models.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/03/2607.02349v1-a-pde-based-framework-for-generative-modeling-beyond-classical-score-based-diffusion",
+      "section": "quick",
+      "title_en": "A PDE-Based Framework for Generative Modeling Beyond Classical Score-Based Diffusion",
+      "authors": "Horacio Tettamanti, Michael Herty",
+      "date": "2026-07-02",
+      "pdf": "https://arxiv.org/pdf/2607.02349v1",
+      "score": "7.0",
+      "evidence": "基于PDE的生成框架可应用于流体动力学",
+      "tldr": "现有基于分数的扩散模型受限于线性Ornstein-Uhlenbeck过程。本文提出非线性修改的动力学，微观上为相互作用粒子系统，宏观由带有超线性漂移的非线性Fokker-Planck方程描述。前向过程在适参数下出现凝聚现象，丧失L^2正则性；由此推导稳定化反向PDE，从渐近态重建初始分布。数值实验验证了该方法在1D和2D上的有效性，并展示了密度滤波的迭代应用。该框架将生成范式扩展至经典分数基础之外。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We introduce an alternative generative framework based on a nonlinear modification of the classical Ornstein--Uhlenbeck dynamics. The proposed dynamics admits both a microscopic description through an interacting particle system and, in the mean-field limit, a macroscopic formulation given by a nonlinear Fokker--Planck equation with a superlinear drift term. We show that, for suitable choices of the model parameters and sufficiently large initial mass, the forward dynamics exhibits condensation phenomena by proving the loss of $L^2$ regularity of the solution in finite time. Building upon this formulation, we derive a stabilized reverse-time partial differential equation that reconstructs the initial distribution from the asymptotic state of the forward dynamics, thereby extending the generative paradigm beyond the classical score-based framework. Furthermore, we introduce numerical discretizations of both the forward and reverse processes that accurately capture the asymptotic behavior of the continuous model while successfully reconstructing the initial distribution. Numerical experiments in one and two spatial dimensions validate the proposed methodology and illustrate its application to density filtering through successive iterations of the generative process.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

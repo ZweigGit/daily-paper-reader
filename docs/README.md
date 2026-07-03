@@ -6,35 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-02
-- 运行时间：2026-07-02 21:33:44 UTC
+- 最新运行日期：2026-07-03
+- 运行时间：2026-07-03 20:51:38 UTC
 - 运行状态：成功
-- 本次总论文数：5
-- 精读区：2
-- 速读区：3
+- 本次总论文数：3
+- 精读区：1
+- 速读区：2
 
 ### 今日简报（AI）
-今天精读了2篇高分论文，速览3篇生成式建模与数据同化教程。最值得关注的是物理约束生成建模的稀疏投影方法（SNAP-FM）和随机PDE代理评估框架（TRIE）。建议优先精读这两篇，掌握前沿思路。
-- 详情：[/202607/02/README](/202607/02/README)
+今日精读一篇8分论文，将边际分布对齐与重流方法结合，加速扩散模型生成；速读两篇分别聚焦随机PDE代理评估框架与基于PDE的生成建模新范式。建议优先精读高分论文，其余适合数学或PDE背景读者拓展思路。
+- 详情：[/202607/03/README](/202607/03/README)
 
 ### 精读区论文标签
-1. [SNAP-FM: Sparse Nonlinear Accelerated Projection for Physics-Constrained Generative Modeling](/202607/02/2607.00095v1-snap-fm-sparse-nonlinear-accelerated-projection-for-physics-constrained-generative-modeling)  
+1. [Beyond Trajectory Matching: Reflow with Marginal Distribution Alignment](/202607/03/2606.29287v1-beyond-trajectory-matching-reflow-with-marginal-distribution-alignment)  
    标签：评分：8.0/10、query:genmod-fluid
-   evidence：面向物理仿真约束的生成建模方法
-2. [TRIE: An Evaluation Framework for Stochastic PDE Surrogates](/202607/02/2607.00196v1-trie-an-evaluation-framework-for-stochastic-pde-surrogates)  
-   标签：评分：8.0/10、query:genmod-fluid
-   evidence：在Kolmogorov流上评估随机PDE代理，涉及概率生成
+   evidence：提出改进的基于reflow的蒸馏方法用于流匹配，可直接应用于流体流动模拟
 
 ### 速读区论文标签
-1. [Notes on generative modeling: flow matching, diffusion, optimal transport and Schr{ö}dinger bridge](/202607/02/2606.30053v1-notes-on-generative-modeling-flow-matching-diffusion-optimal-transport-and-schrdinger-bridge)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：关于流匹配和扩散生成模型的综合笔记
-2. [Introduction to Stochastic Differential Equations for Generative Machine Learning: A Variational Perspective](/202607/02/2606.31576v1-introduction-to-stochastic-differential-equations-for-generative-machine-learning-a-variational-perspective)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：教程涵盖扩散模型、分数匹配和流匹配方法，为流体动力学生成模型奠定基础
-3. [Generative Model Proposal based Particle Filtering for Data Assimilation](/202607/02/2607.01012v1-generative-model-proposal-based-particle-filtering-for-data-assimilation)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：生成模型用于数据同化，可应用于流体动力学
+1. [TRIE: An Evaluation Framework for Stochastic PDE Surrogates](/202607/03/2607.00196v1-trie-an-evaluation-framework-for-stochastic-pde-surrogates)  
+   标签：评分：7.0/10、query:genmod-fluid
+   evidence：评估包括流体流动在内的随机PDE生成代理模型
+2. [A PDE-Based Framework for Generative Modeling Beyond Classical Score-Based Diffusion](/202607/03/2607.02349v1-a-pde-based-framework-for-generative-modeling-beyond-classical-score-based-diffusion)  
+   标签：评分：7.0/10、query:genmod-fluid
+   evidence：基于PDE的生成框架可应用于流体动力学
 
 
 <div class="dpr-home-promo-card">

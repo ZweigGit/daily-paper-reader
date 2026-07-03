@@ -1,0 +1,131 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-03T20:49:03.569030+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2606.29287v1",
+      "source": "arxiv",
+      "title": "Beyond Trajectory Matching: Reflow with Marginal Distribution Alignment",
+      "abstract": "Diffusion and continuous-flow generative models achieve high-quality generation, and their deterministic sampling can be formulated as solving learned ODE dynamics. However, accurate ODE discretization often requires many steps, making efficient few-step generation a key challenge. Among acceleration strategies, reflow-based distillation simplifies teacher ODE trajectories so that a student model can approximate the teacher transport with fewer steps. We identify a theoretical limitation of this paradigm, namely that trajectory matching can under-determine the distribution induced by the student model. In particular, two student models can attain the same trajectory-matching loss while inducing different endpoint marginal distributions, which may lead to different generation quality. To address this limitation, we introduce a marginal-alignment regularizer that penalizes the discrepancy between the student-induced marginal and the corresponding teacher marginal at the endpoint of each distillation interval. The regularizer is computed by tracking log-density changes along the ODE induced by the student model and evaluating scores from the frozen teacher model, without requiring auxiliary trainable networks or adversarial optimization. The resulting framework applies uniformly to the reflow family, including vanilla reflow and piecewise reflow. We further prove a telescoping total-variation bound showing that local marginal alignment controls the final-time discrepancy between the student-induced and teacher-induced distributions. Experiments on benchmark backbones demonstrate the effectiveness of the proposed method for few-step generation.",
+      "authors": [
+        "Chen Wang",
+        "Peiran Yun",
+        "Pan Xie",
+        "Ke Deng"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.CV"
+      ],
+      "published": "2026-06-28T09:19:44+00:00",
+      "link": "https://arxiv.org/pdf/2606.29287v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "proposes improved reflow-based distillation for flow matching, directly applicable to fluid flow simulation",
+      "llm_evidence_cn": "提出改进的基于reflow的蒸馏方法用于流匹配，可直接应用于流体流动模拟",
+      "llm_evidence": "提出改进的基于reflow的蒸馏方法用于流匹配，可直接应用于流体流动模拟",
+      "canonical_evidence": "提出改进的基于reflow的蒸馏方法用于流匹配，可直接应用于流体流动模拟",
+      "llm_tldr_en": "This paper enhances flow matching distillation by addressing marginal distribution alignment, enabling faster and more accurate generative modeling for fluid simulations.",
+      "llm_tldr_cn": "加速流匹配生成模型的少步采样是重要挑战。本文指出现有轨迹匹配方法的不足，提出通过边缘分布对齐增强reflow蒸馏，使学生模型能更好逼近教师分布。该方法可显著提升流体模拟等应用中的生成效率与质量，为快速生成高保真流场提供了新的理论支撑。",
+      "llm_tldr": "加速流匹配生成模型的少步采样是重要挑战。本文指出现有轨迹匹配方法的不足，提出通过边缘分布对齐增强reflow蒸馏，使学生模型能更好逼近教师分布。该方法可显著提升流体模拟等应用中的生成效率与质量，为快速生成高保真流场提供了新的理论支撑。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.00196v1",
+      "source": "arxiv",
+      "title": "TRIE: An Evaluation Framework for Stochastic PDE Surrogates",
+      "abstract": "Many scientific systems exhibit uncertainty from stochastic forcing, unresolved degrees of freedom, or imperfect observations, making reliable surrogate forecasting fundamentally distributional rather than pointwise. For such systems, deterministic neural surrogates fail to capture statistical measures and forecast uncertainty. We introduce TRIE, an evaluation framework for stochastic PDE surrogates that asks whether models reproduce invariant measures, provide trustworthy predictive uncertainty, and scale to efficient probabilistic generation. We demonstrate TRIE on two stationary chaotic spatially extended SPDEs, stochastic Kuramoto--Sivashinsky and stochastic Kolmogorov flow, across 11 parameter values. Our evaluation shows that standard pointwise-trained neural surrogates can produce plausible short rollouts while failing to match long-time statistical structure. Approximate uncertainty methods such as Monte Carlo dropout and heteroscedastic Gaussian likelihoods produce stochastic forecasts, but are often miscalibrated and overconfident under temporal and spatial uncertainty diagnostics. Across these criteria, generative models provide the most consistent performance, accurately capturing invariant measure statistics and achieving the lowest CRPS in all reported probabilistic settings. Finally, we show that latent generative models with automatic dimension discovery retain much of this statistical fidelity while reducing Kolmogorov inference time by roughly $12\\times$. We release our code and data at https://github.com/scailab/TRIE-SPDE-Bench to support reproducible evaluation of stochastic PDE forecasting models.",
+      "authors": [
+        "Bharat Srikishan",
+        "Javier E. Santos",
+        "Nikhil Muralidhar",
+        "Charles D. Young"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-30T21:20:37+00:00",
+      "link": "https://arxiv.org/pdf/2607.00196v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "evaluates generative surrogates for stochastic PDEs including fluid flow",
+      "llm_evidence_cn": "评估包括流体流动在内的随机PDE生成代理模型",
+      "llm_evidence": "评估包括流体流动在内的随机PDE生成代理模型",
+      "canonical_evidence": "评估包括流体流动在内的随机PDE生成代理模型",
+      "llm_tldr_en": "TRIE provides an evaluation framework for stochastic PDE surrogates, focusing on distributional accuracy and uncertainty quantification, demonstrated on stochastic Kolmogorov flow.",
+      "llm_tldr_cn": "TRIE提出了针对随机PDE代理模型的评估框架，强调模型应再现不变测度、提供可信的预测不确定性并具有高效概率生成能力。在随机Kuramoto-Sivashinsky和随机Kolmogorov流（二维流体）上展示了评估指标。该工作为流体动力学中的生成模型提供了标准化评估工具，有助于推动概率代理模型在流体模拟中的应用。",
+      "llm_tldr": "TRIE提出了针对随机PDE代理模型的评估框架，强调模型应再现不变测度、提供可信的预测不确定性并具有高效概率生成能力。在随机Kuramoto-Sivashinsky和随机Kolmogorov流（二维流体）上展示了评估指标。该工作为流体动力学中的生成模型提供了标准化评估工具，有助于推动概率代理模型在流体模拟中的应用。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.02349v1",
+      "source": "arxiv",
+      "title": "A PDE-Based Framework for Generative Modeling Beyond Classical Score-Based Diffusion",
+      "abstract": "We introduce an alternative generative framework based on a nonlinear modification of the classical Ornstein--Uhlenbeck dynamics. The proposed dynamics admits both a microscopic description through an interacting particle system and, in the mean-field limit, a macroscopic formulation given by a nonlinear Fokker--Planck equation with a superlinear drift term. We show that, for suitable choices of the model parameters and sufficiently large initial mass, the forward dynamics exhibits condensation phenomena by proving the loss of $L^2$ regularity of the solution in finite time. Building upon this formulation, we derive a stabilized reverse-time partial differential equation that reconstructs the initial distribution from the asymptotic state of the forward dynamics, thereby extending the generative paradigm beyond the classical score-based framework. Furthermore, we introduce numerical discretizations of both the forward and reverse processes that accurately capture the asymptotic behavior of the continuous model while successfully reconstructing the initial distribution. Numerical experiments in one and two spatial dimensions validate the proposed methodology and illustrate its application to density filtering through successive iterations of the generative process.",
+      "authors": [
+        "Horacio Tettamanti",
+        "Michael Herty"
+      ],
+      "primary_category": "math.NA",
+      "categories": [
+        "math.NA",
+        "math.PR"
+      ],
+      "published": "2026-07-02T15:53:21+00:00",
+      "link": "https://arxiv.org/pdf/2607.02349v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "PDE-based generative framework applicable to fluid dynamics",
+      "llm_evidence_cn": "基于PDE的生成框架可应用于流体动力学",
+      "llm_evidence": "基于PDE的生成框架可应用于流体动力学",
+      "canonical_evidence": "基于PDE的生成框架可应用于流体动力学",
+      "llm_tldr_en": "Introduces a generative model using nonlinear Ornstein-Uhlenbeck dynamics and a reverse PDE, offering a method potentially applicable to fluid flow generation.",
+      "llm_tldr_cn": "该论文提出了一种基于偏微分方程（PDE）的生成框架，该框架通过非线性修改经典Ornstein-Uhlenbeck动力学，并推导出稳定的反向PDE来重建初始分布。这一方法提供了超越传统得分扩散的生成范式，由于流体动力学本身由PDE描述，该框架具有直接应用于流体流动生成任务的潜力，为生成式模型与流体力学交叉研究提供了新的方法论桥梁。",
+      "llm_tldr": "该论文提出了一种基于偏微分方程（PDE）的生成框架，该框架通过非线性修改经典Ornstein-Uhlenbeck动力学，并推导出稳定的反向PDE来重建初始分布。这一方法提供了超越传统得分扩散的生成范式，由于流体动力学本身由PDE描述，该框架具有直接应用于流体流动生成任务的潜力，为生成式模型与流体力学交叉研究提供了新的方法论桥梁。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
