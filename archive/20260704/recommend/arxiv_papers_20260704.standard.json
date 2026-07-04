@@ -1,0 +1,94 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-04T21:15:15.492114+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2606.29620v1",
+      "source": "arxiv",
+      "title": "Bidirectional Autoregressive Latent Diffusion for Forward and Inverse Magnetohydrodynamics",
+      "abstract": "This work presents a new bidirectional autoregressive latent diffusion approach for predicting the evolution of multiple fields (mass density, pressure, velocity, and magnetic field components) for magnetohydrodynamics. We show that this bidirectional flow can be used as a self-supervised consistency metric for uncertainty and error estimation, which enables the model to estimate test-time uncertainty and error without access to ground truth, by comparing how closely flowing forwards and backwards in time returns to the same predicted fields. We also demonstrate this methods's potential to serve as a non-invasive plasma diagnostic, and show how adaptive feedback can be used to make the model more robust based on sparse diagnostics or limited views/measurements.",
+      "authors": [
+        "Alexander Scheinker"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.LG",
+        "nlin.AO",
+        "physics.plasm-ph"
+      ],
+      "published": "2026-06-28T21:57:22+00:00",
+      "link": "https://arxiv.org/pdf/2606.29620v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "bidirectional autoregressive latent diffusion for magnetohydrodynamics",
+      "llm_evidence_cn": "双向自回归潜在扩散用于磁流体动力学",
+      "llm_evidence": "双向自回归潜在扩散用于磁流体动力学",
+      "canonical_evidence": "双向自回归潜在扩散用于磁流体动力学",
+      "llm_tldr_en": "Applies bidirectional autoregressive latent diffusion to predict MHD field evolution, enabling uncertainty estimation and inverse diagnostics, directly using diffusion for fluid dynamics.",
+      "llm_tldr_cn": "该论文提出一种双向自回归潜在扩散方法，用于预测磁流体动力学中多个物理场（密度、压力、速度、磁场）的演化。该方法不仅完成正向模拟，还可作为自洽的一致性度量进行不确定性估计，并支持逆问题诊断。实验表明模型能够准确预测复杂MHD行为，并通过自适应反馈提升鲁棒性，是扩散模型在流体动力学中成功应用的典范。",
+      "llm_tldr": "该论文提出一种双向自回归潜在扩散方法，用于预测磁流体动力学中多个物理场（密度、压力、速度、磁场）的演化。该方法不仅完成正向模拟，还可作为自洽的一致性度量进行不确定性估计，并支持逆问题诊断。实验表明模型能够准确预测复杂MHD行为，并通过自适应反馈提升鲁棒性，是扩散模型在流体动力学中成功应用的典范。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.29724v1",
+      "source": "arxiv",
+      "title": "Simplifying Flow Matching Transformations with Low-Rank Mixture Models",
+      "abstract": "Normalizing flows are powerful generative models that learn an invertible mapping between complex data distributions and simple latent distributions, typically a standard normal density. However, this choice of latent density can impose unnecessary complexity on the learned flow transformation due to the topological mismatch between the latent and data densities, leading to slower training and suboptimal performance. In this work, we propose using mixtures of probabilistic principal component analyzers (MPPCA) as the latent density for normalizing flows. We simplify the learned flow transformation by learning a latent distribution that more closely aligns with the data distribution in terms of KL divergence, thus enabling faster convergence and improved generative performance. Critically, MPPCA models can be fit quickly and cheaply using the expectation-maximization algorithm, making them a practical choice for initializing latent distributions even in high-dimensional generative tasks. We validate our method on both tabular and image datasets, demonstrating consistent gains in training efficiency and generation quality compared to baselines.",
+      "authors": [
+        "Liam A. Kruse",
+        "Houjun Liu",
+        "Alexandros E. Tzikas",
+        "Mansur M. Arief",
+        "Mykel J. Kochenderfer"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-29T03:03:06+00:00",
+      "link": "https://arxiv.org/pdf/2606.29724v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "flow matching generative model",
+      "llm_evidence_cn": "流匹配生成模型方法",
+      "llm_evidence": "流匹配生成模型方法",
+      "canonical_evidence": "流匹配生成模型方法",
+      "llm_tldr_en": "Proposes using mixtures of probabilistic principal component analyzers as latent density for normalizing flows to simplify flow matching transformations and improve convergence and performance.",
+      "llm_tldr_cn": "针对流匹配变换中标准正态潜在密度导致拓扑不匹配、训练慢的问题，提出使用概率主成分分析混合模型（MPPCA）作为归一化流的潜在密度。该方法通过学习更接近数据分布的潜在分布，简化了流变换，从而加速收敛并提升性能。实验表明新潜在密度选择有效提升了流匹配方法的效率。",
+      "llm_tldr": "针对流匹配变换中标准正态潜在密度导致拓扑不匹配、训练慢的问题，提出使用概率主成分分析混合模型（MPPCA）作为归一化流的潜在密度。该方法通过学习更接近数据分布的潜在分布，简化了流变换，从而加速收敛并提升性能。实验表明新潜在密度选择有效提升了流匹配方法的效率。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
