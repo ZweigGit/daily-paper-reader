@@ -1,0 +1,69 @@
+{
+  "label": "2026-07-05",
+  "date": "2026-07-05",
+  "generated_at": "2026-07-05T20:29:02",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202607/05/2606.31928v1-conditional-normalizing-flow-for-gas-surface-scattering-from-thermal-to-hypersonic-velocities",
+      "section": "deep",
+      "title_en": "Conditional Normalizing Flow for Gas-Surface Scattering from Thermal to Hypersonic Velocities",
+      "authors": "Miklas Schütte, Stephen Hocker, Hansjörg Lipp, Johannes Roth, Stefanos Fasoulas, Marcel Pfeiffer",
+      "date": "2026-06-30",
+      "pdf": "https://arxiv.org/pdf/2606.31928v1",
+      "score": "9.0",
+      "evidence": "条件归一化流应用于高超音速气体表面散射",
+      "tldr": "针对极低地球轨道卫星气动建模中气体-表面相互作用模型难以覆盖热速度到高超音速完整速度谱的问题，本文提出基于条件归一化流（cRealNVP）的散射核学习方法。通过扩展分子动力学模拟至全速度范围，并引入细致平衡损失，模型在高速区域精度超越前人，同时成功捕获热速度散射，热化误差在可接受范围内。该框架为吸气式电推进系统优化和VLEO任务规划提供了关键能力，并提供了满足热力学一致性的通用稀薄气体动力学方法。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Accurate aerodynamic modeling of satellites in very low Earth orbit (VLEO) requires gas-surface interaction (GSI) models that capture the full velocity spectrum from thermal to orbital speeds. Atmospheric particles initially strike spacecraft surfaces at hypersonic velocities of 6 000 - 10 000 m/s. Due to surface roughness and complex geometries, especially within air-breathing electric propulsion (ABEP) intake systems, multiple collisions occur, progressively reducing the particle velocities. A recent machine learning framework for deriving scattering kernels from molecular dynamics (MD) simulations has shown promise, but remains limited to high-velocity single impacts and possibly violates fundamental equilibrium principles such as detailed balance. This work extends this machine learning based scattering kernel to cover the complete velocity range using conditional normalizing flows trained with physics-informed constraints, enabling accurate modeling of multi-bounce scenarios in realistic VLEO applications. We train a conditional Real-valued Non-Volume Preserving (cRealNVP) model on expanded molecular dynamics simulations covering velocities from thermal to hypersonic speeds, incorporating a detailed balance loss term. The resulting model demonstrates improved accuracy compared to previous approaches even in the original high-velocity regime, while successfully capturing thermal-velocity scattering. Quantitative assessment shows that thermalization is approximated within acceptable tolerances. This framework provides essential capabilities for accurate ABEP intake optimization and VLEO mission planning while offering a general methodology applicable to broader rarefied gas dynamics problems requiring thermodynamic consistency.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/05/2607.00669v1-convolutional-symmetric-autoencoders-enhancing-latent-stability-via-differential-geometry",
+      "section": "deep",
+      "title_en": "Convolutional Symmetric AutoEncoders: enhancing latent stability via differential geometry",
+      "authors": "G. Li Causi, N. Tonicello, L. Magri, G. Rozza",
+      "date": "2026-07-01",
+      "pdf": "https://arxiv.org/pdf/2607.00669v1",
+      "score": "8.0",
+      "evidence": "用于参数化PDE降阶建模的自编码器框架，可应用于流体动力学",
+      "tldr": "传统自编码器在非线性降维中虽优于POD，但其高表达性导致潜在空间不稳定，不利于构建鲁棒的降阶模型。本文受之前全连接表示一致性工作的启发，将微分几何性质引入卷积层，提出对称卷积自编码器。在三个一维PDE测试中，该架构在潜在轨迹准确性、重构误差和模型鲁棒性上均显著优于经典CAE。这一工作为卷积自编码器在降阶模型中的稳定应用提供了新思路。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Autoencoders (AEs) have emerged as powerful tools for non-linear dimensionality reduction, often surpassing traditional linear methods such as Proper Orthogonal Decomposition (POD) in scenarios characterized by slowly decaying Kolmogorov $n$-widths. In the realm of Reduced-Order Modelling (ROM), these models are increasingly utilized to learn low-dimensional representations of solution manifolds associated with parametric Partial Differential Equations (PDEs). However, the high expressivity of AEs presents a challenge: although trained networks typically minimize reconstruction error, they often struggle to capture the essential properties necessary for building accurate and robust ROMs. Recent works by arXiv:2307.15288v2 and arXiv:2506.11641v1 have tackled this challenge in fully connected AEs by proposing representation-consistent architectures, which preserve some of the properties belonging to POD. This study builds upon that concept by extending representation consistency for convolutional layers. We introduce a novel class of symmetric Convolutional AutoEncoders (CAEs) designed to embody the primary properties of manifold parametrization mappings. When integrated into a ROM framework, this architecture demonstrates significantly improved predictive capabilities. Specifically, we compared the performance of the ROMs based on classical and symmetric CAEs on three one dimensional academic test cases, namely the Linear Advection, the Viscous Burger and the Kuramoto Sivashinsky equation. Numerical results demonstrate that our proposed symmetric approach consistently yields more accurate latent trajectories, lower reconstruction errors, and enhanced model robustness.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/05/2606.31290v1-patch-podiff-vit-structured-latent-diffusion-with-patchwise-pod-for-super-resolution-and-uncertainty-quantification",
+      "section": "quick",
+      "title_en": "Patch-PODiff-ViT: Structured Latent Diffusion with Patchwise POD for Super-Resolution and Uncertainty Quantification",
+      "authors": "Onkar Jadhav, Tim French, Matthew Rayson, Nicole L. Jones",
+      "date": "2026-06-30",
+      "pdf": "https://arxiv.org/pdf/2606.31290v1",
+      "score": "7.0",
+      "evidence": "使用POD潜空间的扩散模型，可应用于流体流动超分辨率",
+      "tldr": "扩散模型在超分辨率中计算昂贵，且学得的潜在空间缺乏可解释不确定性。提出Patch-PODiff-ViT，用逐块本征正交分解（POD）构建固定线性正交基潜在空间，结合Vision Transformer进行扩散。解码器固定线性，潜在系数不确定性可解析传播到像素空间，避免蒙特卡洛采样。在海面温度、医学图像和自然图像上，以更少参数和内存实现强重建，不确定性校准良好。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Diffusion models enable probabilistic super-resolution and conditional generation, but pixel-space methods are computationally expensive and learned latent spaces often lack interpretable uncertainty quantification. We introduce Patch-PODiff-ViT, a structured latent diffusion framework in which the latent space is defined by patchwise Proper Orthogonal Decomposition (POD), a fixed linear orthonormal basis over local patches, rather than learned by a nonlinear autoencoder. This yields low-dimensional, variance-ordered tokens that preserve spatial structure and enable efficient diffusion in a structured low-dimensional latent space with a Vision Transformer. Because the decoder is fixed, linear, and orthonormal, latent coefficient uncertainty can be propagated directly to physical-space predictive variance, enabling analytic propagation of predictive variance through the linear decoder without Monte Carlo estimation in pixel space. Across sea surface temperature, medical imaging, and natural images, the method achieves strong reconstruction with fewer parameters and lower memory, while producing well-calibrated spatial uncertainty that closely matches empirical ensembles.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/05/2606.31576v1-introduction-to-stochastic-differential-equations-for-generative-machine-learning-a-variational-perspective",
+      "section": "quick",
+      "title_en": "Introduction to Stochastic Differential Equations for Generative Machine Learning: A Variational Perspective",
+      "authors": "Ole Winther, Paul Jeha, Sander Dieleman, Andriy Mnih, Manfred Opper, Andrea Dittadi",
+      "date": "2026-06-30",
+      "pdf": "https://arxiv.org/pdf/2606.31576v1",
+      "score": "6.0",
+      "evidence": "提供了生成建模中SDE的导引，包括扩散和流匹配",
+      "tldr": "生成式机器学习中，常微分与随机微分方程成功推动了图像、视频等生成任务的发展。本文从变分视角出发，提供自包含的通俗导论，介绍随机微分方程、Fokker-Planck方程，并推导证据下界（ELBO）作为统一框架。扩散模型、分数匹配和流匹配均可视为该变分框架的特定参数化。通过一维密度建模示例，直观比较了不同参数化的表现，为理解生成模型提供了统一的理论基础。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "The use of ordinary and stochastic differential equations has led to substantial progress in generative machine learning with applications to, for example, image, video and biomolecule generation. This paper provides a self-contained and informal introduction to the differential equations, the probabilistic framework for using them in generative modeling and the Fokker--Planck equation that governs the temporal evolution of the marginal distribution of the stochastic variables of the differential equations. The variational lower bound on the log-likelihood (the evidence lower bound, ELBO) is derived and used as a general starting point for a discussion of diffusion models, score matching, and flow matching. All of these approaches may be viewed as specific parameterizations of the most general variational approach. A one-dimensional density modeling problem is used as a simple example to compare different parameterizations.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

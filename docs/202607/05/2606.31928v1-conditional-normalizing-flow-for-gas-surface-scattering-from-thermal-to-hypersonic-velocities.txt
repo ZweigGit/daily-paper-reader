@@ -1,0 +1,2471 @@
+Title: Conditional Normalizing Flow for Gas-Surface Scattering from Thermal to Hypersonic Velocities
+
+URL Source: https://arxiv.org/pdf/2606.31928v1
+
+Published Time: Wed, 01 Jul 2026 01:40:38 GMT
+
+Number of Pages: 25
+
+Markdown Content:
+Conditional Normalizing Flow Scattering Kernel 
+
+# Conditional Normalizing Flow for Gas-Surface Scattering from Thermal to Hypersonic Velocities 
+
+Miklas Sch¨ utte, 1, a) Stephen Hocker, 2 Hansj¨ org Lipp, 2 Johannes Roth, 2 Stefanos Fasoulas, 1 and Marcel Pfeiffer 1
+
+> 1)
+
+Institute of Space Systems, University of Stuttgart b) 2) Institute for Functional Matter and Quantum Technologies, University of Stuttgart c) 
+
+(Dated: 1 July 2026, Preprint submitted but not yet peer-reviewed.) 
+
+Accurate aerodynamic modeling of satellites in very low Earth orbit (VLEO) requires gas-surface interaction (GSI) models that capture the full velocity spectrum from thermal to orbital speeds. Atmospheric particles initially strike spacecraft surfaces at hypersonic velocities of 6 000 - 10 000 m/s. Due to surface roughness and complex geometries, especially within air-breathing electric propulsion (ABEP) intake systems, multiple col-lisions occur, progressively reducing the particle velocities. A recent machine learning framework for deriving scattering kernels from molecular dynamics (MD) simulations has shown promise, but remains limited to high-velocity single impacts and possibly violates fundamental equilibrium principles such as detailed bal-ance. This work extends this machine learning based scattering kernel to cover the complete velocity range using conditional normalizing flows trained with physics-informed constraints, enabling accurate modeling of multi-bounce scenarios in realistic VLEO applications. We train a conditional Real-valued Non-Volume Preserving (cRealNVP) model on expanded molecular dynamics simulations covering velocities from thermal to hypersonic speeds, incorporating a detailed balance loss term. The resulting model demonstrates improved accuracy compared to previous approaches even in the original high-velocity regime, while successfully captur-ing thermal-velocity scattering. Quantitative assessment shows that thermalization is approximated within acceptable tolerances. This framework provides essential capabilities for accurate ABEP intake optimization and VLEO mission planning while offering a general methodology applicable to broader rarefied gas dynamics problems requiring thermodynamic consistency. 
+
+I. INTRODUCTION 
+
+Describing particle surface scattering is particularly important in the free molecular flow regime. The very low Earth orbit (VLEO), which is typically defined for orbit altitudes below 450 km, falls entirely within this regime 1,2 . At these altitudes, the aerodynamic forces acting on satellites arise from gas-surface interactions (GSIs) between the residual atmosphere and the sur-face of the spacecraft. These interactions generate aero-dynamic drag, which limits the lifetime of satellites in VLEO. At the same time, they also enable novel con-cepts such as air-breathing electric propulsion (ABEP), where an intake collects incoming particles to be used as propellant, and aerodynamic attitude and orbit con-trol. Therefore, accurate modeling of GSIs is essential for lifetime prediction, mission planning, and aerodynamic optimization of satellite designs in VLEO. Addressing these challenges is a central objective of the collabora-tive research center ATLAS (Advancing Technologies for Low-Altitude Satellites), which aims to make sustainable operations in VLEO feasible 3.Widely used scattering models in VLEO aerodynamic simulation tools, such as direct simulation Monte Carlo (DSMC) or panel methods, are very simple. The stan-dard scattering model is the Maxwell model, which was  
+
+> a) Electronic mail: schuettem@irs.uni-stuttgart.de; Corresponding author
+> b) https://www.irs.uni-stuttgart.de/en/
+> c) https://www.fmq.uni-stuttgart.de/
+
+introduced by James Clerk Maxwell in 1879 4. It pre-defines the scattering to be specular or diffuse. The decision of a specular or diffuse scattering is decided by an accommodation coefficient. However, molecular beam experiments have shown that the scattering be-havior is much more complex and cannot be represented as a simple linear combination of specular and diffuse re-flection 5–8 . Consequently, a variety of models have been developed, such as the Cercignani-Lampis (CL) model 9
+
+and the Washboard model 10 . More recent work has intro-duced several extensions of the Washboard model. This includes an extension of the hybrid Washboard-CL for-mulation that incorporates a velocity dependent corru-gation factor 11 , as well as generalized roughness mod-els that account for anisotropic surfaces 12 . Another ap-proach applies electromagnetic wave theory to represent roughness-induced macroscopic effects in the scattering distribution 13 . All of these models use predefined func-tional forms, limiting the shape of the resulting scattering distribution. Furthermore, they depend on accommoda-tion coefficients or other parameters, which are generally treated as constant. These parameters are difficult to determine and depend on a variety of factors, such as particle velocity, angle of incidence, surface temperature, and material composition 14,15 .An alternative to classical scattering models is to em-ploy machine learning techniques that learn the scatter-ing distribution directly from molecular dynamics (MD) simulations. MD resolves every individual impact with atomistic precision, including full momentum and en-ergy transfer at the collision interface. As a result, ma-chine learning models can extract the underlying scat-
+
+> arXiv:2606.31928v1 [physics.comp-ph] 30 Jun 2026
+
+Conditional Normalizing Flow Scattering Kernel 2tering behavior without relying on predefined functional forms or accommodation coefficients. This enables them to capture velocity-dependent effects and multi-modal distributions that simple parametric kernels cannot rep-resent. Such capabilities were demonstrated in recent work by the authors in 16 for VLEO conditions. However, this model was trained exclusively on hypersonic im-pacts (6 000 - 10 000 m/s) and does not generalize to lower velocities. This limitation becomes critical in multi-collision scenarios. Particles entering ABEP intakes at orbital speeds undergo successive wall impacts, decel-erating through 4 000 m/s, 2 000 m/s, down to thermal velocities. By the second, third, or fourth collisions, the incident velocities are entirely outside the training regime. Similarly, the surface roughness resulting from manufacturing or erosion induces multiple bounces with progressive energy loss. Consequently, for VLEO appli-cations, both hypersonic non-equilibrium scattering and thermal (near-)equilibrium scattering are critically im-portant. Capturing these regimes accurately requires scattering kernels that remain valid across the entire thermal-to-hypersonic velocity spectrum. Additionally, the original model did not enforce physical constraints like detailed balance, which can lead to thermodynamic inconsistencies in long-duration simulations. This work addresses both limitations through aphysics-informed conditional normalizing flow architec-ture trained on expanded MD data that cover the full ve-locity range from thermal ( ≈1 000 m/s) to orbital speeds (7 800 m/s). We incorporate a detailed balance loss term to ensure thermodynamic consistency while maintaining high fidelity to the underlying MD simulations. The re-sulting model is compared to the previously used condi-tional Variational Autoencoder (cVAE) approach 16 . This framework enables accurate DSMC predictions for com-plex VLEO applications, including ABEP intake opti-mization and realistic surface roughness modeling. How-ever, the model is not limited to VLEO applications, but can be applied to any rarefied gas dynamics prob-lem ranging from thermal to hypersonic velocities. In addition to the application to DSMC, the models are also applicable to test particle Monte Carlo (TPMC). Furthermore, the aerodynamic coefficients obtained from this model can be integrated into panel methods such as ADBSat 17 , allowing accurate aerodynamic predictions for satellite design and mission planning in VLEO.    
+
+> II. METHODS A. Computational Methods 1. Direct Simulation Monte Carlo
+
+In VLEO, the mean free path of atmospheric parti-cles exceeds typical satellite dimensions, resulting in a high Knudsen number (Kn > 10) flow regime. Con-sequently, the continuum assumption underlying tradi-tional fluid dynamics breaks down, and the gas exhibits non-equilibrium behavior. The DSMC method 18 ad-dresses this regime by representing gas as discrete simu-lation particles. It models the gas flow by tracking the trajectories of these particles, which represent a weighted number of real gas molecules or atoms. These simula-tion particles approximate the distribution function f in DSMC. The Boltzmann equation specifies how the parti-cle distribution function f (x, v, t ) evolves in phase space. Its general form is 
+
+∂f ∂t + v · ∂f ∂x + F
+
+m · ∂f ∂v =
+
+ δf δt 
+
+
+
+> coll
+
+(1) where x and v are the position and velocity vectors, t is time, F is the external force acting on the particles, and 
+
+m is the particle mass. The three terms on the left side represent the temporal variation, the advection in physi-cal space due to particle motion, and changes in velocity induced by external forces F . The right-hand side ac-counts for momentum and energy-exchange during colli-sions between particles and governs the relaxation of the system toward its equilibrium distribution. Therefore, the DSMC method simulates the movement of particles through the computational domain and their interactions with each other and with boundaries, to approximate the Boltzmann equation. For the interaction processes, prob-abilistic models are used. Electromagnetic forces are not included in standard DSMC formulations 18,19 .In VLEO applications, the GSIs are of particular im-portance, as collisions between particles hardly occur in the free molecular flow regime. As a result, the aerody-namic forces on the satellite are primarily determined by the interactions of impinging particles with the surface of the satellite. The scattering of particles on the surface is modeled in DSMC using scattering kernels. It describes how an incident velocity distribution f (vi) is mapped into the reflected velocity distribution f (vr). This rela-tionship is expressed in equation (2) 9,19 :
+
+vn,r f (vr) = 
+
+Z
+
+> vn,i <0
+
+|vn,i | K  vi → vr
+
+ f (vi) d vi (2) Here, vn,r and vn,i denote the normal components of the reflected and incident velocities. The kernel K vi → vr
+
+
+
+acts as a conditional probability density, specifying the likelihood that a particle approaching with velocity vi is scattered to a state with velocity vr.To be physically valid, such a kernel must satisfy three fundamental conditions 9,20 :1. Non-negativity requirement 
+
+K vi → vr
+
+ ≥ 0 (3) The non-negativity requirement states that the scattering kernel must assign non-negative proba-bilities to all possible reflected velocities for every incident velocity. This ensures that the kernel rep-resents a valid probability distribution as the prob-abilities cannot be negative. Conditional Normalizing Flow Scattering Kernel 32. Normalization requirement 
+
+Z
+
+> vr·n>0
+
+K vi → vr
+
+ dvr = 1 vi · n < 0 (4) The normalization requirement states that for ev-ery incident velocity with vi · n < 0, the scattering kernel must define a proper probability distribution over all physically admissible reflected velocities. In other words, the kernel must assign all its proba-bility masses to the half-space vr · n > 0, and the total mass over that domain must be exactly one. 3. Detailed balance (DB) requirement 
+
+M (vi) |vi · n| K  vi → vr
+
+| {z }
+
+> DB fwd
+
+= M (vr) |vr · n| K  −vr → − vi
+
+| {z }
+
+> DB bwd
+
+(5) Here, M denotes the Maxwell distribution of the gas in equilibrium with the wall. The DB rela-tion ensures consistency with equilibrium thermo-dynamics. It requires that the forward (fwd) prob-ability flux from vi to vr is equal to the backward (bwd) flux from −vr to −vi when the gas is in equi-librium with the wall. This can be physically in-terpreted as following 20 . If a gas is in equilibrium with the wall temperature Tw, and therefore has a Maxwell distribution M at that temperature, then the number of particles scattering from a velocity range ( vi, vi + d vi) into a range ( vr, vr + d vr) is exactly equal to the number of particles scatter-ing from ( −vr, −vr + d vr) into ( −vi, −vi + d vi). One consequence of the DB relation is that if the incident velocity distribution is a Maxwellian flux 
+
+fi ∼ |vi,n |M (vi) at the wall temperature, then the reflected velocity distribution will also be a Maxwellian flux at the same temperature 20 .Building on these fundamental requirements, one of the most widely used scattering models in DSMC is the classical Maxwell kernel 4. It assumes that an incident particle undergoes specular or diffuse reflection, repre-sented by 
+
+K vi → vr
+
+ = (1 − σ)δ(vr − vi)
+
+| {z }
+
+> specular
+
++ σM(vr, T w)|vn,r |
+
+| {z }
+
+> diffuse
+
+. (6) The specular term represents mirror-like reflection, and the diffuse term describes the re-emission of particles fol-lowing a Maxwell flux distribution fr ∼ | vr,n |M (vr) at the wall temperature Tw. δ is the Dirac delta function and σ the accommodation coefficient that quantifies the relative contributions of specular and diffuse reflections: 
+
+σ = 1 implies purely diffuse behavior, while σ = 0 indi-cates purely specular reflection 4,21 . Although it is often treated as a constant, σ depends on multiple factors, in-cluding particle energy, angle of incidence, surface tem-perature, and material composition. These dependencies are not well characterized and the accommodation coef-ficient is typically not known 14,15 . Moreover, molecular-beam experiments have demonstrated that real GSIs can-not be represented as a simple linear combination of specular and diffuse components 5–8 . This has motivated the development of more sophisticated scattering mod-els, such as the CL kernel 9 and the Washboard model 10 .However, these approaches still rely on uncertain accom-modation parameters and predefined functional forms, limiting their ability to capture complex scattering be-havior. Recently, a data-driven approach was proposed that combines MD simulations with a cVAE to learn the scattering kernel directly from microscopic simulation data without relying on predefined functional forms and unknown accommodation coefficients 16 . This method showed promising results in capturing the scattering be-havior at hypersonic velocities, but is currently limited to single impacts.  
+
+> 2. Molecular Dynamics
+
+With MD simulations, detailed information can be ob-tained on the physical processes governing GSIs. MD de-scribes the trajectories of gas particles and surface atoms by solving Newton’s second law of motion, 
+
+mj
+
+d2xj
+
+dt2 = Fj , (7) where mj is the mass of particle j, xj is its position, and 
+
+Fj is the force acting on it. The interatomic forces act-ing on each particle are derived from a potential energy function U , by following relationship 
+
+Fj = −∇ j U (x1, x2, . . . , xN ), (8) where x1, x2, . . . , xN denote the positions of all N parti-cles in the system. This potential captures forces such as attraction, repulsion, and bonding between atoms, allow-ing for the prediction of system behavior at the atomic level. Several strategies exist to calculate the potential energy function U . Ab initio methods, such as those based on density functional theory (DFT), provide highly accurate descriptions by solving the Schr¨ odinger equa-tion. They are computationally demanding, but remain the method of choice whenever high accuracy is required. In contrast, parameterized empirical potentials offer a far more efficient alternative. Their parameters are cal-ibrated against experimental or ab initio data, allowing the resulting interaction models to support simulations at comparatively low computational expense 19,22,23 .Although MD simulations offer atomistic detail on gas-surface interactions, their high computational cost re-stricts them to small systems and short timescales. Nev-ertheless, the microscopic information obtained from MD Conditional Normalizing Flow Scattering Kernel 4simulations is crucial to build a data-driven scattering kernel for DSMC simulations. Therefore, specific sets of incident particles vi are simulated using MD simulations to derive the corresponding reflected velocity distribu-tions P (vr|vi). These conditional distributions can then be used to train a generative machine learning model, such as a cVAE, to predict the reflected velocity distri-bution for any given incident velocity vi. The resulting machine learning model can then be used as a scattering kernel in DSMC simulations.  
+
+> B. Data-Driven Scattering Model
+
+To construct a data-driven scattering model, we use the approach proposed by Sch¨ utte et al. 16 , which com-bines MD simulations with a generative machine learn-ing model to learn the scattering kernel directly from microscopic simulation data without relying on prede-fined functional forms and unknown accommodation co-efficients. The first step is to obtain the required scattering datasets from MD simulations. To keep the number of incident velocity vectors vi that must be simulated at a manageable level, the scattering process is assumed to be independent of the incident azimuthal angle ψi. This im-plies that the surface interaction does not vary with rota-tions around the surface normal. Such an approximation is well justified for isotropic surfaces, which is typical for amorphous surface structures, where scattering ex-hibits uniform properties in all directions. In contrast, anisotropic surfaces, including crystalline substrates or engineered textures with grooves or patterned coatings, may violate this assumption because directional features can alter the scattering response. Under this assumption, the scattering is performed in the local scattering frame of reference ( t1, t2, n), as shown in Figure 1. In this reference frame, the global coordinate system ( x, y, z) is rotated around the surface normal n such that the inci-dent velocity component in the t2-direction is zero. Con-sequently, only different incident velocity magnitudes |vi|
+
+and polar angles θi should be selected for data genera-tion, significantly reducing the computational cost of MD simulations 16 . Each selected incident velocity vector vi
+
+is impacted onto the surface several times to obtain the corresponding reflected velocity distribution p(vr|vi). The resulting datasets are then used to train and val-idate generative machine learning models that learn to approximate the reflected velocity distribution p(vr|vi)for any given incident velocity vi. Two architectures are examined in this study: the already mentioned cVAE and a conditional normalizing flow model, both are in-troduced in the subsequent Sections. z
+
+y
+
+x
+
+vi
+
+t2
+
+θi
+
+vr
+
+θr
+
+n
+
+ψr
+
+t1
+
+FIG. 1: Global frame of reference ( x, y, z) and local scattering frame of reference ( t1, t2, n)16 . 
+
+> 1. Conditional Variational Autoencoder
+
+A cVAE can learn to generate new data points that are similar to a given dataset, while also allowing for condi-tioning on additional information. In Sch¨ utte et al. 16 adetailed description of the cVAE architecture and train-ing procedure is given, so here only a brief overview is provided. The cVAE consists of an encoder and a de-coder network with a latent distribution in between (see Figure 2). The encoder takes the reflected velocity vr and the incident velocity vi as input and parametrizes the la-tent distribution, which is typically a multivariate normal distribution N (μ, σ2). From this distribution a latent vector z is sampled and passed to the decoder, which takes z and vi as input and outputs a reconstructed re-flected velocity vr,p . The model is trained to minimize the reconstruction error between vr and vr,p and to reg-ularize the latent space to follow a standard normal dis-tribution N (0 , I) by adding a Kulback-Leibler (KL) di-vergence term to the loss function. After training, the decoder can be used as a generative model for reflected velocities conditioned on incident velocity vi. However, the cVAE does not allow direct evaluation of the proba-bility density value of the scattering kernel K vi → vr
+
+.Instead, it implicitly defines the kernel through a condi-tional generative process. A latent variable z ∼ N (0 , I)is deterministically assigned to a reflected velocity vr by passing it through the decoder network together with the incident velocity vi.For the predicted reflected velocity vr the normal ve-locity component vn must be positive, because the parti-cles are reflected from the surface and cannot penetrate it. To enforce this constraint, the Softplus activation function 24 
+
+Softplus( x; β) = 1
+
+β log (1 + exp( βx )) (9) is applied to the normal velocity component of the de-coder’s output. The cVAE is used purely as a conditional generative model and does not output the scattering kernel K vi →
+
+vr
+
+ directly. Instead, the decoder defines the scattering kernel implicitly as the pushforward of the latent nor-mal distribution through a deterministic neural mapping. Conditional Normalizing Flow Scattering Kernel 5Latent distribution   
+
+> σ2
+> μ
+> Encoder
+> vi
+> vr
+> z
+> vi
+> Decoder
+> vr,p
+> N(0 ,I)
+> KL-divergence
+> Reconstruction loss
+
+FIG. 2: Schematic of the cVAE model architecture 16 .Push-forwards of probability measures are themselves valid probability measures and, therefore, non-negative everywhere on their support. The non-negativity require-ment (3) is thus fulfilled. Due to the fact that the cVAE decoder is a determinis-tic mapping of a latent normal distribution, it induces a normalized conditional distribution p(vr,p |vi), since any distribution obtained as the push-forward of a normalized latent distribution is itself normalized. The Softplus acti-vation applied to the normal component of the decoder’s output ensures vr ·n > 0 for all generated reflected veloc-ities. Thus, the decoder maps all latent samples into the physically admissible half-space. Since the entire proba-bility mass of the induced distribution lies in vr · n > 0and the latent distribution is normalized, the resulting conditional distribution is automatically normalized over the correct physical domain. Therefore, the normaliza-tion requirement (4) is satisfied. As already mentioned, the conditional probability den-sity p(vr|vi) associated with the cVAE decoder is not available in closed form. The decoder provides only a sampling mechanism, i.e. a push-forward of the latent prior through a deterministic neural mapping, rather than an explicit expression for the corresponding prob-ability density function. As a consequence, neither side of the detailed-balance relation (5) can be evaluated di-rectly. Without an explicit density, it is impossible to verify whether the learned kernel satisfies detailed bal-ance. Moreover, since the architecture does not impose any symmetry constraints relating forward and back-ward scattering, it is unlikely that the cVAE satisfies the detailed-balance requirement except by coincidence or approximation inherited from the training data.  
+
+> 2. Conditional Normalizing Flow
+
+Normalizing flows learn to transform a simple base distribution, typically a standard normal distribution 
+
+N (0 , I), into a complex target distribution by apply-ing a sequence of K invertible, differentiable mappings 
+
+f1, . . . , f K . The complete transformation f = fK ◦· · ·◦ f1
+
+is itself invertible, since the composition of invertible functions is also invertible. For a composition of invert-ible functions, the inverse can be computed by applying the inverses of the individual functions in reverse order, i.e. 25,26 
+
+f −1 = ( fK ◦ · · · ◦ f1)−1 = f −11 ◦ · · · ◦ f −1 
+
+> K
+
+. (10) This allows both the forward pass (training) and the in-verse pass (sampling) to be computed exactly and effi-ciently, without any approximation. One way of constructing a normalizing flow is to use affine coupling layers, as done in Real-valued Non-Volume Preserving (RealNVP) model 27 . This archi-tecture can be extended to a conditional version, the conditional Real-valued Non-Volume Preserving (cReal-NVP) 28 , by conditioning the transformations on addi-tional input data, in our case the incident velocity vi.During training, the forward pass f : vr 7 → z maps the data (reflected velocity vr) to the latent space to evaluate the likelihood. 
+
+z = fK ◦ · · · ◦ f1(vr, vi) (11) During sampling, the inverse pass f −1 : z 7 → vr trans-forms a point z sampled from the base distribution into a new data point (a generated reflected velocity vr). 
+
+vr = f −11 ◦ · · · ◦ f −1 
+
+> K
+
+(z, vi) (12) The schematic of a normalizing flow architecture is shown in Figure 3 with the forward and inverse pass. A cRealNVP model consists of a sequence of K con-ditional affine coupling layers fk. Each layer splits the input into two parts. The “on” part yon remains un-changed, while the “off” part yoff is transformed by an affine transformation. The on and off parts can be any combination of the input dimensions, for example, the first two velocity components can be on while the last component is off, or vice versa. Active dimensions in a given layer are controlled by a binary mask that can change from layer to layer to ensure that all dimensions interact across the layers. In the forward pass, the k-th coupling layer fk transforms the input y to x as follows 
+
+xoff = yoff ⊙ exp  s(yon , vi) + t(yon , vi),
+
+xon = yon 
+
+(13) where ⊙ denotes element-wise multiplication. The scal-ing s and translating t parameters of the affine transfor-mation are predicted by a neural network that takes the preserved part and the conditioning variable vi as input. Inverse mapping f −1 
+
+> k
+
+(used during sampling) is obtained analytically by inverting the affine transform: 
+
+yoff =  xoff − t(xon , vi) ⊘ exp  s(xon , vi),
+
+yon = xon 
+
+(14) Importantly, the same neural network (i.e., the same weights) is used to compute s and t for both directions. Conditional Normalizing Flow Scattering Kernel 6latent distribution    
+
+> f−1
+> K
+> fK
+> Kth -Coupling Layer
+> …f−11
+> f1
+> 1st -Coupling Layer
+> target distribution
+
+vi vi
+
+z vr  
+
+> →Inverse: Sampling
+> ←Forward: Training
+
+FIG. 3: Schematic of the cRealNVP architecture. y
+
+yoff 
+
+yon 
+
+vi
+
+> Neural Network
+
+t
+
+sexp 
+
++xoff 
+
+xon 
+
+x
+
+(a) Forward pass fk (y; vi)y
+
+yoff 
+
+yon 
+
+vi
+
+> Neural Network
+
+t
+
+sexp 
+
+−xoff 
+
+xon 
+
+x
+
+(b) Inverse pass f −1 
+
+> k
+
+(x; vi)
+
+FIG. 4: Schematic of the forward and inverse pass through coupling layer k in cRealNVP. At the end of a coupling layer, the on and off parts ( xoff 
+
+and xon ) are concatenated to get the output x of the layer. In Figure 4a the forward pass through a coupling layer is shown, where the input y is transformed into 
+
+x. The inverse pass through the same coupling layer is shown in Figure 4b, where the input x is transformed back to y. Every coupling layer is analytically invertible, allowing both the forward pass (data to latent space) and the inverse pass (latent space to data) to be exact and efficient. The complete forward transformation f : vr 7 → z maps the reflected velocity vr to a latent variable z, which follows the base distribution pZ (z). Because the trans-formation of each coupling layer is invertible, the exact conditional log-probability follows from the change-of-variables formula: log p(vr|vi) = log pZ (f (vr, vi)) +
+
+> K
+
+X
+
+> k=1
+
+log det 
+
+ ∂f k
+
+∂x(k)
+
+ (15) The first term evaluates how likely the mapped latent variable z = f (vr, vi) is under the base distribution. The second term, the logarithmic absolute determinant of the Jacobian, accounts for the change in volume dur-ing the transformation. Since the Jacobian of each affine coupling layer is triangular, the determinant can be effi-ciently computed as the product of the diagonal elements. These diagonal elements correspond to the scale outputs 
+
+s(k) 
+
+> l
+
+of the off dimensions l ∈ off (k) at each layer k, ren-dering the log-probability exact and efficient to evaluate: log p(vr|vi) = log pZ (f (vr, vi)) +
+
+> K
+
+X
+
+> k=1
+
+X
+
+> l∈off (k)
+
+s(k) 
+
+> l
+
+(x(k)on , vi) (16) During training, the exact conditional log-likelihood over the dataset {(vr,j , vi,j )} is maximized, which is equivalent to minimizing the negative log-likelihood (NLL) loss: 
+
+LNLL = − 1
+
+N
+
+> N
+
+X
+
+> j=1
+
+log p(vr,j |vi,j ) (17) The cRealNVP natively operates on the full three-dimensional velocity space v ∈ R3 without coordinate re-strictions. The affine coupling layers transform all three velocity components jointly, across all the stacked layers. However, in case of surface scattering, the normal veloc-ity component vn is physically constrained to be strictly positive. Since the cRealNVP is defined on R3, it can produce samples with negative normal velocity compo-nents, which are unphysical. A clean solution is to apply a preprocessing transformation before passing data to the cRealNVP. Such a transformation must have a few key properties. It must be differentiable, so the Jacobian can be computed, and it must be invertible (bijective) to en-sure there is a unique mapping between the model’s out-put space and the physical velocity space. The Softplus function (9) fulfills these requirements. With the inverse Softplus, the normal velocity component vn can be trans-formed into an unconstrained variable ˜ vn as follows: ˜vn = Softplus −1(vn; β) = 1
+
+β log (exp( βv n) − 1) (18) This maps vn ∈ (0 , ∞) bijectively to ˜ vn ∈ R, on which the cRealNVP can operate without constraints. The inverse Conditional Normalizing Flow Scattering Kernel 7transformation, 
+
+vn = Softplus(˜ vn; β) = 1
+
+β log (1 + exp( β˜vn)) (19) maps back to the strictly positive normal velocity space during sampling. The Softplus preprocessing transforma-tion does not have to be added to the NLL loss, because the transformation occurs before the data are passed to the cRealNVP and from the model’s perspective the physical normal velocity constraint does not exist. The model learns the unrestricted distribution over R3 of the tangential velocities vt1 , vt2 and the transformed normal velocity ˜ vn. However, if one wants to evaluate the phys-ical probability density of the reflected velocity samples, the Softplus transformation has to be considered in the change of variables formula, which adds an additional term to equation (15): log d˜ vn
+
+dvn
+
+= − log 
+
+ exp( β˜vn)1 + exp( β˜vn)
+
+
+
+(20) Another approach, to force positive normal velocity, would be to add the Softplus transformation to the model architecture itself. The model takes raw, untransformed data as input, where the normal velocity component is strictly positive, and applies the Softplus transformation as the first layer of the model. In the following, the sub-sequent coupling layers operate on transformed normal velocity ˜ vn and tangential velocities vt1 , vt2 , which now lie entirely in R3. The crucial difference is that the Jaco-bian of this initial transformation layer must be included in the NLL loss during training. As a first step in verifying that the cRealNVP-based scattering kernel meets the kernel requirements, we ex-amine non-negativity. The cRealNVP based scattering kernel is defined through an explicit conditional proba-bility density (15). This density p(vr|vi) is defined by the non-negative base distribution and the absolute value of the Jacobian determinant of the inverse transformation, which is also non-negative. Since both terms are non-negative, the resulting conditional probability density is non-negative everywhere on its support, thus satisfying the non-negativity requirement (3). Normalization is preserved by construction in the cRe-alNVP architecture. The induced conditional density in-tegrates to one over its entire support, because the trans-formation between latent space and velocity space is bi-jective and differentiable. Therefore, a normalizing flow preserves the probability mass by construction. When the normal component of the reflected velocity is con-strained to satisfy vr · n, the mapping sends the entire la-tent distribution into the physically admissible half-space 
+
+vr · n. As a result, the conditional distribution is auto-matically normalized over the correct physical domain and the normalization requirement is fulfilled. Although the cRealNVP architecture provides an ex-plicit and tractable expression for the conditional density, it does not impose any symmetry constraints that would enforce the DB relation. The model may approximately capture it if the training data itself satisfies detailed bal-ance, but there is no architectural constraint that en-forces it. Compared to the cVAE, the cRealNVP has the advantage of directly evaluating the detailed balance relation, since it gives the exact conditional probability density function value for any reflected velocity sample. This also allows to add a detailed balance loss term to the training loss, which can help to approximate the detailed balance requirement. 
+
+LDB = 1
+
+N
+
+> N
+
+X
+
+> j=1
+
+ M (vi) |vi · n| K  vi → vr
+
+
+
+−M (vr) |vr · n| K  −vr → − vi
+
+ 2
+
+(21) The detailed balance loss has to be evaluated in the phys-ical velocity space. Therefore, if the Softplus transforma-tion is used as a preprocessing step, the log-probability of the model has to be evaluated in the transformed space, and then the additional term from the Softplus transfor-mation has to be added to get the correct log-probability in the physical space. However, a loss is just a soft con-straint and it does not force the model to satisfy detailed balance exactly.  
+
+> III. TRAINING AND VALIDATION DATA
+
+For both models the same training and validation data is used, which are described in more detail in the follow-ing Sections. The dataset comprises two groups: equi-librium data and non-equilibrium data. The equilibrium data ensure that both models are informed about the correct equilibrium behavior, a fundamental requirement for any scattering kernel. The non-equilibrium data train the models to reproduce the scattering behavior across a wide range of incident velocities, from slow near-thermal conditions to hypersonic impacts. This should allow the models to be applicable across a broad spectrum of applications from near-equilibrium conditions to highly non-equilibrium scenarios, such as those encountered in VLEO.  
+
+> A. Equilibrium Data
+
+As mentioned previously, in equilibrium an incident Maxwell flux distribution of particles with wall temper-ature Tw is reflected as a Maxwell flux distribution with the same temperature. Therefore, the equilibrium data consists of incident and reflected velocity pairs {(vr, vi)},where both vr and vi are sampled from a Maxwell flux distribution f ∼ | vn|M (v) at a temperature of 300 K. For each validation and training set, 5 000 velocity pairs are sampled, resulting in a total of 10 000 velocity pairs for the equilibrium data. Conditional Normalizing Flow Scattering Kernel 8 
+
+> B. Non-Equilibrium Data
+
+Details about the data generation of the non-equilibrium data are described in Sch¨ utte et al. 16 , and only a brief overview is summarized here. The previously developed free stream cVAE model 16 
+
+used five free stream velocity magnitudes between 6 000 and 10 000 m/s. These velocity magnitudes cover dif-ferent atmosphere temperatures and orbit velocities in VLEO. Nine incident angles between 0 ◦ and 80 ◦ were simulated for each magnitude, resulting in 45 different incident velocity vectors vi. Each incident condition was impacted 5 000 times on the surface and the correspond-ing reflected velocities vr were recorded. This procedure produces 45 conditional reflected velocity distributions 
+
+p(vr|vi), one for each incident velocity vector. In order to extend the applicability of such a data-driven scattering model, additional non-equilibrium data is generated for slower incident velocity magnitudes. To cover the full velocity spectrum from thermal to hyper-sonic conditions, incident magnitudes of 2 000, 3 000 and 5 000 m/s are simulated as well. Each of these three addi-tional velocities is combined with the same nine incident angles, producing 27 additional incident velocity vectors and their corresponding reflected velocity distributions. As surface material, aluminum oxide Al 2O3 is chosen. This choice reflects the fact that aluminum is widely used in satellite structures and surfaces in VLEO are continu-ously exposed to atomic oxygen, which leads to the for-mation of a native oxide layer. To represent this real-istic surface condition, the Al 2O3 structure used for the oxygen impingement simulations is modeled as an amor-phous block. The MD simulations are carried out using the ITAP Molecular Dynamics (IMD) package, which is developed at the institute for Functional Matter and Quantum Technologies at the University of Stuttgart 29 . IMD is designed for large-scale MD studies in materials science and supports a broad spectrum of interaction models, in-cluding long-range interactions and polarizability, both essential for the present work. Atomic interactions in the simulations are described by classical analytical po-tentials based on the Tangney-Scandolo model 30 . In this potential, atomic oxygen is polarizable, and their dipole moments are calculated self-consistently from the local electric field originating from surrounding charges and dipoles. Short-range interactions are represented through a Morse-Stretch potential. In order to satisfy the Nyquist criterion to ensure an accurate resolution of fast vibrational modes and numer-ical stability, a simulation time step of 0 .1 in the internal unit system is used. The internal unit system is based on atomic-scale reference values for length, energy, and mass. In physical units, this corresponds to a time step of approximately 1 .018 fs. Before impact simulations, the surface is equilibrated at a temperature of 300 K. At the start of the simulation, the incident particle is placed at a distance of > 0.1 nm from the surface to prevent premature interactions before the simulation begins. In addition, the initial position of the incident particle is randomized to capture a diverse range of impact scenar-ios.  
+
+> IV. MODEL CONSTRUCTION AND TRAINING
+
+For constructing the cVAE and the cRealNVP models, the same three steps are followed: velocity scaling, data preprocessing, selection of hyperparameters like number of layers, neurons, activation functions, etc., and train-ing of the model. All these steps are performed sepa-rately for the cVAE and the cRealNVP, but the same training and validation data are used for both models. For constructing the cVAE and the cRealNVP, we utilize the Keras library 31 with TensorFlow 32 as backend. The training of the models, as well as the application of the models in Section VI, is performed with an AMD Ryzen 5 Pro 7530u CPU. Therefore, the computational times mentioned in the following Sections are expected to be significantly reduced when using a GPU. Additionally, with the use of a GPU a large hyperparameter search can be performed to further optimize the model archi-tecture and training procedure, which is currently lim-ited by the computational resources available. Neverthe-less, different architectures and training procedures were tested, and the configurations described in the following Sections exhibited good performance in terms of training and validation metrics.  
+
+> A. Velocity Scaling
+
+The reflected velocities in equilibrium and non-equilibrium are generated for a surface held at a wall temperature of 300 K. To generalize across wall temper-atures, a scaling procedure is applied to the velocities. This procedure aims to eliminate the temperature de-pendence of the data. For the equilibrium data, the tem-perature dependence is removed by normalizing velocities with the thermal velocity vth 
+
+vth =
+
+r 2kB Tw
+
+m . (22) Here, kB denotes the Boltzmann constant, Tw the wall temperature and m the particle mass. This normaliza-tion follows from the equilibrium distributions of the tan-gential and normal velocity components. These are de-scribed by a normal distribution N and Rayleigh dis-tribution R, respectively 33 . Both components can be expressed using vth as scale parameter: 
+
+vN =
+
+r 12 vth RN with RN ∼ N (0 , 1) (23) 
+
+vR =
+
+r 12 vth RR with RR ∼ R (1) (24) Conditional Normalizing Flow Scattering Kernel 9−6 −4 −2 0 2 4 6 8 10                             
+
+> 0
+> 1
+> 2
+> 3
+> 4
+> vr,t1 ·10 −3/m s −1
+> f (vr,t1 ) / (s m −1 · 10 −4)−6−4−20246
+> 0
+> 1
+> 2
+> 3
+> 4
+> vr,t2 ·10 −3/m s −1
+> f (vr,t2 ) / (s m −1 · 10 −4)02468
+> 0
+> 2
+> 4
+> 6
+> vr,n ·10 −3/m s −1
+> f (vr,n ) / (s m −1 · 10 −4)
+> Tw= 300 K
+> Tw= 900 K
+> Tw= 1500 K
+
+(a) |vi| = 7800 .0 m /s, θi = 20 .0 ◦−6 −4 −2 0 2 4 6 8 10                             
+
+> 0
+> 1
+> 2
+> 3
+> 4
+> vr,t1 ·10 −3/m s −1
+> f (vr,t1 ) / (s m −1 · 10 −4)−6−4−20246
+> 0
+> 1
+> 2
+> 3
+> 4
+> vr,t2 ·10 −3/m s −1
+> f (vr,t2 ) / (s m −1 · 10 −4)02468
+> 0
+> 2
+> 4
+> 6
+> vr,n ·10 −3/m s −1
+> f (vr,n ) / (s m −1 · 10 −4)
+> Tw= 300 K
+> Tw= 900 K
+> Tw= 1500 K
+
+(b) |vi| = 7800 .0 m /s, θi = 70 .0 ◦
+
+FIG. 5: Reflected velocity distributions of atomic oxygen of the MD data at different wall temperatures Tw for an incident velocity magnitude of |vi| = 7800 .0 m/s and varying polar angles θi.Here, RN and RR denote standard normal N (0 , 1) and unit Rayleigh R(1) random variables. Normalization by 
+
+vth renders the velocities non-dimensional. This elimi-nates the dependence on wall temperature. It also elim-inates dependence on particle mass. Consequently, the models only need to capture the standard normal distri-bution and the unit Rayleigh distribution. Applying the inverse transformation to the model output reintroduces the wall-temperature and particle-mass dependence, re-covering physical velocities. The models can therefore be applied to arbitrary wall temperature Tw and particle mass m without retraining in the equilibrium regime. To assess how non-equilibrium scattering depends on wall temperature, reflected velocity distributions from MD simulations are shown for different wall temperatures 
+
+Tw of 900 K and 1500 K in Figure 5. Relative to the 300 K wall temperature, the reflected velocity distributions at higher wall temperatures are nearly identical. Notably, 1500 K is close to the melting temperature of aluminum oxide, which is 2326 K 34 . This suggests that the scatter-ing behavior in this regime may be largely independent of Tw over a wide temperature range, up to near the ma-terial’s melting point. However, more data is needed to confirm this hypothesis. For the purpose of this work the scattering behavior in the non-equilibrium regime is assumed to be independent of wall temperature. A con-stant scaling factor is used based on the thermal velocity 
+
+vth,300 at 300 K. Between the constant plateaus of the equilibrium and non-equilibrium regimes lies a transition region. Here, scattering behavior changes gradually from temperature-dependent to temperature-independent. To describe the transition of the scaling factor between the two constant plateaus, a sigmoid function ς is used to smoothly in-terpolate between the two scaling regimes. This results in the reference velocity vref used for velocity scaling, de-fined as a function of the incident velocity magnitude |vi|
+
+and the wall temperature Tw. The scaling factor vref is defined as: 
+
+vref = ς v th,300 + (1 − ς) vth (25) 
+
+ς = 11 + exp( −a(b − 0.5)) (26) with b = |vi| − vmin 
+
+vmax − vmin 
+
+(27) Here, b denotes the normalized incident velocity mag-nitude. It equals 0 at the minimum incident velocity vmin 
+
+and 1 at the maximum incident velocity vmax . For vmin ,the 97 % quantile of the incident Maxwell flux distribu-tion at wall temperature Tw is used, which achieves an almost constant scaling factor equal to vth for incident velocities in the equilibrium regime. From visual inspec-tion of the incident velocity distributions and the refer-ence velocity vref , vmax is set to three times vmin , which ensures convergence to a constant value equal to vth,300 
+
+for velocities in the non-equilibrium regime. The steep-ness parameter a is chosen such that vref is 1 % below vth 
+
+at vmin , and 1 % above vth,300 at vmax , yielding a smooth transition in vref while preserving the two plateaus cor-responding to equilibrium and non-equilibrium behavior. The resulting scaling factor vref is shown in Figure 6a for a wall temperature of Tw = 900 K and a wall temperature of Tw = 1500 K in Figure 6b. Conditional Normalizing Flow Scattering Kernel 10 0 2 4 6 8 10                 
+
+> 0
+> 500
+> 1000
+> 1500
+> 2000
+> 0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> vth
+> vth,300
+> |vi| · 10 −3/m s −1
+> vref  / m s −1
+> f (|vi|) / (s m −1 · 10 −3)
+> vref (|vi|, T w)
+> fi∼ | vi,n |M (vi)
+> (a) Tw= 900 K 0246810
+> 0
+> 500
+> 1000
+> 1500
+> 2000
+> 0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> vth
+> vth,300
+> |vi| · 10 −3/m s −1
+> vref  / m s −1
+> f (|vi|) / (s m −1 · 10 −3)
+> vref (|vi|, T w)
+> fi∼ | vi,n |M (vi)(b) Tw= 1500 K
+
+FIG. 6: Velocity- and temperature-dependent reference velocity vref for scaling, based on the sigmoid function s. The scaling converges to the thermal velocity vth in the equilibrium regime and to vth,300 in the non-equilibrium regime (high incident velocities), as shown by comparison with the equilibrium distribution fi (Maxwell flux). While the scaling in equilibrium is exact, it should be emphasized that the proposed scaling is only an approx-imation outside thermal equilibrium. However, the scal-ing with the temperature in non-equilibrium is reasonable to assume, since a higher Tw merely increases the kinetic energy of the wall atoms, while the interaction potential governing the MD simulations remains unchanged. Gen-eralization across species is more questionable in non-equilibrium, since the interaction potential in MD simu-lations differs for each species. Consequently, this scaling approach cannot be expected to generalize across species outside thermal equilibrium. For further validation, ad-ditional MD simulations at different wall temperatures are required to confirm the validity of this scaling ap-proach. The optimal approach for generalizing the model across wall temperatures would be training on a range of wall temperatures and using Tw as an additional model input. Nevertheless, this would substantially increase the required training data and computational resources. Therefore, the scaling technique presented here serves as a first step toward a generalized model for varying wall temperatures.   
+
+> B. cVAE 1. Data Preprocessing
+
+The incident and reflected velocity data are prepro-cessed are scaled by vref before being passed to the cVAE model. To avoid numerical issues during training, the velocity components are scaled by a constant factor to bring them into a numerically convenient range. The con-stant is chosen such that the scaled velocity magnitudes are approximately in the range [0 , 20]. Such a range is well suited to the activation functions employed in the network and avoids numerical issues such as exploding gradients.  
+
+> 2. Hyperparameters
+
+The input for the encoder of the cVAE is the concate-nation of the reflected velocity vr and the incident veloc-ity vi. Both velocity vectors are three-dimensional, re-sulting in a six-dimensional input vector for the encoder. The encoder consists of three hidden layers with 128, 64, and 32 neurons, respectively. All hidden layers use the exponential linear unit (ELU) activation function 35 .For the latent space distribution an eight-dimensional multivariate normal distribution is used. This selection simplifies backpropagation during training and offers a closed form expression for the KL-divergence term in the loss function, which is crucial for efficient training of the cVAE 36 . Therefore, the encoder outputs a 16-dimensional vector, corresponding to the mean and the diagonal covariance of the latent normal distribution. From the latent distribution, an eight-dimensional latent vector z is sampled and concatenated with the incident velocity vi to form the input of the decoder. As a result, the decoder has a nine-dimensional input vector. For the decoder, three hidden layers with 32, 64, and 128 neurons are used. The hidden layers of the decoder also use the ELU activation function. In order to enforce the non-negativity constraint on the normal velocity component of the reflected velocity, the Softplus activation function is applied to the normal velocity component of the de-coder’s output. The Softplus function avoids saturation issues that can arise with other activation functions, such as ReLU, while still ensuring that the output is strictly positive. Here, the parameter β of the Softplus function is set to 0 .2. For the tangential velocity components, linear activation is used, allowing the model to learn the full range of possible tangential velocities without any constraints. In comparison to the cVAE developed in Sch¨ utte et al. 16 , the architecture described here adds a hidden layer and increases the dimension of the latent space, allowing the model to capture more complex re-lationships in the data and learn a richer representation Conditional Normalizing Flow Scattering Kernel 11 of the reflected velocity distribution from the thermal to hypersonic regime.  
+
+> 3. Training
+
+The loss function is twofold. The first term is the mean squared error (MSE) between the predicted reflected ve-locity vr,p and the true reflected velocity vr, encourag-ing the model to reconstruct the reflected velocity accu-rately. The second term is the KL-divergence between the encoder’s predicted latent distribution and the stan-dard normal prior N (0 , I). This term regularizes the latent space by penalizing deviations from the prior and promotes a smooth, well-structured representation suit-able for sampling and generalization. The KL-divergence term is weighted by a factor of 0 .8 to balance the recon-struction accuracy and the regularization of the latent space. For model training, the Adam optimizer is used for 80 epochs and a batch size of 32. A step decay learn-ing rate schedule is applied, where the learning rate is reduced by a factor of 0 .1 every 20 epochs, starting from an initial value of 10 −3. This allows the model to make larger updates to the parameters in the early stages of training, which can help to escape local minima, and then make finer adjustments as training progresses to avoid overshooting the optimal parameters and to con-verge to a better solution. The training of the model took approximately 10 minutes.   
+
+> C. cRealNVP 1. Data Preprocessing
+
+For preprocessing the data for the cRealNVP model, the incident velocities vi and reflected vr are scaled using the same strategy as for the cVAE. However, as already described in Section II B 2 the normal velocity compo-nent of the reflected velocity is constrained to be strictly positive. To handle this constraint, the Softplus transfor-mation is applied to the normal component after the ini-tial factor scaling. This transformation maps the positive normal velocity values to an unconstrained space, allow-ing the cRealNVP to operate in the full three-dimensional velocity space without violating the physical constraint on the normal velocity component. For this, a β param-eter of 0 .2 is used in the Softplus function. As discussed previously, this transformation does not need to be in-cluded in the loss function during training because the model learns the distribution in the transformed space. However, when evaluating the model’s log-probability in the physical velocity space, the Jacobian of the Softplus transformation must be included to get the correct prob-ability density values. 
+
+TABLE I: Mask pattern for the coupling layers in the cRealNVP model for velocity components (t1, t2, n).                      
+
+> t1 t2 n
+> Layer 1 off on off Layer 2 off off on Layer 3 on off off Layer 4 on on off Layer 5 off on on Layer 6 on off on
+> 2. Hyperparameters
+
+The latent distribution in the cRealNVP is chosen to be a multivariate standard normal distribution N (0 , I). The dimension of the latent space is fixed by the dimen-sion of the velocity space, resulting in a three-dimensional latent space. In total K = 6 coupling layers are used, al-lowing the model to learn complex transformations from the latent space to the velocity space. Each coupling layer uses one neural network to predict the scaling s
+
+and translating t parameters of the affine transforma-tion. The neural network of each coupling layer consists of four hidden layers with 64 neurons each, using the rec-tified linear unit (ReLU) activation function 37 . Its out-put is split into two parts. The first part corresponds to the scaling parameter s. In order to ensure that the scal-ing factors are bounded, the output of this part is passed through the hyperbolic tangent (tanh) activation func-tion. This helps stabilize training and prevents extreme transformations that could lead to numerical issues. The second part corresponds to the translating parameter t
+
+and uses linear activation to allow unbounded transla-tions. The input to the neural network of each coupling layer is the concatenation of the preserved part ( xon or 
+
+yon ) and the incident velocity vi. For the coupling layers, a binary mask is used to determine which dimensions are transformed and which are preserved. The mask config-uration used across the six coupling layers is summarized in Table I. This pattern ensures that all dimensions are transformed across the layers, allowing the model to cap-ture complex interactions between the velocity compo-nents.  
+
+> 3. Training
+
+Training of the cRealNVP model is performed by max-imizing the exact conditional log-likelihood of the data. This is equivalent to minimizing the NLL loss as defined in equation (17). Additionally, a detailed balance loss term, as defined in equation (21), is added to the train-ing loss to encourage the model to satisfy the detailed balance requirement. Therefore, physical constraints are incorporated into the training process. In contrast, the cVAE does not offer a mechanism to impose detailed bal-Conditional Normalizing Flow Scattering Kernel 12 ance. For evaluating the detailed balance loss, equilib-rium data are used, consisting of incident and reflected velocity pairs sampled from a Maxwell flux distribution at 300 K. This distribution is strongly concentrated at moderate velocity magnitudes around the thermal veloc-ity. As a consequence, the model receives detailed bal-ance supervision primarily in this high probability region. The loss resulting from low or high velocities contributes very little to the overall loss because samples in these tail regions of the distribution are sparse. In practice, this means that good detailed balance performance is achieved only in the part of the velocity space where the equilibrium data are dense, whereas regions with low or large velocity magnitudes remain weakly constrained. To increase the detailed balance performance for the tail re-gions, additional training samples are generated by draw-ing incident and reflected velocities uniformly between 0 and 2 000 m/s. This augmentation increases the density of both low- and high magnitude velocities, enabling the model to learn the detailed balance relation across the entire equilibrium velocity space rather than only in the high probability region of the Maxwell flux distribution. It is important to note that the specific distribution of incident and reflected velocities used in the detailed bal-ance loss is irrelevant, since the detailed balance condi-tion must hold for all velocity pairs in equilibrium. At the start of the training, the detailed balance loss is weighted by a factor of 0 .01. This allows the model to first learn the overall structure of the reflected veloc-ity distribution from the data, without being overly con-strained by the detailed balance requirement. As training progresses, the weight of the detailed balance loss is in-creased by a factor of 10 every 20 epoch, gradually shift-ing more emphasis toward satisfying the detailed balance constraint once the model has learned the basic structure of the data distribution. Training runs for 80 epochs using the Adam optimizer and a batch size of 64. Astep decay learning rate schedule is applied, reducing the learning rate by a factor of 0 .1 every 40 epochs, starting from an initial value of 10 −4. This prevents degrada-tion of the NLL performance while the detailed balance term becomes increasingly influential, which is essential to maintain an accurate fit to the hypersonic velocity dis-tributions. The training of the model took approximately 20 minutes.  
+
+> V. PHYSICAL VALIDATION
+
+Physical validation is carried out in two regimes: the equilibrium (Section V A) and the non-equilibrium regime (Section V B). For equilibrium validation, the im-pacts of thermal velocities are examined. The non equi-librium validation instead examines how well the model distributions reproduce the target distributions obtained from the MD simulations.  
+
+> A. Equilibrium
+
+If the gas and a surface are in thermal equilibrium, the reflected velocity distribution of an incident Maxwell flux distribution is also a Maxwell flux distribution with the same temperature. This is a direct consequence of the detailed balance requirement, as already explained in Section II A 1. In order to validate both models, 200 000 incident velocities are sampled from a Maxwell flux dis-tribution at 300 K and scattered at the surface using the cVAE and the cRealNVP models. The reflected veloc-ity distributions of the tangential and normal velocity components, as well as the velocity magnitude, of both models are then compared to the true reflected veloc-ity distribution, which is a Maxwell flux distribution at 300 K. This is shown in Figure 7. While the cRealNVP shows very good agreement with the true reflected veloc-ity distribution, the cVAE shows a worse performance, especially for the normal velocity component and the ve-locity magnitude. Compared to the cVAE, the cRealNVP has the advan-tage of directly evaluating the detailed balance relation, because it gives the exact conditional probability density function value for any incident and reflected velocity pair. This allows to evaluate the detailed balance relation for the equilibrium data, which is shown in Figure 8. In Fig-ure 8b the detailed balance relation is evaluated for the cRealNVP model trained with the detailed balance loss. To isolate the effect of this loss term, an otherwise iden-tical cRealNVP model is trained without it. Its detailed balance evaluation is shown in Figure 8a. Exact satisfaction of the detailed balance requirement would produce identical forward (fwd) and backward (bwd) sides, causing all points to lie on the diagonal. The model trained without the detailed balance loss ex-hibits substantial deviations from this diagonal, particu-larly at high velocity magnitudes. These large discrepan-cies highlight the importance of including high magnitude samples in the detailed balance evaluation, as discussed earlier. Incorporating the detailed balance loss into the train-ing significantly reduces the discrepancy between the forward and backward sides, indicating that the model learns to approximate detailed balance with only small remaining deviations. Nonetheless, the relation is not exactly satisfied and residual deviations remain. A data-driven scattering kernel exactly satisfying de-tailed balance can be constructed analytically with a cRe-alNVP flow p(vr|vi) by a geometric symmetrization. The resulting kernel K vi → vr
+
+ is given by the following ex-pression: log K vi → vr
+
+ = 12 [log p(vr|vi) + log p(−vi| − vr)] + 12 log 
+
+ |vr · n|M (vr)
+
+|vi · n|M (vi)
+
+ (28) By setting the forward K vi → vr
+
+ and the backward kernel K −vr → − vi
+
+ in relation, the flow term cancels Conditional Normalizing Flow Scattering Kernel 13 −2000 −1000 0 1000 2000                      
+
+> 0
+> 0.5
+> 1.0
+> 1.5
+> vr,x /m s −1
+> f (vr,x ) / (s m −1 · 10 −3)−2000 −1000 01000 2000
+> 0
+> 0.5
+> 1.0
+> 1.5
+> vr,y /m s −1
+> f (vr,y ) / (s m −1 · 10 −3)0500 1000 1500 2000
+> 0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> vr,z /m s −1
+> f (vr,z ) / (s m −1 · 10 −3)0500 1000 1500 2000
+> 0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> |vr|/m s −1
+> f (|vr|) / (s m −1 · 10 −3) cVAE
+> cRealNVP
+> fr∼ | vr,n |M (vr)
+
+FIG. 7: Reflected velocity distributions of atomic oxy-gen for the cVAE, cRealNVP, and true reflected Maxwell flux distribution fr ∼ | vr,n |M (vr) at the wall tempera-ture Tw = 300 K, obtained for an incident Maxwell flux distribution fi ∼ | vi,n |M (vi) at wall temperature. exactly, yielding the detailed balance relation (5) 
+
+K vi → vr
+
+
+
+K −vr → − vi
+
+ = |vr · n|M (vr)
+
+|vi · n|M (vi) . (29) Detailed balance is therefore satisfied by algebraic con-struction. Despite its theoretical validity, this construc-tion is not practically feasible, since detailed balance is now enforced even for non-equilibrium conditions. The kernel above requires the evaluation of the backward flow 
+
+p(−vi| − vr), which represents the probability that a par-ticle arriving at the wall with velocity −vr is reflected with velocity −vi. In non-equilibrium conditions, such reverse events are thermodynamically suppressed. A par-ticle incident at 8 000 m/s loses energy during the scat-tering process with high probability, resulting in lower velocities such as 5 000 m/s. The reverse event, in which a particle incident at 5 000 m/s gains energy to reach 8 000 m/s, is highly unlikely and is essentially absent from the MD data. Therefore, the backward inputs ( −vi, −vr)lie arbitrarily far outside the training distribution of the cRealNVP model, making the evaluation of p(−vi| − vr)numerically meaningless in the non-equilibrium regime. A natural solution would be to construct artificial backward data by mirroring the forward MD dataset (vr|vi)MD to ( −vi| − vr)mirrored . However, this does not resolve the physical inconsistency. The mirrored data implicitly claim that the probability of a transition from 8 000 m/s to 5 000 m/s equals the probability of the re-verse transition from 5 000 m/s to 8 000 m/s, which con-tradicts the thermodynamics of the non-equilibrium pro-cess. A detailed balance satisfying kernel constructed from MD data is only reliable near equilibrium, where re-verse events occur with appreciable probability and the backward flow can be evaluated within the training dis-tribution. Far from equilibrium, the backward path is physically suppressed and numerically inaccessible. For-ward and backward rates are no longer balanced, and enforcing detailed balance would move the model away from the scattering statistics observed in the MD data. Therefore, the hybrid strategy adopted in this work pro-vides an appropriate balance between physical fidelity and data driven flexibility. Near equilibrium, where de-tailed balance is a fundamental physical requirement, a dedicated loss term steers the model toward approxi-mate satisfaction of this condition. In non-equilibrium settings, the kernel is instead trained to reproduce the scattering statistics observed in the MD data. This formulation yields the best achievable behavior across both regimes: approximate detailed balance where it is physically meaningful, and accurate reproduction of non-equilibrium scattering statistics. The Appendix A additionally presents scattering re-sults under equilibrium conditions for different wall tem-peratures Tw and species. As shown there, the cReal-NVP model accurately reproduces the correct distribu-tions across all considered cases. This generalization ca-pability stems directly from the scaling approach intro-Conditional Normalizing Flow Scattering Kernel 14 duced in Section IV A. By scaling the velocities with the thermal velocity vth , the model learns the underlying dis-tributions in a normalized space that is independent of wall temperature and species. When the model is ap-plied to different wall temperatures or species, the veloc-ities are scaled using the corresponding thermal velocity 
+
+vth for that specific condition. This allows the model to adapt to different wall temperatures and species without requiring additional training data, as the learned distri-butions are inherently generalizable across these condi-tions. As mentioned in Section IV A, while the species scaling works well in equilibrium, it is not expected to generalize across species in non-equilibrium, since the interaction potential in MD simulations differs for each species. −95 −80 −65 −50 −35                    
+
+> −95
+> −80
+> −65
+> −50
+> −35
+> log( DB fwd )
+> log( DB bwd )
+> 0.00.10.20.30.40.5
+> p(log(DB fwd ),log(DB bwd )) /10 −3
+> (a) cRealNVP without DB-loss −55 −50 −45 −40 −35
+> −55
+> −50
+> −45
+> −40
+> −35
+> log( DB fwd )
+> log( DB bwd )
+> 0.00.51.01.52.1
+> p(log(DB fwd ),log(DB bwd )) /10 −3
+> (b) cRealNVP with DB-loss
+
+FIG. 8: Forward and backward sides of the detailed balance (DB) relation for the scattering of an incident Maxwell flux distribution of atomic oxygen at T = 300 K at a surface with Tw = 300 K for a cRealNVP model trained without and with a detailed balance loss term.  
+
+> B. Non-Equilibrium
+
+For the non-equilibrium validation, the reflected ve-locity distribution of incident velocity magnitudes of 3 000 m/s, 7 261 .3 m/s, and 8585 .9 m/s are compared to the true reflected velocity distribution obtained from the MD simulations. The models haven’t seen any data for these three velocity magnitudes during training, so this validation tests the interpolation capabilities of the mod-els. The distributions of the tangential and normal veloc-ity components for the cVAE and the cRealNVP models are shown in Figures 15, 16, and 17 for incident polar angles of 0 ◦, 20 ◦, 40 ◦, 60 ◦, and 80 ◦. In general, both models show a good agreement with the true reflected velocity distribution in all directions for all incident ve-locity magnitudes and incident polar angles. However, the cRealNVP model shows better agreement with the true reflected velocity distribution, especially for the nor-mal velocity component and the t1-direction at high in-cident polar angles. Nevertheless, the cVAE model also captures the overall shape of the reflected velocity dis-tribution, but struggles to capture the peak in the t1-direction at an incident polar angle of 80 ◦ as can be seen in Figures 17e and 16e. In addition to the validation data, MD simulations are performed for an incident velocity magnitude of 11 000 m/s and an incident polar angle of 80 ◦. This ve-locity magnitude is way outside the velocity range that occurs under VLEO conditions and the reflected velocity distribution is used to evaluate the extrapolation capa-bilities of the models. In Figure 9 the reflected velocity distribution of the cVAE and the cRealNVP models are compared to the true reflected velocity distribution. As can be seen, the cRealNVP shows tremendous extrapo-lation capabilities, with very good agreement with the true reflected velocity distribution. On the other hand, the cVAE model struggles to capture the reflected veloc-ity distribution, especially for the normal velocity com-ponent and the t1-direction. Even attempts with deeper architectures and larger latent space dimensions fail to improve the performance of the cVAE, despite their po-tential to capture more complex relationships in the data. As a result, the cRealNVP model has the best accuracy for the non-equilibrium and the equilibrium regime. The cVAE still achieves an acceptable accuracy in the non-equilibrium regime, but struggles on the extrapolation and the equilibrium regime. In Appendix C, additional non-equilibrium validation results are presented for different wall temperatures Tw.Good agreement with the reference MD data is observed for all considered wall temperatures. This indicates that the scaling approach also seems to be effective in the non-equilibrium regime, allowing the models to general-ize across different wall temperatures without requiring additional training data. However, it should be noted that this scaling still requires validation across a broader range of conditions. Ideally, future work would include non-equilibrium impact data at several wall temperatures Conditional Normalizing Flow Scattering Kernel 15 −6 −4 −2 0 2 4 6 8 10 12                          
+
+> 0
+> 1
+> 2
+> 3
+> 4
+> vr,t1 ·10 −3/m s −1
+> f (vr,t1 ) / (s m −1 · 10 −4)−8−6−4−202468
+> 0
+> 1
+> 2
+> 3
+> 4
+> vr,t2 ·10 −3/m s −1
+> f (vr,t2 ) / (s m −1 · 10 −4)0246810
+> 0
+> 1
+> 2
+> 3
+> 4
+> vr,n ·10 −3/m s −1
+> f (vr,n ) / (s m −1 · 10 −4) MD
+> cVAE
+> cRealNVP
+
+FIG. 9: Reflected velocity distributions of atomic oxy-gen for the cVAE, cRealNVP and MD data for an inci-dent velocity magnitude of 11 000 m/s and incident polar angle of 80 ◦ at a wall temperature of Tw = 300 K. directly in the training process. This would allow the model to learn the wall temperature dependence directly from data. However, generating MD data for multiple wall temperatures is computationally expensive. This makes the proposed scaling approach a reasonable and pragmatic solution at this stage.  
+
+> VI. APPLICATION
+
+Two applications of the developed scattering kernels are presented in this Section. Section VI A demonstrates their use in a DSMC reservoir simulation, illustrating the models’ behavior in (near-) equilibrium. Section VI B applies the kernels in a DSMC simulation for comput-ing aerodynamic coefficients of a flat plate under VLEO conditions, thereby assessing their non-equilibrium per-formance. For both applications, the scattering kernels are im-plemented in a DSMC framework. In this context, the DSMC method implemented in PICLas can be ap-plied 38,39 . PICLas is an open-source particle-based sim-ulation code for rarefied gas flows, developed at the In-stitute of Space Systems at the University of Stuttgart and the company boltzplatz.  
+
+> A. Reservoir Simulation
+
+For reservoir simulation, a simple setup is used, where a gas is confined in a cubic box with the size of 1 m. The gas is initialized with 10 000 particles, where the velocity of each particle is sampled from a Maxwell distribution at a temperature of T0 = 700 K. The wall temperature is set to Tw = 300 K. Since collisions between gas particles are neglected, the only mechanism for energy exchange is gas-surface scattering at the walls. A time step of 10 −5 sis used for the simulation, and the number of iterations is set to 4 000. Both scattering kernels cVAE and cReal-NVP are used to model the scattering on the walls, and the resulting gas temperature in the reservoir is moni-tored over time. The progress of the gas temperature in the reservoir is shown in Figure 10. For the cRealNVP model, the gas temperature converges to the wall tem-perature. The mean gas temperature of the last 3 000 iterations is approximately 300 .29 K. In contrast, the cVAE model struggles to reach the wall temperature. Its mean gas temperature reaches approximately 454 .19 K, far above the prescribed value of 300 K. This behavior is consistent with the results in Section V A, where the cVAE model already struggled to reproduce the reflected velocity distribution for an incident Maxwell flux distri-bution at 300 K of atomic oxygen. Appendix D presents additional reservoir simulation results for different wall temperatures Tw and species. These results show that the cRealNVP model accurately reproduces the correct wall temperature in all consid-ered cases, confirming that the scaling approach works correctly in the equilibrium regime.  
+
+> B. Aerodynamic Coefficients
+
+For the application of the scattering kernels in a non-equilibrium scenario, a simple flat plate is considered to compute aerodynamic coefficients under VLEO con-ditions. The DSMC simulation setup is shown in Fig-ure 11. The flat plate has an area of A = 0 .09 m 2 and a wall temperature of Tw = 300 K. As incident conditions, a bulk velocity magnitude of u∞ = 7 800 m/s, a tem-Conditional Normalizing Flow Scattering Kernel 16 0 1000 2000 3000 4000 
+
+> 200
+> 400
+> 600
+> 800
+> 1000
+> Tw
+> 300
+> T0700
+> iter
+> T /  K
+> cVAE
+> cRealNVP
+
+FIG. 10: Evolution of the gas temperature in the reser-voir simulation for atomic oxygen, starting from an ini-tial temperature of T0 = 700 K and a wall temperature of Tw = 300 K for the cVAE and the cRealNVP models. perature of T∞ = 934 K, and an atomic oxygen number density of nO,∞ = 4 .698 · 10 14 m−3 are used, which corre-spond to typical VLEO conditions. The angle of attack is varied between 0 ◦ and 90 ◦ in steps of 1 ◦. In every simu-lation, 100 000 particle surface interactions are simulated and the resulting aerodynamic coefficients are calculated. The aerodynamic coefficients are derived from the total force F acting on the flat plate, which is calculated from the momentum exchange of the particles with the sur-face. The lift coefficient CL and the drag coefficient CD
+
+are calculated using the following formulas: 
+
+CL = Fy12 mOnO,∞u2
+
+> ∞
+
+A (30) 
+
+CD = Fx12 mOnO,∞u2
+
+> ∞
+
+A (31) where mO = 2 .657 · 10 −26 kg is the mass of an atomic oxygen particle. In Figure 12 the lift coefficient, drag coefficient and lift-to-drag ratio are shown for the cVAE and the cRealNVP models. Additionally, the aerody-namic coefficients of the Maxwell model with Tr = Tw are shown for comparison for different accommodation coef-ficients σ, which is currently the most common model for satellite aerodynamics in VLEO. These coefficients can be analytically calculated for a flat plate using the formulas derived by Bird 18 .Furthermore, for selected angles of attack, aerody-namic coefficients are calculated approximately from the MD data, as a reference for the cVAE and the cReal-NVP models. For this purpose, the mean momentum exchange of the reflected velocities is calculated with re-spect to each selected incident velocity. To calculate the forces acting on the flat plate, the incident velocity dis-tribution is divided into bins of velocity magnitude and the incident polar angle. For each bin, we assign the previously calculated mean momentum exchange for the corresponding incident velocity. Afterwards, the total T∞, n∞ 
+
+> u∞
+> α
+> x
+> y
+> A,Tw
+
+FIG. 11: Schematic representation of the DSMC simu-lation setup used to compute aerodynamic coefficients. force is calculated by summing over all bins, where the contribution of each bin is weighted by the number of particles in that bin. It is important to note that this approach is only an approximation, since the resolution of the bins is highly limited by the amount of MD data available. Experimental data suitable for validating the models would be highly valuable, but there are no mea-surements for the specific VLEO conditions and surface material considered in this work. The comparison of the aerodynamic coefficients of the cVAE and the cRealNVP models to the MD reference data in Figure 12 shows that both models are capa-ble of reproducing the MD reference data well, while the Maxwell model significantly deviates. However, the cRealNVP shows slightly better agreement in the lift-to-drag ratio at low angles of attack compared to the cVAE model. This is a result of the better performance of the cRealNVP model for the reflected velocity distribution at high incident polar angles (with respect to the sur-face normal) as discussed in Section V B. On the other hand, the cVAE allows for significantly faster calcula-tions, as the sampling of reflected velocities is much faster compared to the cRealNVP model. For 100 000 parti-cle surface interactions, the cVAE is approximately 45 % faster than the cRealNVP model. This results from the fact that the decoder of the cVAE consists of only three hidden layers, while the cRealNVP model consists of six coupling layers, where each coupling layer has a neural network with four hidden layers. Therefore, if computa-tional performance is of high importance and accuracy in the equilibrium regime is not crucial, the cVAE model can be a good choice for the scattering kernel. In summary, the cRealNVP shows impressive perfor-mance in the equilibrium and non-equilibrium regime, making it applicable for a wide range of application sce-narios going from thermal to hypersonic velocities.  
+
+> VII. CONCLUSION
+
+In this work, we develop machine learning-based scat-tering kernels capable of bridging thermal to hypersonic velocity regimes. The previously developed machine learning model was limited to hypersonic velocities that occur in VLEO and single scattering events. We ex-tended this by augmenting the MD training data with Conditional Normalizing Flow Scattering Kernel 17 0 10 20 30 40 50 60 70 80 90          
+
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> σ= 1 .0(diffuse)
+> σ= 0 .8
+> σ= 0 .6
+> σ= 0 .4
+> σ= 0 .2
+> σ= 0 .0(specular)
+> α / ◦
+> CL
+> Maxwell
+> cVAE
+> cRealNVP
+> MD
+
+(a) Lift Coefficient 0 10 20 30 40 50 60 70 80 90          
+
+> 0.0
+> 1.0
+> 2.0
+> 3.0
+> 4.0
+> 5.0
+> σ= 0 .0(specular)
+> σ= 0 .2
+> σ= 0 .4
+> σ= 0 .6
+> σ= 0 .8
+> σ= 1 .0(diffuse)
+> α / ◦
+> CD
+> Maxwell
+> cVAE
+> cRealNVP
+> MD
+
+(b) Drag Coefficient 0 10 20 30 40 50 60 70 80 90          
+
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> σ= 1 .0(diffuse)
+> σ= 0 .8
+> σ= 0 .6
+> σ= 0 .4
+> σ= 0 .2
+> σ= 0 .0(specular)
+> α / ◦
+> CL/C D
+> Maxwell
+> cVAE
+> cRealNVP
+> MD
+
+(c) Lift-to-Drag Ratio 
+
+FIG. 12: Comparison of aerodynamic coefficients for atomic oxygen between the cVAE, cRealNVP, MD reflec-tion data, and Maxwell model (with Tr = Tw = 300 K) for a flat plate in VLEO conditions. low-velocity impact simulations and equilibrium data. This allows the model to be used across a wide range of application scenarios, from thermal to hypersonic veloci-ties. Especially enabling multi-scattering events, which is crucial for ABEP intake development of VLEO satellites and surface roughness investigations. We trained and compared two generative models: acVAE and a cRealNVP flow model. The cRealNVP ar-chitecture permits direct evaluation of the scattering ker-nel probability density K vi → vr
+
+. This model demon-strated superior performance in the equilibrium and non-equilibrium regimes. It accurately reproduced the re-flected velocity distributions, approximately satisfies de-tailed balance constraints, and achieved proper thermal convergence in reservoir simulations. In contrast, the cVAE model exhibited deficiencies in these areas. In the non-equilibrium regime, both models showed good agreement with MD reference data. However, the cRealNVP model maintained better accuracy for high incident polar angles. It also demonstrated robust ex-trapolation to velocity magnitudes beyond the training range. The application to aerodynamic coefficient calcu-lations for a flat plate under VLEO conditions confirmed that both models reproduce MD predictions well. On the other hand, the cVAE offers substantially better compu-tational performance. Therefore, it may be suitable for applications where equilibrium accuracy is less critical and computational efficiency is of importance. To generalize the models across different wall tempera-tures and species, a sigmoid-based scaling approach was introduced. This scaling showed good agreement with MD reference data for different wall temperatures in non-equilibrium, and was confirmed by the theoretical behav-ior in equilibrium. However, this represents a first ap-proach and requires further validation across a broader range of conditions. Ideally, future work would include non-equilibrium training data at multiple wall tempera-tures, with Tw as an explicit conditioning variable. Ul-timately, our goal is to incorporate chemical reactions into the gas-surface interaction framework to achieve a complete model for reactive flow simulations in VLEO environments. 
+
+ACKNOWLEDGMENTS 
+
+This work is funded by the Deutsche Forschungsge-meinschaft project number 516238647 - SFB1667/1 (AT-LAS - Advancing Technologies for Low-Altitude Satel-lites). The authors also thank the High Performance Computing Center Stuttgart (HLRS) for granting the computational time that allowed the execution of the pre-sented molecular dynamics simulations. 
+
+DATA AVAILABILITY STATEMENT 
+
+Data and code supporting the findings of this study are available from the corresponding author upon reasonable request. 
+
+CONFLICT OF INTEREST 
+
+The authors declare that they have no conflicts of in-terest, financial or otherwise, that could have influenced Conditional Normalizing Flow Scattering Kernel 18 the results or interpretation of the reported research. 
+
+> 1
+
+J. Virgili-Llop, P. Roberts, D. Z. Hao, and L. Ramio-Tomas, “Very low earth orbit mission concepts for earth observation. ben-efits and challenges,” in Reinventing Space Conference (2014). 
+
+> 2
+
+N. Crisp et al. , “The benefits of very low earth orbit for earth ob-servation missions,” Progress in Aerospace Sciences 117 (2020), 10.1016/j.paerosci.2020.100619. 
+
+> 3
+
+S. Fasoulas et al. , “Motivation, structure and goals of the collab-orative research center 1667: Advancing technologies of very low-altitude satellites - ATLAS,” in 2nd International Conference on Very Low Earth Orbit Missions and Technologies (CEAS Space Journal, Stuttgart, Germany, 2025). 
+
+> 4
+
+J. C. Maxwell, “On stresses in rarefied gases arising from inequal-ities of temperature,” Phil. Trans. R. Soc. 170 , 231–256 (1879). 
+
+> 5
+
+C. Xu, A. Caracciolo, P. D. C. Jorge, I. Gouzman, M. D. Pilin-ski, and T. K. Minton, “Inelastic scattering dynamics of hyper-thermal o atoms on engineering surfaces relevant to satellites in low earth orbit,” in 2nd International Conference on Very Low Earth Orbit Missions and Technologies (CEAS Space Journal, Stuttgart, Germany, 2025). 
+
+> 6
+
+V. J. Murray, M. D. Pilinski, E. J. Smoll, M. Qian, T. K. Minton, S. M. Madzunkov, and M. R. Darrach, “Gas-surface scattering dynamics applied to concentration of gases for mass spectrometry in tenuous atmospheres,” The Journal of Physical Chemistry C 
+
+121 , 7903–7922 (2017). 
+
+> 7
+
+T. K. Minton, T. E. Schwartzentruber, and C. Xu, “On the util-ity of coated poss-polyimides for vehicles in very low earth orbit,” ACS Applied Materials & Interfaces 13 , 51673–51684 (2021). 
+
+> 8
+
+S. Poovathingal, T. E. Schwartzentruber, V. J. Murray, and T. K. Minton, “Molecular simulation of carbon ablation using beam experiments and resolved microstructure,” AIAA Journal 
+
+54 , 995–1006 (2016). 
+
+> 9
+
+C. Cercignani and M. Lampis, “Kinetic models for gas-surface interactions,” Transport Theory and Statistical Physics 1, 101– 114 (1971). 
+
+> 10
+
+J. C. Tully, “Washboard model of gas–surface scattering,” The Journal of Chemical Physics 92 , 680–686 (1990). 
+
+> 11
+
+W. Park and E. Jun, “Velocity-dependent surface corrugation in gas-surface scattering,” Physics of Fluids 37 , 097153 (2025). 
+
+> 12
+
+P. D. C. Jorge, T. E. Schwartzentruber, A. Hubin, T. E. Magin, and T. K. Minton, “Modeling hyperthermal o-atom scattering dynamics on satellite materials,” The Journal of Physical Chem-istry C 129 , 12486–12501 (2025). 
+
+> 13
+
+S.-V. Anton, B. Sousa Alves, C. Siemes, J. Van Den IJssel, and P. N. Visser, “A wave scattering approach to modelling surface roughness in orbital aerodynamics,” Advances in Space Research 
+
+76 , 811–864 (2025). 
+
+> 14
+
+T. Liang, J. Zhang, and Q. Li, “A parameter-free physical model for gas–surface interaction,” Physics of Fluids 33 , 082005–1 – 082005–12 (2021). 
+
+> 15
+
+P. M. Mehta, A. Walker, C. A. McLaughlin, and J. Koller, “Comparing physical drag coefficients computed using different gas–surface interaction models,” Journal of Spacecraft and Rock-ets 51 , 873–883 (2014). 
+
+> 16
+
+M. Sch¨ utte, S. Hocker, H. Lipp, J. Roth, S. Fasoulas, and M. Pfeiffer, “A machine learning framework for scattering ker-nel derivation using molecular dynamics data in very low earth orbit,” Physics of Fluids 37 (2025), 10.1063/5.0287359. 
+
+> 17
+
+L. A. Sinpetru, N. H. Crisp, D. Mostaza-Prieto, S. Livadiotti, and P. C. Roberts, “ADBSat: Methodology of a novel panel method tool for aerodynamic analysis of satellites,” Computer Physics Communications 275 , 108326–1 – 108326–11 (2022). 
+
+> 18
+
+G. A. Bird, Molecular Gas Dynamics and the Direct Simulation of Gas Flows (Clarendon Press, 1994). 
+
+> 19
+
+S. M. Nejad, Scattering Dynamics of rarefied gases , Ph.D. thesis, Eindhoven University of Technology (2023). 
+
+> 20
+
+C. Cercignani, The Boltzmann Equation and Its Applications ,Applied Mathematical Sciences, Vol. 67 (Springer New York, 1988). 
+
+> 21
+
+S. Livadiotti et al. , “A review of gas-surface interaction mod-els for orbital aerodynamics applications,” Progress in Aerospace Sciences 119 , 100675/1–100675/16 (2020). 
+
+> 22
+
+M. P. Allen and D. J. Tildesley, Computer Simulation of Liquids 
+
+(Oxford University Press, 2017). 
+
+> 23
+
+Y. Chen, Molecular Dynamics Modeling of Gas-Surface Interac-tions , Ph.D. thesis, University of Edinburgh (2024). 
+
+> 24
+
+C. Dugas, Y. Bengio, F. B´ elisle, C. Nadeau, and R. Garcia, “In-corporating second-order functional knowledge for better option pricing,” in Advances in Neural Information Processing Systems ,Vol. 13, edited by T. Leen, T. Dietterich, and V. Tresp (MIT Press, 2000). 
+
+> 25
+
+L. Dinh, D. Krueger, and Y. Bengio, “Nice: Non-linear indepen-dent components estimation,” (2015), arXiv:1410.8516 [cs.LG]. 
+
+> 26
+
+D. J. Rezende and S. Mohamed, “Variational inference with nor-malizing flows,” (2016), arXiv:1505.05770 [stat.ML]. 
+
+> 27
+
+L. Dinh, J. Sohl-Dickstein, and S. Bengio, “Density estimation using real nvp,” (2017), arXiv:1605.08803 [cs.LG]. 
+
+> 28
+
+C. Winkler, D. Worrall, E. Hoogeboom, and M. Welling, “Learn-ing likelihoods with conditional normalizing flows,” (2023), arXiv:1912.00042 [cs.LG]. 
+
+> 29
+
+J. Roth, E. Eisfeld, D. Klein, S. Hocker, H. Lipp, and H.-R. Tre-bin, “IMD - the ITAP molecular dynamics simulation package,” The European Physical Journal Special Topics 227 , 1831 – 1836 (2019). 
+
+> 30
+
+P. Tangney and S. Scandolo, “An ab initio parametrized inter-atomic force field for silica,” Journal of Chemical Physics 117 ,8898 – 8904 (2019). 
+
+> 31
+
+F. Chollet et al. , “Keras,” https://keras.io (2015). 
+
+> 32
+
+M. Abadi et al. , “TensorFlow: Large-scale machine learning on heterogeneous systems,” (2016), arXiv:1603.04467v2 [cs.DC]. 
+
+> 33
+
+A. L. Garcia and W. Wagner, “Generation of the maxwellian inflow distribution,” Journal of Computational Physics 217 , 693– 708 (2006). 
+
+> 34
+
+W. M. Haynes, ed., CRC Handbook of Chemistry and Physics ,97th ed. (CRC Press, Boca Raton, FL, 2017). 
+
+> 35
+
+D.-A. Clevert, T. Unterthiner, and S. Hochreiter, “Fast and accurate deep network learning by exponential linear units (ELUs),” (2016), arXiv:1511.07289 [cs.LG]. 
+
+> 36
+
+D. P. Kingma and M. Welling, “Auto-encoding variational bayes,” (2022), arXiv:1312.6114 [stat.ML]. 
+
+> 37
+
+V. Nair and G. E. Hinton, “Rectified linear units improve re-stricted boltzmann machines,” in Proceedings of the 27th Inter-national Conference on Machine Learning (2010). 
+
+> 38
+
+S. Fasoulas, C.-D. Munz, M. Pfeiffer, J. Beyer, T. Binder, S. Cop-plestone, A. Mirza, P. Nizenkov, P. Ortwein, and W. Reschke, “Combining particle-in-cell and direct simulation monte carlo for the simulation of reactive plasma flows,” Physics of Fluids 31 ,072006–1 – 072006–19 (2019). 
+
+> 39
+
+The PICLas Developers, “PICLas: A 3D particle-based kinetic simulation framework combining PIC, DSMC, BGK, and Fokker-Planck methods for plasma dynamics and rarefied gas flows,” 
+
+https://github.com/piclas-framework/piclas (2026). Conditional Normalizing Flow Scattering Kernel 19 
+
+Appendix A: Equilibrium Validation Across Wall Temperatures and Species −3.0 −2.0 −1.0 0 1.0 2.0 3.0
+
+0
+
+0.5 
+
+1.0 
+
+1.5 
+
+vr,x · 10 −3 / m s −1
+
+> f (vr,x ) / (s m −1 · 10 −3)
+
+−3.0 −2.0 −1.0 0 1.0 2.0 3.0
+
+0
+
+0.5 
+
+1.0 
+
+1.5 
+
+vr,y · 10 −3 / m s −1
+
+> f (vr,y ) / (s m −1 · 10 −3)
+
+0 1.0 2.0 3.0 
+
+0
+
+0.5 
+
+1.0 
+
+1.5 
+
+2.0 
+
+2.5 
+
+vr,z · 10 −3 / m s −1
+
+> f (vr,z ) / (s m −1 · 10 −3)
+
+cVAE 
+
+cRealNVP 
+
+fr ∼ | vr,n |M (vr)
+
+(a) Molecular oxygen and Tw = 300 K −3.0 −2.0 −1.0 0 1.0 2.0 3.0
+
+0
+
+0.5 
+
+1.0 
+
+1.5 
+
+vr,x · 10 −3 / m s −1
+
+> f (vr,x ) / (s m −1 · 10 −3)
+
+−3.0 −2.0 −1.0 0 1.0 2.0 3.0
+
+0
+
+0.5 
+
+1.0 
+
+1.5 
+
+vr,y · 10 −3 / m s −1
+
+> f (vr,y ) / (s m −1 · 10 −3)
+
+0 1.0 2.0 3.0 
+
+0
+
+0.5 
+
+1.0 
+
+1.5 
+
+2.0 
+
+2.5 
+
+vr,z · 10 −3 / m s −1
+
+> f (vr,z ) / (s m −1 · 10 −3)
+
+cVAE 
+
+cRealNVP 
+
+fr ∼ | vr,n |M (vr)
+
+(b) Molecular oxygen and Tw = 900 K −3.0 −2.0 −1.0 0 1.0 2.0 3.0
+
+0
+
+0.5 
+
+1.0 
+
+1.5 
+
+vr,x · 10 −3 / m s −1
+
+> f (vr,x ) / (s m −1 · 10 −3)
+
+−3.0 −2.0 −1.0 0 1.0 2.0 3.0
+
+0
+
+0.5 
+
+1.0 
+
+1.5 
+
+vr,y · 10 −3 / m s −1
+
+> f (vr,y ) / (s m −1 · 10 −3)
+
+0 1.0 2.0 3.0 
+
+0
+
+0.5 
+
+1.0 
+
+1.5 
+
+2.0 
+
+2.5 
+
+vr,z · 10 −3 / m s −1
+
+> f (vr,z ) / (s m −1 · 10 −3)
+
+cVAE 
+
+cRealNVP 
+
+fr ∼ | vr,n |M (vr)
+
+(c) Molecular nitrogen and Tw = 900 K −3.0 −2.0 −1.0 0 1.0 2.0 3.0
+
+0
+
+0.5 
+
+1.0 
+
+1.5 
+
+vr,x · 10 −3 / m s −1
+
+> f (vr,x ) / (s m −1 · 10 −3)
+
+−3.0 −2.0 −1.0 0 1.0 2.0 3.0
+
+0
+
+0.5 
+
+1.0 
+
+1.5 
+
+vr,y · 10 −3 / m s −1
+
+> f (vr,y ) / (s m −1 · 10 −3)
+
+0 1.0 2.0 3.0 
+
+0
+
+0.5 
+
+1.0 
+
+1.5 
+
+2.0 
+
+2.5 
+
+vr,z · 10 −3 / m s −1
+
+> f (vr,z ) / (s m −1 · 10 −3)
+
+cVAE 
+
+cRealNVP 
+
+fr ∼ | vr,n |M (vr)
+
+(d) Atomic oxygen and Tw = 900 K −3.0 −2.0 −1.0 0 1.0 2.0 3.0
+
+0
+
+0.5 
+
+1.0 
+
+1.5 
+
+vr,x · 10 −3 / m s −1
+
+> f (vr,x ) / (s m −1 · 10 −3)
+
+−3.0 −2.0 −1.0 0 1.0 2.0 3.0
+
+0
+
+0.5 
+
+1.0 
+
+1.5 
+
+vr,y · 10 −3 / m s −1
+
+> f (vr,y ) / (s m −1 · 10 −3)
+
+0 1.0 2.0 3.0 
+
+0
+
+0.5 
+
+1.0 
+
+1.5 
+
+2.0 
+
+2.5 
+
+vr,z · 10 −3 / m s −1
+
+> f (vr,z ) / (s m −1 · 10 −3)
+
+cVAE 
+
+cRealNVP 
+
+fr ∼ | vr,n |M (vr)
+
+(e) Atomic oxygen and Tw = 1500 K 
+
+FIG. 13: Reflected velocity distributions for the cVAE, cRealNVP, and true reflected Maxwell flux distribution 
+
+fr ∼ | vr,n |M (vr) for different species and wall temperatures, obtained for an incident Maxwell flux distribution 
+
+fi ∼ | vi,n |M (vi) at wall temperature. Conditional Normalizing Flow Scattering Kernel 20 −55 −50 −45 −40 −35 −30 
+
+−55 
+
+−50 
+
+−45 
+
+−40 
+
+−35 
+
+−30 
+
+log( DB fwd )
+
+> log( DB bwd )
+
+0.0 0.5 1.0 1.5 1.9
+
+p(log(DB fwd ), log(DB bwd )) /10 −3
+
+(a) Molecular oxygen and Tw = 300 K −55 −50 −45 −40 −35 −30 
+
+−55 
+
+−50 
+
+−45 
+
+−40 
+
+−35 
+
+−30 
+
+log( DB fwd )
+
+> log( DB bwd )
+
+0.0 0.5 1.0 1.5 1.8
+
+p(log(DB fwd ), log(DB bwd )) /10 −3 (b) Molecular oxygen and Tw = 900 K −60 −55 −50 −45 −40 −35 
+
+−60 
+
+−55 
+
+−50 
+
+−45 
+
+−40 
+
+−35 
+
+log( DB fwd )
+
+> log( DB bwd )
+
+0.0 0.5 1.0 1.5 2.0
+
+p(log(DB fwd ), log(DB bwd )) /10 −3
+
+(c) Molecular nitrogen and Tw = 900 K −60 −55 −50 −45 −40 −35 
+
+−60 
+
+−55 
+
+−50 
+
+−45 
+
+−40 
+
+−35 
+
+log( DB fwd )
+
+> log( DB bwd )
+
+0.0 0.5 1.0 1.5 2.1
+
+p(log(DB fwd ), log(DB bwd )) /10 −3 (d) Atomic oxygen and Tw = 900 K −60 −55 −50 −45 −40 −35 
+
+−60 
+
+−55 
+
+−50 
+
+−45 
+
+−40 
+
+−35 
+
+log( DB fwd )
+
+> log( DB bwd )
+
+0.0 0.5 1.0 1.5 2.3
+
+p(log(DB fwd ), log(DB bwd )) /10 −3
+
+(e) Atomic oxygen and Tw = 1500 K −60 −55 −50 −45 −40 −35 
+
+−60 
+
+−55 
+
+−50 
+
+−45 
+
+−40 
+
+−35 
+
+log( DB fwd )
+
+> log( DB bwd )
+
+0.0 0.5 1.0 1.5 2.1
+
+p(log(DB fwd ), log(DB bwd )) /10 −3 (f ) Molecular oxygen and Tw = 1500 K 
+
+FIG. 14: Forward and backward sides of the detailed balance (DB) relation for the scattering of an incident Maxwell flux distribution at wall temperature, evaluated for different species and wall temperatures using the cRealNVP model trained with a detailed balance loss term. Conditional Normalizing Flow Scattering Kernel 21 
+
+Appendix B: Non-Equilibrium Validation −4 −3 −2 −1 0 1 2 3 4
+
+0
+
+2
+
+4
+
+6
+
+vr,t1 · 10 −3 / m s −1
+
+> f (vr,t1 ) / (s m −1 · 10 −4)
+
+−4 −3 −2 −1 0 1 2 3 4
+
+0
+
+2
+
+4
+
+6
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 1 2 3 4
+
+0
+
+2.5 
+
+5.0 
+
+7.5 
+
+10.0 
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(a) |vi| = 3000 .0 m /s, θi = 0 .0 ◦−4 −3 −2 −1 0 1 2 3 4
+
+0
+
+2
+
+4
+
+6
+
+vr,t1 · 10 −3 / m s −1
+
+> f (vr,t1 ) / (s m −1 · 10 −4)
+
+−4 −3 −2 −1 0 1 2 3 4
+
+0
+
+2
+
+4
+
+6
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 1 2 3 4
+
+0
+
+2.5 
+
+5.0 
+
+7.5 
+
+10.0 
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(b) |vi| = 3000 .0 m /s, θi = 20 .0 ◦−4 −3 −2 −1 0 1 2 3 4
+
+0
+
+2
+
+4
+
+6
+
+vr,t1 · 10 −3 / m s −1
+
+> f (vr,t1 ) / (s m −1 · 10 −4)
+
+−4 −3 −2 −1 0 1 2 3 4
+
+0
+
+2
+
+4
+
+6
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 1 2 3 4
+
+0
+
+2.5 
+
+5.0 
+
+7.5 
+
+10.0 
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(c) |vi| = 3000 .0 m /s, θi = 40 .0 ◦−4 −3 −2 −1 0 1 2 3 4
+
+0
+
+2
+
+4
+
+6
+
+vr,t1 · 10 −3 / m s −1
+
+> f (vr,t1 ) / (s m −1 · 10 −4)
+
+−4 −3 −2 −1 0 1 2 3 4
+
+0
+
+2
+
+4
+
+6
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 1 2 3 4
+
+0
+
+2.5 
+
+5.0 
+
+7.5 
+
+10.0 
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(d) |vi| = 3000 .0 m /s, θi = 60 .0 ◦−4 −3 −2 −1 0 1 2 3 4
+
+0
+
+2
+
+4
+
+6
+
+vr,t1 · 10 −3 / m s −1
+
+> f (vr,t1 ) / (s m −1 · 10 −4)
+
+−4 −3 −2 −1 0 1 2 3 4
+
+0
+
+2
+
+4
+
+6
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 1 2 3 4
+
+0
+
+2.5 
+
+5.0 
+
+7.5 
+
+10.0 
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(e) |vi| = 3000 .0 m /s, θi = 80 .0 ◦
+
+FIG. 15: Reflected velocity distributions of atomic oxygen for the cVAE, cRealNVP and MD data for an incident velocity magnitude of |vi| = 3000 .0 m/s and varying polar angles θi at a wall temperature of Tw = 300 K. Conditional Normalizing Flow Scattering Kernel 22 −6 −4 −2 0 2 4 6 8
+
+0
+
+2
+
+4
+
+6
+
+vr,t1 · 10 −3 / m s −1
+
+> f (vr,t1 ) / (s m −1 · 10 −4)
+
+−6 −4 −2 0 2 4 6
+
+0
+
+2
+
+4
+
+6
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 2 4 6
+
+0
+
+2
+
+4
+
+6
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(a) |vi| = 7261 .3 m /s, θi = 0 .0 ◦−6 −4 −2 0 2 4 6 8
+
+0
+
+2
+
+4
+
+6
+
+vr,t1 · 10 −3 / m s −1
+
+> f (vr,t1 ) / (s m −1 · 10 −4)
+
+−6 −4 −2 0 2 4 6
+
+0
+
+2
+
+4
+
+6
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 2 4 6
+
+0
+
+2
+
+4
+
+6
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(b) |vi| = 7261 .3 m /s, θi = 20 .0 ◦−6 −4 −2 0 2 4 6 8
+
+0
+
+2
+
+4
+
+6
+
+vr,t1 · 10 −3 / m s −1
+
+> f (vr,t1 ) / (s m −1 · 10 −4)
+
+−6 −4 −2 0 2 4 6
+
+0
+
+2
+
+4
+
+6
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 2 4 6
+
+0
+
+2
+
+4
+
+6
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(c) |vi| = 7261 .3 m /s, θi = 40 .0 ◦−6 −4 −2 0 2 4 6 8
+
+0
+
+2
+
+4
+
+6
+
+vr,t1 · 10 −3 / m s −1
+
+> f (vr,t1 ) / (s m −1 · 10 −4)
+
+−6 −4 −2 0 2 4 6
+
+0
+
+2
+
+4
+
+6
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 2 4 6
+
+0
+
+2
+
+4
+
+6
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(d) |vi| = 7261 .3 m /s, θi = 60 .0 ◦−6 −4 −2 0 2 4 6 8
+
+0
+
+2
+
+4
+
+6
+
+vr,t1 · 10 −3 / m s −1
+
+> f (vr,t1 ) / (s m −1 · 10 −4)
+
+−6 −4 −2 0 2 4 6
+
+0
+
+2
+
+4
+
+6
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 2 4 6
+
+0
+
+2
+
+4
+
+6
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(e) |vi| = 7261 .3 m /s, θi = 80 .0 ◦
+
+FIG. 16: Reflected velocity distributions of atomic oxygen for the cVAE, cRealNVP and MD data for an incident velocity magnitude of |vi| = 7261 .3 m/s and varying polar angles θi at a wall temperature of Tw = 300 K. Conditional Normalizing Flow Scattering Kernel 23 −6 −4 −2 0 2 4 6 8 10 
+
+0
+
+2
+
+4
+
+6
+
+vr,t1 · 10 −3 / m s −1
+
+> f (vr,t1 ) / (s m −1 · 10 −4)
+
+−6 −4 −2 0 2 4 6
+
+0
+
+2
+
+4
+
+6
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 2 4 6 8
+
+0
+
+2
+
+4
+
+6
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(a) |vi| = 8585 .9 m /s, θi = 0 .0 ◦−6 −4 −2 0 2 4 6 8 10 
+
+0
+
+2
+
+4
+
+6
+
+vr,t1 · 10 −3 / m s −1
+
+> f (vr,t1 ) / (s m −1 · 10 −4)
+
+−6 −4 −2 0 2 4 6
+
+0
+
+2
+
+4
+
+6
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 2 4 6 8
+
+0
+
+2
+
+4
+
+6
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(b) |vi| = 8585 .9 m /s, θi = 20 .0 ◦−6 −4 −2 0 2 4 6 8 10 
+
+0
+
+2
+
+4
+
+6
+
+vr,t1 · 10 −3 / m s −1
+
+> f (vr,t1 ) / (s m −1 · 10 −4)
+
+−6 −4 −2 0 2 4 6
+
+0
+
+2
+
+4
+
+6
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 2 4 6 8
+
+0
+
+2
+
+4
+
+6
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(c) |vi| = 8585 .9 m /s, θi = 40 .0 ◦−6 −4 −2 0 2 4 6 8 10 
+
+0
+
+2
+
+4
+
+6
+
+vr,t1 · 10 −3 / m s −1
+
+> f (vr,t1 ) / (s m −1 · 10 −4)
+
+−6 −4 −2 0 2 4 6
+
+0
+
+2
+
+4
+
+6
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 2 4 6 8
+
+0
+
+2
+
+4
+
+6
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(d) |vi| = 8585 .9 m /s, θi = 60 .0 ◦−6 −4 −2 0 2 4 6 8 10 
+
+0
+
+2
+
+4
+
+6
+
+vr,t1 · 10 −3 / m s −1
+
+> f (vr,t1 ) / (s m −1 · 10 −4)
+
+−6 −4 −2 0 2 4 6
+
+0
+
+2
+
+4
+
+6
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 2 4 6 8
+
+0
+
+2
+
+4
+
+6
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(e) |vi| = 8585 .9 m /s, θi = 80 .0 ◦
+
+FIG. 17: Reflected velocity distributions of atomic oxygen for the cVAE, cRealNVP and MD data for an incident velocity magnitude of |vi| = 8585 .9 m/s and varying polar angles θi at a wall temperature of Tw = 300 K. Conditional Normalizing Flow Scattering Kernel 24 
+
+Appendix C: Non-Equilibrium Validation Across Wall Temperatures −6 −4 −2 0 2 4 6 8 10 
+
+0
+
+1
+
+2
+
+3
+
+4
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+−6 −4 −2 0 2 4 6
+
+0
+
+1
+
+2
+
+3
+
+4
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 2 4 6 8
+
+0
+
+2
+
+4
+
+6
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(a) |vi| = 7800 .0 m /s, θi = 20 .0 ◦, Tw = 900 K −6 −4 −2 0 2 4 6 8 10 
+
+0
+
+1
+
+2
+
+3
+
+4
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+−6 −4 −2 0 2 4 6
+
+0
+
+1
+
+2
+
+3
+
+4
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 2 4 6 8
+
+0
+
+2
+
+4
+
+6
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(b) |vi| = 7800 .0 m /s, θi = 70 .0 ◦, Tw = 900 K −6 −4 −2 0 2 4 6 8 10 
+
+0
+
+1
+
+2
+
+3
+
+4
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+−6 −4 −2 0 2 4 6
+
+0
+
+1
+
+2
+
+3
+
+4
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 2 4 6 8
+
+0
+
+2
+
+4
+
+6
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(c) |vi| = 7800 .0 m /s, θi = 20 .0 ◦, Tw = 1 500 K −6 −4 −2 0 2 4 6 8 10 
+
+0
+
+1
+
+2
+
+3
+
+4
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+−6 −4 −2 0 2 4 6
+
+0
+
+1
+
+2
+
+3
+
+4
+
+vr,t2 · 10 −3 / m s −1
+
+> f (vr,t2 ) / (s m −1 · 10 −4)
+
+0 2 4 6 8
+
+0
+
+2
+
+4
+
+6
+
+vr,n · 10 −3 / m s −1
+
+> f (vr,n ) / (s m −1 · 10 −4)
+
+MD 
+
+cVAE 
+
+cRealNVP 
+
+(d) |vi| = 7800 .0 m /s, θi = 70 .0 ◦, Tw = 1 500 K 
+
+FIG. 18: Reflected velocity distributions of atomic oxygen for the cVAE, cRealNVP and MD data for an incident velocity magnitude of |vi| = 7800 .0 m/s, varying polar angles θi, and two different wall temperatures Tw.Conditional Normalizing Flow Scattering Kernel 25 
+
+Appendix D: Reservoir Application Across Wall Temperatures and Species 0 1000 2000 3000 4000 
+
+200 
+
+400 
+
+600 
+
+800 
+
+1000 
+
+Tw
+
+> 300
+
+T0700 
+
+iter 
+
+> T /  K
+
+cVAE 
+
+cRealNVP 
+
+(a) Molecular oxygen and Tw = 300 K 0 1000 2000 3000 4000 
+
+0
+
+1000 
+
+2000 
+
+3000 
+
+Tw
+
+T0
+
+iter 
+
+> T /  K
+
+cVAE 
+
+cRealNVP (b) Molecular oxygen and Tw = 900 K 0 1000 2000 3000 4000 
+
+0
+
+1000 
+
+2000 
+
+3000 
+
+Tw
+
+T0
+
+iter 
+
+> T /  K
+
+cVAE 
+
+cRealNVP 
+
+(c) Molecular nitrogen and Tw = 900 K 0 1000 2000 3000 4000 
+
+0
+
+1000 
+
+2000 
+
+3000 
+
+Tw
+
+T0
+
+iter 
+
+> T /  K
+
+cVAE 
+
+cRealNVP (d) Atomic oxygen and Tw = 900 K 0 1000 2000 3000 4000 
+
+0
+
+1000 
+
+2000 
+
+3000 
+
+4000 
+
+Tw
+
+T0
+
+iter 
+
+> T /  K
+
+cVAE 
+
+cRealNVP 
+
+(e) Molecular oxygen and Tw = 1500 K 0 1000 2000 3000 4000 
+
+0
+
+1000 
+
+2000 
+
+3000 
+
+4000 
+
+Tw
+
+T0
+
+iter 
+
+> T /  K
+
+cVAE 
+
+cRealNVP (f ) Atomic oxygen and Tw = 1500 K 
+
+FIG. 19: Evolution of the gas temperature in the reservoir simulation for different species, initial temperatures T0
+
+and wall temperatures Tw for the cVAE and the cRealNVP models.
