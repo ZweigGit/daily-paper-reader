@@ -1,0 +1,57 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-06T21:07:28.191396+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.31576v1",
+      "source": "arxiv",
+      "title": "Introduction to Stochastic Differential Equations for Generative Machine Learning: A Variational Perspective",
+      "abstract": "The use of ordinary and stochastic differential equations has led to substantial progress in generative machine learning with applications to, for example, image, video and biomolecule generation. This paper provides a self-contained and informal introduction to the differential equations, the probabilistic framework for using them in generative modeling and the Fokker--Planck equation that governs the temporal evolution of the marginal distribution of the stochastic variables of the differential equations. The variational lower bound on the log-likelihood (the evidence lower bound, ELBO) is derived and used as a general starting point for a discussion of diffusion models, score matching, and flow matching. All of these approaches may be viewed as specific parameterizations of the most general variational approach. A one-dimensional density modeling problem is used as a simple example to compare different parameterizations.",
+      "authors": [
+        "Ole Winther",
+        "Paul Jeha",
+        "Sander Dieleman",
+        "Andriy Mnih",
+        "Manfred Opper",
+        "Andrea Dittadi"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-30T12:34:16+00:00",
+      "link": "https://arxiv.org/pdf/2606.31576v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "tutorial on SDEs for generative models including diffusion and flow matching, foundational for fluid dynamics",
+      "llm_evidence_cn": "生成式SDE导论，涵盖扩散和流匹配，为流体动力学奠定基础",
+      "llm_evidence": "生成式SDE导论，涵盖扩散和流匹配，为流体动力学奠定基础",
+      "canonical_evidence": "生成式SDE导论，涵盖扩散和流匹配，为流体动力学奠定基础",
+      "llm_tldr_en": "This tutorial provides a self-contained introduction to SDEs for generative modeling, covering diffusion, score matching, and flow matching from a variational perspective.",
+      "llm_tldr_cn": "本文从变分视角自洽地介绍了生成式机器学习中的随机微分方程，涵盖了扩散模型、分数匹配和流匹配。推导了ELBO并展示了这些方法在图像、视频和生物分子生成中的应用，为将SDE框架应用于流体动力学生成模型奠定了理论基础。",
+      "llm_tldr": "本文从变分视角自洽地介绍了生成式机器学习中的随机微分方程，涵盖了扩散模型、分数匹配和流匹配。推导了ELBO并展示了这些方法在图像、视频和生物分子生成中的应用，为将SDE框架应用于流体动力学生成模型奠定了理论基础。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-07-06 <!--dpr-date:20260706-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/06/2606.31576v1-introduction-to-stochastic-differential-equations-for-generative-machine-learning-a-variational-perspective" data-sidebar-item="{&quot;title&quot;: &quot;Introduction to Stochastic Differential Equations for Generative Machine Learning: A Variational Perspective&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.31576v1-introduction-to-stochastic-differential-equations-for-generative-machine-learning-a-variational-perspective&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;生成式SDE导论，涵盖扩散和流匹配，为流体动力学奠定基础&quot;}">Introduction to Stochastic Differential Equations for Generative Machine Learning: A Variational Perspective</a>
   * 2026-07-05 <!--dpr-date:20260705-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/05/2606.31928v1-conditional-normalizing-flow-for-gas-surface-scattering-from-thermal-to-hypersonic-velocities" data-sidebar-item="{&quot;title&quot;: &quot;Conditional Normalizing Flow for Gas-Surface Scattering from Thermal to Hypersonic Velocities&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.31928v1-conditional-normalizing-flow-for-gas-surface-scattering-from-thermal-to-hypersonic-velocities&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;条件归一化流应用于高超音速气体表面散射&quot;}">Conditional Normalizing Flow for Gas-Surface Scattering from Thermal to Hypersonic Velocities</a>

@@ -1,0 +1,24 @@
+{
+  "label": "2026-07-06",
+  "date": "2026-07-06",
+  "generated_at": "2026-07-06T21:08:48",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202607/06/2606.31576v1-introduction-to-stochastic-differential-equations-for-generative-machine-learning-a-variational-perspective",
+      "section": "quick",
+      "title_en": "Introduction to Stochastic Differential Equations for Generative Machine Learning: A Variational Perspective",
+      "authors": "Ole Winther, Paul Jeha, Sander Dieleman, Andriy Mnih, Manfred Opper, Andrea Dittadi",
+      "date": "2026-06-30",
+      "pdf": "https://arxiv.org/pdf/2606.31576v1",
+      "score": "6.0",
+      "evidence": "生成式SDE导论，涵盖扩散和流匹配，为流体动力学奠定基础",
+      "tldr": "生成机器学习需模拟复杂数据分布，传统方法存在局限性。本文从变分视角出发，利用随机微分方程（SDE）和Fokker-Planck方程，推导出证据下界（ELBO），将扩散模型、得分匹配和流匹配统一为变分特例。通过一维密度建模示例比较不同参数化，展示了统一框架的灵活性和有效性。该自包含介绍为理解生成模型的微分方程基础提供了清晰路径。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "The use of ordinary and stochastic differential equations has led to substantial progress in generative machine learning with applications to, for example, image, video and biomolecule generation. This paper provides a self-contained and informal introduction to the differential equations, the probabilistic framework for using them in generative modeling and the Fokker--Planck equation that governs the temporal evolution of the marginal distribution of the stochastic variables of the differential equations. The variational lower bound on the log-likelihood (the evidence lower bound, ELBO) is derived and used as a general starting point for a discussion of diffusion models, score matching, and flow matching. All of these approaches may be viewed as specific parameterizations of the most general variational approach. A one-dimensional density modeling problem is used as a simple example to compare different parameterizations.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
