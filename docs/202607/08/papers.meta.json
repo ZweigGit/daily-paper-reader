@@ -1,0 +1,39 @@
+{
+  "label": "2026-07-08",
+  "date": "2026-07-08",
+  "generated_at": "2026-07-08T21:00:58",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202607/08/2607.02693v1-property-constrained-3d-porous-media-reconstruction-from-2d-images-via-conditional-generative-adversarial-networks",
+      "section": "deep",
+      "title_en": "Property-Constrained 3D Porous Media Reconstruction from 2D Images via Conditional Generative Adversarial Networks",
+      "authors": "Ali Sadeghkhani, Brandon Bennett, Arash Rabbani",
+      "date": "2026-07-02",
+      "pdf": "https://arxiv.org/pdf/2607.02693v1",
+      "score": "8.0",
+      "evidence": "条件生成对抗网络用于多孔介质三维重建，与流体动力学相关",
+      "tldr": "三维多孔介质重建通常依赖昂贵的三维成像数据。本文提出条件生成对抗网络框架，仅用二维薄片图像生成具有可控孔隙度的三维体积，通过二维判别器和多轴切片提取学习三维一致性结构。在两种碳酸盐岩样品上，孔隙度控制误差低，R²达0.93，成功捕获了不同岩性特征。该方法消除了对三维训练数据的需求，为数字岩石物理提供了低成本、属性可控的重建方案。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "This study presents a conditional Generative Adversarial Network (cGAN) framework for generating 3D porous media volumes with controlled porosity, trained exclusively on 2D thin section images. The key innovation lies in combining property-conditioned generation with 2D-to-3D reconstruction, eliminating the need for expensive 3D training data while maintaining control over petrophysical properties. The framework employs a hybrid architecture with a 3D generator and 2D discriminator, where multi-axis slice extraction enables learning 3D-consistent structures from 2D training data. Porosity labels are extracted using an Enhanced U-Net segmentation model. The methodology was demonstrated on two carbonate samples with different lithologies: dolomite-anhydrite and pure dolomite. Results show that the framework successfully generates realistic 3D volumes capturing lithological features such as anhydrite inclusions and fine crystalline textures. Porosity control achieved an $R^2$ of 0.93, with mean absolute errors of 0.019 and 0.010 for the heterogeneous and homogeneous samples, respectively.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/08/2607.04113v1-asymptotic-preserving-a-posteriori-analysis-of-diffusion-and-flow-matching-samplers",
+      "section": "quick",
+      "title_en": "Asymptotic-Preserving A Posteriori Analysis of Diffusion and Flow-Matching Samplers",
+      "authors": "Shiheng Zhang",
+      "date": "2026-07-05",
+      "pdf": "https://arxiv.org/pdf/2607.04113v1",
+      "score": "7.0",
+      "evidence": "扩散与流匹配采样器的渐近保持分析",
+      "tldr": "扩散与流匹配采样器在终端噪声尺度极小时，得分刚性导致流出现边界层，数值稳定性成关键挑战。本文将σ_min视为奇异摄动参数，提出渐近保持后验分析，利用σ_min均匀系数的残差函数审计固定步长采样器。证明σ-时钟下的欧拉（DDIM）是唯一层精确离散化；λ时钟仅在步长h≤h_*时稳定；确定性采样器保持一阶均匀精度且无log因子，而随机采样器的对数成本完全来自Itô项。在CIFAR-10实验中，光谱测量可预测保留残差预算并校准Itô系数，揭示时钟决定稳定性、噪声贡献对数因子，为高效采样提供理论保障。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Diffusion and flow-matching samplers integrate a learned probability-flow ODE from a large noise scale down to a small terminal floor $σ_{\\min}$, at which the score is stiff and the flow develops a boundary layer. We treat $σ_{\\min}$ as a singular-perturbation parameter and determine which fixed-step samplers are asymptotic-preserving (AP), that is, stable and uniformly accurate as $σ_{\\min}\\to0$, casting the criteria as an a posteriori audit: residual functionals with $σ_{\\min}$-uniform coefficients, computable on a pretrained checkpoint without ground-truth scores or exact trajectories. On the terminal layer, Euler in the $σ$-clock, the deterministic DDIM update, is the unique layer-exact discretization up to affine reparameterization, with rectified flow its flow-matching counterpart; the $λ$-clock is stable only for steps $h\\le h_\\star=1+W(1/e)$, and the uniform-$σ^2$ heat clock stalls a $σ_{\\min}$-independent distance from the data. On two solvable models (rank-deficient Gaussian, symmetric two-point mixture), deterministic samplers remain first-order uniformly accurate with no $\\log(1/σ_{\\min})$ factor, even across a symmetric posterior-switching interface whose distributional budget is a universal constant; the logarithm is charged entirely to the Itô term of stochastic samplers, whose path-KL scales as $Λ^2/N$ against the ODE's $O(Λ^2/N^2)$ budget, with $Λ=\\log(σ_{\\max}/σ_{\\min})$. On the EDM CIFAR-10 checkpoint, spectra measured once predict held-out residual budgets across step count, schedule, and noise level against pre-specified gates with no per-configuration refitting, and calibrate the Itô coefficient at $M_1=1.00\\pm0.01$. The clock decides stability; the noise, not the geometry, charges the logarithm.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

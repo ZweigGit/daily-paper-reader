@@ -1,0 +1,92 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-08T20:58:52.091616+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2607.02693v1",
+      "source": "arxiv",
+      "title": "Property-Constrained 3D Porous Media Reconstruction from 2D Images via Conditional Generative Adversarial Networks",
+      "abstract": "This study presents a conditional Generative Adversarial Network (cGAN) framework for generating 3D porous media volumes with controlled porosity, trained exclusively on 2D thin section images. The key innovation lies in combining property-conditioned generation with 2D-to-3D reconstruction, eliminating the need for expensive 3D training data while maintaining control over petrophysical properties. The framework employs a hybrid architecture with a 3D generator and 2D discriminator, where multi-axis slice extraction enables learning 3D-consistent structures from 2D training data. Porosity labels are extracted using an Enhanced U-Net segmentation model. The methodology was demonstrated on two carbonate samples with different lithologies: dolomite-anhydrite and pure dolomite. Results show that the framework successfully generates realistic 3D volumes capturing lithological features such as anhydrite inclusions and fine crystalline textures. Porosity control achieved an $R^2$ of 0.93, with mean absolute errors of 0.019 and 0.010 for the heterogeneous and homogeneous samples, respectively.",
+      "authors": [
+        "Ali Sadeghkhani",
+        "Brandon Bennett",
+        "Arash Rabbani"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.LG",
+        "physics.geo-ph"
+      ],
+      "published": "2026-07-02T18:34:18+00:00",
+      "link": "https://arxiv.org/pdf/2607.02693v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "conditional GAN for 3D porous media reconstruction related to fluid dynamics",
+      "llm_evidence_cn": "条件生成对抗网络用于多孔介质三维重建，与流体动力学相关",
+      "llm_evidence": "条件生成对抗网络用于多孔介质三维重建，与流体动力学相关",
+      "canonical_evidence": "条件生成对抗网络用于多孔介质三维重建，与流体动力学相关",
+      "llm_tldr_en": "Proposes a conditional GAN framework to generate 3D porous media volumes with controlled porosity from 2D images, eliminating the need for expensive 3D training data while maintaining control over petrophysical properties relevant to fluid flow in porous media.",
+      "llm_tldr_cn": "该研究提出了一种条件生成对抗网络（cGAN）框架，利用二维薄片图像生成具有可控孔隙度的三维多孔介质体积。其核心创新在于将属性条件生成与2D到3D重建结合，无需昂贵的三维训练数据即可控制与流体流动相关的岩石物理性质。该方法在碳酸盐岩样本上进行了验证，能够生成符合给定孔隙度的三维结构，为多孔介质流体动力学研究提供了高效的生成工具。",
+      "llm_tldr": "该研究提出了一种条件生成对抗网络（cGAN）框架，利用二维薄片图像生成具有可控孔隙度的三维多孔介质体积。其核心创新在于将属性条件生成与2D到3D重建结合，无需昂贵的三维训练数据即可控制与流体流动相关的岩石物理性质。该方法在碳酸盐岩样本上进行了验证，能够生成符合给定孔隙度的三维结构，为多孔介质流体动力学研究提供了高效的生成工具。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models for fluid dynamics research papers",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.04113v1",
+      "source": "arxiv",
+      "title": "Asymptotic-Preserving A Posteriori Analysis of Diffusion and Flow-Matching Samplers",
+      "abstract": "Diffusion and flow-matching samplers integrate a learned probability-flow ODE from a large noise scale down to a small terminal floor $σ_{\\min}$, at which the score is stiff and the flow develops a boundary layer. We treat $σ_{\\min}$ as a singular-perturbation parameter and determine which fixed-step samplers are asymptotic-preserving (AP), that is, stable and uniformly accurate as $σ_{\\min}\\to0$, casting the criteria as an a posteriori audit: residual functionals with $σ_{\\min}$-uniform coefficients, computable on a pretrained checkpoint without ground-truth scores or exact trajectories. On the terminal layer, Euler in the $σ$-clock, the deterministic DDIM update, is the unique layer-exact discretization up to affine reparameterization, with rectified flow its flow-matching counterpart; the $λ$-clock is stable only for steps $h\\le h_\\star=1+W(1/e)$, and the uniform-$σ^2$ heat clock stalls a $σ_{\\min}$-independent distance from the data. On two solvable models (rank-deficient Gaussian, symmetric two-point mixture), deterministic samplers remain first-order uniformly accurate with no $\\log(1/σ_{\\min})$ factor, even across a symmetric posterior-switching interface whose distributional budget is a universal constant; the logarithm is charged entirely to the Itô term of stochastic samplers, whose path-KL scales as $Λ^2/N$ against the ODE's $O(Λ^2/N^2)$ budget, with $Λ=\\log(σ_{\\max}/σ_{\\min})$. On the EDM CIFAR-10 checkpoint, spectra measured once predict held-out residual budgets across step count, schedule, and noise level against pre-specified gates with no per-configuration refitting, and calibrate the Itô coefficient at $M_1=1.00\\pm0.01$. The clock decides stability; the noise, not the geometry, charges the logarithm.",
+      "authors": [
+        "Shiheng Zhang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.NA"
+      ],
+      "published": "2026-07-05T04:48:33+00:00",
+      "link": "https://arxiv.org/pdf/2607.04113v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Asymptotic-preserving analysis of diffusion and flow-matching samplers",
+      "llm_evidence_cn": "扩散与流匹配采样器的渐近保持分析",
+      "llm_evidence": "扩散与流匹配采样器的渐近保持分析",
+      "canonical_evidence": "扩散与流匹配采样器的渐近保持分析",
+      "llm_tldr_en": "This paper analyzes diffusion and flow-matching samplers from an asymptotic-preserving perspective, providing criteria for stable and accurate sampling as the terminal noise floor goes to zero.",
+      "llm_tldr_cn": "扩散和流匹配采样器在积分到小噪声尺度时面临数值刚度问题。本文将终端噪声视为奇异摄动参数，通过渐近保持分析确定了哪些固定步长采样器是稳定且一致精确的。提出了一种后验审计方法，利用残差泛函评估采样器质量，无需真实分数或轨迹。该工作为生成式采样器的数值实现提供了理论指导，对流体动力学中扩散模型的应用有直接意义。",
+      "llm_tldr": "扩散和流匹配采样器在积分到小噪声尺度时面临数值刚度问题。本文将终端噪声视为奇异摄动参数，通过渐近保持分析确定了哪些固定步长采样器是稳定且一致精确的。提出了一种后验审计方法，利用残差泛函评估采样器质量，无需真实分数或轨迹。该工作为生成式采样器的数值实现提供了理论指导，对流体动力学中扩散模型的应用有直接意义。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
