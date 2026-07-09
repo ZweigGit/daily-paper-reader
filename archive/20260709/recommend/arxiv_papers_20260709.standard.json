@@ -1,0 +1,96 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-09T21:46:23.214464+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2607.05753v1",
+      "source": "arxiv",
+      "title": "Gaussian kinetic representations of rarefied nonequilibrium flows",
+      "abstract": "Compact representations of rarefied flows must preserve kinetic observables, not only smooth macroscopic fields. We introduce Gaussian kinetic representations for discrete velocity method (DVM)-Shakhov solutions of normal shocks and a lid-driven cavity. A positive log-density phase-space model reconstructs shock velocity distribution functions (VDFs) and their moments, while a moment-field model compresses wall-bounded cavity structure. Log-density training recovers heat flux, stress, and third- and fourth-order shock moments without explicit moment supervision; the cavity representation gives a compact continuous wall-transport map.",
+      "authors": [
+        "Ehsan Roohi"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn"
+      ],
+      "published": "2026-07-07T02:23:43+00:00",
+      "link": "https://arxiv.org/pdf/2607.05753v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "log-density generative model for rarefied flow velocity distribution functions",
+      "llm_evidence_cn": "使用对数密度生成模型重建稀薄流速度分布函数",
+      "llm_evidence": "使用对数密度生成模型重建稀薄流速度分布函数",
+      "canonical_evidence": "使用对数密度生成模型重建稀薄流速度分布函数",
+      "llm_tldr_en": "Introduces Gaussian kinetic representations with log-density training to reconstruct velocity distribution functions and moments of rarefied nonequilibrium flows, enabling compact generative modeling of fluid dynamics.",
+      "llm_tldr_cn": "该论文针对稀薄非平衡流中速度分布函数的紧凑表示问题，提出了高斯动理学表示方法。通过训练一个正的对数密度相空间模型，可以重建激波速度分布函数及其高阶矩，无需显式矩监督。此外，还提出了矩场模型用于压缩壁面受限空腔结构。该方法实现了对流体动理学观测量的生成式建模，为流体动力学中的生成模型应用提供了新思路。",
+      "llm_tldr": "该论文针对稀薄非平衡流中速度分布函数的紧凑表示问题，提出了高斯动理学表示方法。通过训练一个正的对数密度相空间模型，可以重建激波速度分布函数及其高阶矩，无需显式矩监督。此外，还提出了矩场模型用于压缩壁面受限空腔结构。该方法实现了对流体动理学观测量的生成式建模，为流体动力学中的生成模型应用提供了新思路。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.03524v1",
+      "source": "arxiv",
+      "title": "Perceptual Flow Matching for Few-Step Generative Modeling",
+      "abstract": "We propose Perceptual Flow Matching (PFM), a simple yet effective framework for few-step generation in flow-matching models. Rather than performing velocity regression in the conventional VAE latent space, PFM supervises flow matching in a perceptual feature space using pretrained perceptual models. This simple change substantially improves the few-step generation capability of flow-matching models, reducing the number of sampling steps from 35-50 to 4-8 while preserving generation quality. Unlike existing acceleration and distillation approaches, PFM requires neither teacher models nor auxiliary score networks and can be integrated into standard flow-matching training pipelines with minimal modifications. Extensive experiments on image generation, video generation, and image editing tasks demonstrate that PFM consistently produces high-quality results while producing fewer artifacts than existing distillation-based methods. We further show that perceptual supervision shifts the regression minimizer from mean-seeking to mode-seeking, biasing predictions toward on-manifold modes that remain accurate under coarse few-step integration. Our results reveal that standard flow-matching training can naturally yield high-quality few-step generators when supervised in an appropriate representation space. We hope this insight inspires future research into representation-aware objectives for efficient generative modeling.",
+      "authors": [
+        "Chuyang Zhao",
+        "Yifei Song",
+        "Hongfa Wang",
+        "Jianlong Yuan",
+        "Yuan Zhang",
+        "Siming Fu",
+        "Zhineng Chen",
+        "Huilin Deng",
+        "Haoyang Huang",
+        "Nan Duan"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-07-03T17:55:01+00:00",
+      "link": "https://arxiv.org/pdf/2607.03524v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "flow matching method with perceptual supervision, transferable to fluid flow simulation",
+      "llm_evidence_cn": "感知流匹配方法，可迁移至流体流动模拟",
+      "llm_evidence": "感知流匹配方法，可迁移至流体流动模拟",
+      "canonical_evidence": "感知流匹配方法，可迁移至流体流动模拟",
+      "llm_tldr_en": "Perceptual Flow Matching (PFM) improves few-step generation in flow-matching models by supervising in a perceptual feature space, reducing sampling steps from 35-50 to 4-8 without quality loss. It is a general method applicable beyond image/video to fluid dynamics.",
+      "llm_tldr_cn": "该论文提出感知流匹配（PFM）框架，针对流匹配模型生成步数过多的问题，在预训练感知特征空间中进行速度回归监督，而非传统VAE潜空间。这一简单改动将采样步数从35-50降至4-8，保持生成质量，无需教师模型或辅助分数网络。虽在图像视频生成上验证，但作为通用流匹配加速方法，可直接迁移至流体流动模拟，提升生成效率。",
+      "llm_tldr": "该论文提出感知流匹配（PFM）框架，针对流匹配模型生成步数过多的问题，在预训练感知特征空间中进行速度回归监督，而非传统VAE潜空间。这一简单改动将采样步数从35-50降至4-8，保持生成质量，无需教师模型或辅助分数网络。虽在图像视频生成上验证，但作为通用流匹配加速方法，可直接迁移至流体流动模拟，提升生成效率。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

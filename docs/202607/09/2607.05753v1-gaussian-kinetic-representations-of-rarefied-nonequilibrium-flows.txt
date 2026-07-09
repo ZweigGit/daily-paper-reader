@@ -1,0 +1,843 @@
+Title: Gaussian kinetic representations of rarefied nonequilibrium flows
+
+URL Source: https://arxiv.org/pdf/2607.05753v1
+
+Published Time: Wed, 08 Jul 2026 00:23:09 GMT
+
+Number of Pages: 11
+
+Markdown Content:
+Gaussian kinetic representations of rarefied nonequilibrium flows 
+
+Ehsan Roohi a) 
+
+Department of Mechanical and Industrial Engineering, University of Massachusetts Amherst, Amherst, Massachusetts 01003, USA 
+
+(Dated: 8 July 2026) 
+
+Compact representations of rarefied flows must preserve kinetic observables, not only smooth macroscopic fields. We introduce Gaussian kinetic representations for discrete velocity method (DVM)-Shakhov solutions of normal shocks and a lid-driven cavity. A positive log-density phase-space model reconstructs shock velocity distribution functions (VDFs) and their moments, while a moment-field model compresses wall-bounded cavity structure. Log-density training recovers heat flux, stress, and third-and fourth-order shock moments without explicit moment supervision; the cavity representation gives a compact continuous wall-transport map. 
+
+> a) Electronic mail: eroohi@umass.edu
+
+1arXiv:2607.05753v1 [physics.flu-dyn] 7 Jul 2026 Rarefied gas data are difficult to reduce because the quantities that define the physics are not limited to density ( ρ), velocity ( u), and temperature ( T ). Heat flux, stress, skewness, and fourth-order content are carried by the velocity distribution function (VDF), so a reduced object may look accurate in low-order fields while being wrong in the kinetic observables that control transport and wall loading. This hierarchy is classical in kinetic theory and direct simulation Monte Carlo (DSMC), where the VDF is the primary unknown. 1–4 Model Boltzmann equations and discrete velocity methods (DVMs) provide deterministic quadrature-based references for the same observables. 5–7 Unified gas-kinetic schemes and rarefied-flow reviews further show why rarefied-flow data must be judged through transport-sensitive moments rather than only through ρ, u, and T .8–10 Gaussian representations are not new to kinetic theory: Mott-Smith’s bimodal shock ansatz, ultra-sparse isotropic-Gaussian approximations of shock-mixed velocity distributions, and recent Gaussian-mixture-model (GMM) compression of distribution functions all use Gaussian components in one form or another. 11–13 Separately, localized Gaussian primitives have been used for continuum turbulent-flow representation, where primary variables may be accurate while derivative-sensitive diagnostics degrade. 14 The present contribution is therefore not the generic use of Gaussians. It is the rarefied-flow target: joint space–velocity log-density representation for shocks, full-quadrature recovery of heat flux, stress, and higher moments from the trained ˆf , and a wall-bounded moment-field representation that quantifies how compression affects transport observables. The method is complementary to operator learning and rarefied-flow scientific-machine-learning surrogates: it compresses a converged kinetic state into a continuous representation that can be interrogated off the original storage grid. 15–20 
+
+We use DVM-Shakhov reference solutions for two tests. The first is a monatomic normal shock at Mach numbers M = 3 and M = 5, where M denotes the upstream Mach number and the VDF changes sharply across the shock layer and tail-sensitive moments peak near the shock center. The second is a lid-driven cavity at Knudsen number Kn = 0 .075, Ulid = 0 .1, and Tw = 1, where wall heat flux, thermal stress, and shear stress coexist in a two-dimensional geometry and where rarefied-cavity benchmarks are well established. 21,22 Shakhov relaxation is used because heat flux is a target observable; a Bhatnagar–Gross–Krook (BGK) reference with Prandtl number Pr = 1 would distort one of the moments used here to judge fidelity. The model equation is 
+
+∂tf + ξ · ∇ xf = f S − fτ , (1) 2with 
+
+f S = f M
+
+
+
+1 + (1 − Pr) c · q
+
+5pT 
+
+|c|2
+
+T − 5
+
+ 
+
+, f M = ρ
+
+(2 πT )3/2 exp 
+
+
+
+−|c|2
+
+2T
+
+
+
+, (2) where c = ξ − u is peculiar velocity, p = ρT is pressure, q is heat flux, Pr = 2 /3 is the Prandtl number, τ = μ(T )/p is the relaxation time, and μ/μ 1 = ( T /T 1)ω with ω = 0 .81 is the viscosity law used by the DVM solver. Shock variables are nondimensionalized by the upstream density, temperature, and thermal speed, denoted by subscript 1; cavity variables are nondimensionalized by length L, lid speed Ulid , wall temperature Tw, reference density 
+
+ρ0, and thermal speed c0. The shock coordinate in Figs. 1–2 is x/λ = x∗/Kn ef f , where λ is the upstream mean free path, x∗ is the solver coordinate in [ −1/2, 1/2], Kn ef f = 1 /120 for 
+
+M = 3, and Kn ef f = 1 /160 for M = 5. With discrete velocities {(ξn, w n)}Nv
+
+> n=1
+
+, where Nv is the number of velocity nodes and wn is the quadrature weight, the reference moments are 
+
+ρ = X
+
+> n
+
+fnwn, ρu i = X
+
+> n
+
+ξi,n fnwn, (3) 3ρT = X
+
+> n
+
+|cn|2fnwn, σij = X
+
+> n
+
+ci,n cj,n fnwn − ρT δ ij , (4) 
+
+qi = 12
+
+X
+
+> n
+
+|cn|2ci,n fnwn, M neq  
+
+> 300
+
+= X
+
+> n
+
+c3
+
+> x,n
+
+fnwn, (5) 
+
+M neq  
+
+> 400
+
+= X
+
+> n
+
+c4
+
+> x,n
+
+fnwn − 3ρT 2. (6) In Eqs. (3)–(6), i and j denote Cartesian components, fn = f (ξn), cn = ξn − u, δij is the Kronecker delta, σij is the stress deviation from isotropic pressure, qi is heat flux, and M neq 
+
+> 300
+
+and M neq  
+
+> 400
+
+are third- and fourth-order deviations in the streamwise peculiar velocity. The 
+
+M = 3 and M = 5 shock references contain 1800 × 64009 and 2200 × 102789 phase-space samples, respectively, using tensor velocity grids 121 × 23 × 23 and 141 × 27 × 27 with velocity cutoffs |ξ|max = 16 and 22, where |ξ|max denotes the maximum retained molecular-speed magnitude in the nondimensional velocity grid. The cavity reference uses isothermal diffuse walls, a 65 × 65 physical grid, 41 velocity nodes per direction over [ −5, 5], and a final residual 8.2 × 10 −8; the stored state contains 20 DVM-Shakhov moment fields. These deterministic references avoid DSMC sampling noise and make the representation error itself observable. For shocks we fit the VDF itself in normalized phase space z = ( ˜x, ˜ξx, ˜ξy, ˜ξz ) through a positive log-density Gaussian mixture, log ˆfθ(z) = log 
+
+> N
+
+X
+
+> m=1
+
+exp 
+
+
+
+am − 12Qm(z)
+
+
+
+, (7) 3where N is the number of Gaussian kernels, m labels a kernel, am is the learned log-amplitude, 
+
+Qm is its positive quadratic form, zℓ is component ℓ of z, μmℓ is the kernel center, and 
+
+smℓ > 0 is the width. The diagonal form uses Qm = P4
+
+> ℓ=1
+
+[( zℓ − μmℓ )/s mℓ ]2. A correlated 
+
+x-ξx block was also tested, 
+
+Qxξ x 
+
+> m
+
+= α2 
+
+> m
+
+− 2rmαmβm + β2
+
+> m
+
+1 − r2
+
+> m
+
+, αm = ˜x − μmx 
+
+smx 
+
+, βm = ˜ξx − μmξ x
+
+smξ x
+
+, (8) where rm ∈ (−1, 1) is a learned correlation coefficient, αm and βm are normalized offsets in x
+
+and ξx, and diagonal transverse terms are retained for ξy and ξz . Centers are initialized from mass-weighted samples and all amplitudes, centers, and scales are optimized. The principal loss is a Huber loss in log f ,
+
+Lf =
+
+D
+
+Hδ{log ˆfθ(z) − log[ f (z) + ϵ]}
+
+E
+
+. (9) Here Lf is the training loss, Hδ is the Huber penalty with threshold δ, ϵ is the log floor used to avoid evaluating log 0, and ⟨·⟩ denotes a minibatch average. Sampled moment penalties are used only as ablations; reported shock moments are always recomputed from ˆfθ by the same full quadrature as the DVM reference. For the cavity we fit a continuous field map, ˆU (x, y ) = b +
+
+> N
+
+X
+
+> m=1
+
+Wm(x, y )Am, Wm = exp[ −(r − μm)T D−1 
+
+> m
+
+(r − μm)] 
+
+P 
+
+> k
+
+exp[ −(r − μk)T D−1 
+
+> k
+
+(r − μk)] , (10) where ˆU is the fitted moment vector, b is a bias vector, Wm are normalized Gaussian weights, 
+
+r = ( x, y ), μm is the physical-space center, Dm = diag (s2
+
+> mx
+
+, s 2
+
+> my
+
+) contains squared widths, 
+
+Am ∈ R20 is the output-amplitude vector, and the denominator sums over all kernels k. The parameter count is 24 N + 20. The state vector is 
+
+U = ( ρ, u, v, T, q x, q y, Θx, Θy, Θz , σ xx , σ yy , σ xy ,M3x, M 3y, S x, S y, M 4x, M 4y, K x, K y). (11) Here Θ i are directional temperatures, M3i and Si are third-order indicators, and M4i and Ki
+
+are fourth-order or closure-sensitive indicators used by the DVM post-processing. Unlike the shock model, Eq. (10) is a moment-field representation rather than a positive VDF, so realizability is not built in; its value is as a compact, continuous diagnostic of wall-transport fields. In particular, consistency identities among fitted moment channels are not imposed by construction, and this distinguishes the cavity test from the phase-space shock representation. 4Training used Adam stochastic optimization with log floors, bounded widths, minibatched phase-space or spatial samples, and the settings listed in the supplementary material; shock errors use full velocity quadrature at the reported evaluation stations and cavity errors use the full 65 × 65 physical grid. Figure 1 shows the M = 3 shock. With N = 512 diagonal Gaussians trained only on log f ,the model captures both Rankine-Hugoniot-scale variation and localized nonequilibrium extrema. The relative L2 error, ∥G − D∥2/∥D∥2 with Gaussian prediction G and DVM reference D, is 1 .42 × 10 −3, 6 .56 × 10 −4, and 6 .48 × 10 −4 for ρ, ux, and T , while qx, σxx , M neq  
+
+> 300
+
+,and M neq  
+
+> 400
+
+remain within 1 .48%, 1 .68%, 2 .03%, and 2 .07%. Thus, for this case, the moment hierarchy is recovered without explicit heat-flux, stress, or high-moment losses: an accurate log-density approximation carries the relevant nonequilibrium structure. The nominal shock compression is large: for diagonal phase kernels, the factor 9 N counts one log-amplitude, four centers, and four widths per kernel, so N = 512 gives 4608 parameters instead of 1 .15 × 10 8
+
+stored f samples for M = 3. For the stronger M = 5 shock, Fig. 2 shows the expected increase in stress and tail sensitivity. The plotted case uses the sampled moment-informed loss; low-order errors remain below 0 .7%, while qx, σxx , M neq  
+
+> 300
+
+, and M neq  
+
+> 400
+
+are in the 7-8% range. A log-density M = 5 study is deferred to the extended article; the reported M = 5 case therefore characterizes the moment-informed representation, not the optimal objective at high Mach number. The available ablation table in the supplementary material nevertheless shows an important point: moment-informed training is not automatically superior. Noisy sampled moment penalties can degrade stress recovery, and adding kernels does not substitute for physically meaningful placement. The cavity tests whether localized Gaussians retain wall-bounded transport topology rather than simply storing a small array. Figure 3 shows |u|, ωz , and T for N = 256. Figure 4 shows qx, qy, and σxy , the wall-transport analogues of shock nonequilibrium moments. Error contours are percentages of the DVM field range, 100( G − D)/∆D, where G is the Gaussian field, D is the DVM field, and ∆ D = max (D) − min (D); this avoids singular pointwise percentages near zeros. At N = 256, the selected errors are 0 .837%, 1 .455%, and 0.741% for qx, qy, and σxy , respectively. The compression-fidelity sweep in Table I shows that N = 64 already gives 54 × compression with a selected-field maximum error of 4 .35%, whereas N = 512 reduces that maximum to 0 .326% at 6 .9× compression. 51.0                      
+
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> ρ/ρ1 [-]
+> (a) ρ
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> 3.5
+> 4.0
+> ux/c1 [-]
+> (b) ux
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> 3.5
+> T/T1 [-]
+> (c) T
+> −5
+> −4
+> −3
+> −2
+> −1
+> 0
+> qx/( ρ1c31 ) [-]
+> (d) qx
+> −60 −40 −20 020 40 60
+> x/λ[-]
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> σxx /( ρ1c21 ) [-]
+> (e) σxx
+> −60 −40 −20 020 40 60
+> x/λ[-]
+> −8
+> −6
+> −4
+> −2
+> 0
+> Mneq
+> 300  /( ρ1c31 ) [-]
+> (f) Mneq
+> 300
+> DVM Gaussian
+
+FIG. 1. M3 normal shock reconstructed by the Gaussian phase-space representation. All moments are obtained by integrating the same trained ˆf (x, ξ x, ξ y, ξ z ). 
+
+These results reposition Gaussian compression for rarefied flows. The novelty is not the use of Gaussians alone: Mott-Smith shock mixtures, the ultra-sparse isotropic-Gaussian approximation of shock-mixed velocity distributions by Alekseenko, Grandilli, and Wood, and recent plasma GMM compression already show that local velocity distributions can be approximated by Gaussian components. 11–13 The present contribution is the coupled kinetic target: a positive phase-space log-density representation for shocks, full-quadrature recovery of heat flux, stress, and third- and fourth-order deviations from the trained ˆf ,explicit comparison against sampled moment-loss ablations, and a wall-bounded moment-field representation that exposes how compression affects transport observables. A per-cell 61.0                      
+
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> 3.5
+> ρ/ρ1 [-]
+> (a) ρ
+> 2
+> 3
+> 4
+> 5
+> 6
+> ux/c1 [-]
+> (b) ux
+> 2
+> 4
+> 6
+> 8
+> T/T1 [-]
+> (c) T
+> −30
+> −20
+> −10
+> 0
+> qx/( ρ1c31 ) [-]
+> (d) qx
+> −75 −50 −25 025 50 75
+> x/λ[-]
+> 0
+> 2
+> 4
+> 6
+> σxx /( ρ1c21 ) [-]
+> (e) σxx
+> −75 −50 −25 025 50 75
+> x/λ[-]
+> −40
+> −30
+> −20
+> −10
+> 0
+> Mneq
+> 300  /( ρ1c31 ) [-]
+> (f) Mneq
+> 300
+> DVM Gaussian
+
+FIG. 2. M5 normal shock. Stronger nonequilibrium increases stress and third-order moment error, but the compact phase-space representation preserves the main kinetic structure. 
+
+velocity-space mixture can approximate local or shock-mixed VDF shape without providing a smooth coupled representation in x and ξ; conversely, a generic neural operator can predict fields without revealing where kinetic information is concentrated. The Gaussian parameters instead define a compact set of locations, scales, and amplitudes that can be interrogated as a kinetic database layer. This is also why compression should not be judged by one smooth field norm. A reduced object may reproduce ρ and T while losing the odd, mixed, and fourth-order deviations that control heat transfer, wall loading, and closure sensitivity. Conversely, once log f is represented accurately, nonequilibrium moments can be recovered without storing the full DVM phase-space array. Analytic polynomial moments of Gaussian components are 70.2 0.4 0.6 0.8 
+
+x/L [-] 
+
+0.2 
+
+0.4 
+
+0.6 
+
+0.8 
+
+> y/L [-]
+
+(a) DVM | u|
+
+> 0.00008
+> 0.00696
+> 0.01384
+> 0.02072
+> 0.02761
+> 0.03449
+> 0.04137
+> 0.04825
+> 0.05514
+> 0.06202
+> |u|/ Ulid  [-]
+
+0.2 0.4 0.6 0.8 
+
+x/L [-] 
+
+(b) Gaussian | u|
+
+> 0.00008
+> 0.00696
+> 0.01384
+> 0.02072
+> 0.02761
+> 0.03449
+> 0.04137
+> 0.04825
+> 0.05514
+> 0.06202
+> |u|/ Ulid  [-]
+
+0.2 0.4 0.6 0.8 
+
+x/L [-] 
+
+(c) Error | u|
+
+> −0.808
+> −0.606
+> −0.404
+> −0.202
+> 0.000
+> 0.202
+> 0.404
+> 0.606
+> 0.808
+> 100 ( G − DVM)/Δ DVM  [%]
+
+0.2 0.4 0.6 0.8 
+
+x/L [-] 
+
+0.2 
+
+0.4 
+
+0.6 
+
+0.8 
+
+> y/L [-]
+
+(d) DVM ωz
+
+> −1.107
+> −0.969
+> −0.831
+> −0.694
+> −0.556
+> −0.418
+> −0.281
+> −0.143
+> −0.005
+> 0.133
+> ωzL/Ulid  [-]
+
+0.2 0.4 0.6 0.8 
+
+x/L [-] 
+
+(e) Gaussian ωz
+
+> −1.107
+> −0.969
+> −0.831
+> −0.694
+> −0.556
+> −0.418
+> −0.281
+> −0.143
+> −0.005
+> 0.133
+> ωzL/Ulid  [-]
+
+0.2 0.4 0.6 0.8 
+
+x/L [-] 
+
+(f) Error ωz
+
+> −3.106
+> −2.329
+> −1.553
+> −0.776
+> 0.000
+> 0.776
+> 1.553
+> 2.329
+> 3.106
+> 100 ( G − DVM)/Δ DVM  [%]
+
+0.2 0.4 0.6 0.8 
+
+x/L [-] 
+
+0.2 
+
+0.4 
+
+0.6 
+
+0.8 
+
+> y/L [-]
+
+(g) DVM T
+
+> 0.995788
+> 0.996899
+> 0.998010
+> 0.999120
+> 1.000231
+> 1.001341
+> 1.002452
+> 1.003563
+> 1.004673
+> 1.005784
+> T/Tw [-]
+
+0.2 0.4 0.6 0.8 
+
+x/L [-] 
+
+(h) Gaussian T
+
+> 0.995788
+> 0.996899
+> 0.998010
+> 0.999120
+> 1.000231
+> 1.001341
+> 1.002452
+> 1.003563
+> 1.004673
+> 1.005784
+> T/Tw [-]
+
+0.2 0.4 0.6 0.8 
+
+x/L [-] 
+
+(i) Error T
+
+> −0.836
+> −0.627
+> −0.418
+> −0.209
+> 0.000
+> 0.209
+> 0.418
+> 0.627
+> 0.836
+> 100 ( G − DVM)/Δ DVM  [%]
+
+FIG. 3. Cavity physical fields at Kn = 0 .075 reconstructed by the N = 256 Gaussian moment-field representation. Error maps are percentages of the DVM field range. TABLE I. Representative compression and relative-error summary. Shock compression is nominally relative to stored f samples; cavity compression is relative to 65 × 65 × 20 stored moment values. The shock fourth-order entry uses M neq 
+
+400 = c4
+
+x − 3ρT 2, not the raw fourth moment. 
+
+Case representation N comp. low-order max q/σ/M 3 max EM neq 
+
+4
+
+M3 shock phase log f 512 2.5 × 10 4 0.00142 0.02030 0.02066 M5 shock phase moment 512 4.9 × 10 4 0.00663 0.07724 0.07841 Cavity moment field 64 54.31 – 0.04354 –Cavity moment field 128 27.33 – 0.02719 –Cavity moment field 256 13.71 – 0.01455 –Cavity moment field 512 6.87 – 0.00326 –
+
+Cavity selected maximum is over U, V, q x, q y , σ xy , M 3x, M 3y ; full 20-channel errors are supplied with the data. 
+
+possible over unbounded velocity domains, but the present errors are deliberately reported by the truncated DVM quadrature so that the comparison is exactly aligned with the reference solution. The method is therefore best viewed as a compact, differentiable, storage-grid-independent 80.2 0.4 0.6 0.8 
+
+x/L [-] 
+
+0.2 
+
+0.4 
+
+0.6 
+
+0.8 
+
+> y/L [-]
+
+(a) DVM qx
+
+> −0.000634
+> 0.000026
+> 0.000686
+> 0.001346
+> 0.002006
+> 0.002667
+> 0.003327
+> 0.003987
+> 0.004647
+> 0.005307
+> qx/( ρ0c30 ) [-]
+
+0.2 0.4 0.6 0.8 
+
+x/L [-] 
+
+(b) Gaussian qx
+
+> −0.000634
+> 0.000026
+> 0.000686
+> 0.001346
+> 0.002006
+> 0.002667
+> 0.003327
+> 0.003987
+> 0.004647
+> 0.005307
+> qx/( ρ0c30 ) [-]
+
+0.2 0.4 0.6 0.8 
+
+x/L [-] 
+
+(c) Error qx
+
+> −0.839
+> −0.629
+> −0.419
+> −0.210
+> 0.000
+> 0.210
+> 0.419
+> 0.629
+> 0.839
+> 100 ( G − DVM)/Δ DVM  [%]
+
+0.2 0.4 0.6 0.8 
+
+x/L [-] 
+
+0.2 
+
+0.4 
+
+0.6 
+
+0.8 
+
+> y/L [-]
+
+(d) DVM qy
+
+> −0.001446
+> −0.001159
+> −0.000872
+> −0.000586
+> −0.000299
+> −0.000013
+> 0.000274
+> 0.000561
+> 0.000847
+> 0.001134
+> qy/( ρ0c30 ) [-]
+
+0.2 0.4 0.6 0.8 
+
+x/L [-] 
+
+(e) Gaussian qy
+
+> −0.001446
+> −0.001159
+> −0.000872
+> −0.000586
+> −0.000299
+> −0.000013
+> 0.000274
+> 0.000561
+> 0.000847
+> 0.001134
+> qy/( ρ0c30 ) [-]
+
+0.2 0.4 0.6 0.8 
+
+x/L [-] 
+
+(f) Error qy
+
+> −2.832
+> −2.124
+> −1.416
+> −0.708
+> 0.000
+> 0.708
+> 1.416
+> 2.124
+> 2.832
+> 100 ( G − DVM)/Δ DVM  [%]
+
+0.2 0.4 0.6 0.8 
+
+x/L [-] 
+
+0.2 
+
+0.4 
+
+0.6 
+
+0.8 
+
+> y/L [-]
+
+(g) DVM σxy 
+
+> −0.02163
+> −0.01923
+> −0.01684
+> −0.01445
+> −0.01206
+> −0.00966
+> −0.00727
+> −0.00488
+> −0.00249
+> −0.00009
+> σxy /( ρ0c20 ) [-]
+
+0.2 0.4 0.6 0.8 
+
+x/L [-] 
+
+(h) Gaussian σxy 
+
+> −0.02163
+> −0.01923
+> −0.01684
+> −0.01445
+> −0.01206
+> −0.00966
+> −0.00727
+> −0.00488
+> −0.00249
+> −0.00009
+> σxy /( ρ0c20 ) [-]
+
+0.2 0.4 0.6 0.8 
+
+x/L [-] 
+
+(i) Error σxy 
+
+> −0.849
+> −0.636
+> −0.424
+> −0.212
+> 0.000
+> 0.212
+> 0.424
+> 0.636
+> 0.849
+> 100 ( G − DVM)/Δ DVM  [%]
+
+FIG. 4. Cavity nonequilibrium fields. Heat-flux and shear-stress structures are recovered by the same continuous representation used for the low-order fields. 
+
+layer on top of DVM or DSMC data, not as a replacement for those solvers. Its centers and widths are geometrically interpretable: they locate where representational capacity is allocated and what support scale is used. The remaining errors identify where the representation is physically strained–high-Mach shock stress, tail-sensitive third moments, and localized cavity wall transport. Future work should combine the phase-space and cavity strategies by fitting full wall-bounded VDF data, enforcing conservation and realizability constraints during training, and adapting kernel density according to heat-flux, stress, or entropy-production indicators. The present tests also caution that sampled moment penalties and larger kernel counts are not automatically beneficial; the training strategy should be selected by the most fragile observable of interest. See the supplementary material for the full shock ablation, cavity sweep, training settings, and accessible figure descriptions. 
+
+Author declarations. Conflict of Interest. The author has no conflicts to disclose. 9Author Contributions. E.R. conceived the study, generated and analyzed the data, implemented the Gaussian representations, and wrote the manuscript. 
+
+Data availability. The DVM reference data, trained Gaussian parameters, and shock and cavity plotting scripts are available from the corresponding author upon reasonable request and will be deposited in a public repository upon acceptance. 
+
+REFERENCES 
+
+> 1
+
+G. A. Bird, Molecular Gas Dynamics and the Direct Simulation of Gas Flows (Clarendon, Oxford, 1994). 
+
+> 2
+
+C. Cercignani, Rarefied Gas Dynamics: From Basic Concepts to Actual Calculations (Cambridge University Press, Cambridge, 2000). 
+
+> 3
+
+Y. Sone, Molecular Gas Dynamics: Theory, Techniques, and Applications (Birkh¨ auser, Boston, 2007). 
+
+> 4
+
+T. J. Scanlon, E. Roohi, C. White, M. Darbandi, and J. M. Reese, “An open source, parallel DSMC code for rarefied gas flows in arbitrary geometries,” Comput. Fluids 39 , 2078–2089 (2010). 
+
+> 5
+
+P. L. Bhatnagar, E. P. Gross, and M. Krook, “A model for collision processes in gases. I. Small amplitude processes in charged and neutral one-component systems,” Phys. Rev. 94 , 511–525 (1954). 
+
+> 6
+
+E. M. Shakhov, “Generalization of the Krook kinetic relaxation equation,” Fluid Dyn. 3, 95–96 (1968). 
+
+> 7
+
+L. Mieussens, “Discrete-velocity models and numerical schemes for the Boltzmann-BGK equation in plane and axisymmetric geometries,” J. Comput. Phys. 162 , 429–466 (2000). 
+
+> 8
+
+K. Xu and J.-C. Huang, “A unified gas-kinetic scheme for continuum and rarefied flows,” J. Comput. Phys. 229 , 7747–7764 (2010). 
+
+> 9
+
+E. Roohi and S. Stefanov, “Collision partner selection schemes in DSMC: From micro/nano flows to hypersonic flows,” Phys. Rep. 656 , 1–38 (2016). 
+
+> 10
+
+H. Akhlaghi, E. Roohi, and S. Stefanov, “A comprehensive review on micro- and nano-scale gas flow effects: Slip-jump phenomena, Knudsen paradox, thermally-driven flows, and Knudsen pumps,” Phys. Rep. 997 , 1–60 (2023). 
+
+> 11
+
+H. M. Mott-Smith, “The solution of the Boltzmann equation for a shock wave,” Phys. Rev. 82 ,
+
+10 885–892 (1951). 
+
+> 12
+
+A. Alekseenko, A. Grandilli, and A. W. Wood, “An ultra-sparse approximation of kinetic solutions to spatially homogeneous flows of non-continuum gas,” Results Appl. Math. 5, 100085 (2020). 
+
+> 13
+
+A. Hu, L. Pennati, I. Peng, and S. Markidis, “Physics-aware compression of plasma distribution functions with GPU-accelerated Gaussian mixture models,” arXiv:2504.14897 (2025). 
+
+> 14
+
+D. V. Shenoy and S. H. Frankel, “Gaussian field representations for turbulent flow: Compression, scale separation, and physical fidelity,” Comput. Fluids 318 , 107202 (2026). 
+
+> 15
+
+L. Lu, P. Jin, G. Pang, Z. Zhang, and G. E. Karniadakis, “Learning nonlinear operators via DeepONet based on the universal approximation theorem of operators,” Nat. Mach. Intell. 3,218–229 (2021). 
+
+> 16
+
+E. Roohi and A. Mahdavi, “Analysis of the rarefied flow at micro-step using a DeepONet surrogate model with a physics-guided zonal loss function,” Microfluid. Nanofluid. 30 , 44 (2026). 
+
+> 17
+
+E. Roohi, A. Shoja-Sani, and F. Ebrahimzadeh Azghadi, “Neural networks for rarefied gas dynamics: Relaxation problem, polyatomic shock waves, and hypersonic cylinder flow,” Phys. Fluids 38 , 057108 (2026). 
+
+> 18
+
+E. Roohi, A. Shoja-Sani, and S. Stefanov, “Physics constrained neural collision operators for variable hard sphere surrogates and ab initio angle prediction in direct simulation Monte Carlo (DSMC),” Phys. Fluids 38 , 057123 (2026). 
+
+> 19
+
+A. Mahdavi and E. Roohi, “Prescribed wall-heat-flux control of blockage and impulse in a rarefied micro-nozzle,” arXiv:2605.19286 (2026). 
+
+> 20
+
+E. Roohi and A. Mahdavi, “Shock-centered low-rank structure and neural-operator representation of rarefied micro-nozzle flows,” arXiv:2605.12723 (2026). 
+
+> 21
+
+M. Zhu, E. Roohi, and A. Ebrahimi, “Computational study of rarefied gas flow and heat transfer in lid-driven cylindrical cavities,” Phys. Fluids 35 , 052012 (2023). 
+
+> 22
+
+S. Rafieenasab, E. Roohi, and A. Manela, “Thermal edge animation in a two-dimensional micro-cavity: Effect of nonuniform boundary smoothness in the entire range of gas rarefaction rates,” Phys. Fluids 38 , 022013 (2026). 
+
+11
