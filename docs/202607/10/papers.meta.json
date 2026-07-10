@@ -1,0 +1,54 @@
+{
+  "label": "2026-07-10",
+  "date": "2026-07-10",
+  "generated_at": "2026-07-10T21:13:04",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202607/10/2607.07233v1-hpg-diff-hierarchical-physics-guided-diffusion-with-differentiable-connectivity-constraints-for-topology-optimization",
+      "section": "deep",
+      "title_en": "HPG-Diff: Hierarchical physics-guided diffusion with differentiable connectivity constraints for topology optimization",
+      "authors": "Jinbo Yang, Mingyue Yuan, Boyuan Zhang, Yoshifumi Kitamura, Shikai Jing",
+      "date": "2026-07-08",
+      "pdf": "https://arxiv.org/pdf/2607.07233v1",
+      "score": "9.0",
+      "evidence": "用于流体拓扑优化的扩散模型",
+      "tldr": "拓扑优化中深度生成模型缺乏物理引导，导致泛化性差和浮动物体伪影。本文提出层级物理引导扩散模型HPG-Diff，通过对齐物理特征与去噪过程引导材料分布，并设计基于热传导的可微连通性约束来抑制浮动物体。实验表明，HPG-Diff在分布内和分布外分别实现0.87%和5.29%的平均柔度误差，浮动物体比率降至2.90%和2.44%。该方法有效提升了拓扑优化的物理一致性和泛化能力。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Deep generative models offer a promising paradigm for topology optimization, enabling rapid design exploration. However, these approaches lack intrinsic physics guidance, often leading to poor generalizability across unseen boundary conditions and the formation of floating material artifacts. To address these limitations, we propose Hierarchical Physics-Guided Diffusion (HPG-Diff), a novel diffusion framework that enforces physics consistency through two synergistic mechanisms. First, we introduce a hierarchical physics-guided strategy that aligns different precomputed physics features with the denoising process, guiding material distribution toward optimal load paths to enhance generalizability. Second, we propose a floating material suppression loss as a differentiable connectivity constraint inspired by thermal conduction to improve topological connectivity. By simulating a virtual heat propagation process from load positions, this mechanism explicitly penalizes floating material during training. Quantitative evaluations demonstrate that HPG-Diff achieves average compliance errors of 0.87% (in-distribution) and 5.29% (out-of-distribution), while reducing floating material ratios to 2.90% and 2.44%, respectively. Furthermore, case studies on a 3:1 rectangular domain, including cantilever and bridge benchmarks, provide preliminary evidence that lightweight LoRA fine-tuning with a small dataset can support the adaptation of HPG-Diff to rectangular non-square domains.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/10/2607.03217v1-joint-distribution-of-upstream-runoff-governs-downstream-river-discharge-prediction-uncertainty-in-distributed-ml-models",
+      "section": "quick",
+      "title_en": "Joint distribution of upstream runoff governs downstream river-discharge prediction uncertainty in distributed ML models",
+      "authors": "Karan Ruparell, Tristan Hascoet, Takemasa Miyoshi, Kieran M. R. Hunt, Hannah L. Cloke, Christel Prudhomme, Florian Pappenberger",
+      "date": "2026-07-03",
+      "pdf": "https://arxiv.org/pdf/2607.03217v1",
+      "score": "6.0",
+      "evidence": "生成式机器学习用于概率径流预测",
+      "tldr": "当前概率径流预测局限于集总模型，分布式模型未考虑上游径流联合分布。本文提出在分布式概率预测中需联合采样上游径流，以日本为例，对比随机匹配与分位数匹配策略。随机匹配导致下游集合严重欠分散，而分位数匹配可恢复大部分分布宽度。该研究强调从集总到分布式概率水文需关注径流不确定性的空间联合结构。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Uncertainty quantification of hydrological predictions is necessary to inform operational decisions. Recent generative machine-learning methods have advanced probabilistic streamflow prediction, but have remained confined to lumped models that predict a basin outlet directly. At the same time, deterministic LSTM runoff models are increasingly applied at grid or catchment scale and routed through river networks to produce spatially continuous, physically consistent discharge fields. This technical note argues that moving probabilistic prediction from lumped to distributed models introduces a specific new requirement: the joint distribution of upstream runoff generation must be sampled jointly. In lumped inference, the model predicts the outlet distribution directly and can modulate spread from basin attributes. In distributed inference, downstream discharge is obtained by routing many upstream runoff predictions, so independent local sampling averages uncertainty away. Using Japan as a case study, we train two probabilistic basin-scale runoff LSTMs and route their runoff through a Hayami routing scheme. Randomly matching upstream ensemble members produces severely under-dispersed downstream ensembles, whereas a simple quantile matching strategy restores much of the spread of the direct basin-scale reference. The shift from lumped to distributed probabilistic hydrology therefore requires explicit attention to the spatial joint structure of runoff uncertainty.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/10/2607.07385v1-jax-fvm-a-differentiable-entropy-stable-finite-volume-solver-on-unstructured-meshes-for-compressible-flows",
+      "section": "quick",
+      "title_en": "JAX-FVM: A differentiable, entropy-stable finite volume solver on unstructured meshes for compressible flows",
+      "authors": "Guillaume de Romémont",
+      "date": "2026-07-08",
+      "pdf": "https://arxiv.org/pdf/2607.07385v1",
+      "score": "6.0",
+      "evidence": "可微分CFD求解器，支持生成模型集成",
+      "tldr": "现有可微CFD框架多局限于结构化网格或谱离散，无法处理非结构化可压缩流动。JAX-FVM基于JAX构建了完整的可微有限体积求解器，支持非结构化三角网格上的欧拉与Navier-Stokes方程。它通过自动微分实现端到端可微，所有操作包括网格连接、通量评估、斜率限制和时间积分均可微分。数值上采用熵守恒Tadmor/Ismail-Roe通量和熵变量Rusanov/Roe耗散，二阶MUSCL重构与Venkatakrishnan限制，以及显式(RK2-4)和无矩阵隐式(Newton, SDIRK2)时间积分。该求解器填补了技术空白，为气动优化、数据同化和流场反演提供了高效可微工具。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We present JAX-FVM, an open-source, fully differentiable finite volume method (FVM) for the two-dimensional compressible Euler and Navier-Stokes equations on unstructured triangular meshes. The solver is written entirely in JAX, so that every operation : mesh connectivity, flux evaluation, slope limiting, and time integration is just-in-time compiled, vectorised, and end-to-end differentiable through automatic differentiation (AD), and runs transparently on CPU or GPU. On the numerical side, JAX-FVM is built around an entropy-conservative Tadmor/Ismail-Roe two-point flux supplemented with entropy-variable Rusanov or Roe dissipation, second-order MUSCL reconstruction of primitive variables with least-squares gradients and Venkatakrishnan limiting, and a family of explicit (RK2-4) and matrix-free implicit (Newton, SDIRK2) time integrators whose Jacobian actions are obtained by AD. The combination of an unstructured-mesh compressible FVM with end-to-end differentiability fills a gap left by existing differentiable CFD frameworks, which are almost exclusively restricted to structured grids or spectral discretisations. We describe the governing equations, the discretisation, the software architecture, and a set of standard verification cases. The code is openly available at https://github.com/guigzair/jax_fvm.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
