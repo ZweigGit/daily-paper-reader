@@ -6,29 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-10
-- 运行时间：2026-07-10 21:12:59 UTC
+- 最新运行日期：2026-07-11
+- 运行时间：2026-07-11 20:54:17 UTC
 - 运行状态：成功
-- 本次总论文数：3
-- 精读区：1
+- 本次总论文数：4
+- 精读区：2
 - 速读区：2
 
 ### 今日简报（AI）
-今日精读一篇拓扑优化领域的高分论文HPG-Diff，速读两篇水文与CFD相关文章。最值得关注的是HPG-Diff通过可微连接约束实现层次化物理引导扩散，显著提升拓扑结构有效性。建议重点阅读该文，尤其适合对物理信息机器学习与结构优化结合感兴趣的读者。
-- 详情：[/202607/10/README](/202607/10/README)
+今日精读两篇8分论文，聚焦速度模型构建与分类器无引导修复，速读涵盖张量列扩散与湍流物理发现。最值得关注扩散模型的结构化约束应用及终端拟合修复方法。建议优先精读两篇高分论文，抓住核心机制即可。
+- 详情：[/202607/11/README](/202607/11/README)
 
 ### 精读区论文标签
-1. [HPG-Diff: Hierarchical physics-guided diffusion with differentiable connectivity constraints for topology optimization](/202607/10/2607.07233v1-hpg-diff-hierarchical-physics-guided-diffusion-with-differentiable-connectivity-constraints-for-topology-optimization)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：用于流体拓扑优化的扩散模型
+1. [Joint Velocity Slope Diffusion Prior for Structurally Constrained Velocity Model Building](/202607/11/2607.04982v1-joint-velocity-slope-diffusion-prior-for-structurally-constrained-velocity-model-building)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：扩散引导的速度模型重建框架
+2. [Guidance Breaks the Fitted Operator: A Terminal-Fitted Repair for Classifier-Free Guidance](/202607/11/2607.07665v1-guidance-breaks-the-fitted-operator-a-terminal-fitted-repair-for-classifier-free-guidance)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：分析了扩散和流匹配采样器中无分类器指导的渐近保持性质
 
 ### 速读区论文标签
-1. [Joint distribution of upstream runoff governs downstream river-discharge prediction uncertainty in distributed ML models](/202607/10/2607.03217v1-joint-distribution-of-upstream-runoff-governs-downstream-river-discharge-prediction-uncertainty-in-distributed-ml-models)  
+1. [Tensor Train Diffusion: Leveraging Low-Rank Structures for High-Dimensional Score-Based Sampling](/202607/11/2607.06841v1-tensor-train-diffusion-leveraging-low-rank-structures-for-high-dimensional-score-based-sampling)  
+   标签：评分：7.0/10、query:genmod-fluid
+   evidence：提出了一种基于张量列分解的扩散模型得分函数HJB方程求解器
+2. [PhysMiner: An Agentic AI Framework for Discovering Turbulence Physics](/202607/11/2607.04009v1-physminer-an-agentic-ai-framework-for-discovering-turbulence-physics)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：生成式机器学习用于概率径流预测
-2. [JAX-FVM: A differentiable, entropy-stable finite volume solver on unstructured meshes for compressible flows](/202607/10/2607.07385v1-jax-fvm-a-differentiable-entropy-stable-finite-volume-solver-on-unstructured-meshes-for-compressible-flows)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：可微分CFD求解器，支持生成模型集成
+   evidence：集成大语言模型的智能体框架用于湍流物理发现
 
 
 <div class="dpr-home-promo-card">

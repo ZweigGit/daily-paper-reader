@@ -1,0 +1,69 @@
+{
+  "label": "2026-07-11",
+  "date": "2026-07-11",
+  "generated_at": "2026-07-11T20:54:24",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202607/11/2607.04982v1-joint-velocity-slope-diffusion-prior-for-structurally-constrained-velocity-model-building",
+      "section": "deep",
+      "title_en": "Joint Velocity Slope Diffusion Prior for Structurally Constrained Velocity Model Building",
+      "authors": "Francesco Brandolin, Tariq Alkhalifah",
+      "date": "2026-07-06",
+      "pdf": "https://arxiv.org/pdf/2607.04982v1",
+      "score": "8.0",
+      "evidence": "扩散引导的速度模型重建框架",
+      "tldr": "地表数据的带限特性限制了高分辨率速度模型的构建。本文提出一种扩散引导框架，结合平面波PDE正则化、结构预条件反演和测量引导扩散后验采样，利用局部斜率先验沿地质倾角传播测井信息。在Volve合成模型和Viking Graben现场数据上的实验表明，该方法相比传统结构预条件反演，显著提升了结构连续性、横向一致性和地质真实性，且通过DDIM采样保持了计算可行性。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "High-resolution velocity models are crucial for reservoir characterization and subsurface delineation. However, the band limited nature of our surface recorded data limits resolution. Utilizing well measurements to enhance the resolution of our subsurface models is an important objective. To this end, we present a diffusion-guided framework for structurally preconditioned velocity-model reconstruction from sparse well-log information. The proposed approach combines plane-wave PDE regularization, structurally preconditioned inversion, and measurement-guided diffusion posterior sampling within a unified formulation. Local structural slopes estimated through plane-wave destruction are used both to propagate well information along geological dip directions and to guide the diffusion sampling process through a joint velocity--slope generative prior. Numerical experiments on the Volve synthetic model and the Viking Graben field dataset demonstrate that the proposed framework improves structural continuity, lateral consistency, and geological realism compared with conventional structurally preconditioned inversion approaches while maintaining computationally practical inference through DDIM sampling.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/11/2607.07665v1-guidance-breaks-the-fitted-operator-a-terminal-fitted-repair-for-classifier-free-guidance",
+      "section": "deep",
+      "title_en": "Guidance Breaks the Fitted Operator: A Terminal-Fitted Repair for Classifier-Free Guidance",
+      "authors": "Shiheng Zhang",
+      "date": "2026-07-08",
+      "pdf": "https://arxiv.org/pdf/2607.07665v1",
+      "score": "8.0",
+      "evidence": "分析了扩散和流匹配采样器中无分类器指导的渐近保持性质",
+      "tldr": "针对无分类器引导(CFG)在高引导强度下的过饱和与不稳定问题，本文通过渐进保持数值分析揭示DDIM步骤在引导下不再拟合终端层，产生sigma_min发散残差。提出一个零额外NFE的修复：将CFG的方向权重从w(r-1)替换为r^(1+w)-r，消除了发散并实现一阶精度。在CIFAR-10和Stable Diffusion 1.5上，该修复在无额外成本下稳定高引导，9/9网格点FID优于CFG，但并非通用质量提升。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Classifier-free guidance (CFG) is the standard way to strengthen class-conditioning in diffusion and flow-matching samplers, yet at large guidance it oversaturates and destabilizes, symptoms practitioners suppress with more steps or limited-interval schedules. We analyze CFG through an asymptotic-preserving, numerical-analysis lens. Building on a recent result that the deterministic DDIM step is the unique fitted operator for the unguided terminal layer, exact on the final small-sigma stretch of sampling, we show that guidance re-stiffens exactly the discriminative subspace to an anomalous exponent 1+w. DDIM is therefore no longer fitted there, and on coarse meshes its guided residual diverges as sigma_min goes to zero. We prove a guided clock barrier with three ordered step-size thresholds, and read one-step oversaturation as its endpoint: a solver artifact on the calibration model rather than the continuous guided law. The same analysis yields a one-coefficient, zero-extra-NFE repair: replace CFG's w(r-1) by r^(1+w)-r on the guidance direction. On the calibration model's discriminative crossover, this removes CFG's sigma_min-divergent blow-up and is first-order accurate against the exact guided flow as sigma_min goes to zero. On learned CIFAR-10 checkpoints, and as a cross-domain smoke test on Stable Diffusion 1.5 DDIM, it acts as a high-guidance stabilizer at no extra cost rather than a universal quality knob: it cuts residual amplification and saturation, gives 9/9 point-FID wins over CFG on the tested grid, and preserves classifier-proxy target accuracy in the hard-cell blocks. We report the limits alongside: it is not a universal image-quality win, and against a dense vanilla-CFG reference it is not a uniformly better integrator of that field.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/11/2607.06841v1-tensor-train-diffusion-leveraging-low-rank-structures-for-high-dimensional-score-based-sampling",
+      "section": "quick",
+      "title_en": "Tensor Train Diffusion: Leveraging Low-Rank Structures for High-Dimensional Score-Based Sampling",
+      "authors": "Robert Gruhlke, Julius Berner, David Sommer, Lorenz Richter",
+      "date": "2026-07-07",
+      "pdf": "https://arxiv.org/pdf/2607.06841v1",
+      "score": "7.0",
+      "evidence": "提出了一种基于张量列分解的扩散模型得分函数HJB方程求解器",
+      "tldr": "扩散模型通过求解HJB型PDE实现高维采样，但现有方法如PINN训练慢且超参数敏感。本文提出基于函数张量列（FTT）的求解器，利用低秩结构高效逼近得分函数，并结合BSDE反向迭代求解。实验表明，该方法在采样精度和速度上显著优于传统方案，克服了主要瓶颈。贡献在于为高维扩散采样提供了快速、鲁棒的新范式。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Diffusion models offer a powerful framework for sampling from complex probability densities by learning to reverse a noising process. A common approach involves solving for the time-reversed stochastic differential equation (SDE), which requires the score function of the evolving sample distribution. The logarithm of this distribution's density is governed by a Hamilton-Jacobi-Bellman (HJB) type partial differential equation (PDE). However, current methods for solving this PDE, such as PINNs or trajectory-based techniques, often suffer from long training times and significant sensitivity to hyperparameter tuning. In this work, we introduce a novel and efficient solver for the underlying HJB equation based on the functional tensor train (FTT) format. The FTT representation leverages latent low-rank structures to efficiently approximate high-dimensional functions, enabling both model compression and rapid computation. By integrating this efficient representation with a backward-in-time iterative scheme derived from backward stochastic differential equations (BSDEs), we develop a fast, robust and accurate sampling method. Our approach overcomes primary bottlenecks of existing techniques, enabling high-fidelity sampling from challenging target distributions with improved efficiency.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/11/2607.04009v1-physminer-an-agentic-ai-framework-for-discovering-turbulence-physics",
+      "section": "quick",
+      "title_en": "PhysMiner: An Agentic AI Framework for Discovering Turbulence Physics",
+      "authors": "Jiawei Chen, Han Gao, Ping He",
+      "date": "2026-07-04",
+      "pdf": "https://arxiv.org/pdf/2607.04009v1",
+      "score": "6.0",
+      "evidence": "集成大语言模型的智能体框架用于湍流物理发现",
+      "tldr": "湍流物理发现中，传统速度梯度分析法受剪切干扰导致物理机制识别不准。PhysMiner将速度梯度张量三重分解与大语言模型推理结合，自动消除剪切污染，经五个基准验证。在周期山流动中端到端验证，框架自主生成湍流建模建议并改进亚网格模型，为自动化湍流物理发现奠定基础。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Uncovering the physical mechanisms of turbulent flows remains a fundamental challenge in fluid mechanics. In particular, conventional velocity-gradient analysis methods suffer from shear contamination, which hinders accurate identification of the dominant physical mechanisms. This study presents PhysMiner, an automated framework integrating the triple decomposition method of the velocity gradient tensor with large language model-driven reasoning for turbulence-physics discovery. The triple decomposition module automatically decomposes flow fields into rigid rotation, pure shearing, and normal straining components, enabling statistical analysis, contour visualization, vortex-line extraction, and threshold-insensitive vortex identification while eliminating shear contamination. These automated capabilities are validated across five benchmarks, ranging from canonical configurations to complex engineering flows. A discover-physics agent combines flow statistics, spatial structures, and literature-derived knowledge to perform pattern recognition and physical inference, while a review Agent iteratively validates physical consistency to ensure reliable conclusions. A continuously evolving Triple Decomposition Library accumulates statistical knowledge from successfully analyzed flows, enabling cross-case comparison and progressive enhancement of inductive capability. The complete PhysMiner pipeline is validated end-to-end on the periodic hill flow, where the framework autonomously generates turbulence modeling recommendations and derives an improved subgrid-scale model with superior Reynolds-stress predictions. PhysMiner is open to the public and establishes a foundation for long-term collaborative advancement in automated turbulence-physics discovery.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
