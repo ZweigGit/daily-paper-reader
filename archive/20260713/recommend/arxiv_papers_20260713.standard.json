@@ -1,0 +1,97 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-13T20:14:47.513598+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.06281v1",
+      "source": "arxiv",
+      "title": "Straight-Path Flow Matching for Incomplete Multi-View Clustering",
+      "abstract": "Incomplete Multi-View Clustering addresses the problem of clustering multi-modal data when certain views are missing. Recent end-to-end generative approaches leverage diffusion models to recover missing views via stochastic noise-to-data trajectories. While expressive, such mechanisms are not explicitly designed for clustering, as they initialize from cluster-agnostic noise and rely on stochastic denoising dynamics. In this work, we revisit probability path design in end-to-end generative IMVC. We introduce a flow-matching framework with a linear interpolation path between paired view representations, that replaces diffusion with probability flows between observed and missing views. We provide a formal analysis showing that deterministic ODE flows are inherently better aligned with clustering objectives than diffusion-based stochastic trajectories, especially in terms of transport mechanisms that respect class-conditional data distributions and maintain cluster consistency in finite-step regimes. Building upon this insight, we develop an end-to-end IMVC architecture that integrates straight-path flow-matching view completion with cluster-level and entropy-based alignment to enforce cross-view clustering consistency. Extensive experiments on standard IMVC benchmarks demonstrate that the proposed framework establishes new state-of-the-art performance.",
+      "authors": [
+        "Yiteng Yuan",
+        "Junyan Wang",
+        "Zheyuan Liu",
+        "Hong Jia",
+        "Lei Fan",
+        "Zhulin Tao",
+        "Lianbo Guo"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-07-07T13:47:51+00:00",
+      "link": "https://arxiv.org/pdf/2607.06281v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "flow matching framework applicable to fluid dynamics",
+      "llm_evidence_cn": "流匹配框架可应用于流体动力学",
+      "llm_evidence": "流匹配框架可应用于流体动力学",
+      "canonical_evidence": "流匹配框架可应用于流体动力学",
+      "llm_tldr_en": "Proposes straight-path flow matching for incomplete multi-view clustering, replacing diffusion models with deterministic ODE flows. The method is a generative approach using probability paths, transferable to fluid flow simulation.",
+      "llm_tldr_cn": "针对不完整多视图聚类问题，提出直线路径流匹配方法，用确定性ODE流替代扩散模型进行生成。该方法设计概率路径实现视图间映射，其流匹配框架可迁移至流体动力学中的流场生成。实验证明该框架在聚类任务上有效，为流体模拟中的流匹配应用提供了方法论基础。",
+      "llm_tldr": "针对不完整多视图聚类问题，提出直线路径流匹配方法，用确定性ODE流替代扩散模型进行生成。该方法设计概率路径实现视图间映射，其流匹配框架可迁移至流体动力学中的流场生成。实验证明该框架在聚类任务上有效，为流体模拟中的流匹配应用提供了方法论基础。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.07119v1",
+      "source": "arxiv",
+      "title": "ColorFM: An Optimization-to-Learning Framework for Color Transfer via Flow Matching",
+      "abstract": "Color transfer aims to align the color distribution of a source image with that of a reference image while preserving structural and semantic consistency. However, existing methods often suffer from inaccurate global mapping, semantic misalignment, and visual artifacts. To address these issues, we propose ColorFM, an optimization-to-learning framework. ColorFM connects online optimization to offline inference by reformulating color transfer as the transport of pixel distributions along velocity fields via Flow Matching. Specifically, we introduce ColorFM-O, an instance-specific optimization scheme that fits the velocity field through hierarchical color coupling guided by semantic priors. By numerically integrating the induced flow trajectories, ColorFM-O produces precise and semantically consistent color transfer results, while generating high-quality paired data as pseudo-supervision. Building upon this, we design ColorFM-L, an efficient feed-forward model trained on the generated pairs. Through implicit state modeling, ColorFM-L extracts deep semantic features to predict flow parameters for bidirectional linearized transport, ensuring accurate color transfer. Extensive experiments demonstrate that ColorFM-L outperforms state-of-the-art methods in visual quality, structural fidelity, and semantic consistency, successfully combining the accuracy of optimization with the speed of feed-forward inference.",
+      "authors": [
+        "Yuhang He",
+        "Kai Zhang",
+        "Xiaoming Li",
+        "Du Chen",
+        "Jian Yang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-07-08T08:01:15+00:00",
+      "link": "https://arxiv.org/pdf/2607.07119v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "flow matching for color transfer, method transferable",
+      "llm_evidence_cn": "流匹配用于颜色迁移，方法可迁移",
+      "llm_evidence": "流匹配用于颜色迁移，方法可迁移",
+      "canonical_evidence": "流匹配用于颜色迁移，方法可迁移",
+      "llm_tldr_en": "Applies flow matching to color transfer by reformulating as pixel distribution transport. The optimization-to-learning framework is a generative approach using velocity fields, directly analogous to fluid flow simulation via flow matching.",
+      "llm_tldr_cn": "提出ColorFM框架，将颜色迁移转化为像素分布沿速度场的流匹配传输。该方法结合在线优化与离线推理，通过数值积分生成连续流轨迹。其流匹配方案与流体动力学中的流场生成高度相似，为流体模拟中的流匹配应用提供了直接借鉴。",
+      "llm_tldr": "提出ColorFM框架，将颜色迁移转化为像素分布沿速度场的流匹配传输。该方法结合在线优化与离线推理，通过数值积分生成连续流轨迹。其流匹配方案与流体动力学中的流场生成高度相似，为流体模拟中的流匹配应用提供了直接借鉴。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching for fluid flow simulation",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

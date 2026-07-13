@@ -1,0 +1,39 @@
+{
+  "label": "2026-07-13",
+  "date": "2026-07-13",
+  "generated_at": "2026-07-13T20:16:24",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202607/13/2607.06281v1-straight-path-flow-matching-for-incomplete-multi-view-clustering",
+      "section": "quick",
+      "title_en": "Straight-Path Flow Matching for Incomplete Multi-View Clustering",
+      "authors": "Yiteng Yuan, Junyan Wang, Zheyuan Liu, Hong Jia, Lei Fan, Zhulin Tao, Lianbo Guo",
+      "date": "2026-07-07",
+      "pdf": "https://arxiv.org/pdf/2607.06281v1",
+      "score": "7.0",
+      "evidence": "流匹配框架可应用于流体动力学",
+      "tldr": "针对不完整多视图聚类中扩散模型未显式优化聚类目标的问题，提出基于直路径流匹配的端到端框架。该方法使用线性插值构建确定性ODE流替代随机扩散，在补全缺失视图的同时保持类条件分布，并引入聚类级和熵对齐增强跨视图一致性。在多个基准上取得新最优结果。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Incomplete Multi-View Clustering addresses the problem of clustering multi-modal data when certain views are missing. Recent end-to-end generative approaches leverage diffusion models to recover missing views via stochastic noise-to-data trajectories. While expressive, such mechanisms are not explicitly designed for clustering, as they initialize from cluster-agnostic noise and rely on stochastic denoising dynamics. In this work, we revisit probability path design in end-to-end generative IMVC. We introduce a flow-matching framework with a linear interpolation path between paired view representations, that replaces diffusion with probability flows between observed and missing views. We provide a formal analysis showing that deterministic ODE flows are inherently better aligned with clustering objectives than diffusion-based stochastic trajectories, especially in terms of transport mechanisms that respect class-conditional data distributions and maintain cluster consistency in finite-step regimes. Building upon this insight, we develop an end-to-end IMVC architecture that integrates straight-path flow-matching view completion with cluster-level and entropy-based alignment to enforce cross-view clustering consistency. Extensive experiments on standard IMVC benchmarks demonstrate that the proposed framework establishes new state-of-the-art performance.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/13/2607.07119v1-colorfm-an-optimization-to-learning-framework-for-color-transfer-via-flow-matching",
+      "section": "quick",
+      "title_en": "ColorFM: An Optimization-to-Learning Framework for Color Transfer via Flow Matching",
+      "authors": "Yuhang He, Kai Zhang, Xiaoming Li, Du Chen, Jian Yang",
+      "date": "2026-07-08",
+      "pdf": "https://arxiv.org/pdf/2607.07119v1",
+      "score": "6.0",
+      "evidence": "流匹配用于颜色迁移，方法可迁移",
+      "tldr": "针对颜色迁移中全局映射不准确、语义错位和视觉伪影问题，提出ColorFM框架，将颜色迁移重构为基于流匹配的像素分布运输。通过优化阶段ColorFM-O利用语义先验分层拟合速度场产生精确结果和伪监督数据，再训练前馈模型ColorFM-L实现双向线性化传输。实验表明，ColorFM-L在视觉质量、结构保真度和语义一致性上超越现有方法，兼顾优化精度与推理速度。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Color transfer aims to align the color distribution of a source image with that of a reference image while preserving structural and semantic consistency. However, existing methods often suffer from inaccurate global mapping, semantic misalignment, and visual artifacts. To address these issues, we propose ColorFM, an optimization-to-learning framework. ColorFM connects online optimization to offline inference by reformulating color transfer as the transport of pixel distributions along velocity fields via Flow Matching. Specifically, we introduce ColorFM-O, an instance-specific optimization scheme that fits the velocity field through hierarchical color coupling guided by semantic priors. By numerically integrating the induced flow trajectories, ColorFM-O produces precise and semantically consistent color transfer results, while generating high-quality paired data as pseudo-supervision. Building upon this, we design ColorFM-L, an efficient feed-forward model trained on the generated pairs. Through implicit state modeling, ColorFM-L extracts deep semantic features to predict flow parameters for bidirectional linearized transport, ensuring accurate color transfer. Extensive experiments demonstrate that ColorFM-L outperforms state-of-the-art methods in visual quality, structural fidelity, and semantic consistency, successfully combining the accuracy of optimization with the speed of feed-forward inference.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
