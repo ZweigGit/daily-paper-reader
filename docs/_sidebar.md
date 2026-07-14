@@ -1,6 +1,11 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-07-14 <!--dpr-date:20260714-->
+    * 精读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/14/2607.11497v1-ig-gan-a-generative-adversarial-network-for-aerodynamic-data-generation-based-on-intrinsic-geometry" data-sidebar-item="{&quot;title&quot;: &quot;IG-GAN: A Generative Adversarial Network for Aerodynamic Data Generation Based on Intrinsic Geometry&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.11497v1-ig-gan-a-generative-adversarial-network-for-aerodynamic-data-generation-based-on-intrinsic-geometry&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;基于生成对抗网络的气动数据生成&quot;}">IG-GAN: A Generative Adversarial Network for Aerodynamic Data Generation Based on Intrinsic Geometry</a>
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/14/2607.11442v1-velocity-scheduled-flow-matching" data-sidebar-item="{&quot;title&quot;: &quot;Velocity Scheduled Flow Matching&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.11442v1-velocity-scheduled-flow-matching&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;速度调度流匹配，一种生成式流匹配方法，可用于流体动力学模拟&quot;}">Velocity Scheduled Flow Matching</a>
   * 2026-07-13 <!--dpr-date:20260713-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/13/2607.06281v1-straight-path-flow-matching-for-incomplete-multi-view-clustering" data-sidebar-item="{&quot;title&quot;: &quot;Straight-Path Flow Matching for Incomplete Multi-View Clustering&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.06281v1-straight-path-flow-matching-for-incomplete-multi-view-clustering&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;流匹配框架可应用于流体动力学&quot;}">Straight-Path Flow Matching for Incomplete Multi-View Clustering</a>

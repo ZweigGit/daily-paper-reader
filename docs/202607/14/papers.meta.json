@@ -1,0 +1,39 @@
+{
+  "label": "2026-07-14",
+  "date": "2026-07-14",
+  "generated_at": "2026-07-14T21:25:32",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202607/14/2607.11497v1-ig-gan-a-generative-adversarial-network-for-aerodynamic-data-generation-based-on-intrinsic-geometry",
+      "section": "deep",
+      "title_en": "IG-GAN: A Generative Adversarial Network for Aerodynamic Data Generation Based on Intrinsic Geometry",
+      "authors": "Ying Yan, Liwei Hu, Xiaoming Zhang",
+      "date": "2026-07-13",
+      "pdf": "https://arxiv.org/pdf/2607.11497v1",
+      "score": "9.0",
+      "evidence": "基于生成对抗网络的气动数据生成",
+      "tldr": "现有生成模型在平坦欧几里得空间学习，忽略了真实世界数据的流形结构。为此，提出基于内蕴几何的生成对抗网络IG-GAN，其生成器将气动数据表示为贝塞尔曲面构建的分片光滑流形并自动组合，判别器采用径向基函数网络。在Burgers方程数据集上，速度预测MSE较SOTA降低97.41%；在ONERA M6飞机数据集上，九个气动系数整体MSE降低82.95%。IG-GAN通过引入数据的内蕴几何结构，显著提升了气动数据生成的精度。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Existing generative models learn data distributions in flat Euclidean space. However, most data in our real world are manifolds embedded in high dimensional Euclidean space. Therefore, we propose an intrinsic-geometry-based generative adversarial network (IG-GAN) for data generation in the field of aerodynamics. The generator of the IG-GAN represents aerodynamic data as a piecewise smooth manifold constructed by Bézier surfaces, and the generator tries to learn the coefficients of each Bézier surface to further combine multiple Bézier surfaces into a smooth manifold automatically. The discriminator in the IG-GAN is a radial-basis-function based discriminator (RBF-D). Experimental results show that IG-GAN achieves lower predicted Mean Squared Errors (MSEs) than those of three baselines. Specifically, on the Burgers' equation dataset, IG-GAN reduces the predicted MSE of velocity u by 97.41% compared with state of the art SSL-Transformer. Additionally, on the ONERA M6 aircraft dataset, IG-GAN reduces the overall MSE of nine aerodynamic coefficients by 82.95% compared with SSL-Transformer.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/14/2607.11442v1-velocity-scheduled-flow-matching",
+      "section": "quick",
+      "title_en": "Velocity Scheduled Flow Matching",
+      "authors": "Vitalii Bondar",
+      "date": "2026-07-13",
+      "pdf": "https://arxiv.org/pdf/2607.11442v1",
+      "score": "7.0",
+      "evidence": "速度调度流匹配，一种生成式流匹配方法，可用于流体动力学模拟",
+      "tldr": "流匹配通常使用线性插值，假设样本沿轨迹匀速运动。本文提出速度调度流匹配（VSFM），用任意非负速度轮廓v(t)替代恒定速度，满足积分条件。推理时，预训练模型可在任意轮廓下通过非均匀τ调度采样，无需重训练；从头训练时采用制动轮廓进一步改善结果。在CIFAR-10上，推理模式使FID降低19.8%，训练模式在4次NFE下降低17.4%。收益源于欧拉积分器在诱导网格上的局部截断误差减小。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Flow matching trains a neural network to regress the conditional velocity along a linear interpolant between noise and data, and the number of network evaluations~(NFE) sets the cost of sampling. The straight-line interpolant carries an implicit choice: the sample moves at constant speed throughout the trajectory. We relax this choice and introduce Velocity Scheduled Flow Matching~(VSFM), which replaces the conditional target $x_1 - x_0$ with $v(t)(x_1 - x_0)$ for any nonnegative profile $v:[0,1]\\to\\mathbb{R}_{\\geq 0}$ satisfying $\\int_0^1 v\\,dt = 1$. We study six polynomial profiles drawn from motion planning. The first use of VSFM is at inference time: a pretrained linear flow-matching model can be sampled under any admissible profile by integrating its ODE on a non-uniform $τ$-schedule, with no retraining and no additional computation; on CIFAR-10 this lowers FID by up to $19.8\\%$. Training from scratch under a braking profile gives a further reduction of $17.4\\%$ at $4$~NFE. Both gains follow from the local truncation error of the Euler integrator on the induced grid.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

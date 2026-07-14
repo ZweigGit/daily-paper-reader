@@ -6,29 +6,28 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-13
-- 运行时间：2026-07-13 20:16:16 UTC
+- 最新运行日期：2026-07-14
+- 运行时间：2026-07-14 21:25:24 UTC
 - 运行状态：成功
 - 本次总论文数：2
-- 精读区：0
-- 速读区：2
+- 精读区：1
+- 速读区：1
 
 ### 今日简报（AI）
-1) 今日速读两篇流匹配应用论文，分别聚焦不完整多视图聚类（7.0分）与颜色迁移（6.0分）。  
-2) 值得关注的是《Straight-Path Flow Matching》将直通路径引入聚类，有效处理缺失视图；而《ColorFM》则把颜色迁移转换为优化到学习的框架。  
-3) 建议后续可深入流匹配在缺失数据与跨域转换中的通用潜力，并尝试将其与自监督方法结合。
-- 详情：[/202607/13/README](/202607/13/README)
+今日精读《IG-GAN: 基于内蕴几何的气动数据生成对抗网络》（9.0分），速读《速度调度流匹配》（7.0分）。  
+最值得关注的是IG-GAN利用流形的内蕴几何显著提升气动数据生成质量，而速度调度流匹配为生成模型提供了更可控的采样轨迹。  
+建议普通读者首先理解内蕴几何如何增强数据真实性，再探索速度调度对生成稳定性的影响。
+- 详情：[/202607/14/README](/202607/14/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [IG-GAN: A Generative Adversarial Network for Aerodynamic Data Generation Based on Intrinsic Geometry](/202607/14/2607.11497v1-ig-gan-a-generative-adversarial-network-for-aerodynamic-data-generation-based-on-intrinsic-geometry)  
+   标签：评分：9.0/10、query:genmod-fluid
+   evidence：基于生成对抗网络的气动数据生成
 
 ### 速读区论文标签
-1. [Straight-Path Flow Matching for Incomplete Multi-View Clustering](/202607/13/2607.06281v1-straight-path-flow-matching-for-incomplete-multi-view-clustering)  
+1. [Velocity Scheduled Flow Matching](/202607/14/2607.11442v1-velocity-scheduled-flow-matching)  
    标签：评分：7.0/10、query:genmod-fluid
-   evidence：流匹配框架可应用于流体动力学
-2. [ColorFM: An Optimization-to-Learning Framework for Color Transfer via Flow Matching](/202607/13/2607.07119v1-colorfm-an-optimization-to-learning-framework-for-color-transfer-via-flow-matching)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：流匹配用于颜色迁移，方法可迁移
+   evidence：速度调度流匹配，一种生成式流匹配方法，可用于流体动力学模拟
 
 
 <div class="dpr-home-promo-card">

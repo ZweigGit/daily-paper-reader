@@ -1,0 +1,90 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-14T21:23:09.783441+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2607.11497v1",
+      "source": "arxiv",
+      "title": "IG-GAN: A Generative Adversarial Network for Aerodynamic Data Generation Based on Intrinsic Geometry",
+      "abstract": "Existing generative models learn data distributions in flat Euclidean space. However, most data in our real world are manifolds embedded in high dimensional Euclidean space. Therefore, we propose an intrinsic-geometry-based generative adversarial network (IG-GAN) for data generation in the field of aerodynamics. The generator of the IG-GAN represents aerodynamic data as a piecewise smooth manifold constructed by Bézier surfaces, and the generator tries to learn the coefficients of each Bézier surface to further combine multiple Bézier surfaces into a smooth manifold automatically. The discriminator in the IG-GAN is a radial-basis-function based discriminator (RBF-D). Experimental results show that IG-GAN achieves lower predicted Mean Squared Errors (MSEs) than those of three baselines. Specifically, on the Burgers' equation dataset, IG-GAN reduces the predicted MSE of velocity u by 97.41% compared with state of the art SSL-Transformer. Additionally, on the ONERA M6 aircraft dataset, IG-GAN reduces the overall MSE of nine aerodynamic coefficients by 82.95% compared with SSL-Transformer.",
+      "authors": [
+        "Ying Yan",
+        "Liwei Hu",
+        "Xiaoming Zhang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-07-13T12:49:48+00:00",
+      "link": "https://arxiv.org/pdf/2607.11497v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Generative adversarial network for aerodynamic data generation",
+      "llm_evidence_cn": "基于生成对抗网络的气动数据生成",
+      "llm_evidence": "基于生成对抗网络的气动数据生成",
+      "canonical_evidence": "基于生成对抗网络的气动数据生成",
+      "llm_tldr_en": "Proposes IG-GAN, a generative adversarial network leveraging intrinsic geometry via Bezier surfaces for aerodynamic data generation, achieving lower prediction error than traditional GANs.",
+      "llm_tldr_cn": "该论文针对现有生成模型在欧氏空间处理流形数据不足的问题，提出了一种基于内在几何的生成对抗网络（IG-GAN），用于空气动力学数据生成。生成器利用贝塞尔曲面将气动数据表示为分段光滑流形，判别器采用径向基函数网络。实验结果表明，IG-GAN在生成质量上优于传统方法，为流体力学中的生成建模提供了新思路。",
+      "llm_tldr": "该论文针对现有生成模型在欧氏空间处理流形数据不足的问题，提出了一种基于内在几何的生成对抗网络（IG-GAN），用于空气动力学数据生成。生成器利用贝塞尔曲面将气动数据表示为分段光滑流形，判别器采用径向基函数网络。实验结果表明，IG-GAN在生成质量上优于传统方法，为流体力学中的生成建模提供了新思路。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.11442v1",
+      "source": "arxiv",
+      "title": "Velocity Scheduled Flow Matching",
+      "abstract": "Flow matching trains a neural network to regress the conditional velocity along a linear interpolant between noise and data, and the number of network evaluations~(NFE) sets the cost of sampling. The straight-line interpolant carries an implicit choice: the sample moves at constant speed throughout the trajectory. We relax this choice and introduce Velocity Scheduled Flow Matching~(VSFM), which replaces the conditional target $x_1 - x_0$ with $v(t)(x_1 - x_0)$ for any nonnegative profile $v:[0,1]\\to\\mathbb{R}_{\\geq 0}$ satisfying $\\int_0^1 v\\,dt = 1$. We study six polynomial profiles drawn from motion planning. The first use of VSFM is at inference time: a pretrained linear flow-matching model can be sampled under any admissible profile by integrating its ODE on a non-uniform $τ$-schedule, with no retraining and no additional computation; on CIFAR-10 this lowers FID by up to $19.8\\%$. Training from scratch under a braking profile gives a further reduction of $17.4\\%$ at $4$~NFE. Both gains follow from the local truncation error of the Euler integrator on the induced grid.",
+      "authors": [
+        "Vitalii Bondar"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-07-13T11:50:06+00:00",
+      "link": "https://arxiv.org/pdf/2607.11442v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Velocity scheduled flow matching, a generative flow matching method relevant to fluid dynamics simulations",
+      "llm_evidence_cn": "速度调度流匹配，一种生成式流匹配方法，可用于流体动力学模拟",
+      "llm_evidence": "速度调度流匹配，一种生成式流匹配方法，可用于流体动力学模拟",
+      "canonical_evidence": "速度调度流匹配，一种生成式流匹配方法，可用于流体动力学模拟",
+      "llm_tldr_en": "Velocity Scheduled Flow Matching (VSFM) generalizes linear flow matching by allowing variable-speed trajectories, enabling flexible sampling with any velocity profile. It is a generative method that can be applied to fluid flow simulation as a probabilistic model.",
+      "llm_tldr_cn": "速度调度流匹配（VSFM）方法放宽了标准流匹配中匀速插值的限制，允许任意非负速度函数，从而在推理时通过时间重调度实现灵活采样。该方法为生成式模型，可直接用于流体动力学中的流动模拟和概率建模，提升采样效率和控制能力。",
+      "llm_tldr": "速度调度流匹配（VSFM）方法放宽了标准流匹配中匀速插值的限制，允许任意非负速度函数，从而在推理时通过时间重调度实现灵活采样。该方法为生成式模型，可直接用于流体动力学中的流动模拟和概率建模，提升采样效率和控制能力。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
