@@ -1,0 +1,851 @@
+Title: A Shortcut to Statistically Steady-State Turbulence with Flow Matching
+
+URL Source: https://arxiv.org/pdf/2607.13022v1
+
+Published Time: Wed, 15 Jul 2026 11:56:05 GMT
+
+Number of Pages: 25
+
+Markdown Content:
+# A Shortcut to Statistically Steady-State Turbulence with Flow Matching 
+
+Gianluca Galletti ∗1 Gerald Gutenbrunner ∗1
+
+William Hornsby 2 Lorenzo Zanisi 2 Naomi Carey 2
+
+Stanislas Pamela 2 Johannes Brandstetter 1,3 Fabian Paischer 1,31 Institute for Machine Learning, JKU Linz  
+
+> 2
+
+United Kingdom Atomic Energy Authority, Culham campus  
+
+> 3
+
+Mistral AI 
+
+ml-jku/neural-gyrokinetics gerkone/cbc-gyroswin-256traj 
+
+## Abstract 
+
+Many nonlinear physical systems exhibit an initial transient phase in which per-turbations grow before nonlinear interactions lead to a statistically steady state. While this saturated regime is of primary interest, direct numerical simulations must resolve the full transient dynamics before reaching it, incurring significant computational cost. In Computational Fluid Dynamics, reduced-order approaches such as Large Eddy Simulation mitigate computational cost by modeling small-scale dynamics, enabling tractable approximations of turbulent flows. In contrast, for systems such as gyrokinetics, comparably effective closures for the full dy-namics are not generally available, and high-fidelity simulations remain neces-sary. Existing surrogate modeling approaches for these systems are autoregres-sive, hence they suffer from accumulating error. We instead propose to bypass explicit time evolution by directly modeling the distribution of saturated states under an ergodicity assumption, stating that ensemble averages over samples are equivalent to time averages of a single long simulation. We introduce GyroFlow, a latent generative model that directly estimates steady-state statistics of gyrokinetic turbulence in 5D phase space, without resolving the transient phase. GyroFlow generates saturated snapshots from noise, conditioned on dimensionless operating parameters and outperforms autoregressive, reduced-order, and other generative approaches, while providing substantial speedup. To evaluate generation qual-ity we propose FGyD, a distributional metric computed in the latent space of a pretrained gyrokinetic model, and show that it correlates with downstream flux accuracy and solver convergence. Finally, GyroFlow can be used to warm-start the numerical code used to produce the data. 
+
+## 1 Introduction 
+
+Numerical simulations of turbulent multiscale systems are a cornerstone of modern science and engineering, from aerospace and automotive design (Slotnick et al., 2014) to interstellar medium modeling (Federrath & Klessen, 2012) and energy systems, where they predict the turbulent trans-port that determines confinement in nuclear fusion power plant concepts such as STEP (Kennedy et al., 2023) and underpin the design of combustion engines and gas turbines (Pitsch, 2006). Af-ter an initial transient, these systems relax to a statistically steady regime from which quantities of interest for design or scientific analysis, such as heat and momentum transport in plasmas, are typ-ically obtained via time averaging. The initial transient phase can be long and costly to compute,   
+
+> ∗Equal contribution, corresponding author: galletti@ml.jku.at
+> Preprint. arXiv:2607.13022v1 [physics.plasm-ph] 14 Jul 2026
+
+yet it is strictly necessary to simulate to reach the statistically steady state regime and therefore the quantities of interest. In Computational Fluid Dynamics, substantial speedups can be obtained via Large Eddy Simulation, where dissipation at small scales is modeled instead of resolved explicitly, with many analytical clo-sures available (Pope, 2000). However, such reductions collapse when no tractable closure is avail-able or the observables of interest are themselves statistics of multiscale fluctuations. Gyrokinetics is a prominent example of this problem class, and one of the most challenging simulation problems in engineering. It models the turbulent transport that governs confinement in magnetic fusion plas-mas, and therefore the viability of fusion as an energy source. Kinetic effects in the plasma core and the low collisionality between particles require a 5D phase-space description, rather than a fluid approximation. An approach similar to LES in gyrokinetics is notoriously difficult, because of the bi-directional energy cascade where smaller scales drive an inverse transfer that generates large-scale structures such as zonal flows, which in turn suppress the small scales. Therefore reduced models only exist via data-driven semi-empirical saturation rules (Staebler et al., 2007; Bourdelle et al., 2007), which are brittle in strongly turbulent and power plant-relevant regimes (Dimits et al., 2000b; Bourdelle et al., 2008; Kiefer et al., 2021). Reliable predictions for fusion power plants require mul-tiple expensive, time-dependent nonlinear simulations, including a transient ramp-up phase during which unstable modes grow before nonlinear couplings and zonal flows saturate the turbulence. Machine learning based surrogate models of gyrokinetics offer a fruitful alternative. Existing ap-proaches sit on two opposite sides of a trade-off. Autoregressive neural surrogates (Paischer et al., 2025) retain the 5D dynamics but integrate through the transient, accumulating rollout error as they proceed. Quasilinear reduced-order models (Bourdelle et al., 2015; Citrin et al., 2017; Staebler et al., 2007; Staebler & Kinsey, 2010) and classical surrogates (Hornsby et al., 2024; van de Plassche et al., 2020) bypass the transient entirely, but discard the nonlinear physics. In this work we attempt a different approach that brings together the best of both worlds. We lever-age the fact that gyrokinetic turbulence can be treated as approximately ergodic, as time-averaged observables converge to their ensemble averages over the underlying steady-state distribution after a sufficiently long time. These statistics are primarily determined by the dimensionless operating parameters. Therefore, we propose GyroFlow, a latent flow matching (Lipman et al., 2023; Dao et al., 2023) model trained to sample turbulent 5D snapshots conditioned on operating parameters. This enables recovering the ensemble average in a single forward pass without the need for autore-gressive rollouts or reducing assumptions. To evaluate generation of 5D plasma data we propose FGyD, a Fréchet distance in the latent space of a pretrained gyrokinetic surrogate (Paischer et al., 2025), whose features encode mode structure, amplitude, and zonal-flow content and verify that it correlates with downstream flux accuracy and the convergence time of warm-started solvers. Our contributions are summarized as follows. 
+
+❶ We introduce GyroFlow, a generative model of saturated 5D gyrokinetic turbulence which bypasses the costly transient, conditioned on operating parameters. 
+
+❷ We introduce FGyD as a distributional metric defined in the latent space of GyroSwin (Paischer et al., 2025), and show that it correlates with downstream performance. 
+
+❸ We demonstrate that generated fields can be effectively used to warm-start numerical solvers, reducing their time-to-convergence to the saturated regime. 
+
+## 2 The (Un)avoidable Cost of Gyrokinetics 
+
+Gyrokinetic simulation codes, such as GKW (Peeters et al., 2009), evolve a 5D distribution function 
+
+f (kx, k y , s, v ∥, μ ; t) of charged particles in a magnetised plasma. Turbulence in a plasma is driven by microinstabilities that draw free energy from the radial gradients of temperature and density, giving rise to, e.g., ion-temperature-gradient (Coppi et al., 1967, ITG) modes. These instabilities are responsible for the transport of heat and particles, which is the central quantity governing the performance of magnetically confined fusion devices. A gyrokinetic simulation proceeds through two distinct phases. In the linear phase, perturbations to the distribution function grow exponentially as the microinstabilities amplify. Once the fluctuation amplitudes become sufficiently large, nonlinear mode coupling sets in and energy is redistributed across scales which causes emergence of zonal flows (Itoh et al., 2006). Zonal flows act as a self-2Transient
+
+Plasma Turbulence  
+
+> Heat Flux
+
+GyroFlow       
+
+> cR/LT R/Ln ŝq
+> Dψ
+
+## f^ Q
+
+# φ    
+
+> QProbing ]Warm-start
+> Q(t) QQ probe
+> A(r) = cos 2
+> ·
+> fM(v)
+> =
+
+=               
+
+> f0(gkw) ✗needs init ✗costly transient ✗Error drift
+> (AR surrogates)
+> ✓fast
+> ✓c+noise as init
+> ?no time, not AR
+
+v θ  
+
+> X0XtX1
+
+Figure 1: Left: In a Tokamak the heat flux Q(t) is the radial transport of thermal energy across the nested magnetic flux surfaces, driven by turbulence. The transient of a gyrokinetic simulation traverses an initial ramp-up phase before converging to a statistically steady state. Right: GyroFlow assumes ergodicity and uses flow matching to sample directly from the saturated distribution, instead of traversing the transient. Downstream quantities such as average heat flux can be obtained either by latent probing or reconstruction of the 5D phase space. regulation mechanism, because they shear apart the turbulent eddies at small scales, effectively suppressing transport and saturating the instability growth. The system transitions into a saturated regime characterised by a dynamic equilibrium between instability drive and zonal flow regulation. Simulations with identical parameters but different initial conditions converge to the same steady-state statistics. This indicates that gyrokinetic turbulence is approximately ergodic, meaning that time averages along a single realisation equal ensemble averages, defining a unique statistical steady state. Together, these properties imply that transport-relevant statistics, such as mean and fluctuating heat and particle fluxes, are fully characterised by the operating parameters alone. No information about the final statistical state is carried by the ramp-up trajectory, therefore it can be considered pure computational overhead. In practice, the linear buildup phase is so long and costly that the ensemble average is impracti-cal, and therefore time averages along a single simulation are taken. However, the cost incurred by traversing the transient of a single gyrokinetic simulation is only the tip of the iceberg. Integrated modeling of plasma in a tokamak (Mulders et al., 2021; Citrin et al., 2024; Bourdelle, 2025) com-pounds this cost by several orders of magnitude, since a turbulent-transport prediction is required at every radial point and every time slice of the discharge, requiring many thousands of evaluations for fusion power plant design (Zanisi et al., 2025). While nonlinear gyrokinetics provide the high-fidelity information needed to de-risk these designs, their computational cost makes such integrated predictions currently infeasible. Based on the observation that the saturated distribution depends only on the operating parameters and is accessible through independent samples under the ergodicity assumption, we aim to replace temporal simulations with recent generative modeling approaches. That is, a model that maps oper-ating parameters directly to realisations of the saturated state, bypassing both the ramp-up and the need for long time-averaging trajectories. 
+
+## 3 Related Works 
+
+Surrogates for gyrokinetics. There have been multiple attempts to develop surrogates for core tur-bulent transport as modelled by gyrokinetics. Quasilinear reduced-order models such as QuaLiKiz (Bourdelle et al., 2015; Citrin et al., 2017) and TGLF (Staebler et al., 2007; Staebler & Kinsey, 2010) replace the nonlinear term in Equation (5) with a saturation rule fitted to nonlinear simu-lations and combine independent ky -mode contributions via a weighting function (Staebler et al., 2024). They evolve reduced linear simulations that resolve each mode independently, hence reduc-ing the dimensionality to 3D, but neglect nonlinear phenomena. Therefore, they are generally less accurate near stability boundaries and in strongly driven regimes (Dimits et al., 2000b; Bourdelle et al., 2008). Classical surrogates, namely Gaussian process regression (Hornsby et al., 2024) and multilayer perceptrons (van de Plassche et al., 2020; Citrin et al., 2023; Zanisi et al., 2024), map 3operating parameters directly to scalar fluxes. They are efficient, but inherit the same limitations as reduced-order models. Recent work targets full gyrokinetic surrogates. Narita et al. (2022) apply CNNs to 2D wavenumber slices for flux and time-to-saturation prediction, Honda et al. (2023) extend this with multimodal inputs, and Wan et al. (2025) study cross-fidelity transfer in a reduced 1D space. GyroSwin (Paischer et al., 2025) is the first surrogate operating on the full 5D phase space with orders-of-magnitude per-step speedup and state of the art accuracy. It still depends on an initially evolved saturated state from a numerical code and also traverses the transient step by step. Therefore it suffers from error accumulation affecting the time averages of the quantities of interest. 
+
+Generative models for scientific simulation. Denoising diffusion models (Ho et al., 2020; Song & Ermon, 2020; Dhariwal & Nichol, 2021) sample from a target distribution by inverting a for-ward noising process and dominate content generation across images, video, and audio (Yang et al., 2025). Deterministic samplers (Song et al., 2021; Karras et al., 2022) and continuous-time ODE reformulations (flow matching (Lipman et al., 2023), stochastic interpolants (Albergo et al., 2023)) have cut integration steps and improved quality. The framework of Albergo et al. (2023) unifies flow and diffusion by bridging two densities in finite time through a time-indexed interpolant, recover-ing rectified flow (Liu et al., 2023) as a special case. Applying the generative process in the latent space of a pretrained autoencoder (Rombach et al., 2022; Dao et al., 2023) scales these models to high-resolution signals. These methods are commonly applied to scientific simulation. Several works use diffusion to sta-bilise or correct autoregressive rollouts of spatiotemporal dynamics (Lippe et al., 2024; Kohl et al., 2023; Rühling Cachay et al., 2024) and to quantify uncertainty in under-resolved flow surrogates (Liu & Thuerey, 2024). Diffusion has also been used as the generative core of probabilistic en-sembles for medium-range weather forecasting (Price et al., 2023) and as a posterior sampler for score-based data assimilation (Rozet & Louppe, 2023). Most similar to our work, Lino et al. (2025); Lienen et al. (2024); Gao et al. (2024) use diffusion models to learn the stationary distribution of de-veloped fluid flows from transient Large Eddy or unsteady RANS simulations. The main difference is that our work does not make any assumption on ground-truth obtained by reduced-order models and extends to a domain where no closures are available, hence all turbulent scales are resolved. 
+
+## 4 Method 
+
+GyroFlow is a two-stage latent generative model. A Swin5D autoencoder first compresses 5D snap-shots of the saturated distribution function into a low-dimensional latent space. A Diffusion Trans-former (DiT) (Peebles & Xie, 2023) is then trained with rectified flow matching to transport a Gaus-sian prior to the encoded data manifold, conditioned on the operating parameters. The two stages are trained independently, and the autoencoder weights are frozen during DiT training. Finally, to eval-uate generative quality while respecting the distributional nature of turbulence, we propose FGyD (Section 4.5), a Fréchet distance in the latent space of a pretrained gyrokinetic surrogate. 
+
+4.1 Problem setup 
+
+A gyrokinetic simulation is parameterised by dimensionless numbers entering Equation (5) through the equilibrium Maxwellian FM (Equation (7)) and the magnetic geometry. GyroFlow condi-tions on four operating parameters that strongly affect ITG turbulence. R/L T (normalised ion-temperature gradient) and R/L n (normalised density gradient) set the free-energy source, with larger R/L T pushing the simulation into strongly driven regimes and R/L n modulating the con-tribution of density-gradient-driven modes. q (safety factor) and ˆs (magnetic shear) enter the magnetic geometry through the parallel dynamics and the radial wavenumber along the field line. Jointly, (R/L T , R/L n, q, ˆs) specify the stationary distribution, independently of the initial condi-tion, and are stacked into the conditioning vector 
+
+c = ( R/L T , R/L n , ˆs , q ). (1) Let f ∈ R2×v∥×μ×s×x×y denote a saturated snapshot, with the two channels carrying the real and imaginary parts of the complex distribution function. A velocity network vθ (zt, t, c) is trained 4to transport z0 ∼ N (0 , I ) to z1 = Eψ (f ) along an interpolation parameter t ∈ [0 , 1] , with no information about the physical time of Equation (5). At inference, ˆf = Dψ (z1) recovers the full 5D state from the generated latent. 
+
+4.2 Swin5D autoencoder 
+
+Eψ and Dψ share hierarchical Swin5D layers, with n-dimensional Swin blocks functionally equiv-alent to GyroSwin (Paischer et al., 2025). Attention is applied to non-overlapping 5D windows of size M = Mv∥ ×Mμ ×Ms ×Mx ×My , alternating with shifted partitions (half-window cyclic shift) to recover approximate global attention at linear cost. The bottleneck is implemented via two Trans-former layers (Vaswani et al., 2017) at the coarsest resolution after a linear projection to channel width dz . The operating parameters c are not injected into either the encoder or the decoder to decouple compression from conditioning.Training uses a complex MSE reconstruction loss on f .
+
+4.3 Latent diffusion model 
+
+We adhere to the stochastic-interpolant framework of Albergo et al. (2023) as a rectified flow (Liu et al., 2023). The prior is Gaussian, the data density is the latent representation of the saturated gyrokinetic distribution obtained via the pre-trained autoencoder, and the interpolant is the linear path of Equation (2). A full derivation is given in Section E in the appendix. 
+
+Flow-matching formulation Let z1 = Eψ (f ) denote a data latent and z0 ∼ N (0 , I ) a prior sample. For t ∈ [0 , 1] , we define the linear probability path 
+
+zt = t z 1 + (1 − t) z0, u⋆(zt | z0, z 1) = z1 − z0, (2) so that the target velocity is independent of t. We depart from the standard recipe in two respects to reduce path variance and linearize inference trajectories. First, instead of independent pairings, in-batch pairs are drawn from an optimal-transport coupling π(z0, z 1) that minimizes the expected path length between the noise and data distributions (Tong et al., 2024). Second, the integration time 
+
+t is sampled from a logit-normal distribution pLN (t) (Esser et al., 2024). The network vθ (zt, t, c) is trained to regress u⋆ by minimizing 
+
+LFM (θ) = Ez0,z 1∼π, t ∼pLN , c ∥ vθ (zt, t, c) − u∗ ∥2 . (3) At inference, we integrate ˙z = vθ (z, t, c) from z ∼ N (0 , I ) with an explicit Euler scheme on a uniform grid of N steps in [0 , 1] . We use N = 15 throughout, chosen from the accuracy-runtime sweep in Section E.5. 
+
+Diffusion Transformer. The velocity network vθ is a DiT (Peebles & Xie, 2023) that operates directly on the autoencoder bottleneck tokens, without further patching. The flow integration time t
+
+and the four operating parameters in c (Equation (1)) are each embedded via a sinusoidal expansion and mapped through a shared MLP to produce a joint conditioning vector. This vector modulates each transformer block via adaptive layer normalization (adaLN) applied prior to the self-attention and feed-forward layers. The residual gate is zero-initialised so DiT begins training as identity. 
+
+4.4 Implementation details 
+
+Prior work on compression (Galletti et al., 2026a) observes that training on 5D data presents insta-bilities, linked to the large dynamic range across velocity shells and the high dimensionality of the fields. We introduce three interventions to stabilize model training. 
+
+Magnetic moment normalization. The magnetic moment coordinate μ indexes energy shells whose amplitudes span several orders of magnitude. A global z-score collapses small-μ contri-butions, whose amplitudes are orders of magnitude smaller than dominant shells. Therefore, instead of normalizing across channels as in Paischer et al. (2025) we normalize over μ via ¯fμ, σ fμ over all other axes. The resulting input to the model is then computed as ˜f (·, μ, · · · ) = ( f − ¯fμ)/(σfμ + ε).
+
+Query-Key normalization. Attention logits on 5D grids are prone to scale drift as the model size grows. Inspired by the language modelling community (Henry et al., 2020; Team, 2025), RMS 5normalization is applied independently to the query and key tensors along the head dimension before the dot product, so that logit magnitudes are controlled independently of the feature norm. 
+
+Gated attention. Also following findings in Qiu et al. (2025), we apply a head-wise sigmoid gate to the attention output prior to the output projection. Let oh ∈ Rdh be the raw attention output of head h and qh its query. We replace oh with ˜oh = σ Wg ReLU( qh) ⊙ oh, where Wg ∈ Rdh×dh
+
+is a per-head learnable projection and σ(·) the sigmoid. The gate modulates each head contribution conditionally on its query. Qiu et al. (2025) report that this stabilizes attention logits and yields per-head sparsity. 
+
+4.5 Fréchet GyroSwin Distance (FGyD) 
+
+In vision it is common to evaluate generative models at a distributional level using Fréchet distance based on the latent space of pre-trained classifiers (Heusel et al., 2017; Szegedy et al., 2016). In our case, there is no pre-trained classifier for gyrokinetics on which we can base our evaluation. Furthermore, the latent space should ideally be sensitive to downstream quantities. To this end, we extract features h = gξ (f, c) from a frozen and pre-trained encoder of GyroSwin (Paischer et al., 2025), fit Gaussians to generated and reference activations, and report FGyD = ∥μr − μg ∥22 + Tr 
+
+
+
+Σr + Σ g − 2  Σr Σg
+
+1/2
+
+. (4) We use the publicly available checkpoint from the huggingface hub (Wolf et al., 2020) 2. GyroSwin is a UNet trained in a multitask manner to predict the time evolution of the 5D phase space, the 3D electrostatic potential fields, and the scalar heat flux. Therefore, it provides several choices for latents that could be used for computing the FGyD metric. Also, it allows us to evaluate on latents that encode different derived physical quantities. To provide a comprehensive evaluation, we select three different latents (bottleneck skip L=2 , ϕ decoder, Q head) and report FGyD on each of them. For further details see Section G. 
+
+## 5 Experiments 
+
+We evaluate GyroFlow model along three complementary axes: (i) downstream, time-averaged physical observables and parameter scans (Table 1 and Figure 2); (ii) distributional comparisons in a pretrained latent space (FGyD, Table 2); (iii) the convergence of the gyaradax solver (Galletti et al., 2026b), a GPU accelerated version of GKW (Peeters et al., 2009), warm-started from gener-ated candidates (Table 2). Across all evaluations, GyroFlow outperforms autoregressive GyroSwin and other generative baselines. 
+
+5.1 Setup 
+
+We evaluate GyroFlow on the dataset of Paischer et al. (2025), ∼250 saturated GKW trajectories in the 4D parameter space (Section B in appendix). 3 Three trajectories form the validation split, six the in-distribution (ID) test split, and five the out-of-distribution (OOD) split, obtained by taking points outside the training convex hull. Three baseline families are considered. Reduced-order models map linear growth rates to non-linear saturated fluxes via saturation rules (Bourdelle et al., 2015, QuaLiKiz). Tabular regressors (Hornsby et al., 2024, GPR)) map c to saturated transport scalars without. Both neglect the nonlin-ear physics. Autoregressive surrogates such as GyroSwin (Paischer et al., 2025) evolve the 5D phase space forward in time. We train and evaluate two GyroSwin variants. GyroSwin (warm) begins the autoregressive rollout from a semi-saturated snapshot, while GyroSwin (cold) starts from an early snapshot in the linear phase (details in Section D.2 in appendix). Finally, we include three genera-tive baselines following the same turbulence sampling perspective as GyroFlow. A VAE (Kingma & Welling, 2014) that decodes z ∼ N (0 , I ), and two variants of a VQ-VAE (van den Oord et al., 2017) that differ in how code indices are drawn at inference. VQ-VAE (rand) samples them i.i.d. from the empirical codebook distribution, while VQ-VAE (AR) draws them from a Transformer prior trained autoregressively over the code sequences (Yan et al., 2021). See Section D in appendix for details.   
+
+> 2Checkpoints available at https://huggingface.co/ml-jku/gyroswin_large
+> 3Quantized dataset at https://huggingface.co/datasets/gerkone/cbc-gyroswin-256traj .
+
+6Table 1: Downstream accuracy on in-distribution ( ID ) and out-of-distribution ( OOD ) operating conditions. 5D : produces 5D nonlinear phase space outputs. We report the RMSE of the time-averaged heat flux ( ¯Q), Pearson correlation on W (ky ), Pearson correlation on Q(ky ), and wall-clock per 64 saturated-phase samples on a single NVIDIA H100. GyroFlow (probe) uses latent-space probing without 5D decoding; GyroFlow (decode) uses the full decode path. Best bold , second underlined.                                                                                              
+
+> Method 5D ¯QRMSE ↓W(ky)PC ↑Q(ky)PC ↑Runtime ↓
+> [in ms]
+> ID OOD ID OOD ID OOD
+> Quasilinear ✗56 .68 ±14 .09 56 .06 ±14 .35 0.0346 ±0.1075 0.0837 ±0.1124 0.5260 ±0.3757 0.5826 ±0.3331 <0.1
+> GPR ✗36 .95 ±9.24 25 .89 ±8.78 ————<0.1
+> GyroSwin (warm) ✓18 .35 ±13 .58 26 .43 ±21 .09 0.9689 ±0.0495 0.9737 ±0.0167 0.4774 ±0.3097 0.6133 ±0.3200 985 .6
+> GyroSwin (cold) ✓30 .37 ±19 .11 33 .15 ±22 .66 0.9671 ±0.0532 0.9766 ±0.0134 0.2144 ±0.2188 0.2992 ±0.3113 20036 .3
+> VAE ✓106 .30 ±32 .30 112 .80 ±44 .07 0.9663 ±0.0542 0.9728 ±0.0169 0.4753 ±0.1921 0.4994 ±0.2427 18.9 VQ-VAE (rand) ✓74 .78 ±29 .96 72 .47 ±32 .25 0.9687 ±0.0503 0.9742 ±0.0166 0.5297 ±0.1826 0.5999 ±0.1878 21.9 VQ-VAE (AR) ✓52 .99 ±24 .12 45 .31 ±22 .82 0.9748 ±0.0407 0.9781 ±0.0172 0.8124 ±0.1850 0.9112 ±0.0685 132.6
+> GyroFlow (probe) ✗14 .40 ±10 .31 17 .43 ±11 .80 0.9812 ±0.0320 0.9815 ±0.0186 0.5916 ±0.2330 0.6845 ±0.2427 18.5 GyroFlow (decode) ✓14 .36 ±9.41 16 .38 ±7.06 0.9697 ±0.0506 0.9747 ±0.0175 0.9738 ±0.0172 0.8753 ±0.1001 35.6
+
+Latent probing. A linear probe πη is a linear regression model fit on GyroFlow latents. It maps directly to ¯Q, W (ky ) and Q(ky ), bypassing both Dψ and the integrals from 5D to integrated quanti-ties (Equation (12)). Concretely, we first apply PCA then perform Ridge regression on a training-set of (latents, ¯Q/W (ky )/Q(ky )) pairs. We call this method GyroFlow (probe), which trades accuracy for lower cost compared to GyroFlow (decode). 
+
+5.2 Downstream physics accuracy 
+
+We evaluate GyroFlow on three time-averaged transport quantities: ¯Q, the binormal potential spec-trum W (ky ), and the flux spectrum Q(ky ). The latent nature of our method admits two routes, either decoding ˆf = Dψ (z1) or probing the latent directly. Table 1 includes both, but unless reported dif-ferently we decode to the 5D space. The table is grouped in three parts, with reduced-order models at the top, autoregressive surrogates in the middle, and generative approaches at the bottom. GyroFlow (probe) and GyroFlow (decode) achieve the lowest ¯QRMSE on both ID and OOD splits, re-ducing the ¯QRMSE of GyroSwin at a significantly lower inference cost and most importantly without the need for a semi-saturated, “warm” initial condition. It is also worth noting that all non-generative baselines were either solely trained on time-averaged heat flux (reduced-order models) or explicitly finetuned on it (GyroSwin flux head). Generative baselines rely on the field integrals (Section A.4 in appendix) to produce all derived quantities. On the spectra, the probed latent reaches the highest W (ky ) Pearson correlation on both splits. Conversely, GyroFlow (decode) is on-par with other methods on W (ky ), while performing the best on the in-distribution Q(ky ) correlation. Quasilinear performs poorly on W (ky ) as it cannot capture the required turbulent nonlinear interactions. Since GPR directly maps to the nonlinear heat fluxes, it cannot be evaluated on the spectra. We also report Pointwise RMSE and Wasserstein-distance in Table 8 in Section G.2 in the appendix. The reduced-order baselines and the latent generative baselines (VAE, VQ-VAE) consistently perform worse on both the time-averaged heat flux as well as the spectra. 
+
+Single-parameter sensitivity scans. We investigate whether the model has learned a smooth and physically consistent attractor manifold. To that end, we sweep each component of c independently across a wide ID and OOD support, with the other three fixed. See Section C in appendix for details. This generalization is non-trivial as the model is being pushed far outside of its training domain. Figure 2 shows that GyroFlow reproduces the expected ITG thresholding behavior even in regimes absent or underrepresented in the dataset. This dataset is heavily skewed toward high R/L T ranges, and thus highly turbulent regions. Figure 2 includes the training distribution across parameters and flux in gray, highlighting the gaps in training data and the robustness of our method. Surprisingly, GyroFlow even captures unseen near-zero fluxes at low R/L T which are entirely unseen during training. This finding is consistent with generalization behavior for other conditioning parameters. 72.5 5.0 7.5 10.0 12.5             
+
+> R/LT
+> 0
+> 20
+> 40
+> 60
+> 80
+> average flux ̄  Q
+> 0246
+> R/Ln
+> 15
+> 30
+> 45
+> 60
+> 12345̂
+> s
+> 0
+> 50
+> 100
+> 150
+> 200
+> 2468
+> q
+> 0
+> 20
+> 40
+> 60
+> 80
+> train
+> N
+> train
+> N
+> train
+> N
+> train
+> N
+> train
+> N
+> train
+> N
+> train
+> N
+> train
+> N̂
+> QGyroFlow ̄QGT training distribution
+
+Figure 2: Single-param ¯Q scans along each of the four conditioning axes. Green ⋄: mean of Gy-roFlow samples, violins represent distribution of K=64 draws. Dark ◦: reference. Dark shade: training distribution over flux and each parameter. 
+
+Runtime. Table 1 reports wall-clock time on a single NVIDIA H100 to produce 64 samples. For GyroSwin (warm) we roll forward for 64 saturated-phase steps. We exclude the ∼25 -30 min GKW spin-up required to reach saturation from the reported runtime. GyroSwin (cold) instead times the full rollout from a random perturbation through the transient plus 64 steps, and ends up in an entirely different regime as it needs many more autoregressive calls. Per-call cost of QuaLiKiz and GPR is negligible relative to all other methods. GyroFlow attains the best performance but is orders of magnitude faster than autoregressive surrogates. 
+
+5.3 Distributional quality and warm-start 
+
+Since draws from GyroFlow are i.i.d. samples of the saturated distribution rather than predictions of a specific reference, evaluating generative quality requires a distributional metric. We compare two complementary views, (i) warm-start dynamics in physical space (the solver is initialized from ˆf and we measure how close the resulting stationary marginal is to the reference) and (ii) FGyD, introduced in Section 4.5. We find that both are cross-correlated as well as correlated to the downstream metrics. 
+
+Warm-starts and similarity to attractor. A generated ˆf can replace the random initial condition of numerical solvers. If ˆf already lies close to the attractor Pc, the linear-to-nonlinear transient is shortened or completely removed. To quantify this, for each held-out c we draw R=5 indepen-dent generations from GyroFlow, integrate each with gyaradax for T ≪ TGT steps and pair all R
+
+warm-started rollouts ( Sw 
+
+> c
+
+) with the corresponding tail of a fully saturated reference run ( Sr 
+
+> c
+
+). At every binormal mode index ℓ ∈ { 1, . . . , n ky }, the spectrum component Sℓ(t) is a scalar time series (over the rolled, warm started integration). We compare the empirical distribution functions (CDFs) 
+
+ˆF wℓ , ˆF rℓ with the non-parametric two-sample Kolmogorov-Smirnov (KS) statistic (Massey, 1951) and mean across modes: 
+
+Dℓ = sup 
+
+> x∈R
+
+ˆF wℓ (x) − ˆF rℓ (x) ∈ [0 , 1] , DS (c) = 1
+
+nky
+
+> nky
+
+X
+
+> ℓ=1
+
+Dℓ.
+
+Table 2: Distributional generation quality from both (a) warm-start Kolmogorov-Smirnov DS and 
+
+(b) FGyD at three GyroSwin U-Net depths. Lower is better, best in bold and second underlined. 
+
+Method DW (ky ) ↓ DQ(ky ) ↓
+
+Nearest c 0.363 0.267 VAE 0.659 0.471 VQ-VAE (rand) 0.642 0.513 VQ-VAE (AR) 0.688 0.497 
+
+GyroFlow 0.349 0.248 
+
+(a) Warm-start KS statistic DS .Method skip L=2 flux head ϕ decoder VAE 5.3e+03 99.3 1.7e+05 VQ-VAE (rand) 4.6e+03 105.0 1.8e+05 VQ-VAE (AR) 2.5e+03 66.9 1.3e+05 
+
+GyroFlow 2.4e+03 52.5 3.2e+05 (b) FGyD per method at the three depths. 
+
+8Dℓ = 0 for identical empirical CDFs and Dℓ = 1 for disjoint ones. The per-mode evaluation mitigates the bias introduced by the very high magnitude low-ky range ( ∼ 2−3 orders of magnitude larger than the high-ky ). Details are provided in Section F in the appendix. We include the nearest neighbor in the training set according to operating parameters in the comparison to the warm-restart. The results are shown in Table 2a. GyroFlow attains the lowest DS on both spectra across generative methods. 
+
+Generation quality. For each held-out c we draw K = 64 samples { ˆf (k)} and extract features 
+
+h(k) = gξ ( ˆf (k), c) from the frozen GyroSwin encoder, with the reference set produced by passing ground-truth samples at the same c through gξ . Table 2b reports FGyD at three U-Net depths, namely the deepest skip L=2 (coarsest 5D resolution level of GyroSwin), the flux head activation (before the final scalar flux projection), and the ϕ decoder (electrostatic potential reconstruction branch). 
+
+Figure 3: Correlation between FGyD and warm-start KS (left) and flux RMSE (right). GyroFlow attains the best FGyD at skip 
+
+L=2 and the flux head, in line with its lead on ¯Q and Q(ky ) in Table 1, indicating strong 5D generation quality. It is worse at the ϕ decoder, matching the weaker W (ky )
+
+spectra reconstruction (Table 1) which is itself a ϕ-derived quantity. The quantita-tive alignment between FGyD and the cor-responding physical observable supports its use as a quantitative diagnostic. To further drive this point and as a veri-fication of both distributional metrics, we cross-validate them by pairing DS and FGyD per held-out c. Figure 3 (left) reports a positive corre-lation, suggesting that latent-space distance in the GyroSwin features is linked to attractor proximity of the generated warm start candidates. A similar pattern is observed when pairing FGyD on the flux head to the time-averaged flux RMSE (Figure 3, right). 
+
+## 6 Discussion and Conclusion 
+
+We introduced GyroFlow, a conditional latent flow-matching model that bypasses the transient of gyrokinetic simulations by leveraging the ergodicity assumption. Therefore it can directly sample from the statistical 5D steady state the simulation naturally converges to. On the cyclone-base case ITG benchmark, GyroFlow sets a new state of the art for heat flux prediction while providing a speedup of an order of magnitude. Linear probing on the diffused latent space attains comparable accuracy while providing another two-fold speedup. Furthermore, we demonstrate that GyroFlow can extrapolate along parameter regions it has not been trained on, indicating that it has learned to successfully traverse the latent attractor manifold. Finally, we propose FGyD, a distributional metric computed in the latent space of a pretrained gyrokinetic surrogate. By warm-starting the numerical solver with generated snapshots, we show that FGyD correlates with the spectral divergence of the resulting rollouts, validating it as a solver-free proxy for generation quality. 
+
+Limitations and future directions. The current dataset is electrostatic, single-species, and lo-cal flux-tube. The most direct line of follow-up is to scale GyroFlow to other physical regimes, namely electromagnetic fluctuations at low and high β, collisionality, and heterogeneous solvers (e.g. CGYRO Candy et al. (2016), GENE (Kotschenreuther & Rogers, 2000)). This requires both a heterogeneous training corpus and conditioning on additional dimensionless parameters. A second axis is integration with transport modeling frameworks. Pairing GyroFlow with JINTRAC (Ro-manelli et al., 2014), TORAX (Citrin et al., 2024) or PORTALS (Rodriguez-Fernandez et al., 2024) would replace tens of thousands of numerical solver calls while ensuring significantly better accu-racy than the currently used reduced-order alternatives (Hornsby et al., 2024; Zanisi et al., 2025; Citrin et al., 2024), taking a step toward real-time transport prediction in reactor design loops. 9Acknowledgments and Disclosure of Funding 
+
+This work has been funded by the Fusion Futures Programme. As announced by the UK Government in October 2023, Fusion Futures aims to provide holistic support for the development of the fusion sector. The ELLIS Unit Linz, the LIT AI Lab, the Institute for Machine Learning, are supported by the Federal State Upper Austria. We thank the projects FWF AIRI FG 9-N (10.55776/FG9), AI4GreenHeatingGrids (FFG- 899943), Stars4Waters (HORIZON-CL6-2021-CLIMATE-01-01), FWF Bilateral Artificial Intelligence (10.55776/COE12). We thank NXAI GmbH, Audi AG, Merck Healthcare KGaA, GLS (Univ. Waterloo), TÜV Holding GmbH, Software Competence Center Hagenberg GmbH, dSPACE GmbH, TRUMPF SE + Co. KG. We acknowledge EuroHPC Joint Un-dertaking for awarding us access to Leonardo at CINECA, Italy, and Deucalion at MACC, Portugal. The authors acknowledge the use of resources provided by the Isambard-AI National AI Research Resource (AIRR). Isambard-AI is operated by the University of Bristol and is funded by the UK Government’s Department for Science, Innovation and Technology (DSIT) via UK Research and Innovation; and the Science and Technology Facilities Council [ST/AIRR/I-A-I/1023]. 
+
+## References 
+
+Michael S. Albergo, Nicholas M. Boffi, and Eric Vanden-Eijnden. Stochastic interpolants: A unify-ing framework for flows and diffusions, 2023. Mikołaj Bi´ nkowski, Danica J. Sutherland, Michael Arbel, and Arthur Gretton. Demystifying MMD GANs. In International Conference on Learning Representations, 2018. C Bourdelle. Integrated modelling of tokamak plasmas: progress and challenges towards iter opera-tion and reactor design. Plasma Physics and Controlled Fusion, 67(4):043001, April 2025. ISSN 1361-6587. doi: 10.1088/1361-6587/adc484. C. Bourdelle, X. Garbet, F. Imbeaux, A. Casati, N. Dubuit, R. Guirlet, and T. Parisot. A new gyrokinetic quasilinear transport model applied to particle transport in tokamak plasmas. Physics of Plasmas, 14(11):112501, 11 2007. ISSN 1070-664X. doi: 10.1063/1.2800869. C. Bourdelle, A. Casati, X. Garbet, F. Imbeaux, J. Candy, F. Clairet, G. Dif-Pradalier, G. Falchetto, T. Gerbaud, V. Grandgirard, P. Hennequin, R. Sabot, Y. Sarazin, L. Vermare, and R. E. Waltz. Validity of quasi-linear transport model. In Proceedings of the 22nd IAEA Fusion Energy Conference, pp. 227, Vienna, Austria, 2008. International Atomic Energy Agency. Paper TH/P8-7. C Bourdelle, J Citrin, B Baiocchi, A Casati, P Cottier, X Garbet, and F Imbeaux and. Core turbulent transport in tokamak plasmas: bridging theory and experiment with QuaLiKiz. Plasma Physics and Controlled Fusion, 58(1):014036, December 2015. doi: 10.1088/0741-3335/58/1/014036. J. Candy, E.A. Belli, and R.V. Bravenec. A high-accuracy eulerian gyrokinetic solver for collisional plasmas. Journal of Computational Physics, 324:73–93, 2016. ISSN 0021-9991. Min Jin Chong and David Forsyth. Effectively unbiased FID and Inception score and where to find them. In IEEE Conference on Computer Vision and Pattern Recognition, 2020. J Citrin, C Bourdelle, F J Casson, C Angioni, N Bonanomi, Y Camenen, X Garbet, L Garzotti, T Görler, O Gürcan, F Koechl, F Imbeaux, O Linder, K van de Plassche, P Strand, and G Szepesi and. Tractable flux-driven temperature, density, and rotation profile evolution with the quasilinear gyrokinetic transport model QuaLiKiz. Plasma Physics and Controlled Fusion, 59(12):124005, November 2017. doi: 10.1088/1361-6587/aa8aeb. J. Citrin, P. Trochim, T. Goerler, D. Pfau, K. L. van de Plassche, and F. Jenko. Fast transport simulations with higher-fidelity surrogate models for ITER. Physics of Plasmas, 30(6), jun 2023. doi: 10.1063/5.0136752. Jonathan Citrin, Ian Goodfellow, Akhil Raju, Jeremy Chen, Jonas Degrave, Craig Donner, Federico Felici, Philippe Hamel, Andrea Huber, Dmitry Nikulin, David Pfau, Brendan Tracey, Martin Riedmiller, and Pushmeet Kohli. Torax: A fast and differentiable tokamak transport simulator in jax, 2024. 10 B. Coppi, M. N. Rosenbluth, and R. Z. Sagdeev. Instabilities due to temperature gradients in com-plex magnetic field configurations. The Physics of Fluids, 10(3):582–587, 03 1967. ISSN 0031-9171. doi: 10.1063/1.1762151. Quan Dao, Hao Phung, Binh Nguyen, and Anh Tran. Flow matching in latent space, 2023. Prafulla Dhariwal and Alexander Nichol. Diffusion models beat GANs on image synthesis. Advances in neural information processing systems, 34:8780–8794, 2021. A. M. Dimits, G. Bateman, M. A. Beer, B. I. Cohen, W. Dorland, G. W. Hammett, C. Kim, J. E. Kinsey, M. Kotschenreuther, A. H. Kritz, L. L. Lao, J. Mandrekas, W. M. Nevins, S. E. Parker, A. J. Redd, D. E. Shumaker, R. Sydora, and J. Weiland. Comparisons and physics basis of tokamak transport models and turbulence simulations. Physics of Plasmas, 7(3):969–983, 03 2000a. ISSN 1070-664X. doi: 10.1063/1.873896. A. M. Dimits, G. Bateman, M. A. Beer, B. I. Cohen, W. Dorland, G. W. Hammett, C. Kim, J. E. Kinsey, M. Kotschenreuther, A. H. Kritz, L. L. Lao, J. Mandrekas, W. M. Nevins, S. E. Parker, A. J. Redd, D. E. Shumaker, R. Sydora, and J. Weiland. Comparisons and physics basis of tokamak transport models and turbulence simulations. Physics of Plasmas, 7(3):969–983, 03 2000b. ISSN 1070-664X. doi: 10.1063/1.873896. Patrick Esser, Sumith Kulal, Andreas Blattmann, Rahim Entezari, Jonas Müller, Harry Saini, Yam Levi, Dominik Lorenz, Axel Sauer, Frederic Boesel, Dustin Podell, Tim Dockhorn, Zion En-glish, Kyle Lacey, Alex Goodwin, Yannik Marek, and Robin Rombach. Scaling rectified flow transformers for high-resolution image synthesis, 2024. Christoph Federrath and Ralf S. Klessen. The star formation rate of turbulent magnetized clouds: Comparing theory, simulations, and observations. The Astrophysical Journal, 761(2):156, 2012. doi: 10.1088/0004-637X/761/2/156. Gianluca Galletti, Gerald Gutenbrunner, Sandeep S. Cranganore, William Hornsby, Lorenzo Zanisi, Naomi Carey, Stanislas Pamela, Johannes Brandstetter, and Fabian Paischer. Physics-informed neural compression of high-dimensional plasma data, 2026a. Gianluca Galletti, Eric Volkmann, and Johannes Brandstetter. gyaradax: Local gyrokinetics jax code, 2026b. Han Gao, Luning Li, Xuhui Jiao, and Anima Anandkumar. Bayesian conditional diffusion models for versatile spatiotemporal turbulence generation. Computer Methods in Applied Mechanics and Engineering, 427:117023, 2024. Alex Henry, Prudhvi Raj Dachapally, Shubham Pawar, and Yuxuan Chen. Query-key normalization for transformers, 2020. Martin Heusel, Hubert Ramsauer, Thomas Unterthiner, Bernhard Nessler, and Sepp Hochreiter. Gans trained by a two time-scale update rule converge to a local nash equilibrium. In Advances in Neural Information Processing Systems, 2017. Jonathan Ho, Ajay Jain, and Pieter Abbeel. Denoising diffusion probabilistic models. Advances in neural information processing systems, 33:6840–6851, 2020. Mitsuru Honda, Emi Narita, Shinya Maeyama, and Tomo-Hiko Watanabe. Multimodal convo-lutional neural networks for predicting evolution of gyrokinetic simulations. Contributions to Plasma Physics, 63(5-6):e202200137, 2023. doi: https://doi.org/10.1002/ctpp.202200137. W. A Hornsby, A. Gray, J. Buchanan, B. S. Patel, D. Kennedy, F. J. Casson, C. M. Roach, M. B. Lykkegaard, H. Nguyen, N. Papadimas, B. Fourcin, and J. Hart. Gaussian process regression models for the properties of micro-tearing modes in spherical tokamaks. Physics of Plasmas, 31 (1), jan 2024. ISSN 1089-7674. doi: 10.1063/5.0174478. K. Itoh, S.-I. Itoh, P. H. Diamond, T. S. Hahm, A. Fujisawa, G. R. Tynan, M. Yagi, and Y. Nagashima. Physics of zonal flowsa). Physics of Plasmas, 13(5):055502, 05 2006. ISSN 1070-664X. doi: 10.1063/1.2178779. 11 Tero Karras, Miika Aittala, Timo Aila, and Samuli Laine. Elucidating the design space of diffusion-based generative models. In Advances in Neural Information Processing Systems 35, 2022. D. Kennedy, M. Giacomin, F.J. Casson, D. Dickinson, W.A. Hornsby, B.S. Patel, and C.M. Roach. Electromagnetic gyrokinetic instabilities in step. Nuclear Fusion, 63(12):126061, nov 2023. ISSN 1741-4326. doi: 10.1088/1741-4326/ad08e7. C.K. Kiefer, C. Angioni, G. Tardini, N. Bonanomi, B. Geiger, P. Mantica, T. Pütterich, E. Fable, P.A. Schneider, ASDEX Upgrade Team , EUROfusion MST1 Team , and JET Contributors . Validation of quasi-linear turbulent transport models against plasmas with dominant electron heating for the prediction of iter pfpo-1 plasmas. Nuclear Fusion, 61(6):066035, may 2021. doi: 10.1088/1741-4326/abfc9c. Diederik P. Kingma and Max Welling. Auto-encoding variational bayes. In Yoshua Bengio and Yann LeCun (eds.), 2nd International Conference on Learning Representations, ICLR 2014, Banff, AB, Canada, April 14-16, 2014, Conference Track Proceedings, 2014. Georg Kohl, Li-Wei Chen, and Nils Thuerey. Turbulent flow simulation using autoregressive condi-tional diffusion models. arXiv preprint arXiv:2309.01745, 2023. M Kotschenreuther and BN Rogers. Electron temperature gradient driven turbulence. Physics of plasmas, 7(5):1904–1910, 2000. John A. Krommes. The gyrokinetic description of microturbulence in magnetized plasmas. Annual Review of Fluid Mechanics, 44(Volume 44, 2012):175–201, 2012. ISSN 1545-4479. doi: https: //doi.org/10.1146/annurev-fluid-120710-101223. Marten Lienen, David Lüdke, Jan Hansen-Palmus, and Stephan Günnemann. From zero to tur-bulence: Generative modeling for 3d flow simulation. In Proceedings of the 12 th International Conference on Learning Representations, 2024. Mario Lino, Tobias Pfaff, and Nils Thuerey. Learning distributions of complex fluid simulations with diffusion graph networks. In International Conference on Learning Representations, 2025. Yaron Lipman, Ricky T. Q. Chen, Heli Ben-Hamu, Maximilian Nickel, and Matthew Le. Flow matching for generative modeling. In Proceedings of the 11th International Conference on Learning Representations, 2023. Phillip Lippe, Bastiaan S Veeling, Paris Perdikaris, Richard E Turner, and Johannes Brandstetter. PDE-refiner: Achieving accurate long rollouts with neural PDE solvers. Advances in Neural Information Processing Systems, 2024. Qiang Liu and Nils Thuerey. Uncertainty-aware surrogate models for airfoil flow simulations with denoising diffusion probabilistic models. AIAA Journal, 2024. Xingchao Liu, Chengyue Gong, and Qiang Liu. Flow straight and fast: Learning to generate and transfer data with rectified flow. In The Eleventh International Conference on Learning Representations, 2023. Frank J. Massey. The Kolmogorov–Smirnov test for goodness of fit. Journal of the American Statistical Association, 46(253):68–78, 1951. doi: 10.1080/01621459.1951.10500769. S. Van Mulders, F. Felici, O. Sauter, J. Citrin, A. Ho, M. Marin, and K.L. van de Plassche. Rapid optimization of stationary tokamak plasmas in RAPTOR: demonstration for the ITER hybrid scenario with neural network surrogate transport model QLKNN. Nuclear Fusion, 61(8):086019, July 2021. doi: 10.1088/1741-4326/ac0d12. E. Narita, M. Honda, S. Maeyama, and T.-H. Watanabe. Toward efficient runs of nonlinear gyroki-netic simulations assisted by a convolutional neural network model recognizing wavenumber-space images. Nuclear Fusion, 62(8):086037, jun 2022. doi: 10.1088/1741-4326/ac70e8. Fabian Paischer, Gianluca Galletti, William Hornsby, Paul Setinek, Lorenzo Zanisi, Naomi Carey, Stanislas Pamela, and Johannes Brandstetter. Gyroswin: 5d surrogates for gyrokinetic plasma turbulence simulations. In The Thirty-ninth Annual Conference on Neural Information Processing Systems, 2025. 12 William Peebles and Saining Xie. Scalable diffusion models with transformers. In IEEE/CVF International Conference on Computer Vision, ICCV 2023, Paris, France, October 1-6, 2023, pp. 4172–4182. IEEE, 2023. doi: 10.1109/ICCV51070.2023.00387. A.G. Peeters, Y. Camenen, F.J. Casson, W.A. Hornsby, A.P. Snodin, D. Strintzi, and G. Szepesi. The nonlinear gyro-kinetic flux tube code gkw. Computer Physics Communications, 180(12): 2650–2672, 2009. ISSN 0010-4655. doi: https://doi.org/10.1016/j.cpc.2009.07.001. 40 YEARS OF CPC: A celebratory issue focused on quality software for high performance, grid and novel computing architectures. Ethan Perez, Florian Strub, Harm de Vries, Vincent Dumoulin, and Aaron Courville. Film: Visual reasoning with a general conditioning layer. In AAAI, 2018. Heinz Pitsch. Large-eddy simulation of turbulent combustion. Annu. Rev. Fluid Mech., 38(1): 453–482, 2006. Stephen B Pope. Turbulent flows. Cambridge University Press, 2000. Ilan Price, Alvaro Sanchez-Gonzalez, Ferran Alet, Tom R. Andersson, Andrew El-Kadi, Do-minic Masters, Timo Ewalds, Jacklynn Stott, Shakir Mohamed, Peter Battaglia, Remi Lam, and Matthew Willson. GenCast: Diffusion-based ensemble forecasting for medium-range weather, 2023. Zihan Qiu, Zekun Wang, Bo Zheng, Zeyu Huang, Kaiyue Wen, Songlin Yang, Rui Men, Le Yu, Fei Huang, Suozhi Huang, Dayiheng Liu, Jingren Zhou, and Junyang Lin. Gated attention for large language models: Non-linearity, sparsity, and attention-sink-free, 2025. P. Rodriguez-Fernandez, N. T. Howard, A. Saltzman, S. Kantamneni, J. Candy, C. Holland, M. Ba-landat, S. Ament, and A. E. White. Enhancing predictive capabilities in fusion burning plasmas through surrogate-based optimization in core transport solvers, 2024. M Romanelli, G Corrigan, V Parail, Sven Wiesen, Roberto Ambrosino, P Da Silva Aresta Belo, Luca Garzotti, P Harting, F Köchl, Tuomas Koskela, L Lauro-Taroni, Chiara Marchetto, Massimiliano Mattei, E Militello-Asp, M Nave, Stanislas Pamela, A Salmi, P Strand, and G Szepesi. JINTRAC: A system of codes for integrated simulation of tokamak scenarios. Plasma and Fusion Research, 9, 01 2014. doi: 10.1585/pfr.9.3403023. Robin Rombach, Andreas Blattmann, Dominik Lorenz, Patrick Esser, and Björn Ommer. High-resolution image synthesis with latent diffusion models. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition, pp. 10684–10695, 2022. François Rozet and Gilles Louppe. Score-based data assimilation, 2023. Salva Rühling Cachay, Bo Zhao, Hailey Joren, and Rose Yu. DYffusion: A dynamics-informed diffusion model for spatiotemporal forecasting. Advances in Neural Information Processing Systems, 36, 2024. Jeffrey Slotnick, Abdollah Khodadoust, Juan Alonso, David Darmofal, William Gropp, Elizabeth Lurie, and Dimitri Mavriplis. CFD Vision 2030 Study: A Path to Revolutionary Computational Aerosciences. Technical Report NASA/CR-2014-218178, NASA Langley Research Center, 2014. Jiaming Song, Chenlin Meng, and Stefano Ermon. Denoising diffusion implicit models. In Proceedings of the 9th International Conference on Learning Representations, 2021. Yang Song and Stefano Ermon. Improved techniques for training score-based generative models. Advances in neural information processing systems, 33:12438–12448, 2020. G. Staebler, C. Bourdelle, J. Citrin, and R. Waltz. Quasilinear theory and modelling of gy-rokinetic turbulent transport in tokamaks. Nuclear Fusion, 64(10):103001, sep 2024. doi: 10.1088/1741-4326/ad6ba5. G. M. Staebler and J. E. Kinsey. Electron collisions in the trapped gyro-landau fluid transport model. Physics of Plasmas, 17(12), dec 2010. ISSN 1089-7674. doi: 10.1063/1.3505308. 13 G. M. Staebler, J. E. Kinsey, and R. E. Waltz. A theory-based transport model with comprehensive physics. Physics of Plasmas, 14(5), may 2007. ISSN 1089-7674. doi: 10.1063/1.2436852. Christian Szegedy, Sergey Ioffe, Vincent Vanhoucke, and Alex Alemi. Inception-v4, inception-resnet and the impact of residual connections on learning, 2016. Chameleon Team. Chameleon: Mixed-modal early-fusion foundation models, 2025. Alexander Tong, Kilian Fatras, Nikolay Malkin, Guillaume Huguet, Yanlei Zhang, Jarrid Rector-Brooks, Guy Wolf, and Yoshua Bengio. Improving and generalizing flow-based generative models with minibatch optimal transport, 2024. K. L. van de Plassche, J. Citrin, C. Bourdelle, Y. Camenen, F. J. Casson, V. I. Dagnelie, F. Felici, A. Ho, S. Van Mulders, and JET Contributors. Fast modeling of turbulent transport in fusion plasmas using neural networks. Physics of Plasmas, 27(2):022310, 02 2020. ISSN 1070-664X. doi: 10.1063/1.5134126. Aaron van den Oord, Oriol Vinyals, and koray kavukcuoglu. Neural discrete representation learning. In I. Guyon, U. Von Luxburg, S. Bengio, H. Wallach, R. Fergus, S. Vishwanathan, and R. Garnett (eds.), Advances in Neural Information Processing Systems, volume 30. Curran Associates, Inc., 2017. Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. In Isabelle Guyon, Ulrike von Luxburg, Samy Bengio, Hanna M. Wallach, Rob Fergus, S. V. N. Vishwanathan, and Roman Garnett (eds.), Advances in Neural Information Processing Systems 30: Annual Conference on Neural Information Processing Systems 2017, December 4-9, 2017, Long Beach, CA, USA, pp. 5998–6008, 2017. Chenguang Wan, Youngwoo Cho, Zhisong Qu, Yann Camenen, Robin Varennes, Kyungtak Lim, Kunpeng Li, Jiangang Li, Yanlong Li, and Xavier Garbet. A high-fidelity surrogate model for the ion temperature gradient (itg) instability using a small expensive simulation dataset. Nuclear Fusion, 65(5):054001, apr 2025. doi: 10.1088/1741-4326/adc7c9. Thomas Wolf, Lysandre Debut, Victor Sanh, Julien Chaumond, Clement Delangue, Anthony Moi, Pierric Cistac, Tim Rault, Rémi Louf, Morgan Funtowicz, et al. Transformers: State-of-the-art natural language processing. In Proceedings of the 2020 conference on empirical methods in natural language processing: system demonstrations, pp. 38–45, 2020. Wilson Yan, Yunzhi Zhang, Pieter Abbeel, and Aravind Srinivas. Videogpt: Video generation using vq-vae and transformers, 2021. Ling Yang, Zhilong Zhang, Yang Song, Shenda Hong, Runsheng Xu, Yue Zhao, Wentao Zhang, Bin Cui, and Ming-Hsuan Yang. Diffusion models: A comprehensive survey of methods and applications, 2025. L. Zanisi, A. Ho, J. Barr, T. Madula, J. Citrin, S. Pamela, J. Buchanan, F.J. Casson, and V. Gopakumar. Efficient training sets for surrogate models of tokamak turbulence with ac-tive deep ensembles. Nuclear Fusion, 64(3):036022, February 2024. ISSN 1741-4326. doi: 10.1088/1741-4326/ad240d. Lorenzo Zanisi, Aaro Järvinen, Adam Kit, Amanda Bruncrona, Anushan Fernando, Bhavin Pa-tel, Catherine Siddle, Colin Roach, Daniel Jordan, Francis Casson, Frida Eriksson, Garud Snoep, Harry Dudding, James Buchanan, Jonathan Citrin, Luigi Quarantiello, Orso Meneghini, P. Hamel, Salvatore Correnti, Stanislas Pamela, T. Norman, Theodore Brown, Tom Neiser, and Vincenzo Lomonaco. Data-efficient digital twinning strategies and surrogate models of quasilinear turbu-lence in JET and STEP. In Proceedings of the 30th IAEA Fusion Energy Conference (FEC 2025), Chengdu, China, October 2025. International Atomic Energy Agency (IAEA). Paper ID: TH-C, Contribution 36059. 14 A Gyrokinetics 
+
+This appendix provides a term-by-term decomposition of the gyrokinetic Vlasov equation intro-duced in Equation (5). The presentation follows the standard δf formulation ( ?Krommes, 2012) in the local flux-tube limit, and the term numbering of Peeters et al. (2009), then the quantities of interest are presented. Each species satisfies the gyrokinetic equation: 
+
+∂f ∂t + ( v∥ b + vD ) · ∇ f − μB m
+
+B · ∇ BB2
+
+∂f ∂v ∥
+
+| {z }
+
+> Linear
+
++ vE · ∇ f
+
+| {z }
+
+> Nonlinear
+
+= S, (5) where b = B/B is the unit vector along the equilibrium magnetic field B, vD the magnetic drift, vE
+
+the E×B drift, and S collects collisional, source terms and numerical dissipation. See Appendix A for a detailed description of the gyrokinetic equation. The quantities of interest that can be extracted from gyrokinetics for downstream use are the electrostatic potentials, ϕ(t), and heat flux, Q(t), both defined as integrals of f (see Appendix A), as well as their spectra W (ky ) and Q(ky ) respectively. 
+
+A.1 The δf decomposition 
+
+The distribution function is split into a time-independent equilibrium Maxwellian and a fluctuating perturbation, 
+
+f = FM + δf (v∥, μ, s, k x, k y ; t). (6) The equilibrium Maxwellian encodes the background density n and temperature T through 
+
+FM = n
+
+(2 πT /m )3/2 exp 
+
+
+
+− m v 2
+
+2 T
+
+
+
+, (7) where m is the species mass. The normalised radial gradients of FM yield the temperature and den-sity gradient parameters R/L T and R/L n that enter the equilibrium drive and condition GyroFlow (Equation (10)). Substituting Equation (6) into the full gyrokinetic Vlasov equation and retaining terms to first order in δf /F M yields a closed evolution equation for δf . The individual terms of the resulting right-hand side are detailed below. 
+
+A.2 Right-hand side decomposition 
+
+Substituting Equation (6) into Equation (5) and separating linear from nonlinear contributions, the right-hand side groups into four categories: kinetic dynamics, energy drives, nonlinear advection, and numerical dissipation. The vE ·∇ f term of Equation (5) splits into the equilibrium drive (V), which is linear in ϕ, and the nonlinear advection (III). In the local flux-tube representation with spectral perpendicular coordinates (kx, k y ), the equation reads                                
+
+> ∂δf ∂t =−v∥∇∥δf −i(k⊥·vD)δf +μ∇∥B ∂δf ∂v ∥
+> |{z }
+> Kinetic dynamics (I, II, IV)
+> −vE·∇ FM−Ze F M
+> T
+>  v∥∇∥¯ϕ+i(k⊥·vD) ¯ϕ|{z }
+> Energy drives (V, VII, VIII)
+> −vE·∇ ⊥δf
+> |{z }
+> Nonlinear advection (III)
+> − D (δf )
+> |{z }
+> Dissipation
+
+(8) where ¯ϕ denotes the gyro-averaged electrostatic potential, vD the magnetic drift velocity, vE the 
+
+E ×B drift velocity, Ze the species charge, and D a numerical dissipation operator. Each category is described below. 
+
+Kinetic dynamics (I, II, IV). These terms describe the collisionless motion of guiding centres in the equilibrium magnetic geometry. Parallel advection (I) represents streaming along the magnetic field. The magnetic drift (II) arises from curvature and ∇B drifts perpendicular to the field. The 15 mirror term (IV) accounts for the parallel force exerted by gradients in the magnetic field magnitude, which leads to particle trapping in regions of low B. More explicitly, in s–α geometry, 
+
+∇∥ = 1
+
+q R ∂s, k2 
+
+> ⊥
+
+∝ 1 +   ˆs s − α sin s2. (9) so q rescales parallel dynamics and ˆs modulates the radial wavenumber along the field line. 
+
+Energy drives (V, VII, VIII). The equilibrium drive (V) couples the E × B drift to the radial gradient of the Maxwellian, providing the free-energy source for micro-instabilities. It is through this term that the normalised gradients R/L T and R/L n enter the equation: 
+
+vE · ∇ FM = vE · ˆr FM
+
+RLn
+
++
+
+ v2
+
+v2th 
+
+− 32
+
+ RLT
+
+!
+
+, (10) where vth is the thermal velocity. The field drives (VII, VIII) represent the linear response of the background distribution to the fluctuating electrostatic potential, coupling parallel streaming and magnetic drift to ¯ϕ.
+
+Nonlinear advection (III). The E×B advection of δf by the fluctuating electric field is responsi-ble for mode coupling, energy redistribution across spatial scales, and the development of saturated turbulence. It is the computationally dominant term and the one that distinguishes nonlinear from linear gyrokinetics. 
+
+Dissipation. A numerical dissipation operator D is added for stability, acting along the parallel and velocity coordinates and as spectral hyper-viscosity in the perpendicular plane. Its coefficients are chosen to damp grid-scale fluctuations without affecting the resolved physical scales. 
+
+Remark. Term VI in the convention of Peeters et al. (2009) is the neoclassical drive −vD ·∇ FM ,which couples the magnetic drift to equilibrium gradients and is relevant only for rotating or neo-classical plasmas. It is omitted in this work. 
+
+A.3 Quasineutrality and the field solver 
+
+The electrostatic potential ϕ is determined self-consistently from δf through the gyrokinetic quasineutrality condition. In Fourier space, for each perpendicular wavevector k⊥ = ( kx, k y ) and parallel position s,
+
+X
+
+> a
+
+Z2 
+
+> a
+
+na
+
+Ta
+
+(Γ a 
+
+> 0
+
+− 1) ˆϕ(k⊥, s ) = X
+
+> a
+
+Za
+
+Z
+
+Ja 
+
+> 0
+
+δf a B dv∥ dμ, (11) where the sum runs over species a with charge number Za, density na, and temperature Ta. The operator Ja 
+
+> 0
+
+= J0(k⊥ρa) is the zeroth-order Bessel function that performs the gyro-average, cor-responding to the operator J0 appearing in Equation (12). The quantity Γa 
+
+> 0
+
+= I0(ba) e−ba with 
+
+ba = k2
+
+> ⊥
+
+ρ2 
+
+> a
+
+is the velocity-space-integrated gyro-average, where I0 is the modified Bessel function of the first kind and ρa is the species gyroradius. Equation (11) is algebraic in ˆϕ and is solved at each evaluation of the right-hand side. In the adiabatic electron approximation used for the dataset in this work, only the ion species is evolved kinetically and the electron response is replaced by a Boltzmann relation, δn e/n e = e ϕ/T e. This simplifies the left-hand side of Equation (11) and removes the need to resolve the fast electron time scales, while retaining the essential ion-temperature-gradient-driven turbulence. 
+
+A.4 Integrals and diagnostics 
+
+The quantities of interest are the electrostatic potential ϕ(x, s, y ) and the scalar heat flux Q ∈ R.Following Peeters et al. (2009), both are velocity-space integrals of f ,
+
+ϕ = A
+
+Z
+
+J0 f dv∥dμ, Q =
+
+Z
+
+C
+
+Z
+
+v2 ϕ f dv∥dμ dx dy ds, (12) 16 where A, C ∈ Rx×s×y collect geometric and operating coefficients, v2 is the pointwise kinetic energy, and J0 is the zeroth-order Bessel envelope. Turbulence is diagnosed through binormal-direction wavespace spectra 
+
+W (ky ) = X
+
+> s, k x
+
+ˆϕ(kx, s, k y ) 2, Q(ky ) = X
+
+> v∥,μ, s, k x
+
+Q(v∥, μ, s, k x, k y ), (13) with ˆϕ the Fourier-space potential and Q the heat-flux field prior to the outer integral of Equa-tion (12). In the saturated regime the amplitude of radial transport is regulated by zonal flows at 
+
+ky = 0 (Itoh et al., 2006). The quantities of practical interest are time-averaged: ¯Q, Q(ky ), and 
+
+W (ky ).
+
+## B Data generation 
+
+We reuse the dataset introduced in Paischer et al. (2025). We summarise it here. All simulations are cyclone-base-case ion-temperature-gradient runs (Dimits et al., 2000a) generated with GKW (Peeters et al., 2009), parameterised by four dimensionless numbers from Section 4.1. Data collec-tion is performed in two passes. The first pass samples R/L T ∈ [3 , 12] , R/L n ∈ [1 , 7] , q ∈ [1 , 9] ,
+
+ˆs ∈ [0 .5, 5] , together with an initial-condition noise amplitude in [10 −5, 10 −3] and initial shape in 
+
+{sin , cos , random }. Out of 100 runs, only about half reach saturation. Following the sparsity of turbulent points in Figure 4, the second pass narrows the ranges to R/L T ∈ [6 , 12] , R/L n ∈ [0 , 2] ,
+
+q ∈ [5 , 9] , ˆs ∈ [0 .5, 2] , reducing the stabilising factors; all 200 runs of the second pass develop turbulence. After filtering, the dataset consists of roughly 250 saturated nonlinear trajectories. We hold out three for validation and six as an in-distribution test split, and retain 241 trajectories for training. Linear counterparts of each configuration are generated in parallel for the reduced-order baselines. 
+
+## C Single-parameter sensitivity scans 
+
+This appendix specifies the protocol for the ¯Q scans of Figure 2. 
+
+Operating points. Starting from a fixed strongly turbulent baseline ( R/L T =10 .17 , R/L n=2 .61 ,
+
+ˆs=3 .08 , q=4 .57 ), we sweep one of {R/L T , R/L n, ˆs, q } at a time on a K=6 -point linspace cover-ing a wide range of that parameter (even outside the training regime), holding the other three fixed. The 24 scan points are disjoint from the training and test trajectories of Section B, so each scan is a single-axis OOD probe. Table 3 lists every operating point, the swept value, and the GT saturated heat flux. 
+
+Reference solver. GT ¯Q at each scan point is obtained from gyaradax (Galletti et al., 2026b) (a GKW port) in the adiabatic-electron limit. Each run integrates for 318 time units from a cos 2-shaped IC. We report the saturated mean as the average flux over the last 96 time units. Three interior scan points hit a numerical NaN under the exact baseline parameters (sensitive boundary-of-aliasing configurations); we re-ran those with ∆ ∼ 1−5% jitter on the swept value (kept inside the linspace cell) and report the first stable run. One scan point ( ˆs=5 .00 ) failed to converge under any jitter inside the cell and is reported as NaN. 
+
+Plot. Figure 2 reports the mean of the 64 model samples (green ⋄ markers) and the per-sample distribution as a faint cloud at the same x. GT is the saturated mean from gyaradax (dark ◦ markers). With a gray shadow we report the histogram of training samples on flux and parameters. 
+
+## D Training and architecture details 
+
+This appendix collects the architectural and optimisation hyperparameters of GyroFlow and the three generative baselines introduced in Section 5. Unless stated otherwise, all models share the same Swin5D backbone of Section 4 and differ only in their bottleneck and the way the operating parameters c enter. In Table 5 the reconstruction RMSE of the autoencoders is listed, as well as the count of the parameters. 17 1          
+
+> 2
+> 3
+> 4
+> 5
+> s
+> 0
+> 2
+> 4
+> 6
+> R/Ln
+> 4
+> 6
+> 8
+> 10
+> 12
+> R/LT
+> 2.5 5.0 7.5
+> q
+> 0
+> 50
+> 100
+> 150
+> 200
+> Q
+> 24
+> s
+> 0246
+> R/Ln
+> 5.0 7.5 10.0
+> R/LT
+> 0100 200
+> Q
+
+Figure 4: Distribution of the four operating parameters ˆs, q, R/L n, R/L T and the resulting mean heat flux ¯Q across the dataset, after the two-pass sweep. Reproduced from Paischer et al. (2025). 
+
+D.1 Swin5D autoencoder 
+
+The encoder Eψ and decoder Dψ use a hierarchical Swin5D backbone of depth 8 with 16 attention heads per layer. Attention is computed locally over non-overlapping windows of size Mv∥ ×Ms ×
+
+Mx × My = 4 × 4 × 9 × 4, alternating standard and shifted-window partitions across consecutive blocks. The μ axis is folded into the channel dimension after a learned 1D positional embedding rather than attended over directly, which keeps attention 4-dimensional while still resolving the variable-amplitude μ shells. The bottleneck consists of two Transformer layers with four attention heads operating at the coarsest resolution after a linear down-projection to channel width dz = 256 .Both Eψ and Dψ are unconditional. Training uses an MSE reconstruction loss on the 2-channel real-space representation of f described in Section 4. 
+
+D.2 GyroSwin baselines: cold vs. warm ∗
+
+Table 1 lists two GyroSwin variants. GyroSwin (warm) ∗ is the public checkpoint of Paischer et al. (2025) 4. GyroSwin (cold) is a retraining of the same hierarchical Swin5D architecture by us, with the differences summarised in Table 4. 
+
+> 4https://huggingface.co/datasets/ml-jku/gyroswin_cbc_id_ood
+
+18 Table 3: All 24 scan points and their gyaradax saturated heat flux ¯QGT . Each block sweeps one operating parameter across the empirical min/max of the training corpus while the other three are held at the baseline.                                                            
+
+> point R/L TR/L nˆsq
+> swept value ¯QGT swept value ¯QGT swept value ¯QGT swept value ¯QGT
+> 01.060 0.00 0.004 45 .69 0.510 101 .33 1.000 0.00
+> 13.244 0.00 1.401 51 .71 1.408 83 .35 2.598 25 .35
+> 25.428 3.12 2.798 50 .52 2.306 78 .97 4.196 43 .75
+> 37.612 18 .38 4.196 41 .88 3.204 47 .05 5.794 58 .23
+> 49.796 43 .98 5.593 29 .55 4.102 33 .57 7.392 50 .33
+> 511 .980 85 .81 6.990 18 .56 5.000 NaN 8.990 48 .41
+
+Table 4: GyroSwin (cold) vs. GyroSwin (warm) ∗. Fields identical between the two (patch/window, depth, dz =1024 , two-stage protocol, fluxavg loss schedule, posttrain flux_conditioning ) are omitted.                                  
+
+> GyroSwin (cold) GyroSwin (warm) ∗
+> trajectory window (pretrain) full ( offset =0 )saturated ( offset =80 )inference IC random perturbation saturated snapshot norm RMSNorm LayerNorm modulation adaLN-Zero (DiT) FiLM gated attention / QK-norm yes / yes no / no #heads / head-dim 32 / 32 64 / 16 field normalization per-field, μ-decoupled global z-score nodes / batch 32 / 1024 / (GH200 ×4)4 / 128 / (H100 ×4)pretrain LR / clip 2.1×10 −4/0.13×10 −4/0.5
+> posttrain LR / clip 5×10 −5/0.13×10 −4/0.5
+> pretrain / posttrain epochs 500 / 200 500 / 200
+
+Two-stage training. Both checkpoints follow the same two-stage protocol: a pretraining stage that supervises one-step prediction of f and ϕ, and a posttraining stage that warm-starts from it, freezes everything outside the conditional flux head ( params_to_include=[flux] ), and supervises only the time-averaged scalar heat flux ¯Q via a loss schedule that ramps wf , w ϕ → 0 and w ¯Q → 1.
+
+Cold vs. warm trajectory window. The warm ∗ model is pretrained on windows starting after the linear-to-nonlinear transient, and is rolled out from a saturated snapshot. GyroSwin (cold) is pretrained on the full trajectories, exposing it to the entire ramp-up, and at inference is rolled out autoregressively from a small random perturbation through the transient until saturation, skipping the need for using a numerical solver for starting the rollout. 
+
+Architecture alignment with the autoencoder. We bring the GyroSwin backbone in line with the Swin5D autoencoder of Section 4, so the surrogate trained from the cold start uses the same stability axes as the AE that drives GyroFlow. Concretely, against the warm ∗ backbone we change 
+
+LayerNorm → RMSNorm , film → adaLN-Zero ( dit ), enable gated_attention and qk_norm ,and increase the head dimension from 16 to 32 (num_heads 64 →32 ; dz =1024 unchanged). The 5D patch and window partition and the network depth are unchanged. 
+
+Normalization. The warm ∗ model uses a single global z-score across all fields. GyroSwin (cold) uses the per-field, μ-decoupled scheme of Section 4 ( norm_decouple_mu=true , with f aggregated over (μ, s, v ∥, x, y ) and ϕ over (s, x, y )). 
+
+Optimization. Pretraining runs 500 epochs on 32 ×4 H100 GPUs at effective batch size 1024 ,AdamW with η=2 .1×10 −4, cosine schedule to ηmin =10 −6, gradient clip 0.1, bf16. Posttraining runs 200 further epochs (501-700) with η=5 ×10 −5, clip 0.1, and the backbone frozen. 19 Table 5: Reconstruction RMSE in physical (denormalised) units, evaluated for each autoencoder backbone underlying the latent generative models. Parameter counts in millions (M). ID and OOD entries denote the mean ± standard deviation across trajectories of the corresponding test split.                        
+
+> Method Params (M) Recon RMSE ↓¯QRMSE ↓
+> ID OOD ID OOD
+> AE 217.6 0.753 ±0.175 0.786 ±0.257 4.76 ±2.15 7.12 ±7.35
+> VAE 217.9 0.839 ±0.171 0.869 ±0.249 3.82 ±0.654 6.92 ±6.39
+> VQ-VAE 225.8 0.888 ±0.187 0.924 ±0.273 21 .6±9.723 .5±13 .4
+
+D.3 Latent generative models 
+
+All four generative models reuse the autoencoder of Section D.1; they differ in their bottleneck and in how c is injected. 
+
+VAE. A reparameterised Gaussian bottleneck with channel width dz = 256 . The KL weight is annealed cyclically from 0 to 0.2 over four cycles to mitigate posterior collapse, and the posterior log-variance is clamped to [−20 , 20] to avoid degenerate encodings. The encoder is unconditional; the decoder receives c through per-block adaptive layer normalization (adaLN) (Peebles & Xie, 2023). At inference, z ∼ N (0 , I ) is decoded with the test-time c.
+
+VQ-VAE. A vector-quantised bottleneck with an EMA-updated codebook of 8192 entries, em-bedding dimension 256 , and commitment loss weight 0.25 . The conditioning structure mirrors the VAE (unconditional encoder, adaLN-conditioned decoder). At inference, code indices are drawn independently from the empirical codebook distribution estimated on the training set, and decoded jointly with c. For the vector quantization we were using the implementation from 
+
+vector-quantize-pytorch 5.
+
+VQ-VAE + Transformer. The same VQ-VAE bottleneck, paired with a 12 -layer, 16 -head GPT-style causal Transformer with dmodel = 1024 trained on the code sequences. The cross-entropy objective uses label smoothing 0.1, and c is injected per layer via FiLM (Perez et al., 2018). Sampling is autoregressive with KV-caching, and the resulting index sequence is decoded by the frozen VQ-VAE decoder under the same c.
+
+GyroFlow. A plain autoencoder (no KL, no quantisation) with an unconditional encoder and de-coder, and a DiT that operates directly on the bottleneck tokens with no additional patching. The flow time t and the four entries of c are each lifted through a sinusoidal embedding and a shared MLP to a joint conditioning vector that modulates each DiT block via adaLN. Residual gates are zero-initialised so the DiT begins training as the identity. Architectural hyperparameters of the DiT are: depth 12 , 16 attention heads, dmodel = 1024 , MLP ratio 2.0, token input/output dimension 
+
+dz = 256 (matching the AE bottleneck), and drop-path 0.1. The flow time t and the four entries of 
+
+c are each lifted to 128 dimensions through a sinusoidal embedding ( ωk = 10 −4k/K ) followed by a SiLU MLP, concatenated, and broadcast to every block as the adaLN modulation signal. 
+
+D.4 Optimisation 
+
+The DiT and the autoregressive prior are trained with AdamW; the Swin5D autoencoders (AE, VAE, VQ-VAE) use Adam (PyTorch weight_decay added to the gradient, not decoupled). All runs use 
+
+β1 = 0 .9, β2 = 0 .999 , ϵ = 10 −8, weight decay 10 −6, gradient clipping at norm 1.0, and bf16 mixed precision. Learning rates and schedules differ across components and reflect the regimes in which each was found stable (Table 6). Table 6 also lists batch sizes and total epochs. For all autoencoders we observe early-training instabilities driven by large μ-shell amplitude im-balance; the per-shell normalization of Section 4 eliminates them. Without it, training of the larger Swin5D variants diverges within the first epoch. QK normalization and gated attention contribute smaller but consistent improvements at scale, in line with the LLM literature (Henry et al., 2020; Qiu et al., 2025). 
+
+> 5https://github.com/lucidrains/vector-quantize-pytorch
+
+20 Table 6: Optimisation hyperparameters for the autoencoder, the autoregressive prior over VQ-VAE codes, and the DiT used in GyroFlow. All runs use AdamW, weight decay 10 −6, gradient clipping at 1.0, and bf16 mixed precision.                 
+
+> Component Batch size Epochs Peak lr Schedule
+> Swin5D autoencoder (all variants) 512 400 3·10 −4cosine VQ-VAE Transformer prior 128 1000 1·10 −3OneCycle GyroFlow DiT 128 1000 5·10 −4cosine
+
+D.5 Flow-matching specifics 
+
+The DiT in GyroFlow is trained with the rectified flow-matching objective of Equation (3). As detailed in Section E, we draw the integration time from a logit-normal distribution ( τ ∼ N (0 , 1) ,
+
+t = σ(τ )) and pair noise with data within each minibatch via the optimal-transport assignment of Equation (15), solved with the Hungarian algorithm at O(B3) cost. Latents are rescaled by their average per-element standard deviation σz , estimated once over the training set, before flow matching. At inference we use N = 15 explicit-Euler steps on a uniform grid in [0 , 1] .
+
+D.6 Compute 
+
+All models are trained on NVIDIA GH200 GPUs (the gracehopper cluster, 4 GPUs per node), using bf16 mixed precision throughout. Table 7 summarises the per-component compute budget. Inference cost per sample is reported in Table 1. Table 7: Compute used for each training run, on NVIDIA GH200 120GB ( gracehopper cluster, 4 GPUs/node, bf16 mixed precision throughout). Wall-clock is end-to-end. The DiT and AR runs are single-GPU; the autoencoders use multi-node data parallelism (DeepSpeed ZeRO-2 for the AE, PyTorch DDP for the VAE/VQ-VAE).                                    
+
+> Run GPUs Parallelism Wall-clock GPU-hours Epochs
+> GyroFlow AE 32 DeepSpeed ZeRO-2 19 h ∼600 400 VAE 64 DDP 11 h ∼695 400 VQ-VAE 64 DDP 9 h ∼580 400 VQ-VAE Transformer prior (AR) 1–19 h ∼19 1000 GyroFlow DiT 1–24 h ∼24 1000
+
+## E Generative model details 
+
+This appendix expands the flow-matching construction of Section 4 and gives the pragmatic variance-reduction choices that make training on 5D plasma latents stable. 
+
+E.1 Stochastic interpolants and rectified flow 
+
+The stochastic-interpolant framework of Albergo et al. (2023) bridges two arbitrary densities ρ0 and 
+
+ρ1 on Rd exactly in finite time through a time-indexed interpolant 
+
+xt = α(t) x0 + β(t) x1 + γ(t) z, t ∈ [0 , 1] , (14) with x0 ∼ ρ0, x1 ∼ ρ1, and z ∼ N (0 , I ) an independent latent, subject to α(0) = β(1) = 1 and 
+
+α(1) = β(0) = γ(0) = γ(1) = 0 . The time-dependent density of xt satisfies a first-order transport equation together with a family of forward and backward Fokker–Planck equations with tunable diffusion, so the same marginal law can be realised either as an ODE or as an SDE of matching diffusion coefficient. The drift coefficients entering these equations are the unique minimisers of simple quadratic objectives estimable from samples of ρ0 and ρ1.We instantiate the spatially linear one-sided interpolant of Albergo et al. (2023, §4.4), which takes 
+
+ρ0 = N (0 , I ), α(t) = 1 − t, β(t) = t, γ ≡ 0, and selects the ODE branch with zero diffusion. Equation (14) then collapses to the straight-line path of Equation (2), and the target drift reduces 21 to the rectified-flow velocity u⋆(xt | x0, x 1) = x1 − x0 of Liu et al. (2023). In the flow-matching formulation of Lipman et al. (2023), this is the probability path induced by a Gaussian prior and an independent-pair coupling; we extend it below with an OT coupling that tightens this pairing. 
+
+E.2 Logit-normal time schedule 
+
+Uniform sampling of t ∼ U (0 , 1) oversamples the endpoints, where the target velocity is already close to x1 − x0 (near t=1 ) or close to the prior mean (near t=0 ). The intermediate regime, where the network has to disambiguate mode structure from noise, is in contrast undersampled. Following Esser et al. (2024), we draw τ ∼ N (0 , 1) and set t = σ(τ ) = (1 + e −τ )−1, which concentrates training density in t ≈ 0.5 and leaves the endpoints with lighter sampling. In practice we observe a clear reduction in training-loss variance and faster convergence at the same compute. 
+
+E.3 Optimal-transport minibatch coupling 
+
+The independent pairing (z(i)0 , z (i)1 ) sampled within a minibatch induces paths that frequently cross and produce high-variance velocity targets. Following Tong et al. (2024), we permute prior samples against data latents by solving the assignment problem 
+
+π⋆ = arg min 
+
+> π∈SB
+> B
+
+X
+
+> i=1
+
+z(π(i)) 0 − z(i)1 2, (15) where SB is the symmetric group on B elements, and use the matched pairs (z(π⋆(i)) 0 , z (i)1 ) in place of the independent ones. In practice we flatten each latent to a vector, build the Euclidean cost matrix, and solve Equation (15) with the Hungarian algorithm at O(B3) cost, which is negligible compared to a forward pass of vθ at small batch sizes. This pairing approximates the optimal-transport coupling between the empirical prior and empirical data measures, straightens the resulting paths, and shortens inference-time trajectories at fixed N .
+
+E.4 Inference 
+
+At inference time we draw z ∼ N (0 , I ) and integrate ˙z = vθ (z, t, c) with an explicit Euler scheme, 
+
+zk+1 = zk + ∆ t v θ (zk, t k, c), tk = k/N, ∆t = 1 /N, (16) on a uniform grid of N steps in [0 , 1] . The combination of rectified-flow straight paths, logit-normal time sampling, and OT-coupled training is known to shorten inference trajectories at fixed sample quality (Liu et al., 2023; Esser et al., 2024; Tong et al., 2024). 
+
+E.5 Choice of integration steps 
+
+Figure 5 reports ¯QRMSE and per-sample wall-clock time as a function of the number of explicit-Euler steps N used to integrate ˙z = vθ (z, t, c) at inference. Accuracy improves rapidly up to 
+
+N ≈7, reaches its minimum around N =15 , and degrades slightly with larger N as the spread across samples grows, while runtime increases roughly linearly. We adopt N = 15 throughout Section 5: it sits at the elbow of the accuracy curve and keeps generation below 35 ms per sample. 
+
+## F Warm starts and the Kolmogorov-Smirnov statistic 
+
+This appendix specifies the construction of the warm-start divergence reported in Table 2a and used as the y-axis of Figure 3. 
+
+F.1 Setup 
+
+Fix a held-out operating point c and let S(t) ∈ Rnky denote one of the binormal spectra of ?? ,either W (ky , t ) or Q(ky , t ). Saturated turbulence is statistically stationary, so along a sufficiently long trajectory the empirical distribution of {S(t)} converges to a c-dependent stationary law Pc on 
+
+Rnky . We compare two empirical estimates of Pc:22 Figure 5: ¯QRMSE (blue, left axis) and per-sample wall-clock time (orange, right axis) versus the number of explicit-Euler integration steps N . Error bars denote standard deviation over the valida-tion split. The dotted line marks our operating point at N = 15 .• the warm-side sample Sw 
+
+> c
+
+obtained by initializing gyaradax from generated fields ˆf (k) ∼ pθ ( · | 
+
+c) drawn from GyroFlow and integrating for T steps; • the reference sample Sr 
+
+> c
+
+obtained from the post-saturation tail of a long trajectory at the same c.Under the null hypothesis that ˆf (k) already lies on the attractor of Pc, the two samples are i.i.d. from the same law and any statistical test should fail to reject equality. 
+
+F.2 Two-sample Kolmogorov-Smirnov statistic 
+
+We score the agreement between Sw 
+
+> c
+
+and Sr 
+
+> c
+
+with the two-sample Kolmogorov-Smirnov (KS) statis-tic (Massey, 1951), the classical non-parametric measure of distributional discrepancy. Given samples Sw = {xi}ni=1 and Sr = {yj }mj=1 with empirical CDFs F wn (x) = 1
+
+> n
+
+P 
+
+> i
+
+1xi≤x and 
+
+F rm(x) = 1
+
+> m
+
+P 
+
+> j
+
+1yj ≤x, the statistic is the supremum of their pointwise gap, 
+
+Dn,m 
+
+ Sw, Sr  = sup 
+
+> x∈R
+
+F wn (x) − F rm(x) ∈ [0 , 1] . (17) 
+
+Dn,m = 0 corresponds to identical empirical CDFs and Dn,m = 1 to disjoint supports. Under the null P = Q, the rescaled statistic pnm/ (n+m) Dn,m converges weakly to the Kolmogorov distri-bution and admits a distribution-free p-value; we report D rather than the p-value because p collapses below numerical resolution at our pooled sample sizes ( ∼ 10 4). D requires no kernel or bandwidth choice, is monotone in distributional discrepancy, and is computed in O(( n + m) log( n + m)) via sorted-merge of the two samples. We use scipy.stats.ks_2samp for the per-mode evaluation. 
+
+F.3 Restart pooling 
+
+A single warm trajectory yields a strongly auto-correlated time-series whose empirical mode-marginal sits at one realisation of the attractor and may differ from Pc by an amount comparable to the inter-trajectory variation we wish to measure. To reduce this within-condition variance we draw 
+
+R = 5 independent generations { ˆf (r)}Rr=1 from GyroFlow at the same c, integrate each for T steps with gyaradax, and pool the post-saturation halves along the time axis, 
+
+Sw 
+
+> c
+
+=
+
+> R
+
+[
+
+> r=1
+
+ S(r)(t) : t ∈ [ T / 2, T ] , Sw 
+
+> c
+
+= R T / 2. (18) Pooling along time is justified by the stationarity of Pc. We additionally compute D once per restart against the same reference, and report the cross-restart standard deviation as a within-condition uncertainty for the scatter of Figure 3. 23 F.4 Per-mode aggregation 
+
+For vector spectra we treat S(t) ∈ Rnky component-wise. At binormal mode index ℓ ∈{1, . . . , n ky } the scalar warm-side and reference samples are {Swℓ (t)} and {Srℓ (t)} with empiri-cal CDFs ˆF wℓ , ˆF rℓ , and the per-mode KS statistic is 
+
+Dℓ = sup 
+
+> x∈R
+
+ˆF wℓ (x) − ˆF rℓ (x) ∈ [0 , 1] , (19) the form of Equation (17) applied to a single mode. The headline reported in Table 2a is the arith-metic mean over modes, 
+
+DS (c) = 1
+
+nky
+
+> nky
+
+X
+
+> ℓ=1
+
+Dℓ. (20) Per-mode aggregation makes the statistic insensitive to the absolute amplitude scale across ky ,which would otherwise be dominated by the high-energy low-ky end. Each Dℓ is computed via 
+
+scipy.stats.ks_2samp .
+
+## G Distributional metrics: Wasserstein and FGyD 
+
+This appendix lists the four GyroSwin U-Net depths we tracked during development, two of which are reported in the main paper, and addresses the statistical reliability of FGyD at the sample counts we use. 
+
+G.1 Wasserstein distance 
+
+We use the Wasserstein distance to compare the time-averaged spectra W (ky ) across methods in Table 8. It measures the minimum cost of transporting probability mass between two distributions, with cost proportional to the distance the mass is moved, and stays well-defined when the two supports do not overlap, which is useful when generated and reference spectra peak at different 
+
+ky . We normalise each spectrum so that its total sum is one, ensuring it represents a probability distribution over ky before computing the distance. Formally, 
+
+Wp(P, Q ) = 
+
+
+
+inf 
+
+> γ∈Γ( P,Q )
+
+Z
+
+∥x − y∥p dγ (x, y )
+
+1/p 
+
+,
+
+where Γ( P, Q ) is the set of couplings of P and Q. We use p = 1 on the 1D index ky . FGyD (Section 4.5, Equation (4)) is itself a Wasserstein-2 distance between Gaussian fits of the GyroSwin activations. 
+
+G.2 Spectral RMSE and Wasserstein distance 
+
+Table 8 complements the Pearson-correlation columns of Table 1 with two additional spectral fidelity metrics: pointwise RMSE on the unnormalised amplitudes of ⟨W (ky )⟩ and ⟨Q(ky )⟩, and Wasser-stein distance on each (computed after normalising every spectrum to a probability distribution over 
+
+ky , see Section G.1). RMSE penalises mismatched spectral magnitudes, while the Wasserstein dis-tance is invariant to overall scale and instead penalises misplaced peaks. 
+
+G.3 Latent depths 
+
+The frozen GyroSwin encoder gξ of Section 4.5 is a hierarchical Swin5D U-Net composed of three down-up sampling stages with skip connections, a Transformer bottleneck, and an auxiliary decoder that reconstructs the electrostatic potential ϕ. We extract activations at four depths. • skip L=2 : the bottleneck-adjacent middle block. • ϕ decoder : the bottleneck-adjacent activation taken from the auxiliary ϕ-reconstruction branch rather than the f -reconstruction branch. • flux head : the activation immediately preceding GyroSwin’s scalar flux readout. Skip L=2 , the flux head, and the ϕ decoder constitute the headline of Table 2b. 24 Table 8: Spectral fidelity on in-distribution ( ID ) and out-of-distribution ( OOD ) operating conditions. We report RMSE and Wasserstein distance on the time-averaged binormal potential spectrum W (ky )
+
+and flux spectrum Q(ky ). Quasilinear and GPR baselines do not produce W (ky ) pointwise estimates and only provide flux observables. Best bold , second underlined. 
+
+Method W (ky )RMSE ↓ Q(ky )RMSE ↓ W (ky )WD ↓ Q(ky )WD ↓
+
+ID OOD ID OOD ID OOD ID OOD 
+
+Quasilinear 7.37 ±5.66 ×10 2 4.22 ±2.61 ×10 2 7.38 ±2.997 7.60 ±3.58 0.0171 ±0.0152 0.0135 ±0.0117 0.0155 ±0.007 0.0147 ±0.005 
+
+GPR — — — — — — — —GyroSwin (warm) ∗ 6.78 ±6.45 ×10 5 1.60 ±1.48 ×10 6 9.28 ±6.33 10 .53 ±6.34 0.010 ±0.0076 0.0140 ±0.0061 0.0065 ±0.0013 0.0120 ±0.0075 
+
+GyroSwin (cold) 2.68 ±2.47 ×10 6 3.51 ±3.44 ×10 7 13 .60 ±5.82 13 .87 ±7.71 0.014 ±0.0103 0.0162 ±0.0043 0.0222 ±0.0100 0.0129 ±0.0031 
+
+VAE 4.28 ±3.90 ×10 5 1.15 ±0.99 ×10 6 13 .84 ±5.87 14 .07 ±7.40 0.0139 ±0.0101 0.0159 ±0.0047 0.0274 ±0.0075 0.0266 ±0.0082 
+
+VQ-VAE (rand) 1.01 ±0.90 ×10 5 2.85 ±2.63 ×10 5 12 .94 ±6.07 12 .70 ±7.22 0.0126 ±0.0092 0.0149 ±0.0047 0.0257 ±0.0079 0.0251 ±0.0071 
+
+VQ-VAE (AR) 7.87 ±6.71 ×10 4 3.18 ±2.98 ×10 5 9.94 ±5.07 8.31 ±5.08 0.0105 ±0.0080 0.0131 ±0.0057 0.0136 ±0.0052 0.0133 ±0.0056 
+
+GyroFlow (probe) 1.71 ±1.14 ×10 3 6.89 ±4.67 ×10 2 12 .16 ±6.16 12 .34 ±7.92 0.0093 ±0.0035 0.0083 ±0.0032 0.0175 ±0.0065 0.0180 ±0.0080 
+
+GyroFlow (decode) 4.39 ±3.65 ×10 5 3.57 ±3.36 ×10 6 3.37 ±1.54 6.75 ±3.50 0.0123 ±0.0104 0.0149 ±0.0050 0.0077 ±0.0021 0.0137 ±0.0041 
+
+G.4 Sample-count regime 
+
+FGyD of Equation (4) is the squared 2-Wasserstein distance between Gaussian fits to two empirical activation clouds. The empirical estimator is biased: with K generated and Nref reference sam-ples and latent dimension D, the bias of bΣ scales like D/ min( K, N ref ) and the bias of the trace term in Equation (4) therefore decays as O(1 / min( K, N ref )) with a generator-dependent prefactor (Bi´ nkowski et al., 2018; Chong & Forsyth, 2020). Standard image benchmarks resolve this by sam-pling Nref ≥ 50 ,000 (Heusel et al., 2017); in our setting K = 64 and Nref ∼ 80 , so the absolute values of FGyD are biased and serve only as relative rankings at fixed depth, not as estimates of the underlying W 22 .25

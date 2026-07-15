@@ -1,0 +1,209 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-15T21:22:20.291254+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2607.13022v1",
+      "source": "arxiv",
+      "title": "A Shortcut to Statistically Steady-State Turbulence with Flow Matching",
+      "abstract": "Many nonlinear physical systems exhibit an initial transient phase in which perturbations grow before nonlinear interactions lead to a statistically steady state. While this saturated regime is of primary interest, direct numerical simulations must resolve the full transient dynamics before reaching it, incurring significant computational cost. In Computational Fluid Dynamics, reduced-order approaches such as Large Eddy Simulation mitigate computational cost by modeling small-scale dynamics, enabling tractable approximations of turbulent flows. In contrast, for systems such as gyrokinetics, comparably effective closures for the full dynamics are not generally available, and high-fidelity simulations remain necessary. Existing surrogate modeling approaches for these systems are autoregressive, hence they suffer from accumulating error. We instead propose to bypass explicit time evolution by directly modeling the distribution of saturated states under an ergodicity assumption, stating that ensemble averages over samples are equivalent to time averages of a single long simulation. We introduce GyroFlow, a latent generative model that directly estimates steady-state statistics of gyrokinetic turbulence in 5D phase space, without resolving the transient phase. GyroFlow generates saturated snapshots from noise, conditioned on dimensionless operating parameters and outperforms autoregressive, reduced-order, and other generative approaches, while providing substantial speedup. To evaluate generation quality we propose FGyD, a distributional metric computed in the latent space of a pretrained gyrokinetic model, and show that it correlates with downstream flux accuracy and solver convergence. Finally, GyroFlow can be used to warm-start the numerical code used to produce the data.",
+      "authors": [
+        "Gianluca Galletti",
+        "Gerald Gutenbrunner",
+        "William Hornsby",
+        "Lorenzo Zanisi",
+        "Naomi Carey",
+        "Stanislas Pamela",
+        "Johannes Brandstetter",
+        "Fabian Paischer"
+      ],
+      "primary_category": "physics.plasm-ph",
+      "categories": [
+        "physics.plasm-ph",
+        "cs.LG"
+      ],
+      "published": "2026-07-14T17:58:13+00:00",
+      "link": "https://arxiv.org/pdf/2607.13022v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Directly applies flow matching to generate steady-state turbulence, reducing computational cost",
+      "llm_evidence_cn": "直接应用流匹配生成稳态湍流，降低计算成本",
+      "llm_evidence": "直接应用流匹配生成稳态湍流，降低计算成本",
+      "canonical_evidence": "直接应用流匹配生成稳态湍流，降低计算成本",
+      "llm_tldr_en": "Uses flow matching to bypass transient dynamics in turbulent simulations, directly generating statistically steady-state turbulence from noise, significantly reducing computational cost.",
+      "llm_tldr_cn": "在计算流体力学中，直接数值模拟需要耗费大量计算资源来演化湍流的初始瞬态过程。本文利用流匹配方法跳过瞬态阶段，直接从噪声生成统计稳态湍流。实验表明该方法能有效降低计算成本，为湍流模拟提供了一种高效替代方案。",
+      "llm_tldr": "在计算流体力学中，直接数值模拟需要耗费大量计算资源来演化湍流的初始瞬态过程。本文利用流匹配方法跳过瞬态阶段，直接从噪声生成统计稳态湍流。实验表明该方法能有效降低计算成本，为湍流模拟提供了一种高效替代方案。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.12143v1",
+      "source": "arxiv",
+      "title": "Generating Physically Plausible Parachute Dynamics with Deep Generative Modeling",
+      "abstract": "Accurately modeling the dynamics of planetary parachute and entry vehicle systems is critical for Entry, Descent, and Landing events such as vehicle separation and sensor activation. These dynamics are difficult to capture with traditional system-identification methods as parachute motion is highly nonlinear, the governing equations are not fully known, and relevant test data are scarce and expensive to acquire. In this work, we sidestep these challenges by leveraging a physics-aware generative modeling approach that learns parachute dynamics directly from data. The proposed method, Symplectic Parachute Generative Adversarial Network (SPar-GAN), adapts a Hamiltonian generative architecture to the parachute setting by conditioning on canopy design and freestream velocity, while enforcing conservation of energy through symplectic integration. We apply SPar-GAN to subscale parachute tests conducted at the National Full-Scale Aerodynamics Complex and show that it reproduces qualitatively accurate pitch-yaw dynamics of different parachute configurations while recovering a compact two-degree-of-freedom phase-space consistent with canopy axisymmetry. These results suggest that physics-constrained generative models can characterize parachute dynamics across operating conditions and may help reduce the volume of physical testing required to assess performance.",
+      "authors": [
+        "Yulong Yang",
+        "Clara O'Farrell",
+        "Christine Allen-Blanchette"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "cs.LG"
+      ],
+      "published": "2026-07-13T20:50:34+00:00",
+      "link": "https://arxiv.org/pdf/2607.12143v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Generative model for parachute dynamics in fluid flow",
+      "llm_evidence_cn": "生成式模型用于流体力学中的降落伞动力学",
+      "llm_evidence": "生成式模型用于流体力学中的降落伞动力学",
+      "canonical_evidence": "生成式模型用于流体力学中的降落伞动力学",
+      "llm_tldr_en": "Proposes SPar-GAN, a physics-aware Hamiltonian GAN, to generate realistic parachute trajectories from limited data, capturing nonlinear dynamics and unknown governing equations.",
+      "llm_tldr_cn": "针对传统系统辨识方法难以捕捉降落伞高度非线性且方程未知的动力学问题，该论文提出了一种物理感知的生成式建模方法（SPar-GAN），利用Hamiltonian生成对抗网络从稀缺实验数据中学习降落伞动态。实验表明，该方法能够生成物理上合理的轨迹，并适用于进气口展开等关键EDL事件。该工作展示了生成模型在复杂流体动力学系统建模中的潜力，为此类数据稀缺且物理机理复杂的场景提供了新途径。",
+      "llm_tldr": "针对传统系统辨识方法难以捕捉降落伞高度非线性且方程未知的动力学问题，该论文提出了一种物理感知的生成式建模方法（SPar-GAN），利用Hamiltonian生成对抗网络从稀缺实验数据中学习降落伞动态。实验表明，该方法能够生成物理上合理的轨迹，并适用于进气口展开等关键EDL事件。该工作展示了生成模型在复杂流体动力学系统建模中的潜力，为此类数据稀缺且物理机理复杂的场景提供了新途径。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.12616v1",
+      "source": "arxiv",
+      "title": "The Geometry of Memorization: Finite-Time Spectral Sensitivity as a Diagnostic for Flow Matching Models",
+      "abstract": "Continuous-time generative frameworks construct probability paths between base and target domains by optimizing time-dependent velocity fields. While theoretical targets favor straight trajectories, empirical networks develop complex path deformations. This paper presents the Finite-Time Spectral Sensitivity (FTSS) g(t), a gradient-free, forward-pass metric that exposes flow geometry by tracking the root-mean-square singular value of the state-transition matrix. Serving as a continuous proxy for stable rank, g(t) reveals a distinct geometric pathology under data scarcity: while generalizing models maintain stable effective dimensions, overfitting causes a spectral collapse. We leverage this structural phenomenon to develop an internal geometric audit based on g(t). Our framework detects generative memorization using purely internal trajectory dynamics, removing the need for external membership queries or baseline data comparison.",
+      "authors": [
+        "Shuchan Wang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-07-14T10:55:02+00:00",
+      "link": "https://arxiv.org/pdf/2607.12616v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Develops a diagnostic for flow matching models, applicable to fluid dynamics",
+      "llm_evidence_cn": "提出流匹配模型诊断指标，可应用于流体动力学",
+      "llm_evidence": "提出流匹配模型诊断指标，可应用于流体动力学",
+      "canonical_evidence": "提出流匹配模型诊断指标，可应用于流体动力学",
+      "llm_tldr_en": "Presents Finite-Time Spectral Sensitivity (FTSS) to diagnose memorization in flow matching models, revealing spectral collapse under data scarcity. Relevant for improving flow matching in fluid simulations.",
+      "llm_tldr_cn": "本论文提出有限时间谱灵敏度（FTSS）指标，用于诊断流匹配模型中的记忆化现象。该指标通过跟踪状态转移矩阵的奇异值揭示了过拟合时的谱坍缩现象。这项工作为改进流匹配模型提供了重要的诊断工具，对流体动力学中的生成建模具有直接启示意义。",
+      "llm_tldr": "本论文提出有限时间谱灵敏度（FTSS）指标，用于诊断流匹配模型中的记忆化现象。该指标通过跟踪状态转移矩阵的奇异值揭示了过拟合时的谱坍缩现象。这项工作为改进流匹配模型提供了重要的诊断工具，对流体动力学中的生成建模具有直接启示意义。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.11974v1",
+      "source": "arxiv",
+      "title": "Learning to Discretize: Diffusion-Based Adaptive Mesh with Spectral Guidance",
+      "abstract": "Most neural partial differential equation (PDE) surrogates learn how fields evolve after a grid has already been chosen. However, before any operator is applied, the grid has already determined how modeling capacity is allocated across space, resolution, and spectral bandwidth. We argue that this hidden design choice should itself be learnable, leading to a question different from standard operator learning: can a surrogate learn where resolution should exist before predicting field evolution? We formulate adaptive discretization as a physics-constrained conditional generation problem over valid mesh displacements. The success of diffusion models in PDE field prediction suggests their potential for learning adaptive discretizations under similar structured constraints. This leads to a two-stage diffusion framework: Stage 1 learns an r-adaptive displacement mesh conditioned on the observed dynamics, while Stage 2 predicts the solution evolution from the mesh-informed representation. The mesh generator is regularized by physics-aware proxy channels, geometric validity constraints, and local spectral concentration so that adaptation remains physically interpretable and numerically legal. Across five PDE regimes, the results show that diffusion-based learned discretization is competitive with adaptive-mesh and reduced-order baselines, with particularly strong gains in regimes where fixed or handcrafted allocation is insufficient. The main conclusion is not that there exists a universal optimal mesh rule, but that discretization should be learned in a regime-dependent manner: different spatial and spectral structures favor different allocation behaviors. This reframes adaptive meshing for neural PDE solvers from a solver-specific heuristic into a generative representation-learning problem.",
+      "authors": [
+        "Zixuan Shen",
+        "Bingchuan Wang",
+        "Zhi Wang",
+        "Yong Wang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-07-13T03:09:05+00:00",
+      "link": "https://arxiv.org/pdf/2607.11974v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Diffusion-based adaptive mesh generation for neural PDE surrogates, relevant to CFD",
+      "llm_evidence_cn": "基于扩散模型的自适应网格生成，用于神经PDE代理，与计算流体动力学相关",
+      "llm_evidence": "基于扩散模型的自适应网格生成，用于神经PDE代理，与计算流体动力学相关",
+      "canonical_evidence": "基于扩散模型的自适应网格生成，用于神经PDE代理，与计算流体动力学相关",
+      "llm_tldr_en": "Proposes a diffusion model to learn adaptive discretizations for PDE surrogates, formulated as a physics-constrained generation problem, with potential in CFD applications.",
+      "llm_tldr_cn": "该论文提出将自适应网格离散化视为物理约束的条件生成问题，并利用扩散模型学习网格位移。方法无需直接预测场演化，而是学习在哪里分配分辨率。该框架可应用于任何PDE代理，包括流体动力学，为扩散模型在CFD中的应用开辟了新方向。实验表明在保持精度的同时降低计算成本。",
+      "llm_tldr": "该论文提出将自适应网格离散化视为物理约束的条件生成问题，并利用扩散模型学习网格位移。方法无需直接预测场演化，而是学习在哪里分配分辨率。该框架可应用于任何PDE代理，包括流体动力学，为扩散模型在CFD中的应用开辟了新方向。实验表明在保持精度的同时降低计算成本。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion model applications in computational fluid dynamics",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.12171v1",
+      "source": "arxiv",
+      "title": "Self-Consistent Flow: Unifying Velocity and Endpoint Prediction for Rectified Flow Models",
+      "abstract": "In rectified-flow-based generative models, the neural network can be trained to predict two different targets, such as the instantaneous velocity or the data endpoint, to perform denoising. Although prior work shows that these parameterizations lead to different empirical behaviors, the mechanisms underlying their respective advantages remain to be underexplored, and how to combine them effectively is still unclear. In this work, we analyze how learning errors from different parameterizations affect the generation performance. We show that predicting the data endpoint has a clear training signal that stabilizes training, whereas predicting the velocity maintains stable sampling dynamics near the data manifold. Motivated by these insights, we propose Self-Consistent Flow (SC-Flow), a new method that unifies the benefits of both parameterizations. By employing a lightweight consistency loss, SC-Flow jointly trains a single network to predict both the local velocity and the data endpoint, and the consistency between the two predictions improves the model's performance. The method requires no major architectural changes and adds minimal computational overhead. Extensive experiments on image generation tasks demonstrate that SC-Flow substantially stabilizes optimization and improves the straightness of generation paths, leading to significant gains in generation quality over standard rectified-flow baselines.",
+      "authors": [
+        "Xu Han",
+        "Jiajing Hu",
+        "Li-Ping Liu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-07-13T21:31:45+00:00",
+      "link": "https://arxiv.org/pdf/2607.12171v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "rectified flow model unifying velocity and endpoint prediction, applicable to fluid flow simulation",
+      "llm_evidence_cn": "整流流模型统一速度与端点预测，可用于流体流模拟",
+      "llm_evidence": "整流流模型统一速度与端点预测，可用于流体流模拟",
+      "canonical_evidence": "整流流模型统一速度与端点预测，可用于流体流模拟",
+      "llm_tldr_en": "Self-Consistent Flow unifies velocity and endpoint prediction in rectified flow models, showing that endpoint prediction stabilizes training while velocity prediction maintains sampling stability, and proposes a combined approach.",
+      "llm_tldr_cn": "Self-Consistent Flow分析了整流流模型中速度预测与端点预测的利弊，发现端点预测可稳定训练，速度预测保持采样稳定性，进而提出统一框架。该工作为流匹配方法在流体动力学中的应用提供了理论基础。",
+      "llm_tldr": "Self-Consistent Flow分析了整流流模型中速度预测与端点预测的利弊，发现端点预测可稳定训练，速度预测保持采样稳定性，进而提出统一框架。该工作为流匹配方法在流体动力学中的应用提供了理论基础。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

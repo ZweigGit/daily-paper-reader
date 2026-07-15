@@ -6,28 +6,35 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-14
-- 运行时间：2026-07-14 21:25:24 UTC
+- 最新运行日期：2026-07-15
+- 运行时间：2026-07-15 21:30:35 UTC
 - 运行状态：成功
-- 本次总论文数：2
-- 精读区：1
-- 速读区：1
+- 本次总论文数：5
+- 精读区：3
+- 速读区：2
 
 ### 今日简报（AI）
-今日精读《IG-GAN: 基于内蕴几何的气动数据生成对抗网络》（9.0分），速读《速度调度流匹配》（7.0分）。  
-最值得关注的是IG-GAN利用流形的内蕴几何显著提升气动数据生成质量，而速度调度流匹配为生成模型提供了更可控的采样轨迹。  
-建议普通读者首先理解内蕴几何如何增强数据真实性，再探索速度调度对生成稳定性的影响。
-- 详情：[/202607/14/README](/202607/14/README)
+今日精选5篇论文，精读3篇，速读2篇。最值得关注的是《A Shortcut to Statistically Steady-State Turbulence with Flow Matching》（满分）与《Generating Physically Plausible Parachute Dynamics with Deep Generative Modeling》（9分），分别聚焦湍流模拟捷径和跳伞动力学可解释生成。建议进一步探索速读中扩散模型在自适应网格和整流流中的新思路。
+- 详情：[/202607/15/README](/202607/15/README)
 
 ### 精读区论文标签
-1. [IG-GAN: A Generative Adversarial Network for Aerodynamic Data Generation Based on Intrinsic Geometry](/202607/14/2607.11497v1-ig-gan-a-generative-adversarial-network-for-aerodynamic-data-generation-based-on-intrinsic-geometry)  
+1. [A Shortcut to Statistically Steady-State Turbulence with Flow Matching](/202607/15/2607.13022v1-a-shortcut-to-statistically-steady-state-turbulence-with-flow-matching)  
+   标签：评分：10.0/10、query:genmod-fluid
+   evidence：直接应用流匹配生成稳态湍流，降低计算成本
+2. [Generating Physically Plausible Parachute Dynamics with Deep Generative Modeling](/202607/15/2607.12143v1-generating-physically-plausible-parachute-dynamics-with-deep-generative-modeling)  
    标签：评分：9.0/10、query:genmod-fluid
-   evidence：基于生成对抗网络的气动数据生成
+   evidence：生成式模型用于流体力学中的降落伞动力学
+3. [The Geometry of Memorization: Finite-Time Spectral Sensitivity as a Diagnostic for Flow Matching Models](/202607/15/2607.12616v1-the-geometry-of-memorization-finite-time-spectral-sensitivity-as-a-diagnostic-for-flow-matching-models)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：提出流匹配模型诊断指标，可应用于流体动力学
 
 ### 速读区论文标签
-1. [Velocity Scheduled Flow Matching](/202607/14/2607.11442v1-velocity-scheduled-flow-matching)  
+1. [Learning to Discretize: Diffusion-Based Adaptive Mesh with Spectral Guidance](/202607/15/2607.11974v1-learning-to-discretize-diffusion-based-adaptive-mesh-with-spectral-guidance)  
    标签：评分：7.0/10、query:genmod-fluid
-   evidence：速度调度流匹配，一种生成式流匹配方法，可用于流体动力学模拟
+   evidence：基于扩散模型的自适应网格生成，用于神经PDE代理，与计算流体动力学相关
+2. [Self-Consistent Flow: Unifying Velocity and Endpoint Prediction for Rectified Flow Models](/202607/15/2607.12171v1-self-consistent-flow-unifying-velocity-and-endpoint-prediction-for-rectified-flow-models)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：整流流模型统一速度与端点预测，可用于流体流模拟
 
 
 <div class="dpr-home-promo-card">
