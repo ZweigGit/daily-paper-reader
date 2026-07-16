@@ -1,0 +1,39 @@
+{
+  "label": "2026-07-16",
+  "date": "2026-07-16",
+  "generated_at": "2026-07-16T21:24:58",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202607/16/2607.13193v1-generating-synthetic-evolution-of-turbulent-flames-with-an-experimental-data-based-spatiotemporal-diffusion-model",
+      "section": "deep",
+      "title_en": "Generating synthetic evolution of turbulent flames with an experimental data-based spatiotemporal diffusion model",
+      "authors": "Amrit Tarur, Shivam Barwey",
+      "date": "2026-07-14",
+      "pdf": "https://arxiv.org/pdf/2607.13193v1",
+      "score": "10.0",
+      "evidence": "条件扩散模型用于湍流火焰模拟",
+      "tldr": "针对湍流火焰实验数据稀疏的问题，本文开发了基于条件扩散模型的合成演化生成方法。采用x-prediction flow matching与时空transformer，生成条件于火焰状态的时空板，保留大尺度特征与统计一致性，小尺度偏差由时间跨度决定。进一步实现火焰过渡（抬升/再附着）的时空连贯合成，通过时变线性组合去噪速度控制方向与时标，并保持样本间变异。该方法为数据稀疏环境下的实验数据探索提供新途径，能有效补充实验与CFD模拟。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "In this study, a conditional diffusion model -- a class of generative machine learning models -- is developed to generate synthetic, experimental data-based trajectories of turbulent flames. Generated experimental data corresponds to simultaneous field measurements, namely OH planar laser-induced fluorescence (OH-PLIF) fields and multi-component particle image velocimetry (PIV) fields, for attached and detached flame states in a swirl combustor configuration. This is done using an x-prediction flow matching framework combined with a pixel-based spatiotemporal transformer, which is capable of generating entire spatiotemporal slabs containing synthetic flame evolution at inference time, conditioned on the flame regime. Using this framework, synthetic flames were found to preserve key flame features and statistical consistency across space and time, particularly at the large scales -- deviations at high temporal frequencies and small spatial length scales were found to depend on the time-span of the generated space-time slabs. An extrapolation task of transition synthesis is also conducted, in which the conditional diffusion model is used to synthesize spatiotemporally coherent flame transitions (flame liftoff and reattachment) unseen by the model during training. This was accomplished using a model for the denoising transition velocity that relies on time-varying linear combinations of attached and detached denoising velocities, leading to an approach that (a) allows for control of the generated transition directions and timescales, and (b) retains sample-to-sample variability in the generated transitions in the process. Overall, this study provides a promising pathway for the utilization of experimental data-based generative models as a new means of data exploration in data-sparse environments, complementing both experiments and computational fluid dynamics-based approaches.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/16/2607.13841v1-heavy-tailed-flow-matching-via-random-clocks",
+      "section": "quick",
+      "title_en": "Heavy-Tailed Flow Matching via Random Clocks",
+      "authors": "Zhouhao Yang, Yezhen Wang, Kenji Kawaguchi, Vladimir Braverman, Haoyang Cao",
+      "date": "2026-07-15",
+      "pdf": "https://arxiv.org/pdf/2607.13841v1",
+      "score": "6.0",
+      "evidence": "流匹配方法可应用于流体动力学",
+      "tldr": "标准流匹配模型使用高斯源分布，难以生成重尾数据。本文提出重尾流匹配（HTFM），通过随机时钟将重尾源建模为时钟条件高斯源的混合，并利用截断对数签名特征高效编码时钟路径。在2D不平衡α-稳定混合、CIFAR10-LT和天气场上，HTFM改进了模式覆盖、样本质量和尾统计恢复，同时保持低推理步数。该方法还提供通过调整时钟律控制生成尾重的实用接口。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Heavy-tailed data arise in many domains where rare events carry disproportionate importance, such as imbalanced image datasets, financial returns, and weather extremes. Standard diffusion and flow-matching models typically begin from Gaussian noise or Gaussian source distributions, which yield tractable training targets but provide a poor inductive match for heavy-tailed data. We propose Heavy-Tailed Flow Matching via Random Clocks (HTFM), a framework that portrays heavy-tailed sources as mixtures of clock-conditioned Gaussian sources. Conditioning on a given clock path, the source distribution and flow are Gaussian; marginalizing over the clock gives a Gaussian scale mixture covering Gaussian, $α$-stable, and Student-t families. To make the clock-conditioned vector field practical, we encode the path-valued clock using truncated logsignature features, allowing the velocity field to adapt to the realized conditional space with negligible overhead. Empirically, on 2D imbalanced $α$-stable mixtures, CIFAR10-LT, and HRRR weather fields, HTFM improves mode coverage, sample quality, and tail-statistic recovery over Gaussian flow matching and competitive heavy-tailed baselines, while retaining the low-NFE sampling advantage of flow matching. Moreover, the random-clock formulation further provides a practical tail-control interface: by varying only the clock law or tail parameter, the same architecture can calibrate the ``heaviness'' of generated tails across different distribution families.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

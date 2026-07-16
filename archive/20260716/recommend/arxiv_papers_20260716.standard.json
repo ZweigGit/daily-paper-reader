@@ -1,0 +1,93 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-16T21:21:32.620132+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2607.13193v1",
+      "source": "arxiv",
+      "title": "Generating synthetic evolution of turbulent flames with an experimental data-based spatiotemporal diffusion model",
+      "abstract": "In this study, a conditional diffusion model -- a class of generative machine learning models -- is developed to generate synthetic, experimental data-based trajectories of turbulent flames. Generated experimental data corresponds to simultaneous field measurements, namely OH planar laser-induced fluorescence (OH-PLIF) fields and multi-component particle image velocimetry (PIV) fields, for attached and detached flame states in a swirl combustor configuration. This is done using an x-prediction flow matching framework combined with a pixel-based spatiotemporal transformer, which is capable of generating entire spatiotemporal slabs containing synthetic flame evolution at inference time, conditioned on the flame regime. Using this framework, synthetic flames were found to preserve key flame features and statistical consistency across space and time, particularly at the large scales -- deviations at high temporal frequencies and small spatial length scales were found to depend on the time-span of the generated space-time slabs. An extrapolation task of transition synthesis is also conducted, in which the conditional diffusion model is used to synthesize spatiotemporally coherent flame transitions (flame liftoff and reattachment) unseen by the model during training. This was accomplished using a model for the denoising transition velocity that relies on time-varying linear combinations of attached and detached denoising velocities, leading to an approach that (a) allows for control of the generated transition directions and timescales, and (b) retains sample-to-sample variability in the generated transitions in the process. Overall, this study provides a promising pathway for the utilization of experimental data-based generative models as a new means of data exploration in data-sparse environments, complementing both experiments and computational fluid dynamics-based approaches.",
+      "authors": [
+        "Amrit Tarur",
+        "Shivam Barwey"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn"
+      ],
+      "published": "2026-07-14T18:45:04+00:00",
+      "link": "https://arxiv.org/pdf/2607.13193v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "conditional diffusion model for turbulent flame simulation",
+      "llm_evidence_cn": "条件扩散模型用于湍流火焰模拟",
+      "llm_evidence": "条件扩散模型用于湍流火焰模拟",
+      "canonical_evidence": "条件扩散模型用于湍流火焰模拟",
+      "llm_tldr_en": "Develops a conditional diffusion model with flow matching to generate synthetic turbulent flame data, directly addressing fluid dynamics simulation.",
+      "llm_tldr_cn": "本文开发了一个条件扩散模型（基于x-预测流匹配框架），用于生成湍流火焰的合成时空演化数据，包括OH-PLIF和PIV场。该方法直接应用于流体动力学中的湍流燃烧模拟，证明了生成模型在实验数据驱动的流体仿真中的有效性。",
+      "llm_tldr": "本文开发了一个条件扩散模型（基于x-预测流匹配框架），用于生成湍流火焰的合成时空演化数据，包括OH-PLIF和PIV场。该方法直接应用于流体动力学中的湍流燃烧模拟，证明了生成模型在实验数据驱动的流体仿真中的有效性。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.13841v1",
+      "source": "arxiv",
+      "title": "Heavy-Tailed Flow Matching via Random Clocks",
+      "abstract": "Heavy-tailed data arise in many domains where rare events carry disproportionate importance, such as imbalanced image datasets, financial returns, and weather extremes. Standard diffusion and flow-matching models typically begin from Gaussian noise or Gaussian source distributions, which yield tractable training targets but provide a poor inductive match for heavy-tailed data. We propose Heavy-Tailed Flow Matching via Random Clocks (HTFM), a framework that portrays heavy-tailed sources as mixtures of clock-conditioned Gaussian sources. Conditioning on a given clock path, the source distribution and flow are Gaussian; marginalizing over the clock gives a Gaussian scale mixture covering Gaussian, $α$-stable, and Student-t families. To make the clock-conditioned vector field practical, we encode the path-valued clock using truncated logsignature features, allowing the velocity field to adapt to the realized conditional space with negligible overhead. Empirically, on 2D imbalanced $α$-stable mixtures, CIFAR10-LT, and HRRR weather fields, HTFM improves mode coverage, sample quality, and tail-statistic recovery over Gaussian flow matching and competitive heavy-tailed baselines, while retaining the low-NFE sampling advantage of flow matching. Moreover, the random-clock formulation further provides a practical tail-control interface: by varying only the clock law or tail parameter, the same architecture can calibrate the ``heaviness'' of generated tails across different distribution families.",
+      "authors": [
+        "Zhouhao Yang",
+        "Yezhen Wang",
+        "Kenji Kawaguchi",
+        "Vladimir Braverman",
+        "Haoyang Cao"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "stat.ML"
+      ],
+      "published": "2026-07-15T13:48:05+00:00",
+      "link": "https://arxiv.org/pdf/2607.13841v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "flow matching method applicable to fluid dynamics",
+      "llm_evidence_cn": "流匹配方法可应用于流体动力学",
+      "llm_evidence": "流匹配方法可应用于流体动力学",
+      "canonical_evidence": "流匹配方法可应用于流体动力学",
+      "llm_tldr_en": "Proposes a heavy-tailed flow matching framework that can model extreme events, with potential application to fluid dynamics.",
+      "llm_tldr_cn": "本文提出重尾流匹配框架（HTFM），通过随机钟表将重尾分布建模为高斯尺度混合，使得流匹配能够处理罕见事件。该方法虽未直接应用于流体，但其建模极端事件的能力与流体湍流等场景高度相关，可作为方法论桥梁。",
+      "llm_tldr": "本文提出重尾流匹配框架（HTFM），通过随机钟表将重尾分布建模为高斯尺度混合，使得流匹配能够处理罕见事件。该方法虽未直接应用于流体，但其建模极端事件的能力与流体湍流等场景高度相关，可作为方法论桥梁。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
