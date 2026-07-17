@@ -1,0 +1,39 @@
+{
+  "label": "2026-07-17",
+  "date": "2026-07-17",
+  "generated_at": "2026-07-17T21:18:57",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202607/17/2607.14272v1-lyapunov-guidance-a-unified-framework-for-stabilizing-generative-flows",
+      "section": "quick",
+      "title_en": "Lyapunov Guidance: A Unified Framework for Stabilizing Generative Flows",
+      "authors": "Jingdong Zhang, Xinze Li, Yize Jiang, Luan Yang, Minkai Xu, Junhong Liu",
+      "date": "2026-07-15",
+      "pdf": "https://arxiv.org/pdf/2607.14272v1",
+      "score": "7.0",
+      "evidence": "为生成流提供统一李雅普诺夫引导框架，可通过流匹配应用于流体流动模拟。",
+      "tldr": "针对流匹配后训练指导缺乏稳定性保证的问题，提出LyaGuide框架，将流指导统一为Lyapunov控制问题，并通过伪投影算子显式保障稳定性。该方法兼容现有指导策略，在图像逆问题、强化学习规划等任务中提升了样本质量和鲁棒性，且计算开销小。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Flow matching has emerged as an effective framework for learning complex data distributions, but adapting pretrained flow models to new tasks often requires computationally expensive retraining. Post-training guidance provides a more efficient alternative, but existing methods are largely heuristic and offer no explicit stability guarantees. We address this limitation by proposing LyaGuide, a unified Lyapunov-guided framework that formulates flow guidance as a Lyapunov control problem. Our main theoretical result establishes an equivalence between guided flow matching and Lyapunov control, thereby unifying common guidance strategies, such as classifier guidance, reward guidance, and energy-based guidance, within a single control-theoretic framework. To enforce the Lyapunov condition, we introduce a pseudo-projection operator with a closed-form expression that endows learned or heuristic guidance terms with explicit stability guarantees. LyaGuide supports two practical settings: a model-driven setting, where the target guidance distribution is specified through a known Lyapunov function, and a data-driven setting, where the guidance is adapted from task-specific downstream data. LyaGuide is compatible with existing guidance methods, introduces minimal additional computational overhead, and is straightforward to integrate in practice. Extensive experiments on synthetic benchmarks, image inverse problems, reinforcement learning planning, and energy-based modeling demonstrate consistent improvements in sample quality, guidance fidelity, and robustness, while maintaining computational efficiency.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/17/2607.13202v1-a-generative-model-free-form-deformation-approach-for-the-generation-of-mesh-motions-with-applications-to-pde",
+      "section": "quick",
+      "title_en": "A Generative Model-Free Form Deformation Approach for the Generation of Mesh Motions with Applications to PDE",
+      "authors": "Gugliemo Padula, Artem Sinitsa, Gianluigi Rozza",
+      "date": "2026-07-14",
+      "pdf": "https://arxiv.org/pdf/2607.13202v1",
+      "score": "6.0",
+      "evidence": "用于PDE问题的生成式网格运动方法",
+      "tldr": "针对三维形状变形匹配中网格非同构和高维参数化问题，提出一种拓扑无关的ODE-FFD框架，用粗控制格位移参数化速度场，证明其通用逼近性；结合TarFlow流生成方法学习潜在变形轨迹。该方法支持高效采样与优化，在变形体流基准上提升精度和计算效率，实现可扩展降阶建模。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We introduce a topology-agnostic framework for matching deformations of three-dimensional shapes with non-isomorphic mesh graphs by modelling the deformation as the flow of an Ordinary Differential Equation (ODE). The velocity field is parameterised by a time-dependent Free Form Deformation (FFD), expressed through displacements of a coarse control lattice, yielding a smooth and low-dimensional representation that decouples the deformation model from the discretisation of the source and target surfaces. Under mild regularity assumptions, we prove that the induced ODE map is a universal approximator (in the sup norm) for mappings between genus-0 surfaces, providing a theoretical expressivity guarantee. To further compress the representation and enable probabilistic inference, we couple the ODE--FFD model with a flow-based generative approach in the TarFlow framework, learning a compact latent parametrisation over time series of FFD maps. The resulting method supports efficient sampling and optimisation of plausible deformation trajectories while preserving mesh quality, and it enables scalable reduced-order modelling. Experiments on deforming-body flow benchmarks demonstrate improved accuracy and computational efficiency of reduced-order models constructed from the learned latent dynamics.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

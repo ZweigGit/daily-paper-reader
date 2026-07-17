@@ -1,0 +1,96 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-17T21:16:23.460209+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.14272v1",
+      "source": "arxiv",
+      "title": "Lyapunov Guidance: A Unified Framework for Stabilizing Generative Flows",
+      "abstract": "Flow matching has emerged as an effective framework for learning complex data distributions, but adapting pretrained flow models to new tasks often requires computationally expensive retraining. Post-training guidance provides a more efficient alternative, but existing methods are largely heuristic and offer no explicit stability guarantees. We address this limitation by proposing LyaGuide, a unified Lyapunov-guided framework that formulates flow guidance as a Lyapunov control problem. Our main theoretical result establishes an equivalence between guided flow matching and Lyapunov control, thereby unifying common guidance strategies, such as classifier guidance, reward guidance, and energy-based guidance, within a single control-theoretic framework. To enforce the Lyapunov condition, we introduce a pseudo-projection operator with a closed-form expression that endows learned or heuristic guidance terms with explicit stability guarantees. LyaGuide supports two practical settings: a model-driven setting, where the target guidance distribution is specified through a known Lyapunov function, and a data-driven setting, where the guidance is adapted from task-specific downstream data. LyaGuide is compatible with existing guidance methods, introduces minimal additional computational overhead, and is straightforward to integrate in practice. Extensive experiments on synthetic benchmarks, image inverse problems, reinforcement learning planning, and energy-based modeling demonstrate consistent improvements in sample quality, guidance fidelity, and robustness, while maintaining computational efficiency.",
+      "authors": [
+        "Jingdong Zhang",
+        "Xinze Li",
+        "Yize Jiang",
+        "Luan Yang",
+        "Minkai Xu",
+        "Junhong Liu"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.DS",
+        "math.OC"
+      ],
+      "published": "2026-07-15T18:28:08+00:00",
+      "link": "https://arxiv.org/pdf/2607.14272v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Unified Lyapunov guidance for generative flows, applicable to fluid flow simulation via flow matching.",
+      "llm_evidence_cn": "为生成流提供统一李雅普诺夫引导框架，可通过流匹配应用于流体流动模拟。",
+      "llm_evidence": "为生成流提供统一李雅普诺夫引导框架，可通过流匹配应用于流体流动模拟。",
+      "canonical_evidence": "为生成流提供统一李雅普诺夫引导框架，可通过流匹配应用于流体流动模拟。",
+      "llm_tldr_en": "Proposes LyaGuide, a Lyapunov-guided framework for stabilizing generative flows (e.g., flow matching), unifying existing guidance strategies with stability guarantees, enabling efficient adaptation to new tasks, relevant for fluid flow simulation.",
+      "llm_tldr_cn": "流匹配虽能有效学习复杂数据分布，但将预训练模型适配新任务需昂贵重训练。现有后训练引导方法多为启发式且缺乏稳定性保证。为此提出LyaGuide，将流引导形式化为李雅普诺夫控制问题，统一了分类器引导、奖励引导等多种策略，并提供显式稳定性保证。该方法在多个数据集上验证了稳定性和效率，为生成流在流体动力学等领域的应用提供了理论基础和实用工具。",
+      "llm_tldr": "流匹配虽能有效学习复杂数据分布，但将预训练模型适配新任务需昂贵重训练。现有后训练引导方法多为启发式且缺乏稳定性保证。为此提出LyaGuide，将流引导形式化为李雅普诺夫控制问题，统一了分类器引导、奖励引导等多种策略，并提供显式稳定性保证。该方法在多个数据集上验证了稳定性和效率，为生成流在流体动力学等领域的应用提供了理论基础和实用工具。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.13202v1",
+      "source": "arxiv",
+      "title": "A Generative Model-Free Form Deformation Approach for the Generation of Mesh Motions with Applications to PDE",
+      "abstract": "We introduce a topology-agnostic framework for matching deformations of three-dimensional shapes with non-isomorphic mesh graphs by modelling the deformation as the flow of an Ordinary Differential Equation (ODE). The velocity field is parameterised by a time-dependent Free Form Deformation (FFD), expressed through displacements of a coarse control lattice, yielding a smooth and low-dimensional representation that decouples the deformation model from the discretisation of the source and target surfaces. Under mild regularity assumptions, we prove that the induced ODE map is a universal approximator (in the sup norm) for mappings between genus-0 surfaces, providing a theoretical expressivity guarantee. To further compress the representation and enable probabilistic inference, we couple the ODE--FFD model with a flow-based generative approach in the TarFlow framework, learning a compact latent parametrisation over time series of FFD maps. The resulting method supports efficient sampling and optimisation of plausible deformation trajectories while preserving mesh quality, and it enables scalable reduced-order modelling. Experiments on deforming-body flow benchmarks demonstrate improved accuracy and computational efficiency of reduced-order models constructed from the learned latent dynamics.",
+      "authors": [
+        "Gugliemo Padula",
+        "Artem Sinitsa",
+        "Gianluigi Rozza"
+      ],
+      "primary_category": "math.NA",
+      "categories": [
+        "math.NA"
+      ],
+      "published": "2026-07-14T18:51:56+00:00",
+      "link": "https://arxiv.org/pdf/2607.13202v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "generative approach for mesh motion generation with PDE applications",
+      "llm_evidence_cn": "用于PDE问题的生成式网格运动方法",
+      "llm_evidence": "用于PDE问题的生成式网格运动方法",
+      "canonical_evidence": "用于PDE问题的生成式网格运动方法",
+      "llm_tldr_en": "Introduces a topology-agnostic generative framework for mesh deformation using ODE flow, with theoretical guarantees, applicable to generating mesh motions for PDE solvers including fluid dynamics.",
+      "llm_tldr_cn": "该论文提出一种拓扑无关的生成式框架，通过常微分方程流对三维形状变形进行建模，参数化速度场为时变自由变形。理论证明该映射是通用近似器，可生成光滑的低维变形表示。该方法可应用于PDE求解中的网格运动生成，包括流体动力学问题，为生成式模型在科学计算中的应用提供了新思路。",
+      "llm_tldr": "该论文提出一种拓扑无关的生成式框架，通过常微分方程流对三维形状变形进行建模，参数化速度场为时变自由变形。理论证明该映射是通用近似器，可生成光滑的低维变形表示。该方法可应用于PDE求解中的网格运动生成，包括流体动力学问题，为生成式模型在科学计算中的应用提供了新思路。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
