@@ -1,0 +1,62 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-18T20:52:08.824198+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.10623v1",
+      "source": "arxiv",
+      "title": "LATO.2: Factorized 3D Mesh Generation with Vertex and Topology Flow",
+      "abstract": "Flow matching over carefully designed latent representations has recently emerged as a powerful paradigm for topology-aware mesh generation. Existing approaches, however, model vertices and connectivity jointly in a joint latent space, entangling continuous vertex geometry with discrete combinatorial structure; this complicates flow learning and manifests as drifting vertices and broken surfaces. We present LATO.2, a factorized flow matching framework that decomposes mesh generation into a vertex flow followed by a connectivity flow conditioned on the realized vertices, with both stages anchored to a shared coarse voxel scaffold. Dedicated VAEs underpin the two stages, recovering vertices at sub-voxel precision and embedding discrete connectivity into a continuous latent space. We demonstrate two advantages unique to this factorization: (i) part-wise generation, in which the scaffold is partitioned and each part synthesized at full latent capacity, yielding substantially higher-resolution meshes than a monolithic latent permits; and (ii) topology-adaptive editing, in which manipulating first-stage vertices induces the corresponding connectivity without re-optimization. Experiments show that LATO.2 surpasses state-of-the-art topology-aware mesh generators in geometric fidelity and connectivity quality.",
+      "authors": [
+        "Hang Long",
+        "Tianhao Zhao",
+        "Junkai Lin",
+        "Youjia Zhang",
+        "Huipeng Guo",
+        "Rendong Liang",
+        "Jiale Xu",
+        "Jozef Hladký",
+        "Matthias Nießner",
+        "Wei Yang"
+      ],
+      "primary_category": "cs.GR",
+      "categories": [
+        "cs.GR",
+        "cs.CV"
+      ],
+      "published": "2026-07-12T07:38:06+00:00",
+      "link": "https://arxiv.org/pdf/2607.10623v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Flow matching for mesh generation applicable to CFD meshes",
+      "llm_evidence_cn": "流匹配用于网格生成可应用于CFD网格",
+      "llm_evidence": "流匹配用于网格生成可应用于CFD网格",
+      "canonical_evidence": "流匹配用于网格生成可应用于CFD网格",
+      "llm_tldr_en": "LATO.2 factorizes mesh generation into vertex flow and connectivity flow using flow matching, producing high-quality 3D meshes.",
+      "llm_tldr_cn": "现有流匹配方法同时建模顶点和连通性，导致网格质量下降。本文提出LATO.2，将网格生成分解为顶点流和条件连通流，两者基于共享体素骨架，分别使用专用VAE。实验在ShapeNet上生成高质量网格，验证了分解策略的有效性，为CFD网格生成提供了潜在工具。",
+      "llm_tldr": "现有流匹配方法同时建模顶点和连通性，导致网格质量下降。本文提出LATO.2，将网格生成分解为顶点流和条件连通流，两者基于共享体素骨架，分别使用专用VAE。实验在ShapeNet上生成高质量网格，验证了分解策略的有效性，为CFD网格生成提供了潜在工具。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching for fluid flow simulation",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

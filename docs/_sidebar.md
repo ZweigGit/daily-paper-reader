@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-07-18 <!--dpr-date:20260718-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/18/2607.10623v1-lato2-factorized-3d-mesh-generation-with-vertex-and-topology-flow" data-sidebar-item="{&quot;title&quot;: &quot;LATO.2: Factorized 3D Mesh Generation with Vertex and Topology Flow&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.10623v1-lato2-factorized-3d-mesh-generation-with-vertex-and-topology-flow&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;流匹配用于网格生成可应用于CFD网格&quot;}">LATO.2: Factorized 3D Mesh Generation with Vertex and Topology Flow</a>
   * 2026-07-17 <!--dpr-date:20260717-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/17/2607.14272v1-lyapunov-guidance-a-unified-framework-for-stabilizing-generative-flows" data-sidebar-item="{&quot;title&quot;: &quot;Lyapunov Guidance: A Unified Framework for Stabilizing Generative Flows&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.14272v1-lyapunov-guidance-a-unified-framework-for-stabilizing-generative-flows&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;为生成流提供统一李雅普诺夫引导框架，可通过流匹配应用于流体流动模拟。&quot;}">Lyapunov Guidance: A Unified Framework for Stabilizing Generative Flows</a>

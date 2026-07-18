@@ -6,27 +6,24 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-17
-- 运行时间：2026-07-17 21:18:51 UTC
+- 最新运行日期：2026-07-18
+- 运行时间：2026-07-18 20:53:03 UTC
 - 运行状态：成功
-- 本次总论文数：2
+- 本次总论文数：1
 - 精读区：0
-- 速读区：2
+- 速读区：1
 
 ### 今日简报（AI）
-今天速读了2篇论文，聚焦于生成流稳定性与网格运动生成。最值得关注的是Lyapunov引导的生成流稳定框架（7.0/10），它统一了控制理论在生成模型中的应用。下一步建议研究该框架与现有生成模型的结合。
-- 详情：[/202607/17/README](/202607/17/README)
+今日速览1篇关于3D网格生成的论文《LATO.2》。值得关注的是其通过分解顶点与拓扑流实现高质量网格生成的方法。建议对该方向感兴趣的读者深入阅读原文，了解其分解策略的实际效果。
+- 详情：[/202607/18/README](/202607/18/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Lyapunov Guidance: A Unified Framework for Stabilizing Generative Flows](/202607/17/2607.14272v1-lyapunov-guidance-a-unified-framework-for-stabilizing-generative-flows)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：为生成流提供统一李雅普诺夫引导框架，可通过流匹配应用于流体流动模拟。
-2. [A Generative Model-Free Form Deformation Approach for the Generation of Mesh Motions with Applications to PDE](/202607/17/2607.13202v1-a-generative-model-free-form-deformation-approach-for-the-generation-of-mesh-motions-with-applications-to-pde)  
+1. [LATO.2: Factorized 3D Mesh Generation with Vertex and Topology Flow](/202607/18/2607.10623v1-lato2-factorized-3d-mesh-generation-with-vertex-and-topology-flow)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：用于PDE问题的生成式网格运动方法
+   evidence：流匹配用于网格生成可应用于CFD网格
 
 
 <div class="dpr-home-promo-card">
