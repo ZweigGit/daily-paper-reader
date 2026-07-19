@@ -1,0 +1,97 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-19T21:01:25.465433+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.14398v1",
+      "source": "arxiv",
+      "title": "Integration Matters: Rollout-Based Training for Constrained Diffusion Models",
+      "abstract": "Constrained generative models aim to produce samples that satisfy complex feasibility constraints while remaining faithful to the data distribution. Existing constrained generation methods typically enforce constraints either through training-time optimization or sampling-time correction. Training-time optimization approaches optimize on states induced by the training distribution, which can differ substantially from those encountered during sampling. Sampling-time correction methods instead modify the sampling process at inference, introducing distribution shift and requiring expensive tuning, particularly for few-step sampling. We propose a fine-tuning framework that incorporates constraint guidance obtained through online rollout into the training process, which aligns training with sampling by differentiating through the fixed noise schedule used to numerically integrate the denoising process. This exposes the model to violations that arise along the denoising trajectory and aligns diffusion learning with the sampling process. Experiments across multiple tasks show that our method improves constraint satisfaction while maintaining competitive sampling quality compared to prior methods.",
+      "authors": [
+        "Xiaoxuan Liang",
+        "Saeid Naderiparizi",
+        "Berend Zwartsenberg",
+        "Frank Wood"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-07-15T22:25:59+00:00",
+      "link": "https://arxiv.org/pdf/2607.14398v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "constrained diffusion models transferable to fluid dynamics",
+      "llm_evidence_cn": "约束扩散模型方法，可迁移至流体动力学生成",
+      "llm_evidence": "约束扩散模型方法，可迁移至流体动力学生成",
+      "canonical_evidence": "约束扩散模型方法，可迁移至流体动力学生成",
+      "llm_tldr_en": "Proposes rollout-based fine-tuning for constrained diffusion models to mitigate training-sampling distribution mismatch, applicable to generative modeling with physical constraints in fluid dynamics.",
+      "llm_tldr_cn": "现有约束扩散模型在训练和采样时存在分布不匹配导致约束违反。本文提出基于在线展开（rollout）的微调框架，在训练中融入约束指导，提高约束满足能力。该方法为流体动力学中带物理约束的生成建模提供了通用工具，有助于可靠地生成符合物理定律的流场。",
+      "llm_tldr": "现有约束扩散模型在训练和采样时存在分布不匹配导致约束违反。本文提出基于在线展开（rollout）的微调框架，在训练中融入约束指导，提高约束满足能力。该方法为流体动力学中带物理约束的生成建模提供了通用工具，有助于可靠地生成符合物理定律的流场。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.14652v1",
+      "source": "arxiv",
+      "title": "Trajectory-Aware Flow Matching for Topology Optimisation",
+      "abstract": "Topology optimisation (TO) often requires repeated finite element analysis and sensitivity-based material updates, which can be costly when multiple candidate designs are needed under varying physical and design conditions. Generative TO offers a route to rapid design exploration, but existing models may rely on adversarial training, long reverse-diffusion sampling, or external guidance to maintain structural feasibility and physical consistency. This study develops a flow matching-based topology optimisation (FMTO) framework for conditional topology generation. Linear FMTO is first formulated as an endpoint-based baseline by interpolating between a Gaussian source field and the BESO reference topology. To introduce mechanically meaningful intermediate states, a trajectory-aware FMTO formulation is proposed, where volume-fraction-indexed BESO states are used to construct the probability path and target velocity field. This incorporates physics-guided optimisation history into generative flow learning without adding inference-time optimisation. A path--velocity mismatch analysis explains why moderate trajectory weighting can improve generation stability, whereas excessive guidance may over-constrain the learned transport. Numerical examples show that FMTO generates diverse topology candidates with improved compliance-related performance, volume-fraction satisfaction, topology fidelity, and substantially fewer sampling steps than a diffusion-based baseline. Under limited training data, trajectory-aware FMTO achieves the best overall performance with a moderate trajectory weight. Studies on trajectory-anchor density and three-dimensional topology generation further demonstrate the influence of path design and the applicability of the proposed framework beyond two-dimensional problems.",
+      "authors": [
+        "Shusheng Xiao",
+        "Jinshuai Bai",
+        "Hyogu Jeong",
+        "Yunfei Xi",
+        "Yilin Gui",
+        "YuanTong Gu"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.NA"
+      ],
+      "published": "2026-07-16T07:21:02+00:00",
+      "link": "https://arxiv.org/pdf/2607.14652v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "flow matching for topology optimization, method transferable to fluid flow",
+      "llm_evidence_cn": "流匹配方法用于拓扑优化，方法可迁移至流体流动",
+      "llm_evidence": "流匹配方法用于拓扑优化，方法可迁移至流体流动",
+      "canonical_evidence": "流匹配方法用于拓扑优化，方法可迁移至流体流动",
+      "llm_tldr_en": "This paper proposes a flow matching-based topology optimization (FMTO) framework that avoids adversarial training and long reverse-diffusion sampling, enabling efficient conditional generation. Although applied to topology optimization, the flow matching method is directly transferable to fluid flow simulation tasks.",
+      "llm_tldr_cn": "该论文针对现有生成式拓扑优化依赖对抗训练、长逆向扩散采样或外部引导等问题，提出了一种基于流匹配的拓扑优化框架（FMTO）。通过线性插值高斯场与BESO参考拓扑构建端点基线，并引入力学有意义的中间状态，实现了高效的条件拓扑生成。虽未直接涉及流体动力学，但其流匹配方法可迁移至流体流动模拟，为流体力学中的生成模型应用提供了新思路。",
+      "llm_tldr": "该论文针对现有生成式拓扑优化依赖对抗训练、长逆向扩散采样或外部引导等问题，提出了一种基于流匹配的拓扑优化框架（FMTO）。通过线性插值高斯场与BESO参考拓扑构建端点基线，并引入力学有意义的中间状态，实现了高效的条件拓扑生成。虽未直接涉及流体动力学，但其流匹配方法可迁移至流体流动模拟，为流体力学中的生成模型应用提供了新思路。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

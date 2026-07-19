@@ -1,0 +1,1144 @@
+Title: Trajectory-Aware Flow Matching for Topology Optimisation
+
+URL Source: https://arxiv.org/pdf/2607.14652v1
+
+Published Time: Fri, 17 Jul 2026 00:42:46 GMT
+
+Number of Pages: 30
+
+Markdown Content:
+# Trajectory-Aware Flow Matching for Topology Optimisation 
+
+Shusheng Xiao a, Jinshuai Bai b, ∗, Hyogu Jeong a, Yunfei Xi d,a , Yilin Gui c, YuanTong Gu a
+
+> aSchool of Mechanical, Medical and Process Engineering, Queensland University of Technology, Brisbane, 4000, QLD, Australia
+> bInstitute of Biomechanics and Medical Engineering, AML, Department of Engineering Mechanics, Tsinghua University, Beijing, 100084, China
+> cSchool of Civil and Environmental Engineering, Queensland University of Technology, Brisbane, 4000, QLD, Australia
+> dState Key Laboratory of Advanced Environmental Technology, Guangzhou Institute of Geochemistry, Chinese Academy of Sciences, Guangzhou, 510640, China
+
+Abstract 
+
+Topology optimisation (TO) often requires repeated finite element analysis and sensitivity-based material updates, which can be costly when multiple candidate designs are needed under varying physical and design conditions. Generative TO provides a route to rapid design explo-ration, but existing generative models may require adversarial training, long reverse-diffusion sampling, or external guidance to maintain structural feasibility and physical consistency. This study develops a flow matching-based topology optimisation (FMTO) framework for conditional topology generation. Linear FMTO is first formulated by interpolating between a Gaussian source field and the BESO reference topology, establishing an efficient endpoint-based baseline but also revealing the limitation of probability paths constructed only from the source and final topology. To address this limitation, a trajectory-aware FMTO formulation is proposed, in which volume-fraction-indexed intermediate BESO states are used to construct both the prob-ability path and the target velocity field. In this way, physics-guided optimisation history is incorporated into the learned generative flow without adding inference-time optimisation. The role of trajectory guidance is analysed through a path–velocity mismatch formulation, which explains why moderate trajectory weighting can improve generation stability, whereas exces-sive guidance may over-constrain the learned transport. Numerical examples show that linear FMTO generates diverse topology candidates with improved compliance-related performance, volume-fraction satisfaction, topology fidelity, and substantially fewer sampling steps than a diffusion-based baseline. Under limited training data, trajectory-aware FMTO achieves the best overall performance with a moderate trajectory weight, consistent with the theoretical analysis. Further studies on trajectory-anchor density and three-dimensional topology genera-tion demonstrate the influence of path design and the applicability of the proposed framework beyond two-dimensional problems. 
+
+Keywords: Machine learning, Flow matching, Topology optimisation, Generative model, Solid mechanics   
+
+> ∗Corresponding author
+> Email address: bjs@mail.tsinghua.edu.cn (Jinshuai Bai) arXiv:2607.14652v1 [cs.LG] 16 Jul 2026
+
+1. Introduction 
+
+Topology optimisation (TO) provides a systematic method for generating material layouts that satisfy prescribed loading, boundary, and design constraints while optimising structural performance [1]. Over the past decades, a wide range of TO formulations have been developed, including density-based methods such as solid isotropic material with penalisation (SIMP) [2, 3], evolutionary approaches such as evolutionary structural optimisation (ESO) and bi-directional evolutionary structural optimisation (BESO) [4, 5], level-set-based methods [6], and explicit geometry-based methods such as moving morphable components (MMC) [7]. These methods have enabled the design of lightweight and mechanically efficient structures in aerospace, me-chanical, and civil engineering applications [8, 9, 10]. However, conventional TO is usually performed as an iterative and problem-specific optimisation process, where repeated finite ele-ment analyses (FEA) and sensitivity evaluations are required for each new loading, boundary-condition, or constraint setting. This repeated optimisation can become computationally ex-pensive when multiple design alternatives must be generated under changing design require-ments [11]. These limitations have motivated increasing interest in machine learning-based TO (MLTO) methods for accelerating topology generation from prescribed design conditions. Recent advances in ML have enabled surrogate-based topology prediction, where neural net-works are trained to approximate the mapping from prescribed design conditions, intermediate fields, or compact representations to optimised material layouts. Early studies formulated TO as an image-to-image prediction problem using convolutional encoder–decoder networks [12, 13]. Subsequent works extended this paradigm to three-dimensional domains [14], nonlinear struc-tural problems [15], MMC-based real-time topology prediction [16], operator- and transformer-based topology prediction models [17, 18], and low-dimensional latent-space reconstruction of optimised topologies [19]. Related studies have also explored neural ordinary differential equation (ODE)-based representations to describe the continuous evolution of topology design variables during optimisation [20]. These surrogate-based methods can rapidly approximate optimised layouts, but they are usually designed to predict or reconstruct a single near-optimal topology for a given load and boundary conditions. They provide limited support for design exploration, where multiple feasible topology candidates are often needed to investigate alterna-tive load-transfer patterns and design trade-offs [21, 22, 23]. This limitation has motivated the development of generative TO methods, which aim to synthesise diverse topology candidates under prescribed physical conditions while maintaining structural performance and feasibility. Generative TO provides a promising approach for rapid and diverse topology synthesis, but existing studies also show that engineering stability remains a central challenge [24]. Early cGAN-based models, including the prediction–refinement framework of Yu et al. [25] and Nie et al. [26], demonstrated the feasibility of conditional GAN for TO application, with physical-field inputs improving consistency with prescribed loading and boundary conditions. However, GAN-based topology generators may suffer from training instability and mode collapse, with limited generalisability to out-of-distribution (OOD) design conditions, and their generated samples can neglect performance-related requirements such as compliance and manufactura-bility [27]. Diffusion-based generative TO models have recently been introduced to improve sample quality while better preserving structural performance. For example, TopoDiff uses surrogate models to predict properties such as compliance and manufacturability during gener-ation, thereby guiding the denoising process towards structurally efficient and manufacturable designs [27]. Latent-space diffusion further combines conditional latent diffusion with physics-related input fields and auxiliary penalties to improve compliance prediction, volume-fraction control, and structural connectivity [28]. Giannone and Ahmed propose a generative opti-misation framework that combines diffusion-based topology generation with subsequent SIMP refinement. Their results show that, without refinement, generated designs may contain floating material or low-performance features under OOD constraint settings [29]. These developments indicate that generative TO should not only produce diverse topology samples, but should also maintain structural performance, volume feasibility, connectivity, and consistency with 2prescribed physical conditions. Nevertheless, the improved stability of existing generative TO models is often achieved through external conditioning, surrogate-based guidance, auxiliary penalties, post-processing, or optimisation-based refinement, introducing additional modelling and computational overhead beyond the generative model itself [26, 27, 28, 25, 29]. In ad-dition, diffusion-based methods usually require many iterative reverse-sampling steps, which can increase the cost of generating large numbers of candidate topologies [30, 27, 28]. These observations suggest that a suitable generative TO framework should avoid unstable training and reduce sampling cost while maintaining structural performance and physical consistency. Flow matching has recently emerged as a promising alternative for addressing these chal-lenges. Rather than relying on adversarial optimisation or iterative reverse denoising, it learns a continuous velocity field that transports samples from a simple source distribution to the tar-get topology distribution through a supervised velocity-matching objective [31]. The resulting ordinary differential equation (ODE) can be solved efficiently during inference, making flow matching attractive for stable and efficient topology generation. In this work, linear FMTO is first established by directly interpolating between a Gaussian source field and the BESO reference topology under prescribed design conditions. The numerical results show that lin-ear FMTO provides an efficient baseline, although its performance can remain unstable under challenging or limited-data conditions. Its intermediate states are direct mixtures of random noise and the final topology rather than mechanically meaningful topology-evolution states. These mechanically uninformative states can increase the difficulty of velocity-field regression and may leave high-compliance or physically unreasonable samples in the tail of the learned terminal distribution. This issue is fundamentally associated with probability-path construction rather than merely the absence of additional conditioning variables. Flow matching does not prescribe a unique probability path, and different choices define different intermediate states and target velocities, thereby affecting velocity-field learning and ODE sampling stability [31, 32, 33, 34]. In linear FMTO, the path is defined solely by the source sample and final topology and therefore does not reflect the material redistribution governed by structural response, sensitivity information, and design constraints. The central question is therefore not only whether flow matching can generate topologies, but how a trajectory-aware probability path should be constructed to improve the quality and stability of topology generation while better reflecting the underlying optimisation process. Conventional TO algorithms naturally generate intermediate design states that record how material is progressively redistributed during optimisation [2, 3, 6, 7, 4, 5]. Among these meth-ods, BESO is particularly suitable for providing optimisation-history information because it evolves the topology through strain-energy- and sensitivity-driven material removal and addi-tion, while its binary distribution offers a consistent topology that is easier for the model to learn [4, 5]. Its prescribed volume evolution also provides a consistent basis for indexing and aligning intermediate states across different optimisation cases. The resulting BESO history therefore provides a natural physics-guided basis for constructing the trajectory-aware path. However, the BESO trajectory is not imposed as an exact transport path because it repre-sents one optimiser-specific evolution from a prescribed initial design, whereas flow matching transports different random source samples to the target topology distribution. Enforcing the recorded trajectory directly would impose the same optimisation history on distinct source– target transports. Instead, the BESO history guides probability-path construction during training, with a trajectory weight balancing this guidance against endpoint transport. The main contribution of this work is a trajectory-aware FMTO framework that incor-porates volume-fraction-indexed BESO states into both the probability path and the target velocity. Linear FMTO first establishes the endpoint-based flow matching framework and ex-poses the absence of mechanics-informed intermediate states in the standard path, which can limit topology-generation quality and stability. Trajectory-aware FMTO then addresses this limitation by introducing BESO optimisation history into path construction. A path–velocity 3mismatch analysis characterises the trade-off between endpoint transport and trajectory guid-ance and explains why moderate guidance may reduce the mismatch, whereas excessive guidance may over-constrain the learned transport. An error-propagation analysis further connects the path–velocity mismatch to velocity-field approximation error, terminal generation error, and the probability of generating high-compliance failure samples. The proposed framework and the trends predicted by the theoretical analysis are examined through numerical studies of lin-ear FMTO, trajectory guidance under limited training data, trajectory weight, anchor density, sampling efficiency, and three-dimensional topology generation. The remainder of this article is organised as follows. Section 2 reviews the minimum-compliance TO formulation, the BESO procedure, and the preliminaries of flow matching. Section 3 presents the proposed FMTO framework, including data preparation, linear and trajectory-aware path construction, path–velocity mismatch analysis, error propagation, sam-pling, and numerical implementation. Section 4 evaluates linear FMTO as the base generator and investigates the effects of trajectory guidance, trajectory weight, anchor density, limited training data, sampling efficiency, and extension to three-dimensional TO. Section 5 summarises the main findings, discusses the limitations, and outlines future research directions. 
+
+2. Topology Optimisation and Flow Matching Preliminaries 
+
+This section outlines the fundamental formulations of the minimum-compliance TO problem and flow matching model, upon which the proposed FMTO methodology is constructed. 
+
+2.1. Topology Optimisation 
+
+TO seeks to determine the optimal layout of material within a prescribed design domain while satisfying the governing physical equations and design constraints. In structural compli-ance minimisation, the objective is to obtain a stiff load-bearing structure under a prescribed material-volume constraint [35]. In this study, the soft-kill BESO method is adopted to generate the reference topologies for the learning framework [36]. The design domain is discretised into N finite elements. Each element is assigned a binary material density variable ρi, where ρi = 1 denotes solid material and ρi = ρmin denotes void material with a small residual stiffness to avoid singularity. The minimum-compliance problem is written as 
+
+ρ∗ = arg min 
+
+> ρ
+
+C(ρ) = F TU = U TK(ρ)U ,
+
+s.t. K(ρ)U = F , 
+
+> ∑Ni=1
+
+ρivi 
+
+> ∑Ni=1
+
+vi
+
+≤ Vf ,ρi ∈ { ρmin , 1}, i = 1 , . . . , N. 
+
+(1) where ρ = [ ρ1, ρ 2, . . . , ρ N ]T denotes the material distribution, K(ρ) is the global stiffness matrix, and U and F are the global displacement and load vectors, respectively. In addition, 
+
+vi is the volume of the ith element, Vf is the prescribed volume-fraction, and ρmin is a small positive density assigned to void elements. In BESO, the topology is evolved by addition and removal of elements according to their sensitivity numbers. After solving the finite element equilibrium equation, the sensitivity num-ber of the ith element for compliance minimisation is evaluated from the elemental strain energy as 
+
+αi = − ∂C ∂ρ i
+
+∝ uT 
+
+> i
+
+k0 
+
+> i
+
+ui, (2) 4where ui is the elemental displacement vector and k0 
+
+> i
+
+is the elemental stiffness matrix of solid material. The sensitivity numbers are commonly filtered over neighbouring elements to reduce checkerboard patterns and mesh-dependent features, 
+
+˜αi = 
+
+> ∑
+> j∈N i
+
+wij αj 
+
+> ∑
+> j∈N i
+
+wij 
+
+, wij = max(0 , r min − dij ), (3) where Ni denotes the neighbourhood of element i, dij is the distance between elements i
+
+and j, and rmin is the filter radius. At each iteration, the intermediate volume target is first updated according to the evolutionary ratio, 
+
+V k = max (
+
+(1 − er)V k−1, V f
+
+> )
+
+, (4) where er is the evolutionary ratio and V k is the volume target at the kth iteration. After finite element analysis, the raw sensitivity numbers are spatially filtered and then averaged with the sensitivity numbers from the previous iteration to stabilise the evolutionary process. The elements are subsequently ranked according to the stabilised sensitivity numbers under the current volume target. Low-sensitivity solid elements are removed, while high-sensitivity void elements may be reintroduced as solid material. This bi-directional add–remove process allows the topology to evolve while following the prescribed volume reduction schedule. The binary topology is updated iteratively until the prescribed volume-fraction is reached and the relative change in the objective value falls below a predefined convergence tolerance. 
+
+2.2. Flow Matching 
+
+Flow matching is a generative modelling framework that learns a time-dependent neural velocity field to continuously transform samples from a simple source distribution to a target data distribution [31, 32]. Let p0(x) and p1(x) denote the source and target distributions, respectively. Flow matching constructs a continuous probability path {pt}t∈[0 ,1] satisfying 
+
+pt=0 = p0, pt=1 = p1. (5) The evolution of a sample along this path is governed by the ordinary differential equation 
+
+dxt
+
+dt = vθ(xt, t ), t ∈ [0 , 1] , (6) where xt denotes the intermediate state at time t, and vθ is a time-dependent neural velocity field. Starting from x0 ∼ p0, integrating Eq. (6) from t = 0 to t = 1 yields a terminal sample whose distribution approximates p1. During training, flow matching directly matches the target velocity associated with a prescribed probability path and therefore avoids numerical integration of the generative ODE. Given a probability path {pt}t∈[0 ,1] connecting p0 and p1, let ut(x) denote the corresponding marginal velocity field. In principle, the neural velocity field can be trained using the flow matching objective 
+
+LFM (θ) = Et∼U (0 ,1) , xt∼pt
+
+> [
+
+∥vθ(xt, t ) − ut(xt)∥22
+
+> ]
+
+. (7) However, the marginal velocity field ut(x) is generally unavailable in closed form. Conditional flow matching therefore constructs tractable conditional probability paths associated with sam-pled source–target endpoints x0 ∼ p0 and x1 ∼ p1. For a randomly sampled time t ∼ U (0 , 1) ,an intermediate state xt is drawn from the corresponding conditional path pt(x | x0, x1). The neural velocity field is then trained using 
+
+LCFM (θ) = E [
+
+∥vθ(xt, t ) − ut(xt | x0, x1)∥22
+
+> ]
+
+, (8) where the expectation is taken over the sampled source–target pairs, flow times, and interme-diate states. 5The conditional flow matching formulation does not prescribe a unique conditional proba-bility path. Different path constructions may be adopted, provided that the intermediate states and their corresponding target velocities can be evaluated during training [37]. The selected path determines the intermediate states presented to the velocity network and can influence the geometry of the learned flow, training behaviour, and numerical sampling efficiency [34]. For topology generation, the target sample x1 corresponds to an optimised topology field, while the velocity network is additionally conditioned on the physical and design variables c.The resulting problem-conditioned velocity field is denoted by vθ(xt, t, c). Based on this general formulation, the linear and BESO-guided trajectory-aware paths considered in this study are introduced in the following section. 
+
+3. Trajectory-aware Flow Matching Topology Optimisation Framework 
+
+This section presents the proposed FMTO framework with an emphasis on trajectory-aware path construction. The purpose is not only to define a conditional generative model for topology fields, but also to show how optimisation-history information can be converted into a training-time probability path for flow matching. 
+
+3.1. Data preparation and BESO trajectory recording 
+
+For a given set of physical and design conditions, the BESO produces a converged numerical reference topology, 
+
+ρref  
+
+> i
+
+= TBESO (ci), (9) where ci denotes the conditions of the ith TO instance and ρref  
+
+> i
+
+is the corresponding BESO solution. The notation ρ∗ is reserved for the ideal optimum of the mathematical TO problem in Eq. (1). For linear FMTO, the training data consist of condition–topology pairs, 
+
+Dlin = {( 
+
+ci, ρref  
+
+> i
+> )} Mi=1
+
+, (10) where M is the number of TO instances. For trajectory-aware FMTO, representative intermediate BESO states are also recorded. These states are saved at descending volume-fraction levels, 
+
+Vi = {
+
+ν(0)  
+
+> i
+
+, ν (1)  
+
+> i
+
+, . . . , ν (L)
+
+> i
+> }
+
+, ν(0)  
+
+> i
+
+> ν (1)  
+
+> i
+
+> · · · > ν (L) 
+
+> i
+
+, (11) with the corresponding topology trajectory 
+
+Ri = {
+
+ρ(0)  
+
+> i
+
+, ρ(1)  
+
+> i
+
+, . . . , ρ(L)
+
+> i
+> }
+
+, ρ(L) 
+
+> i
+
+= ρref  
+
+> i
+
+. (12) The trajectory dataset is therefore 
+
+Dtraj = {(ci, Ri, Vi)}Mi=1 . (13) Volume-fraction is used to align optimisation progress because different TO instances may converge in different numbers of iterations. The recorded states are mapped to the flow time 
+
+t ∈ [0 , 1] by 
+
+ti,ℓ = ν(0)  
+
+> i
+
+− ν(ℓ)
+
+> i
+
+ν(0)  
+
+> i
+
+− ν(L)
+
+> i
+
+, ℓ = 0 , . . . , L. (14) Thus, ti, 0 = 0 corresponds to the initial material distribution and ti,L = 1 corresponds to the converged reference topology. The BESO trajectory is not treated as an additional final target. Instead, it is used to define a training-time guide for the probability path. The condition ci contains global descriptors and spatial fields encoding the prescribed design variables, supports, and loads. Gaussian source fields are sampled online as 6x0 ∼ p0(x) = N (0, I), (15) with the same spatial resolution as the topology field. For linear FMTO, x0 is paired with ρref  
+
+> i
+
+.For trajectory-aware FMTO, x0 is paired with Ri and Vi.
+
+3.2. Linear FMTO as an endpoint-based baseline 
+
+As illustrated in Fig. 1(a), linear FMTO constructs an endpoint-based straight-line proba-bility path between a Gaussian source field and a reference topology [38, 33]. For each training pair (ci, ρref  
+
+> i
+
+) ∈ D lin , the intermediate state is defined as 
+
+x0 
+
+> t
+
+= (1 − t)x0 + tρref  
+
+> i
+
+, (16) where t ∼ U (0 , 1) and x0 ∼ N (0, I). The corresponding target velocity is 
+
+u0 
+
+> t
+
+= dx0
+
+> t
+
+dt = ρref  
+
+> i
+
+− x0. (17) Accordingly, the straight path shown in Fig. 1(a) evolves directly from the Gaussian source sam-ple x0 towards the reference topology ρref  
+
+> i
+
+, without introducing any intermediate optimisation-history information. The conditional velocity network is trained to approximate the target velocity by minimising 
+
+Llin = E(ci,ρref  
+
+> i),x0,t
+> [∥∥∥
+
+v0
+
+> θ
+> (
+
+x0 
+
+> t
+
+, t, ci
+
+> )
+
+− u0
+
+> t
+> ∥∥∥22
+> ]
+
+. (18) The trained velocity field is subsequently used for generation through the common ODE sam-pling procedure described in Section 3.5. The linear formulation is simple and provides an efficient endpoint-based baseline. However, as shown by the intermediate states along the path in Fig. 1(a), these states are direct mixtures of random noise and the final reference topology. They do not represent mechanically mean-ingful stages of topology evolution and therefore do not use the optimisation history through which the reference design was obtained. Consequently, the network must regress the velocity field from intermediate states that may be poorly aligned with physically plausible material-redistribution patterns. This may increase the difficulty of velocity-field learning and produce a broader terminal distribution, leaving high-compliance or physically unreasonable samples in the generated tail. This limitation motivates the BESO-guided trajectory-aware formulation illustrated in Fig. 1(b). 
+
+3.3. BESO-guided trajectory-aware path 
+
+As illustrated in Fig. 1(b), the trajectory-aware formulation uses volume-fraction-indexed BESO states to construct a mechanics-informed guide for the probability path. These states describe progressive material redistribution driven by finite element equilibrium, strain-energy sensitivity, and volume evolution. However, the BESO trajectory is not assumed to be an exact generative transport path. Instead, it is introduced as a soft training-time guide for constructing physically more informative intermediate states. Let {ρ(ℓ) 
+
+> i
+
+}Li 
+
+> ℓ=0
+
+denote the recorded BESO states for the i-th design case, with the corre-sponding normalised trajectory times {ti,ℓ }Li
+
+> ℓ=0
+
+. The discrete BESO states shown along the green trajectory in Fig. 1(b) are converted into a continuous trajectory guide qi(t) through piecewise-linear interpolation. For t ∈ [ti,ℓ , t i,ℓ +1 ],
+
+qi(t) = (1 − γ)ρ(ℓ) 
+
+> i
+
++ γρ(ℓ+1)  
+
+> i
+
+, γ = t − ti,ℓ 
+
+ti,ℓ +1 − ti,ℓ 
+
+. (19) The corresponding segment-wise trajectory velocity is 7Figure 1: Schematic illustration of the proposed FMTO path construction and sampling workflow. (a) Endpoint-based linear path from a Gaussian source field to the BESO reference topology. (b) BESO-guided trajectory-aware path, where the interpolated BESO guide qi(t) is used to construct the λ-weighted centreline mλi (t) and the corresponding intermediate state xλt . (c) ODE-based FMTO sampling from x0 to the generated topology. (d) Conditional velocity network, which takes the current state xt, flow time t, and design condition ci as inputs and outputs the velocity field vθ (xt, t, c i).
+
+8˙qi(t) = ρ(ℓ+1)  
+
+> i
+
+− ρ(ℓ)
+
+> i
+
+ti,ℓ +1 − ti,ℓ 
+
+. (20) The piecewise-linear trajectory qi(t) is continuous, although its derivative may be discontinuous at the interpolation knots. Since these knots form a set of measure zero under continuous sampling of t, they do not affect the expected flow-matching objective. The interpolated BESO trajectory is not imposed directly as the probability-path centreline. Instead, as represented by the orange trajectory in Fig. 1(b), a trajectory weight λ ∈ [0 , 1] is introduced to balance endpoint supervision and optimisation-history guidance. The guided centreline is defined as 
+
+mλi (t) = (1 − λ)ρref  
+
+> i
+
++ λqi(t), (21) with the corresponding centreline velocity 
+
+˙mλi (t) = λ ˙qi(t). (22) Here, λ = 0 recovers the endpoint-based centreline used by the linear formulation in Fig. 1(a), whereas λ = 1 makes the centreline fully follow the interpolated BESO guide qi(t). Intermediate values of λ produce the orange λ-weighted centreline in Fig. 1(b), thereby providing a soft balance between supervision from the final reference topology and guidance from the BESO optimisation trajectory. Using this time-dependent centreline, the trajectory-aware probability path shown by the blue curve in Fig. 1(b) is defined as 
+
+xλt = (1 − t)x0 + tmλi (t). (23) Unlike the endpoint-based path in Eq. (16), this path is not a straight-line interpolation because its centreline mλi (t) varies with time. Differentiating Eq. (23) gives the corresponding target velocity 
+
+uλt = dxλt
+
+dt = −x0 + mλi (t) + t ˙mλi (t). (24) The final term t ˙mλi (t) accounts explicitly for the time variation of the trajectory-guided cen-treline and distinguishes the proposed target velocity from that of the endpoint-based linear path. The trajectory-aware conditional velocity network is trained by minimising 
+
+Ltraj = E(ci,Ri,Vi),x0,t 
+
+> [∥∥∥
+
+vλθ
+
+> (
+
+xλt , t, ci
+
+> )
+
+− uλt
+
+> ∥∥∥22
+> ]
+
+, (25) where Ri denotes the recorded BESO topology states and Vi denotes their associated volume-fraction sequence. The complete trajectory-aware path construction is summarised in Fig. 1(b). Importantly, the BESO trajectory is required only during training to construct xλt and uλt . During infer-ence, neither the recorded BESO states nor the interpolated guide qi(t) is required. Linear and trajectory-aware FMTO therefore follow the same ODE sampling procedure described in Section 3.5. 
+
+3.4. Theoretical rationale for trajectory guidance 
+
+The benefit of trajectory guidance can be understood from a path-approximation perspec-tive. Flow matching learns a velocity field, and different paths expose the network to different intermediate states and target velocities. A trajectory guide is useful only if it reduces the mis-match between the constructed training path and a more favourable, but unknown, generative path for topology evolution. 9Let m∗ 
+
+> i
+
+(t) denote a hypothetical ideal generative centreline. The detailed derivation is pro-vided in Appendix A. In compact form, the combined path–velocity mismatch of the trajectory-aware centreline can be written as 
+
+G(λ) = (1 − λ)2BG + λ2NG + 2 λ(1 − λ)CG. (26) Here, BG measures the mismatch of the endpoint-based linear path, NG measures the mismatch of the BESO trajectory guide, and CG measures their correlation. Because G(0) = BG, trajec-tory guidance improves the path design when G(λ) < G (0) . The unconstrained minimiser of this quadratic mismatch is 
+
+λ∗ = BG − CG
+
+BG + NG − 2CG
+
+, (27) with the practical value constrained to [0 , 1] . This expression shows that increasing λ does not necessarily improve the path. Instead, a moderate value may better balance endpoint supervision and BESO trajectory guidance, whereas excessive guidance may over-constrain the learned transport. The same interpretation can be connected to generation stability. Under finite data and fi-nite model capacity, reducing G(λ) can reduce the difficulty of velocity-field regression. Through the stability of the generative ODE, a smaller velocity-field error can in turn reduce the ter-minal generation error and the upper bound on the probability of generating high-compliance samples. The full error-propagation argument and its assumptions are given in Appendix B. This analysis is used as an interpretation rather than an unconditional guarantee. 
+
+3.5. Sampling, post-processing, and FEA evaluation 
+
+After training, the linear and trajectory-aware FMTO models use the same inference pro-cedure. As illustrated by the global sampling sequence in Fig. 1(c), sampling starts from a Gaussian source field and advances the topology state from t = 0 to t = 1 . For a prescribed design condition c, the initial state is sampled according to Eq. (15), and the learned ordinary differential equation is 
+
+dxt
+
+dt = vθ (xt, t, c) , xt=0 = x0. (28) At each solver evaluation, the current topology state xt, the current flow time t, and the prescribed condition c are passed to the conditional U-Net, as illustrated in Fig. 1(d). The network predicts the instantaneous velocity field ̂
+
+ut = vθ (xt, t, c) . (29) The predicted velocity is then used by the numerical ODE solver to advance the topology state. For example, an explicit Euler update is written as 
+
+xtk+1 = xtk + ∆ t vθ (xtk , t k, c) , tk+1 = tk + ∆ t. (30) Repeated velocity-network evaluations and ODE updates produce the sampling sequence 
+
+x0 −→ xt1 −→ xt2 −→ · · · −→ ̂ x1, (31) where ̂ x1 is the generated continuous topology field at t = 1 . Multiple candidates for the same condition are obtained by drawing different Gaussian source fields x0.The two FMTO formulations differ only in their training-time path construction and velocity-field supervision. Linear FMTO is trained using Eq. (18), whereas trajectory-aware FMTO is trained using Eq. (25). The recorded BESO states, the interpolated guide qi(t), and the 10 guided centreline mλi (t) are required only during training and are not evaluated during infer-ence. Therefore, trajectory guidance introduces no additional BESO optimisation or trajectory-construction step into the sampling procedure. For post-processing, each element of the generated terminal field is first clamped to the interval [0 , 1] ,
+
+> ˜
+
+x1,e = min [1 , max (0 ,̂ x1,e )] , (32) and subsequently binarised using a fixed threshold of 0.5, ̂
+
+ρbin  
+
+> e
+
+=
+
+> 
+
+1, ˜x1,e > 0.5,
+
+0, ˜x1,e ≤ 0.5. (33) Here, e denotes the element index. Elements assigned a value of one are treated as solid, whereas the remaining elements are treated as void. The same thresholded topology is used for visualisation and finite element evaluation. Each generated topology is re-evaluated using the same boundary conditions, loads, material properties, mesh, and finite element settings as the corresponding BESO reference. When multiple candidates are generated for the same condition, their FEA-based evaluation and ranking are performed only after neural-network sampling and do not alter the generative ODE. The quantitative measures used to assess structural performance, volume feasibility, and topology fidelity are introduced in the following subsection. 
+
+3.6. Evaluation metrics 
+
+Following the sampling, post-processing, and FEA procedure described in Section 3.5, the generated samples are evaluated in terms of structural performance, volume feasibility, and topology fidelity. Compliance- and volume-related metrics are computed from the thresholded binary topologies, whereas Raw MAE is computed from the clamped continuous density fields before thresholding. For the j-th generated sample of validation case i, C/C BESO denotes the ratio between the recomputed compliance of the generated topology, C(j)gen ,i , and that of the corresponding BESO reference, CBESO ,i . A value below one indicates lower recomputed compliance than the reference under the adopted FEA settings. The median C/C BESO is evaluated over all generated samples. The mean-best C/C BESO is obtained by selecting the lowest ratio for each validation case and then averaging across cases. The constrained mean-best value is computed in the same manner after retaining only samples satisfying V (j) 
+
+> f,i
+
+≤ V ∗
+
+> f,i
+
+. The failure rate is defined as the percentage of generated samples with 
+
+C/C BESO > 1.25 .The generated volume-fraction is 
+
+V (j) 
+
+> f,i
+
+= 
+
+> ∑Ne
+> e=1 ̂
+
+ρ(j),bin  
+
+> i,e
+
+ve 
+
+> ∑Ne
+> e=1
+
+ve
+
+, (34) where ve is the volume of element e. The feasible-sample rate is the percentage of samples satisfying V (j) 
+
+> f,i
+
+≤ V ∗
+
+> f,i
+
+, while the mean absolute volume-fraction error is 
+
+EVf = 1
+
+NcNsNc∑
+
+> i=1
+> Ns∑
+> j=1
+> ∣∣∣
+
+V (j) 
+
+> f,i
+
+− V ∗ 
+
+> f,i
+> ∣∣∣
+
+, (35) where Nc and Ns are the numbers of validation cases and generated samples per case, respec-tively. Topology fidelity is evaluated relative to the corresponding BESO reference. Let Ω(j) 
+
+> i
+
+and 
+
+Ωref  
+
+> i
+
+denote the solid-element sets of the thresholded generated and reference topologies. The intersection over union (IoU) and Dice coefficient are defined as 11 IoU (j) 
+
+> i
+
+=
+
+> ∣∣∣
+
+Ω(j) 
+
+> i
+
+∩ Ωref 
+
+> i
+> ∣∣∣∣∣∣
+
+Ω(j) 
+
+> i
+
+∪ Ωref 
+
+> i
+> ∣∣∣
+
+, Dice (j) 
+
+> i
+
+= 2 ∣∣∣Ω(j) 
+
+> i
+
+∩ Ωref 
+
+> i
+> ∣∣∣∣∣∣
+
+Ω(j) 
+
+> i
+> ∣∣∣
+
++ |Ωref  
+
+> i
+
+| . (36) Boundary F1 measures agreement between the generated and reference material boundaries and is defined as 
+
+BF1 = 2PBRB
+
+PB + RB
+
+, (37) where PB and RB are the boundary precision and recall evaluated using a one-pixel matching tolerance. Raw MAE measures the element-wise difference between the clamped continuous generated density field and the BESO reference, 
+
+MAE (j) 
+
+> i
+
+= 1
+
+NeNe∑
+
+> e=1
+> ∣∣∣˜
+
+x(j)1,i,e − ρref  
+
+> i,e
+> ∣∣∣
+
+. (38) The reported topology-fidelity metrics are averaged over all validation cases and generated samples. Higher values are preferred for IoU, Dice, Boundary F1, and feasible-sample rate, whereas lower values are preferred for compliance ratio, failure rate, volume-fraction error, and Raw MAE. 
+
+3.7. Network and implementation details 
+
+As illustrated in Fig. 1(d), the conditional velocity field vθ(xt, t, c) is represented by a conditional U-Net. For the two-dimensional model, the current topology field xt is concatenated with four spatial fields encoding the boundary conditions and loads, forming a 5 × 80 × 160 
+
+input tensor. An initial 3 × 3 convolution maps the input to 48 channels. The encoder uses residual blocks with feature channels 48 , 96 , and 192 , followed by a 192 × 10 × 20 bottleneck. The decoder mirrors the encoder through transposed-convolution upsampling and skip-feature concatenation, and the output head maps the final 48-channel feature field to a one-channel velocity field. Group normalisation and SiLU activation are used throughout. For the three-dimensional experiments, the input has a spatial resolution of 48 × 24 × 24 ,and the same channel progression is retained. All two-dimensional convolution, downsampling, and transposed-convolution operations are replaced by their three-dimensional counterparts, resulting in a 128 × 6 × 3 × 3 bottleneck and a one-channel three-dimensional velocity field. The flow time is represented using sinusoidal features, while the global condition vector is mapped through a multilayer perceptron. These representations are combined into a 192-dimensional embedding e(t, c), which modulates each residual block through scale–shift con-ditioning. The same conditional architecture is used for linear and trajectory-aware FMTO. Within each dimensional setting, the DMTO baseline, linear FMTO, and trajectory-aware FMTO are configured with the same number of trainable parameters, ensuring that the com-parisons are not affected by differences in model capacity. For each mini-batch, Gaussian source fields are sampled online from N (0, I), and flow times are sampled uniformly from [0 , 1] . The intermediate states and target velocities are computed from the corresponding path formulation, and the model is trained using the mean-squared velocity-matching loss. AdamW is used with a learning rate of 2×10 −4, weight decay of 
+
+1×10 −6, batch size of 8, gradient clipping with a maximum norm of 1.0, and 500 training epochs. During inference, samples are generated using explicit Euler integration. All computations were performed on an Intel Core i9-13900K CPU, an NVIDIA GeForce RTX 4080 GPU, and 32 GB RAM. 12 4. Numerical Examples 
+
+As outlined in the Introduction, the numerical studies are designed to examine three ques-tions arising from the proposed trajectory-aware FMTO framework: 
+
+• Can endpoint-based linear FMTO serve as an efficient conditional generator for topology optimisation compared with a diffusion-based generative baseline? 
+
+• Can BESO optimisation histories improve flow matching by providing a trajectory-aware probability path, particularly when the available training data are limited? 
+
+• How sensitive is the proposed path construction to the discretisation of the BESO trajec-tory, and can the same principle be extended to three-dimensional topology generation with objective assessment of voxel-level topology fidelity and volume feasibility? The numerical results are organised into four examples. Example 1 establishes linear FMTO as an endpoint-based baseline for two-dimensional conditional topology generation and com-pares its generation quality and sampling efficiency with those of a diffusion-based baseline. Example 2 evaluates the proposed trajectory-aware path under a limited-data setting and ex-amines the influence of the trajectory weight λ, thereby testing whether moderate BESO tra-jectory guidance improves generation quality relative to the linear path. Example 3 investigates the effect of trajectory-anchor density, which controls the discretisation of the recorded BESO optimisation history used for path construction. Finally, Example 4 extends the evaluation to three-dimensional topology generation and examines whether the proposed framework can preserve structural validity beyond the two-dimensional setting. Unless otherwise stated, Examples 1, 2, and 3 are conducted using two-dimensional BESO datasets with a topology resolution of 80 ×160 . This common configuration allows the endpoint-based baseline, trajectory-aware guidance, and trajectory discretisation to be evaluated without additional variation from mesh resolution or problem dimensionality. The three-dimensional extension is examined separately in Example 4 using the corresponding voxel-based dataset and model with a resolution of 48 × 24 × 24 .
+
+4.1. Example 1: Linear FMTO as an Efficient Endpoint-Based Baseline 
+
+This example is designed to validate the basic performance of the linear FMTO model in generating two-dimensional topology fields under prescribed physical and design conditions. As the first validation case, it provides a comprehensive comparison with the BESO reference so-lutions and a diffusion model baseline, focusing on the qualitative comparison of representative cases, overall generation quality and computational efficiency of the proposed framework. In this example, a dataset of 5000 BESO-generated TO instances is used and divided into training and testing sets with a ratio of 9:1. Each instance contains the converged BESO reference topology, the global condition vector, and the spatial boundary-condition and load fields. The material properties are specified in non-dimensional form as solid Young’s modulus 
+
+E0 = 1 and Poisson’s ratio ν = 0 .3. The target volume-fraction is set to Vf = 0 .5, and the minimum stiffness for void elements in finite-element compliance evaluation is Emin =1×10 −9E0. The TO parameters are chosen as filter radius rmin = 5 , evolutionary rate er = 0 .01 ,and convergence tolerance τ = 10 −3. The default sampling settings are 20 Euler steps for FMTO and 1000 reverse-diffusion steps for DMTO. These settings are further examined through the step-sensitivity ablation at the end of this subsection. Tables 1 and 2 summarise the quantitative results over 100 validation cases, with 100 gen-erated samples evaluated for each case, resulting in 10000 generated samples per method. All compliance and volume-fraction metrics are computed after thresholding the generated den-sity fields using the same binarisation procedure. As shown in Table 1, both FMTO and DMTO achieve mean-best compliance ratios below unity when the best sample is selected from 100 candidates. This indicates that generative sampling can occasionally identify candidates 13 with lower recomputed compliance than the corresponding BESO reference. Accordingly, the best-sample compliance results are interpreted together with volume-fraction feasibility and topology-fidelity metrics, ensuring that the reported improvements correspond to feasible de-sign alternatives rather than numerical artefacts. Therefore, the best-sample statistics are used as an aggregate indicator of potential design improvement, while the case-wise structural validity is further examined through the qualitative comparison in Fig. 2. Despite this constraint, FMTO achieves lower mean-best compliance ratios both with and without enforcing Vf ≤ 0.5, while also providing a lower median compliance ratio, lower fail-ure rate, higher feasible-sample rate, and smaller volume-fraction deviation. The advantage of FMTO is particularly relevant under the constrained selection criterion, where the best candi-date must satisfy Vf ≤ 0.5, since FMTO maintains a lower mean-best compliance ratio while producing a substantially higher proportion of feasible samples. Table 2 further shows that this improved optimisation behaviour is not obtained by sacrific-ing topology fidelity. FMTO consistently outperforms DMTO in IoU, Dice, Boundary F1, and Raw MAE, demonstrating better agreement with the BESO reference in both thresholded ma-terial layout and continuous density prediction. These results indicate that the FMTO model provides a more reliable generative representation of two-dimensional topology fields, combining improved compliance-related performance, volume-fraction satisfaction, and topology fidelity.                             
+
+> Table 1: Optimisation quality and feasibility over 100 validation cases with 100 generated samples per case. Method Median
+> C/C BESO ↓
+> Mean best
+> C/C BESO ↓
+> Mean best
+> Vf≤0.5↓
+> Fail rate
+> C/C BESO >1.25 ↓
+> Feasible
+> Vf≤0.5↑
+> Mean
+> |Vf−V∗
+> f| ↓
+> FMTO 1.0025 0.9588 0.9609 1.54% 48.07% 0.0046
+> DMTO 1.0043 0.9616 0.9763 6.10% 33.27% 0.0094 Table 2: Topology fidelity with respect to the BESO reference over 100 validation cases, with 100 generated samples per case. IoU, Dice, and Boundary F1 are computed from thresholded topologies, while Raw MAE is computed from the continuous generated density fields. Boundary F1 uses a one-pixel tolerance.
+
+Method IoU ↑ Dice ↑ Boundary F1 ↑ Raw MAE ↓
+
+FMTO 0.8808 0.9344 0.6792 0.0693 
+
+DMTO 0.8013 0.8858 0.4978 0.1191 To further examine these differences at the design level, representative validation cases are visualised in Fig. 2. For each case and method, the displayed topology is selected from 100 generated samples using the same protocol: candidates must satisfy Vf ≤ 0.5. Clearly invalid samples, such as those with disconnected load-bearing paths, are excluded by inspection, and the remaining candidate with the lowest recomputed compliance ratio is reported. Overall, FMTO produces designs that more closely resemble the BESO reference in terms of mate-rial layout, structural connectivity, and consistency with the prescribed boundary and loading conditions. In cases (b)–(e), the FMTO results preserve the dominant structural features of the reference designs more clearly, whereas the DMTO results show larger deviations, including less continuous material layouts, excessive local material, and distorted structural features. The difference maps provide a consistent visual indication, with FMTO generally exhibiting more localised missing and extra material regions relative to the BESO reference. The reported compliance ratios in Fig. 2 further show that the closer agreement with the BESO reference is not obtained at the expense of structural performance. Under the same volume-fraction and visual-validity criteria, the selected FMTO designs achieve compliance ratios close to the BESO reference in all cases, and below C/C BESO = 1 in cases (d) and (e). This indicates that best-of-100 generative sampling can identify structurally plausible feasible candidates with lower recomputed compliance than the corresponding BESO solution. 14 By contrast, the selected DMTO designs generally show higher compliance ratios and larger topological discrepancies, suggesting that DMTO less frequently produces candidates that are simultaneously feasible, structurally reasonable, and low in compliance. These observations are consistent with the aggregate results in Tables 1 and 2. Figure 3 further compares the compliance-ratio distributions of the same five validation cases over all 100 generated samples. In the unfiltered distributions, FMTO generally produces more compact distributions around C/C BESO = 1 , indicating more stable sampling behaviour. This trend becomes clearer after applying the volume-fraction filter Vf ≤ 0.5. In the filtered results, FMTO remains more concentrated in all five cases, and, except for case (a), achieves lower median compliance ratios, lower best-sample compliance ratios, and lower failure rates than DMTO. The difference is particularly pronounced in cases (d) and (e), where the DMTO distributions shift towards higher compliance ratios and contain a larger proportion of failed samples. Together, Figs. 2 and 3 show that the advantage of FMTO is reflected both in the selected feasible designs and in the broader distribution of generated candidates satisfying the volume-fraction constraint. Ground Truth                          
+
+> C/CBESO =1.021, Vf=0.499
+> FMTO FMTO Difference
+> C/CBESO =1.086, Vf=0.495
+> DMTO DMTO Difference
+> C/CBESO =1.017, Vf=0.498 C/CBESO =1.035, Vf=0.494
+> C/CBESO =1.011, Vf=0.500 C/CBESO =1.055, Vf=0.500
+> C/CBESO =0.999, Vf=0.498 C/CBESO =1.054, Vf=0.495
+> C/CBESO =0.971, Vf=0.498 C/CBESO =1.059, Vf=0.496
+> (a)
+> (b)
+> (c)
+> (d)
+> (e)
+> missing material extra material uxfixed uyfixed ux,uyfixed load
+
+Figure 2: Qualitative comparison of linear FMTO and DMTO under representative validation conditions. Each case shows the BESO reference, the selected generated topology, and the corresponding difference map. Red and blue regions indicate missing and extra material relative to the BESO reference, respectively. For each method, the displayed topology is selected from 100 thresholded candidates satisfying Vf ≤ 0.5 using the lowest recomputed C/C BESO . The reported C/C BESO and Vf correspond to the selected feasible design. 
+
+To justify the adopted sampling-step settings, a controlled step-sensitivity ablation is con-ducted for both methods, as shown in Fig. 4. The ablation uses the same five representative validation cases as the qualitative and distributional analyses, so that the sampling-step number is isolated as the main variable. For each step setting, 20 generated samples are evaluated per case. FMTO reaches a stable compliance level with approximately 20 sampling steps, whereas 15 Figure 3: Compliance-ratio distributions of linear FMTO and DMTO over 100 generated samples for five representative validation cases. Each column corresponds to one validation case, labeled (a)–(e). The top row includes all thresholded generated samples, while the bottom row includes only samples satisfying the volume-fraction constraint Vf ≤ 0.5. The dashed vertical line marks the BESO reference level C/C BESO = 1 . The two values listed above each histogram correspond to linear FMTO and DMTO, respectively, and each entry is reported in the format median compliance ratio / best compliance ratio / failure rate, where the failure rate is the percentage of samples with C/C BESO > 1.25 .
+
+DMTO requires substantially more reverse steps and achieves its best observed performance among the tested settings at 1000 steps. These results support the use of 20 steps for FMTO and 1000 steps for DMTO in the subsequent efficiency comparison. 
+
+Figure 4: Controlled step-quality analysis for linear FMTO and DMTO on five representative validation cases. For each sampling-step setting, 20 generated samples are evaluated per case. (a) Median compliance ratio 
+
+C/C BESO . (b) Failure rate, defined as the percentage of samples with C/C BESO > 1.25 . The circled markers indicate the adopted settings: 20 steps for linear FMTO and 1000 steps for DMTO. 
+
+Based on these settings, Table 3 compares the sampling time of the two methods over the same five validation cases, with 100 generated samples per case. The reported timing excludes model loading, visualisation, FEM evaluation, and file input/output (I/O). FMTO requires 0.0177 s per generated sample, whereas DMTO requires 0.8864 s per sample, corresponding to a relative sampling time of 49.9 ×. This difference arises from the different sampling mech-anisms: FMTO generates samples by integrating a learned deterministic velocity field, which can be accurately approximated using a small number of Euler steps, whereas DMTO follows an iterative reverse-denoising process that typically requires many more steps to obtain stable topology samples. 16 Table 3: Inference sampling efficiency measured over five representative validation cases, with 100 generated samples per case. Timing reports pure sampling only and excludes model loading, visualisation, FEM evaluation, and file I/O.                         
+
+> Method Steps Cases ×samples Time/case (s) ↓Time/sample (s) ↓Relative time ↓
+> FMTO 20 5×100 1.775 0.0177 1.0 ×
+> DMTO 1000 5×100 88.638 0.8864 49.9 ×
+
+4.2. Example 2: Trajectory-Aware Path Design under Limited Training Data 
+
+This example evaluates the data efficiency of the proposed trajectory-aware FMTO formula-tion under a limited training set. While Example 1 shows that both linear FMTO and DMTO perform well when trained on 5000 BESO-generated TO instances, the dataset size is reduced here to 1000 instances to create a more challenging limited-data setting. This setting is also used to examine whether a moderate trajectory weight gives the best performance, as suggested by the theoretical trade-off between the linear path and the BESO trajectory guide discussed in Section 3.4. The dataset is divided into training and testing sets with a ratio of 9:1. Each instance con-tains the converged BESO topology, the global condition vector, the spatial boundary-condition and load fields, and the BESO trajectory used for trajectory-aware path construction. The lin-ear FMTO baseline, DMTO, and trajectory-aware FMTO models with different trajectory weights λ are compared. Here, λ = 0 corresponds to the linear path, while larger values in-troduce stronger BESO-trajectory guidance. The material properties, target volume-fraction, FEM setting, and BESO parameters are kept the same as in Example 1. The trajectory-aware path modifies the training probability path and target velocity field, but does not change the inference ODE. Therefore, it introduces no additional sampling overhead. All FMTO variants are sampled using 20 Euler steps, while DMTO uses 1000 reverse-diffusion steps. Quantitative evaluation is conducted on 50 randomly selected validation cases, with 100 generated topologies per case for each method. Table 4 summarises the compliance- and feasibility-related results in the limited-data set-ting. The observed trend is consistent with the theoretical role of λ in Eq. (27), where the preferred trajectory weight is expected to balance the mismatch of the linear path and the mis-match introduced by the BESO trajectory guide, rather than lie at either extreme. Compared with the linear FMTO baseline (λ = 0) , a moderate trajectory weight improves both con-strained best-sample performance and volume feasibility. Among the tested values, λ = 0 .25 
+
+achieves the lowest mean-best compliance ratio under Vf ≤ 0.5, the lowest failure rate, the high-est feasible-sample rate, and the smallest mean volume-fraction error. Although larger λ values can reduce the unconstrained mean-best compliance ratio, this improvement is accompanied by substantially weaker volume-constraint satisfaction and higher failure rates. This behaviour agrees with the trade-off described by G(λ), since excessive trajectory guidance increases the contribution of the trajectory-guide mismatch via the λ2NG term and restricts the flexibility of the learned generative path. Table 5 reports the topology fidelity metrics and shows the same tendency. Trajectory-aware FMTO with λ = 0 .25 obtains the best IoU, Dice, Boundary F1, and Raw MAE, indicating closer agreement with the BESO reference in both thresholded topology layout and continuous density prediction. This indicates that the benefit of a moderate trajectory weight extends beyond compliance performance to topology fidelity. By contrast, DMTO performs substantially worse in both compliance-related and topology-similarity metrics under the same limited-data setting, indicating lower data efficiency and less stable topology generation. Overall, the results identify 
+
+λ = 0 .25 as the most effective value among those tested and support the theoretically motivated use of moderate trajectory guidance. Figure 5 provides a qualitative comparison of the selected feasible designs for five repre-17 Table 4: Optimisation quality and feasibility in the limited-data setting with 1000 training samples, evaluated over 50 validation cases with 100 generated samples per case. Method Median                                                                                                          
+
+> C/C BESO ↓
+> Mean best
+> C/C BESO ↓
+> Mean best
+> Vf≤0.5↓
+> Fail rate
+> C/C BESO >1.25 ↓
+> Feasible
+> Vf≤0.5↑
+> Mean
+> |Vf−V∗
+> f| ↓
+> FMTO λ= 0 1.0131 0.9264 0.9481 9.80% 62.06% 0.0111 FMTO λ= 0 .25 1.0184 0.9021 0.9206 8.96% 70.72% 0.0104
+> FMTO λ= 0 .51.0249 0.9271 0.9572 13.94% 54.14% 0.0106 FMTO λ= 0 .75 1.0286 0.8806 1.0518 19.06% 13.48% 0.0140 FMTO λ= 1 1.0355 0.8660 1.1724 23.82% 1.25% 0.0293 DMTO 1.14 ×10 71.1904 1.2386 82.88% 61.71% 0.0168 Table 5: Topology fidelity to the BESO reference in the limited-data setting with 1000 training samples, evaluated over 50 validation cases with 100 generated samples per case. IoU, Dice, and Boundary F1 are computed from thresholded topologies, while Raw MAE is computed from the continuous generated density fields. Boundary F1 uses a one-pixel tolerance. Method IoU ↑Dice ↑Boundary F1 ↑Raw MAE ↓
+> FMTO λ= 0 0.7952 0.8809 0.3394 0.1220 FMTO λ= 0 .25 0.8189 0.8981 0.3660 0.1061
+> FMTO λ= 0 .50.8060 0.8903 0.3471 0.1223 FMTO λ= 0 .75 0.7098 0.8249 0.2513 0.1866 FMTO λ= 1 0.6627 0.7896 0.2083 0.2307 DMTO 0.4507 0.6061 0.1305 0.3930
+
+sentative validation cases. Consistent with the quantitative results, trajectory-aware FMTO with λ = 0 .25 generally preserves the dominant structural features of the BESO reference more clearly than the linear flow matching baseline and the larger-λ variants. In cases (a)–(c), it pro-duces layouts that remain close to the reference topology while maintaining compliance ratios close to C/C BESO = 1 . In cases (d) and (e), where the reference layouts are simpler or more localised, all FMTO variants can generate feasible designs, but stronger trajectory guidance tends to introduce more visible distortions or over-constrained material distributions. These observations also show that compliance ratio alone is insufficient to assess generation quality. For example, in case (c), the linear flow matching result achieves a compliance ratio below unity, but contains visually weak or disconnected structural features. By contrast, λ = 0 .25 provides more stable structural connectivity while maintaining competitive compliance performance, supporting the use of both compliance-based and structural-fidelity-based metrics. The comparison across λ visually supports the theoretical trade-off discussed in Section 3.4. A purely linear path ignores the BESO trajectory information, whereas a fully trajectory-dominated path may reduce the flexibility of the learned generative transport. The intermediate setting λ = 0 .25 provides a more effective balance between the linear path and the BESO trajectory guide, improving structural consistency without forcing the generated topology to follow the recorded trajectory too strongly. This trend agrees with Tables 4 and 5, where 
+
+λ = 0 .25 achieves the best overall feasibility and topology fidelity. Compared with the FMTO variants, DMTO shows larger deviations from the BESO reference under the same limited-data setting, particularly in cases (b), (d), and (e), suggesting weaker data efficiency and less stable topology generation when fewer training samples are available. 
+
+4.3. Example 3: Effect of BESO Trajectory Anchor Density 
+
+This example investigates the effect of BESO trajectory anchor density on the trajectory-aware FMTO formulation. Based on the results in Example 2, λ = 0 .25 is fixed as the repre-sentative trajectory-aware setting, since it gives the best empirical balance between the linear path and the BESO trajectory guide in the limited-data setting. Only the density of the 18 Ground Truth 
+
+C/CBESO =1.014 
+
+Vf=0.499 
+
+= 0 
+
+C/CBESO =1.005 
+
+Vf=0.500 
+
+= 0.25 
+
+C/CBESO =1.022 
+
+Vf=0.500 
+
+= 0.5 
+
+C/CBESO =1.087 
+
+Vf=0.498 
+
+= 0.75 
+
+C/CBESO =1.040 
+
+Vf=0.498 
+
+= 1 
+
+C/CBESO =1.239 
+
+Vf=0.479 
+
+DMTO 
+
+C/CBESO =1.006 
+
+Vf=0.500 C/CBESO =1.010 
+
+Vf=0.496 C/CBESO =1.027 
+
+Vf=0.490 C/CBESO =1.082 
+
+Vf=0.498 C/CBESO =1.025 
+
+Vf=0.499 C/CBESO =1.094 
+
+Vf=0.491 
+
+C/CBESO =0.980 
+
+Vf=0.494 C/CBESO =1.008 
+
+Vf=0.494 C/CBESO =1.002 
+
+Vf=0.493 C/CBESO =2.840 
+
+Vf=0.500 C/CBESO =0.931 
+
+Vf=0.493 C/CBESO =1.039 
+
+Vf=0.496 
+
+C/CBESO =0.991 
+
+Vf=0.495 C/CBESO =1.003 
+
+Vf=0.499 C/CBESO =1.000 
+
+Vf=0.490 C/CBESO =1.019 
+
+Vf=0.482 C/CBESO =0.874 
+
+Vf=0.499 C/CBESO =0.921 
+
+Vf=0.475 
+
+C/CBESO =1.026 
+
+Vf=0.495 C/CBESO =1.010 
+
+Vf=0.498 C/CBESO =1.027 
+
+Vf=0.496 C/CBESO =1.057 
+
+Vf=0.500 C/CBESO =1.101 
+
+Vf=0.496 C/CBESO =2.113 
+
+Vf=0.482 
+
+(a) 
+
+(b) 
+
+(c) 
+
+(d) 
+
+(e) 
+
+ux fixed uy fixed ux, uy fixed load Figure 5: Qualitative comparison of linear FMTO, trajectory-aware FMTO, and DMTO in the limited-data setting with 1000 training samples. Each row shows one validation case, including the BESO reference, FMTO results with λ ∈ { 0, 0.25 , 0.5, 0.75 , 1}, and the DMTO result. Here, λ = 0 denotes the linear-path baseline, while larger λ values introduce stronger trajectory guidance. For each method, the displayed topology is selected from 100 thresholded candidates satisfying Vf ≤ 0.5, using the candidate whose recomputed compliance ratio is closest to C/C BESO = 1 . The reported C/C BESO and Vf correspond to the selected feasible design. 
+
+19 saved BESO trajectory anchors is varied, allowing the effect of trajectory discretisation to be examined independently from the trajectory-guidance strength. The same limited-data dataset, train–test split, physical parameters, FEM evaluation pro-tocol, and sampling settings as Example 2 are used. The trajectory weight is fixed at λ = 0 .25 .Only the trajectory-anchor setting is varied, with α = 0 .05 , 0.10 , and 0.25 . Here, α controls the spacing of saved trajectory anchors, and a smaller α gives a denser trajectory representation. Quantitative evaluation is conducted on 50 validation cases, with 100 generated topologies per case. Table 6 summarises the optimisation quality and feasibility results for different BESO tra-jectory anchor densities. With λ fixed at 0.25, the effect of the anchor density is not monotonic. The setting α = 0 .25 gives the best median compliance ratio, the best constrained mean-best compliance ratio under Vf ≤ 0.5, and the lowest failure rate. By contrast, α = 0 .10 achieves the highest feasible-sample rate and the smallest mean volume-fraction error, indicating better volume-constraint control. The densest setting, α = 0 .05 , achieves the lowest unconstrained mean-best compliance ratio, but also shows the highest failure rate and weaker feasibility. This suggests that overly dense trajectory anchors may improve the chance of finding a low-compliance sample, but can also introduce less stable constraint satisfaction. Table 7 reports the topology-similarity metrics. The intermediate setting α = 0 .10 achieves the best IoU, Dice, Boundary F1, and Raw MAE, showing the closest agreement with the BESO reference in both binary topology layout and continuous density prediction. This indicates that a moderate anchor density provides the most reliable trajectory representation among the tested settings. Sparse anchors may lose important intermediate topology information, whereas overly dense anchors may introduce excessive local trajectory variation. Overall, α = 0 .10 offers the best balance between trajectory resolution, volume feasibility, and topology fidelity, while 
+
+α = 0 .25 remains competitive in compliance-related metrics.                                                                    
+
+> Table 6: Optimisation quality and feasibility for different BESO trajectory anchor densities in the limited-data setting with 1000 training samples. All models use λ= 0 .25 and are evaluated over 50 validation cases with 100 generated samples per case. Method Median
+> C/C BESO ↓
+> Mean best
+> C/C BESO ↓
+> Mean best
+> Vf≤0.5↓
+> Fail rate
+> C/C BESO >1.25 ↓
+> Feasible
+> Vf≤0.5↑
+> Mean
+> |Vf−V∗
+> f| ↓
+> FMTO, anchor density = 0 .25 1.0127 0.9205 0.9546 9.10 %34.56% 0.0114 FMTO, anchor density = 0 .10 1.0189 0.9430 0.9667 10.88% 44.48 %0.0092
+> FMTO, anchor density = 0 .05 1.0368 0.9098 0.9626 26.98% 34.24% 0.0124 Table 7: Topology fidelity to the BESO reference for different BESO trajectory anchor densities in the limited-data setting with 1000 training samples. All models use λ= 0 .25 and are evaluated over 50 validation cases with 100 generated samples per case. IoU, Dice, and Boundary F1 are computed from thresholded topologies, while Raw MAE is computed from the continuous generated density fields. Boundary F1 uses a one-pixel tolerance. Method IoU ↑Dice ↑Boundary F1 ↑Raw MAE ↓
+> FMTO, anchor density = 0 .25 0.7869 0.8778 0.3341 0.1354 FMTO, anchor density = 0 .10 0.7980 0.8850 0.3597 0.1266
+> FMTO, anchor density = 0 .05 0.7630 0.8618 0.2845 0.1455
+
+Figure 6 presents representative feasible designs generated with different BESO trajectory anchor settings. Since all three models use the same trajectory weight λ = 0 .25 and are trained under the same limited-data setting, their overall topology layouts are visually similar in several cases. The figure therefore mainly highlights local differences induced by the trajectory-anchor discretisation. In cases (a) and (b), all settings recover the main load-transfer paths with only minor local deviations from the BESO reference. In cases (c)–(e), the differences become more 20 visible, particularly around thin members, boundary regions, and local void patterns, where the red and blue regions indicate missing and extra material relative to the reference topology. Overall, the qualitative comparison suggests that the anchor density affects the local fidelity and stability of the learned trajectory path rather than changing the global design pattern. The intermediate setting α = 0 .10 generally provides a balanced visual agreement with the BESO reference, preserving the main structural connectivity while avoiding excessive local distortion. By contrast, α = 0 .25 and α = 0 .05 can still generate feasible designs, but they show more pronounced local discrepancies in some cases. This indicates that an appropriate trajectory-anchor density is important for representing the BESO optimisation history without either under-resolving the trajectory or introducing excessive local variation into the learned path. Ground Truth                     
+
+> C/CBESO =1.011
+> Vf=0.499
+> = 0.25 Difference
+> C/CBESO =1.008
+> Vf=0.497
+> = 0.10 Difference
+> C/CBESO =1.026
+> Vf=0.495
+> = 0.05 Difference
+> C/CBESO =1.006
+> Vf=0.498 C/CBESO =1.001
+> Vf=0.496 C/CBESO =1.006
+> Vf=0.495
+> C/CBESO =1.132
+> Vf=0.500 C/CBESO =1.050
+> Vf=0.498 C/CBESO =1.350
+> Vf=0.495
+> C/CBESO =1.079
+> Vf=0.499 C/CBESO =1.224
+> Vf=0.500 C/CBESO =1.209
+> Vf=0.493
+> C/CBESO =0.951
+> Vf=0.497 C/CBESO =0.935
+> Vf=0.490 C/CBESO =0.943
+> Vf=0.499
+> (a)
+> (b)
+> (c)
+> (d)
+> (e)
+> missing material extra material uxfixed uyfixed ux,uyfixed load
+
+Figure 6: Qualitative comparison of trajectory-aware FMTO with different BESO trajectory anchor densities. Each row shows one validation case, including the BESO reference and generated results for α = 0 .25 , 0.10 ,and 0.05 . Difference maps use red and blue to indicate missing and extra material relative to the BESO reference. The displayed topology is selected from 100 thresholded candidates, with the reported C/C BESO and 
+
+Vf corresponding to the selected feasible design. 
+
+To further examine the stochastic stability of the generated samples, Fig. 7 compares the compliance-ratio distributions for the same five representative validation cases. Cases (a) and (b) show compact distributions close to the BESO reference for all three anchor densities, indi-cating that the anchor density has limited influence when the generation problem is relatively stable. In contrast, cases (c)–(e) exhibit broader distributions and heavier high-compliance tails, especially for α = 0 .05 . This suggests that overly dense trajectory anchoring may intro-duce excessive local path variation for more challenging design conditions, even when visually feasible samples can still be generated. The histograms also show that the best compliance ratio alone does not fully characterise sampling robustness. Although α = 0 .05 can achieve low best-sample compliance in some cases, it also produces broader distributions and higher failure rates. Therefore, Fig. 7 complements the qualitative comparison by revealing the sample-level stability of each anchor-density setting. Together with the aggregate results in Tables 6 and 7, these observations support the use of the intermediate anchor setting α = 0 .10 , which provides strong topology fidelity while avoiding 21 the instability associated with overly dense trajectory discretisation. 0.8 1.0 1.2 1.4                               
+
+> C/CBESO
+> 0
+> 50
+> 100
+> Count
+> (a)
+> = 0.25: 1.11/0.987/3%
+> = 0.10: 1.01/0.985/0%
+> = 0.05: 1.05/0.978/7%
+> 0.8 1.0 1.2 1.4
+> C/CBESO
+> (b)
+> 1.01/1/0%
+> 1.01/1/0%
+> 1.01/1/1%
+> 0.8 1.0 1.2 1.4
+> C/CBESO
+> (c)
+> 1.12/1/14%
+> 1.14/1.02/25%
+> 2.28e+07/1.06/91%
+> 0.8 1.0 1.2 1.4
+> C/CBESO
+> (d)
+> 1.22/0.589/45%
+> 1.21/0.761/41%
+> 1.46/0.758/67%
+> 0.8 1.0 1.2 1.4
+> C/CBESO
+> (e)
+> 0.765/0.56/0%
+> 0.762/0.537/4%
+> 0.844/0.548/16%
+> 0.8 1.0 1.2 1.4
+> C/CBESO
+> 0
+> 25
+> 50
+> Count
+> = 0.25: 1.12/1.01/2%
+> = 0.10: 1.02/1.01/0%
+> = 0.05: 1.06/1.03/0%
+> 0.8 1.0 1.2 1.4
+> C/CBESO
+> 1.01/1/0%
+> 1.01/1/0%
+> 1.01/1/0%
+> 0.8 1.0 1.2 1.4
+> C/CBESO
+> 1.18/1.12/32%
+> 1.16/1.05/39%
+> 2.17e+07/1.35/100%
+> 0.8 1.0 1.2 1.4
+> C/CBESO
+> 1.29/1.04/67%
+> 1.3/0.924/60%
+> 1.5/0.896/77%
+> 0.8 1.0 1.2 1.4
+> C/CBESO
+> 0.79/0.588/0%
+> 0.865/0.599/9%
+> 1.13/0.6/33%
+> All thresholded samples
+> Vf0.5
+> = 0.25 = 0.10 = 0.05
+
+Figure 7: Compliance-ratio distributions of trajectory-aware FMTO with different BESO trajectory anchor densities over 100 generated samples for five representative validation cases. Each column corresponds to one validation case, labeled (a)–(e). The top row includes all thresholded generated samples, while the bottom row includes only samples satisfying the volume-fraction constraint Vf ≤ 0.5. The dashed vertical line marks the BESO reference level C/C BESO = 1 . The values listed above each histogram are reported in the format median compliance ratio / best compliance ratio / failure rate, where the failure rate is the percentage of samples with 
+
+C/C BESO > 1.25 .
+
+4.4. Example 4: Three-Dimensional Applicability, Volume Feasibility, and Topology Fidelity 
+
+This example examines the applicability of the proposed FMTO framework to three-dimensional TO. A dataset of 2000 BESO-generated 3D TO instances is used, with 1800 instances for train-ing and 200 instances for testing. Each instance contains the converged BESO reference topol-ogy, the global condition vector, and the three-dimensional boundary-condition and load fields. The voxel resolution is 48 × 24 × 24 . Linear FMTO, trajectory-aware FMTO with λ = 0 .25 ,and DMTO are compared. The trajectory weight is adopted from Example 2. Since full 3D FEM compliance evaluation is computationally expensive, the quantitative comparison focuses on voxel-level topology fidelity and volume-fraction feasibility. The target volume fraction is reduced to V ∗ 
+
+> f
+
+= 0 .3, and the volume-fraction failure rate of Vf /V ∗ 
+
+> f
+
+>
+
+1.05 is adopted. Table 8 summarises the results over 100 validation cases, with 50 generated samples per case. Trajectory-aware FMTO achieves the best performance across all reported metrics, with the highest IoU, Dice, Boundary F1, and feasible-sample rate, as well as the lowest Raw MAE, volume-fraction failure rate, and mean volume-fraction error. Linear FMTO also consistently outperforms DMTO. These results show that BESO-trajectory guidance improves both voxel-level topology fidelity and volume-fraction control in the three-dimensional setting. Figure 8 shows the prescribed design domains and BESO reference topologies for two repre-sentative validation cases with different support regions and load locations. Figure 9 compares nine generated samples from each method under the two conditions. Trajectory-aware FMTO produces more consistent material layouts and more clearly preserves the dominant features of the BESO references. Linear FMTO captures the overall topology patterns but occasionally produces fragmented local features, while DMTO exhibits larger sample-to-sample variation and greater deviations from the reference topologies. These observations are consistent with Table 8. For the 100 validation cases with 50 samples per case, linear FMTO and trajectory-aware FMTO required approximately 148 s and 150 s, respectively, whereas DMTO required approx-22 Table 8: Topology fidelity and volume-fraction feasibility of 3D generated topologies over 100 validation cases, with 50 generated samples per case. IoU, Dice, Boundary F1, and feasibility metrics are computed from thresholded voxel fields, while Raw MAE is computed from the continuous generated density fields. Boundary F1 uses a one-voxel tolerance. Method IoU ↑ Dice ↑ Boundary F1 ↑
+
+Raw MAE ↓
+
+Volume fail rate 
+
+Vf /V ∗ 
+
+> f
+
+> 1.05 ↓
+
+Feasible 
+
+Vf ≤ 0.3 ↑
+
+Mean 
+
+|Vf − V ∗ 
+
+> f
+
+| ↓ 
+
+Linear FMTO 0.7769 0.8709 0.8330 0.0829 4.16% 47.98% 0.0068 Trajectory-aware FMTO 0.8698 0.9284 0.9514 0.0474 0.74% 55.30% 0.0043 
+
+DMTO 0.6963 0.8136 0.7304 0.1154 5.96% 42.02% 0.0072 
+
+imately 6181 s. Thus, DMTO was approximately 41 × slower than the FMTO variants, while trajectory-aware path construction introduced negligible inference-time overhead. 
+
+Figure 8: Prescribed 3D design domains and corresponding BESO reference topologies for two representative validation cases. The left column shows the initial design domains with voxel resolution 48 × 24 × 24 , where blue regions indicate fixed supports and red arrows denote prescribed point loads. The right column shows the corresponding converged BESO reference topologies. 
+
+23 Figure 9: Qualitative comparison of 3D topology samples generated by (a) linear FMTO, (b) trajectory-aware FMTO with λ = 0 .25 , and (c) DMTO for the two validation cases defined in Fig. 8. For each method, the upper and lower 3 × 3 blocks correspond to the first and second validation cases, respectively. 
+
+5. Discussion and Conclusions 
+
+This work proposes a trajectory-aware flow matching-based topology optimisation (FMTO) framework for conditional topology generation under prescribed physical and design conditions. A basic linear FMTO formulation is first developed by constructing a probability path between a Gaussian source field and the BESO reference topology and training a conditional velocity field for ODE-based topology generation. Although this endpoint-based path provides a simple and efficient baseline, its intermediate states contain no information about the mechanics-driven material evolution that produces the target topology. Probability-path construction is there-fore treated as a central design problem in FMTO. To address this limitation, a BESO-guided trajectory path is introduced. Instead of using only the converged topology as the endpoint tar-get, the trajectory-aware formulation uses volume-fraction-indexed intermediate BESO states to construct the probability path and target velocity field. The resulting framework generates multiple candidate topologies from different source samples while requiring only the prescribed physical and design conditions during inference. A key theoretical contribution of this work is the path–velocity mismatch analysis developed to evaluate trajectory-aware path construction. By accounting for both centreline and veloc-ity mismatch, the analysis characterises the trade-off between endpoint transport and BESO trajectory guidance and explains why a moderate trajectory weight may outperform both the endpoint-only path and strongly trajectory-dominated paths. Under the stated assumptions, the mismatch is further connected to velocity-field approximation error, terminal generation er-ror, and the probability of generating high-compliance failure samples. This analysis provides a mechanics-informed explanation of how probability-path design affects the stability and quality of generative TO. The numerical examples demonstrate the effectiveness of the proposed framework. In the 24 basic two-dimensional setting, linear FMTO achieves better compliance-related performance, volume-fraction satisfaction, and topology fidelity than the diffusion-model baseline, while re-quiring substantially fewer sampling steps. Under the same recomputed finite-element evalua-tion protocol, best-of-samples generation also identifies candidate structures with compliance comparable to, and in some cases lower than, the corresponding reference topology. These results show that FMTO can efficiently generate diverse and competitive design alternatives under prescribed physical conditions. In the limited-data setting, trajectory-aware FMTO improves the robustness and data ef-ficiency of topology generation. Among the tested trajectory weights, a moderate value of 
+
+λ = 0 .25 gives the best overall balance, achieving improved constrained compliance perfor-mance, a lower failure rate, better volume feasibility, and higher topology fidelity to the BESO reference. This trend is consistent with the path–velocity mismatch analysis, supporting the use of moderate BESO trajectory guidance. The anchor-density study further shows that tra-jectory representation affects local fidelity and sampling stability, with an intermediate anchor setting providing the most reliable balance between trajectory resolution, volume feasibility, and topology fidelity. The three-dimensional examples further demonstrate the applicability of the framework to voxel-based TO, where trajectory-aware FMTO qualitatively produces more consistent material layouts and better preserves the dominant load-transfer features than the linear-path and diffusion-based baselines. Overall, the proposed framework demonstrates that generative TO can benefit not only from efficient ODE-based sampling, but also from mechanics-informed probability-path con-struction. The key contribution of trajectory-aware FMTO is the conversion of conventional TO optimisation histories into path and velocity supervision for flow matching, providing a direct link between mechanics-driven material evolution and generative topology synthesis. Nevertheless, the current framework still has limitations. The present study focuses mainly on linear elastic compliance-minimisation problems, and the generated continuous density fields are evaluated after fixed-threshold binarisation. The trajectory-aware path is constructed from BESO histories and volume-fraction-indexed intermediate states, while other types of opti-misation trajectories, intermediate physical fields, and path parameterisations remain unex-plored. The trajectory weight and anchor density are selected empirically in the numerical studies, and the theoretical analysis relies on a hypothetical ideal generative path and standard error-propagation assumptions. In addition, the three-dimensional validation is still limited to moderate-resolution voxel-based cases and should be extended to larger-scale problems with full 3D compliance evaluation and connectivity-aware validity metrics. Future work will investigate more general forms of trajectory-aware flow matching for TO and broader generative design problems. Although this study uses BESO trajectories, the same principle can be extended to other conventional TO formulations, including SIMP density-evolution histories, level-set boundary evolution, MMC parameter trajectories, and BESO sensitivity histories. The intermediate information used to guide the flow path also need not be restricted to volume-fraction-indexed topology snapshots. Possible alternatives include compliance-sensitivity fields, adjoint-gradient information, pseudo-sensitivity fields, displace-ment fields, strain-energy histories, stress fields, constraint-violation maps, and multi-physics response fields. This direction is consistent with recent sensitivity-conditioned Bernoulli flow matching for TO, where sensitivity and pseudo-sensitivity fields are used as informative condi-tioning signals for improved generalisation [39]. The trajectory-aware flow matching framework could also be combined with advanced generative modelling approaches, including optimal-transport flow matching [31], rectified flow [33], stochastic interpolants [38], neural operators, transformer-based condition encoders, and diffusion–flow hybrid models. These developments may further extend the proposed framework to more complex TO problems involving multiple objectives, uncertainty, nonlinear responses, and coupled multi-physics constraints. 25 CRediT authorship contribution statement Shusheng Xiao : Conceptualisation, Methodology, Coding, Formal analysis, Writing – original draft. Jinshuai Bai : Conceptualisation, Methodology, Formal analysis, Supervision, Funding acquisition, Writing – review & editing. Hyogu Jeong : Formal analysis, Writing – review & editing. Yunfei Xi : Formal analysis, Funding acquisition, Writing –review & editing. 
+
+Yilin Gui : Formal analysis, Writing –review & editing. YuanTong Gu : Conceptualisation, Formal analysis, Supervision, Project administration, Funding acquisition, Writing –review & editing. 
+
+Declaration of competing interest 
+
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper. 
+
+Acknowledgements 
+
+Support from the National Natural Science Foundation of China (Grant no. 12502234) and China Postdoctoral Science Foundation (Grant No. 2025M781785) are acknowledged (J. Bai). Support from the Australian Research Council Mid-Career Industry Fellowship (IM230100132) is gratefully acknowledged (Y.T. Gu). Support from a Queensland University of Technology Australian Postgraduate Research Award (QUTPRA). 
+
+Data availability 
+
+Data will be made available on request. 
+
+Appendix A. Derivation of the path–velocity mismatch 
+
+This appendix provides the derivation of the path–velocity mismatch used in Section 3.4. Let m∗ 
+
+> i
+
+(t) denote a hypothetical ideal generative centreline. For the endpoint-based linear path, the centreline is m0 
+
+> i
+
+(t) = ρref  
+
+> i
+
+. Its position and velocity mismatches relative to the ideal centreline are 
+
+bi(t) = ρref  
+
+> i
+
+− m∗ 
+
+> i
+
+(t), ai(t) = − ˙m∗ 
+
+> i
+
+(t). (A.1) For the BESO trajectory guide, the corresponding mismatches are 
+
+ei(t) = qi(t) − m∗ 
+
+> i
+
+(t), ri(t) = ˙ qi(t) − ˙m∗ 
+
+> i
+
+(t). (A.2) Using Eq. (21), the guided centreline satisfies 
+
+mλi (t) − m∗ 
+
+> i
+
+(t) = (1 − λ)bi(t) + λei(t), (A.3) and 
+
+˙mλi (t) − ˙m∗ 
+
+> i
+
+(t) = (1 − λ)ai(t) + λri(t). (A.4) Because flow matching learns a velocity field, the path quality is measured using both centreline position and induced velocity. The combined mismatch is 
+
+G(λ) = Ei,t 
+
+> [∥∥∥
+
+mλi (t) − m∗ 
+
+> i
+
+(t)∥∥∥22 + η ∥∥∥ ˙mλi (t) − ˙m∗ 
+
+> i
+
+(t)∥∥∥22
+
+> ]
+
+, η > 0. (A.5) Substituting Eqs. (A.3) and (A.4) into Eq. (A.5) gives 
+
+G(λ) = (1 − λ)2BG + λ2NG + 2 λ(1 − λ)CG, (A.6) 26 where 
+
+BG = Ei,t 
+
+> [
+
+∥bi(t)∥22 + η∥ai(t)∥22
+
+> ]
+
+, (A.7) 
+
+NG = Ei,t 
+
+> [
+
+∥ei(t)∥22 + η∥ri(t)∥22
+
+> ]
+
+, (A.8) and 
+
+CG = Ei,t [⟨bi(t), ei(t)⟩ + η ⟨ai(t), ri(t)⟩] . (A.9) Since G(0) = BG, the trajectory-aware path improves the mismatch relative to the linear path when G(λ) < G (0) . For λ > 0, this condition becomes 
+
+λ (BG + NG − 2CG) < 2 ( BG − CG) . (A.10) Thus, if the BESO guide contains useful path information and is not over-weighted, there exists a positive range of λ for which the trajectory-aware path has a smaller path–velocity mismatch than the linear path. In the non-degenerate case, the unconstrained minimiser is 
+
+λ∗ = BG − CG
+
+BG + NG − 2CG
+
+, (A.11) and the constrained value is obtained by projecting this expression onto [0 , 1] .
+
+Appendix B. Error propagation and failure probability 
+
+This appendix provides the error-propagation argument connecting path–velocity mismatch with terminal generation stability. The population velocity-field approximation error for the trajectory-aware path is 
+
+ϵλ = 
+
+> ∫10
+
+Ext∼pλt
+
+> [∥∥∥
+
+vλθ (xt, t, c) − uλt (xt, c)∥∥∥22
+
+> ]
+
+dt, (B.1) where pλt is the distribution induced by the trajectory-aware path at time t. To relate this learning error to path construction, we use the learning-error transfer assumption 
+
+ϵλ ≤ AG (λ) + Rλ, (B.2) where A > 0 is a transfer constant and Rλ collects finite-data, finite-capacity, optimisation, and training-randomness errors. Under controlled comparisons using the same architecture, dataset size, optimiser, and training schedule, the residual terms are assumed to be comparable, 
+
+Rλ ≈ R0. (B.3) Let ˆρλθ (c, z) denote the generated topology for condition c and source noise z ∼ N (0, I).The terminal generation error is 
+
+Dλ(c) = Ez
+
+> [∥∥∥
+
+ˆρλθ (c, z) − ρref (c)∥∥∥22
+
+> ]
+
+. (B.4) If the learned velocity field satisfies a Lipschitz-type condition, a Gronwall-type ODE sta-bility bound gives 
+
+Dλ(c) ≤ Kϵ λ + Knum h2p, (B.5) where K is an error-propagation constant, h is the integration step size, p is the order of the numerical solver, and Knum h2p is the numerical integration error. When the same solver and step size are used, this term is comparable across different path constructions. 27 To connect the terminal error with engineering stability, define the bad-structure set under condition c as 
+
+Bc =
+
+> {
+
+ρ : C(ρ, c)
+
+CBESO (c) > τ 
+
+> }
+
+, (B.6) where τ > 1 is a prescribed failure threshold. Assume that every topology in this set is separated from the reference topology by at least δ,
+
+ρ ∈ B c ⇒
+
+> ∥∥∥
+
+ρ − ρref (c) 
+
+> ∥∥∥2
+
+≥ δ. (B.7) Applying Markov’s inequality to the squared terminal error gives 
+
+P λ 
+
+> fail
+
+(Bc) ≤ Dλ(c)
+
+δ2 . (B.8) Therefore, under the stated assumptions and comparable residual errors, a smaller path–velocity mismatch can tighten the upper bounds on the velocity-field approximation error, terminal generation error, and failure probability. This argument is interpretive and does not constitute an unconditional guarantee. 
+
+Bibliography 
+
+[1] G. I. N. Rozvany, Aims, scope, methods, history and unified terminology of computer-aided topology optimization in structural mechanics, Structural and Multidisciplinary Optimization 21 (2001) 90–108. doi: 10.1007/s001580050174 .[2] M. P. Bendsøe, Optimal shape design as a material distribution problem, Structural optimization 1 (1989) 193–202. [3] M. Zhou, G. I. N. Rozvany, The coc algorithm, part ii: Topological, geometrical and generalized shape optimization, Computer Methods in Applied Mechanics and Engineering 89 (1991) 309–336. doi: 10.1016/0045-7825(91)90046-9 .[4] Y. M. Xie, G. P. Steven, A simple evolutionary procedure for structural optimization, Computers & structures 49 (1993) 885–896. [5] O. M. Querin, G. P. Steven, Y. M. Xie, Evolutionary structural optimisation using a bidirectional algorithm, Engineering Computations 15 (1998) 1031–1048. doi: 10.1108/ 02644409810244129 .[6] M. Y. Wang, X. Wang, D. Guo, A level set method for structural topology optimization, Computer Methods in Applied Mechanics and Engineering 192 (2003) 227–246. doi: 10. 1016/S0045-7825(02)00559-5 .[7] W.-H. Zhang, J. Yuan, J. Zhang, X. Guo, A new topology optimization approach based on moving morphable components (mmc) and the ersatz material model, Structural and Multidisciplinary Optimization 53 (2016) 1243–1260. doi: 10.1007/s00158-015-1272-3 .[8] O. Sigmund, K. Maute, Topology optimization approaches, Structural and Multidisci-plinary Optimization 48 (2013) 1031–1055. doi: 10.1007/s00158-013-0978-6 .[9] G. I. N. Rozvany, A critical review of established methods of structural topology opti-mization, Structural and Multidisciplinary Optimization 37 (2009) 217–237. doi: 10.1007/ s00158-007-0217-0 .28 [10] J.-H. Zhu, W.-H. Zhang, L. Xia, Topology optimization in aircraft and aerospace structures design, Archives of Computational Methods in Engineering 23 (2016) 595–622. doi: 10. 1007/s11831-015-9151-2 .[11] M. Behzadi, H. T. Ilies, Real-time topology optimization in 3d via deep transfer learning, arXiv preprint arXiv:2102.07657 (2021). [12] E. Ulu, R. Zhang, L. B. Kara, A data-driven investigation and estimation of optimal topologies under variable loading configurations, Computer Methods in Biomechanics and Biomedical Engineering: Imaging & Visualization 4 (2016) 61–72. [13] I. Sosnovik, I. Oseledets, Neural networks for topology optimization, Russian Journal of Numerical Analysis and Mathematical Modelling 34 (2019) 215–223. [14] S. Banga, H. Gehani, S. Bhilare, S. Patel, L. Kara, 3d topology optimization using convo-lutional neural networks, arXiv preprint arXiv:1808.07440, 2018. [15] D. W. Abueidda, S. Koric, N. A. Sobh, Topology optimization of 2d structures with nonlinearities using deep learning, Computers & Structures 237 (2020) 106283. [16] S. Zheng, H. Fan, Z. Zhang, Z. Tian, K. Jia, Accurate and real-time structural topology prediction driven by deep learning under moving morphable component-based framework, Applied Mathematical Modelling 97 (2021) 522–535. [17] K. Liang, D. Zhu, F. Li, A fourier neural operator-based lightweight machine learning framework for topology optimization, Applied Mathematical Modelling 129 (2024) 714– 732. [18] A. Lutheran, S. Das, A. Tabarraei, Physics-informed transformer for real-time high-fidelity topology optimization, arXiv preprint arXiv:2604.03522, 2026. [19] G. Garayalde, M. Torzoni, M. Bruggi, A. Corigliano, Real-time topology optimization via learnable mappings, International Journal for Numerical Methods in Engineering 125 (2024) e7502. [20] Q. Ma, E. C. De Meter, S. Basu, To-node: topology optimization with neural ordinary differential equation, International Journal for Numerical Methods in Engineering 125 (2024) e7428. [21] S. Oh, Y. Jung, S. Kim, I. Lee, N. Kang, Deep generative design: Integration of topology optimization and generative models, Journal of Mechanical Design 141 (2019) 111405. [22] S. Jang, S. Yoo, N. Kang, Generative design by reinforcement learning: Enhancing the diversity of topology optimization designs, Computer-Aided Design 146 (2022) 103225. [23] A. Radler, E. Volkmann, J. Brandstetter, A. Berzins, Generative topology optimization: Exploring diverse solutions in structural design, arXiv preprint arXiv:2502.13174, 2025. [24] J. Bai, Y. Wang, H. Jeong, S. Chu, Q. Wang, L. Alzubaidi, X. Zhuang, T. Rabczuk, Y. M. Xie, X.-Q. Feng, Y. Gu, Towards the future of physics- and data-guided AI frameworks in computational mechanics, Acta Mechanica Sinica 41 (2025) 225340. doi: 10.1007/s10409-025-25340-x .[25] Y. Yu, T. Hur, J. Jung, I. G. Jang, Deep learning for determining a near-optimal topological design without any iteration, arXiv preprint arXiv:1801.05463, 2018. 29 [26] Z. Nie, T. Lin, H. Jiang, L. B. Kara, Topologygan: Topology optimization using genera-tive adversarial networks based on physical fields over the initial domain, arXiv preprint arXiv:2003.04685, 2020. [27] F. Mazé, F. Ahmed, Diffusion models beat gans on topology optimization, arXiv preprint arXiv:2208.09591, 2022. [28] A. Lutheran, S. Das, A. Tabarraei, Latent space diffusion for topology optimization, arXiv preprint arXiv:2508.05624, 2025. [29] G. Giannone, F. Ahmed, Diffusing the optimal topology: A generative optimization ap-proach, arXiv preprint arXiv:2303.09760, 2023. [30] J. Ho, A. Jain, P. Abbeel, Denoising diffusion probabilistic models, Advances in neural information processing systems 33 (2020) 6840–6851. [31] Y. Lipman, R. T. Q. Chen, H. Ben-Hamu, M. Nickel, M. Le, Flow matching for generative modeling, in: International Conference on Learning Representations, 2023. [32] A. Tong, K. Fatras, N. Malkin, G. Huguet, Y. Zhang, J. Rector-Brooks, G. Wolf, Y. Ben-gio, Improving and generalizing flow-based generative models with minibatch optimal transport, arXiv preprint arXiv:2302.00482 (2023). [33] X. Liu, C. Gong, Q. Liu, Flow straight and fast: Learning to generate and transfer data with rectified flow, arXiv preprint arXiv:2209.03003 (2022). [34] S. H. Lim, Y. Wang, A. Yu, E. Hart, M. W. Mahoney, X. S. Li, N. B. Erichson, Elucidating the design choice of probability paths in flow matching for forecasting, arXiv preprint arXiv:2410.03229 (2024). [35] M. P. Bendsoe, O. Sigmund, Topology optimization: theory, methods, and applications, Springer Science & Business Media, 2013. [36] X. Huang, Y. M. Xie, Convergent and mesh-independent solutions for the bi-directional evolutionary structural optimization method, Finite elements in analysis and design 43 (2007) 1039–1049. [37] Y. Lipman, M. Havasi, P. Holderrieth, N. Shaul, M. Le, B. Karrer, R. T. Chen, D. Lopez-Paz, H. Ben-Hamu, I. Gat, Flow matching guide and code, arXiv preprint arXiv:2412.06264 (2024). [38] M. Albergo, N. M. Boffi, E. Vanden-Eijnden, Stochastic interpolants: A unifying frame-work for flows and diffusions, Journal of Machine Learning Research 26 (2025) 1–80. [39] M. Rashed, D. F. V. Madeira, B. Gholami, C. Guerbuez, Y. Yang, N. Thuerey, On the generalization in topology optimization via sensitivity-conditioned bernoulli flow matching, arXiv preprint arXiv:2606.02179, 2026. 30
