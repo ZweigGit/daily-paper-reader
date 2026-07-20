@@ -6,29 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-19
-- 运行时间：2026-07-19 21:03:14 UTC
+- 最新运行日期：2026-07-20
+- 运行时间：2026-07-20 21:35:39 UTC
 - 运行状态：成功
-- 本次总论文数：2
+- 本次总论文数：1
 - 精读区：0
-- 速读区：2
+- 速读区：1
 
 ### 今日简报（AI）
-今日速读两篇6分论文：约束扩散模型的滚动训练与轨迹感知流匹配在拓扑优化中的应用。
-值得关注的两个方向：用滚动策略提升扩散模型约束满足性，以及流匹配方法优化拓扑设计流程。
-建议普通读者先精读这两篇，理解其如何在实际问题中处理约束与拓扑结构。
-- 详情：[/202607/19/README](/202607/19/README)
+今日速读一篇评分6.0的扩散模型统一视角论文。  
+该文将掩码、连续与混合扩散统一为粘性跳跃扩散框架，值得关注其理论整合思路。  
+建议后续对比该框架与现有扩散模型的收敛性差异。
+- 详情：[/202607/20/README](/202607/20/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Integration Matters: Rollout-Based Training for Constrained Diffusion Models](/202607/19/2607.14398v1-integration-matters-rollout-based-training-for-constrained-diffusion-models)  
+1. [Sticky Jump Diffusions: A Unifying View of Masked, Continuous, and Hybrid Diffusion](/202607/20/2607.10951v1-sticky-jump-diffusions-a-unifying-view-of-masked-continuous-and-hybrid-diffusion)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：约束扩散模型方法，可迁移至流体动力学生成
-2. [Trajectory-Aware Flow Matching for Topology Optimisation](/202607/19/2607.14652v1-trajectory-aware-flow-matching-for-topology-optimisation)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：流匹配方法用于拓扑优化，方法可迁移至流体流动
+   evidence：粘性跳跃扩散统一了掩蔽、连续和混合扩散模型
 
 
 <div class="dpr-home-promo-card">

@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-07-20 <!--dpr-date:20260720-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/20/2607.10951v1-sticky-jump-diffusions-a-unifying-view-of-masked-continuous-and-hybrid-diffusion" data-sidebar-item="{&quot;title&quot;: &quot;Sticky Jump Diffusions: A Unifying View of Masked, Continuous, and Hybrid Diffusion&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.10951v1-sticky-jump-diffusions-a-unifying-view-of-masked-continuous-and-hybrid-diffusion&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;粘性跳跃扩散统一了掩蔽、连续和混合扩散模型&quot;}">Sticky Jump Diffusions: A Unifying View of Masked, Continuous, and Hybrid Diffusion</a>
   * 2026-07-19 <!--dpr-date:20260719-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/19/2607.14398v1-integration-matters-rollout-based-training-for-constrained-diffusion-models" data-sidebar-item="{&quot;title&quot;: &quot;Integration Matters: Rollout-Based Training for Constrained Diffusion Models&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.14398v1-integration-matters-rollout-based-training-for-constrained-diffusion-models&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;约束扩散模型方法，可迁移至流体动力学生成&quot;}">Integration Matters: Rollout-Based Training for Constrained Diffusion Models</a>

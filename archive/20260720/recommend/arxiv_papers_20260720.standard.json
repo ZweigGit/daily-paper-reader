@@ -1,0 +1,57 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-20T21:34:23.498058+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.10951v1",
+      "source": "arxiv",
+      "title": "Sticky Jump Diffusions: A Unifying View of Masked, Continuous, and Hybrid Diffusion",
+      "abstract": "We introduce Sticky Jump Diffusions (SJDs), continuous-time Markov processes on $\\mathbb R^d$ whose discrete anchors are token embeddings. In forward time, anchors release their mass at a hazard rate and the released mass diffuses in the continuous ambient space; time reversal couples a score-driven SDE with a sticky jump kernel whose rate and destination are fixed by flux balance with the forward law. We estimate the score and the per-anchor reverse hazards from a single denoising classifier via Denoising Hazard Matching, the hazard analogue of denoising score matching, with simulation-free cross-entropy training. SJD recovers masked diffusion, continuous diffusion, and hybrid diffusion as limits. Its reversal explains features that each family treats as given: the mask of masked diffusion carries no evidence about the source token because the unsticking kernel of every anchor collapses to the same absorbing point; the terminal projection of continuous diffusion is required due to the absence of atoms in its forward marginal, without which flux balance yields no reverse jumps; and the update rules of hybrid diffusion (commit rate, destination, and drift) all follow from flux balance rather than from separate design. Beyond these limits, the unsticking kernel becomes a design space: a cross-position blending corrupts each position toward a blend of its neighbors' clean values or embeddings, turning dependency structure such as spatial locality or a constraint graph into an inductive bias of the corruption itself, and improves over the identity-kernel hybrid on CIFAR-10, Text8, and Sudoku.",
+      "authors": [
+        "Pascal Jutras-Dubé",
+        "Patrick Pynadath",
+        "Jeremy Lu",
+        "Yuan Gao",
+        "Ruqi Zhang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "stat.ML"
+      ],
+      "published": "2026-07-12T23:03:32+00:00",
+      "link": "https://arxiv.org/pdf/2607.10951v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "sticky jump diffusions generalize masked, continuous, and hybrid diffusion models",
+      "llm_evidence_cn": "粘性跳跃扩散统一了掩蔽、连续和混合扩散模型",
+      "llm_evidence": "粘性跳跃扩散统一了掩蔽、连续和混合扩散模型",
+      "canonical_evidence": "粘性跳跃扩散统一了掩蔽、连续和混合扩散模型",
+      "llm_tldr_en": "Introduces Sticky Jump Diffusions, a continuous-time Markov process unifying masked, continuous, and hybrid diffusion for generative modeling.",
+      "llm_tldr_cn": "现有扩散模型分为掩蔽、连续和混合三种范式，缺乏统一理解。本文提出粘性跳跃扩散（SJD），将离散锚点与连续扩散结合，通过Denoising Hazard Matching进行无仿真训练。SJD能够恢复所有三种扩散模型作为极限情况，并在语言和图像生成任务上展示了灵活性和性能。该框架为扩散模型的设计提供了通用视角。",
+      "llm_tldr": "现有扩散模型分为掩蔽、连续和混合三种范式，缺乏统一理解。本文提出粘性跳跃扩散（SJD），将离散锚点与连续扩散结合，通过Denoising Hazard Matching进行无仿真训练。SJD能够恢复所有三种扩散模型作为极限情况，并在语言和图像生成任务上展示了灵活性和性能。该框架为扩散模型的设计提供了通用视角。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

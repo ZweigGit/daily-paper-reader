@@ -1,0 +1,24 @@
+{
+  "label": "2026-07-20",
+  "date": "2026-07-20",
+  "generated_at": "2026-07-20T21:35:46",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202607/20/2607.10951v1-sticky-jump-diffusions-a-unifying-view-of-masked-continuous-and-hybrid-diffusion",
+      "section": "quick",
+      "title_en": "Sticky Jump Diffusions: A Unifying View of Masked, Continuous, and Hybrid Diffusion",
+      "authors": "Pascal Jutras-Dubé, Patrick Pynadath, Jeremy Lu, Yuan Gao, Ruqi Zhang",
+      "date": "2026-07-12",
+      "pdf": "https://arxiv.org/pdf/2607.10951v1",
+      "score": "6.0",
+      "evidence": "粘性跳跃扩散统一了掩蔽、连续和混合扩散模型",
+      "tldr": "现有掩码扩散、连续扩散和混合扩散各有局限性，缺乏统一视角。本文提出粘性跳跃扩散（SJD），一种连续时间马尔可夫过程，其前向过程锚点以风险率释放质量至连续空间扩散，反向过程通过通量平衡耦合得分驱动SDE与粘性跳跃核。SJD通过去噪风险匹配（Denoising Hazard Matching）训练单个分类器估计得分和反向风险率。SJD统一了三种扩散，解释了掩码扩散中掩码无证据、连续扩散需终端投影、混合扩散更新规则源于通量平衡等特性。此外，交叉位置混合扰动将空间局部性等依赖结构注入先验，在CIFAR-10、Text8和数独上超越恒等核混合扩散。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We introduce Sticky Jump Diffusions (SJDs), continuous-time Markov processes on $\\mathbb R^d$ whose discrete anchors are token embeddings. In forward time, anchors release their mass at a hazard rate and the released mass diffuses in the continuous ambient space; time reversal couples a score-driven SDE with a sticky jump kernel whose rate and destination are fixed by flux balance with the forward law. We estimate the score and the per-anchor reverse hazards from a single denoising classifier via Denoising Hazard Matching, the hazard analogue of denoising score matching, with simulation-free cross-entropy training. SJD recovers masked diffusion, continuous diffusion, and hybrid diffusion as limits. Its reversal explains features that each family treats as given: the mask of masked diffusion carries no evidence about the source token because the unsticking kernel of every anchor collapses to the same absorbing point; the terminal projection of continuous diffusion is required due to the absence of atoms in its forward marginal, without which flux balance yields no reverse jumps; and the update rules of hybrid diffusion (commit rate, destination, and drift) all follow from flux balance rather than from separate design. Beyond these limits, the unsticking kernel becomes a design space: a cross-position blending corrupts each position toward a blend of its neighbors' clean values or embeddings, turning dependency structure such as spatial locality or a constraint graph into an inductive bias of the corruption itself, and improves over the identity-kernel hybrid on CIFAR-10, Text8, and Sudoku.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
