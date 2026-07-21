@@ -6,26 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-20
-- 运行时间：2026-07-20 21:35:39 UTC
+- 最新运行日期：2026-07-21
+- 运行时间：2026-07-21 21:05:47 UTC
 - 运行状态：成功
-- 本次总论文数：1
-- 精读区：0
+- 本次总论文数：2
+- 精读区：1
 - 速读区：1
 
 ### 今日简报（AI）
-今日速读一篇评分6.0的扩散模型统一视角论文。  
-该文将掩码、连续与混合扩散统一为粘性跳跃扩散框架，值得关注其理论整合思路。  
-建议后续对比该框架与现有扩散模型的收敛性差异。
-- 详情：[/202607/20/README](/202607/20/README)
+今日精读湍流通道流机器学习概率分布，速读天气编辑扩散模型，总分9.0与7.0。最值得关注的是高分的湍流合成与流动重建概率分布方法。建议读者结合流体力学与生成模型，探索湍流数据增强及物理约束学习。
+- 详情：[/202607/21/README](/202607/21/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [A machine-learned probability distribution in the phase space of turbulent channel flow for synthetic turbulence and flow reconstruction](/202607/21/2607.18058v1-a-machine-learned-probability-distribution-in-the-phase-space-of-turbulent-channel-flow-for-synthetic-turbulence-and-flow-reconstruction)  
+   标签：评分：9.0/10、query:genmod-fluid
+   evidence：基于流的生成模型用于合成湍流
 
 ### 速读区论文标签
-1. [Sticky Jump Diffusions: A Unifying View of Masked, Continuous, and Hybrid Diffusion](/202607/20/2607.10951v1-sticky-jump-diffusions-a-unifying-view-of-masked-continuous-and-hybrid-diffusion)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：粘性跳跃扩散统一了掩蔽、连续和混合扩散模型
+1. [Cyclone: Diffusion Model for Cycle-Consistent Weather Editing from Unpaired Driving Data](/202607/21/2607.13927v1-cyclone-diffusion-model-for-cycle-consistent-weather-editing-from-unpaired-driving-data)  
+   标签：评分：7.0/10、query:genmod-fluid
+   evidence：将潜在扩散模型应用于天气编辑，属于流体动力学相关任务
 
 
 <div class="dpr-home-promo-card">

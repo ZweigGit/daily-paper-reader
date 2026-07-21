@@ -1,0 +1,39 @@
+{
+  "label": "2026-07-21",
+  "date": "2026-07-21",
+  "generated_at": "2026-07-21T21:05:54",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202607/21/2607.18058v1-a-machine-learned-probability-distribution-in-the-phase-space-of-turbulent-channel-flow-for-synthetic-turbulence-and-flow-reconstruction",
+      "section": "deep",
+      "title_en": "A machine-learned probability distribution in the phase space of turbulent channel flow for synthetic turbulence and flow reconstruction",
+      "authors": "Frederik Aerts, Dirk Nuyens, Johan Meyers",
+      "date": "2026-07-20",
+      "pdf": "https://arxiv.org/pdf/2607.18058v1",
+      "score": "9.0",
+      "evidence": "基于流的生成模型用于合成湍流",
+      "tldr": "湍流相空间概率分布难以完整表征，但其准确采样对合成湍流和流场重建至关重要。本文基于最小条件流单元训练流生成模型，并引入一致条件采样程序，在Re_tau=180槽道流中评估机学习得分布的物理系综统计、一致条件采样和动力学不变性。合成湍流场复现直接数值模拟的关键统计与动力学特征，包括间歇性和非线性能量传递，且在流场重建和大域生成中表现良好。结果表明机学习得分布能很好逼近实际湍流系统的不变分布。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Although a complete characterisation of the probability distribution in the phase space of turbulent flows remains elusive, accurately sampling this distribution is essential for both synthetic turbulence generation and turbulent flow reconstruction. Motivated by these applications, we examine to what extent a machine-learned distribution can approximate the physical invariant distribution of turbulent channel flow at $\\mathrm{Re}_τ=180$. We assess three important properties of the approximation: physical ensemble statistics, consistent conditional sampling, and dynamical invariance. To this end, a flow-based generative model is trained on a minimal conditional flow unit, which we define as the smallest domain outside which conditional fields, given a single observation at the domain centre, are indistinguishable from unconditional fields in terms of mean-square discrepancy to other conditional fields. We also introduce a consistent procedure for sampling from the conditional learned distribution. Comparisons with direct numerical simulation show that synthetic turbulent fields reproduce key statistical and dynamical features of turbulence, including intermittency and nonlinear energy transfer. The consistency of conditional sampling is demonstrated in a flow reconstruction problem, and subsequently used to generate synthetic turbulent velocity fields on a large domain. When adopted as initial conditions in direct numerical simulations, these fields yield physical and statistically stationary ensemble statistics, indicating that the learned distribution provides a good approximation to the natural distribution of the turbulent dynamical system.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/21/2607.13927v1-cyclone-diffusion-model-for-cycle-consistent-weather-editing-from-unpaired-driving-data",
+      "section": "quick",
+      "title_en": "Cyclone: Diffusion Model for Cycle-Consistent Weather Editing from Unpaired Driving Data",
+      "authors": "Thang-Anh-Quan Nguyen, Moussab Bennehar, Luis Guillermo Roldao Jimenez, Nathan Piasco, Dzmitry Tsishkou, Laurent Caraffa, Jean-Philippe Tarel, Roland Brémond",
+      "date": "2026-07-15",
+      "pdf": "https://arxiv.org/pdf/2607.13927v1",
+      "score": "7.0",
+      "evidence": "将潜在扩散模型应用于天气编辑，属于流体动力学相关任务",
+      "tldr": "自动驾驶在恶劣天气下的感知鲁棒性是一大挑战。现有方法依赖合成数据或配对训练，难以生成真实天气效果或泛化。本文提出Cyclone，一种基于潜在扩散的天气编辑统一框架，引入循环一致性约束并利用图像-文本模型先验，无需配对数据即可生成多种天气条件并保持场景结构。实验表明，该方法生成结果更真实，且能显著提升多个下游驾驶感知任务性能。此外，Cyclone可蒸馏为视频扩散模型，实现时序一致的天气编辑。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Reliable perception under diverse weather conditions remains a major challenge for autonomous driving systems. A common strategy to improve robustness is either to synthesize adverse weather conditions for training perception models or to apply weather-removal techniques to recover clean inputs. However, existing approaches typically rely on synthetic data augmentation or physics-based, task-specific models that require paired training data and often struggle to generate realistic weather effects or generalize robustly to out-of-domain scenarios. Toward this problem, we present Cyclone, a unified framework for weather editing based on latent diffusion, equipped with cycle-consistent constraints and knowledge from image-text models. Cyclone enables the generation of multiple weather conditions across diverse scenes while eliminating the need for paired data. Experimental results show that our approach produces more realistic, structure-preserving outputs than existing baselines and leads to consistent improvements across several downstream driving perception tasks. Furthermore, we demonstrate that Cyclone can be distilled to a video diffusion model for temporally consistent weather editing.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
