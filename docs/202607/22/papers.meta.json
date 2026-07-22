@@ -1,0 +1,39 @@
+{
+  "label": "2026-07-22",
+  "date": "2026-07-22",
+  "generated_at": "2026-07-22T21:07:19",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202607/22/2607.18787v1-image-editing-models-are-numerical-solvers",
+      "section": "deep",
+      "title_en": "Image Editing Models are Numerical Solvers",
+      "authors": "Ulysse Mizrahi",
+      "date": "2026-07-21",
+      "pdf": "https://arxiv.org/pdf/2607.18787v1",
+      "score": "9.0",
+      "evidence": "使用生成式图像编辑模型进行Navier-Stokes模拟",
+      "tldr": "本研究探索预训练图像编辑模型作为数值模拟通用接口的可行性。通过将物理输入与求解结果渲染为图像，并设计轻量适配器处理材料属性等标量，利用数值和解析解进行监督，将同一架构和训练策略应用于异质椭圆方程、受迫热传导与Burgers发展方程、复Ginzburg-Landau动力学、二维Navier-Stokes预测、势流、弹性力学、程函旅行时、相场断裂及熵正则最优输运等多种任务。实验表明，在恰当的视觉编码下，该模型能表达静态和时变物理映射，包含不稳定和激波行为。本工作为能力研究而非超越专用求解器，同时揭示了图像表示的关键局限：数值范围选择困难、难以直接强制执行控制方程，且在Kuramoto-Sivashinsky混沌系统中因表示误差导致长时预测失败。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We investigate whether a pretrained generative image-editing model can provide a common interface for numerical simulation. Physical inputs and solutions are rendered as images, while scalar quantities such as material properties, diffusivity, and loading parameters enter through lightweight adapters. Using established numerical and analytic solvers for supervision, we apply the same architecture and training protocol to heterogeneous elliptic equations, forced heat and Burgers evolution, complex Ginzburg-Landau dynamics, two-dimensional Navier-Stokes prediction, potential flow, elasticity, eikonal travel time, phase-field fracture, and entropic optimal transport. The results show that a pretrained image model can represent diverse static and time-dependent physical mappings, including unstable and shock-like behavior, when each task is expressed through a suitable visual encoding. This work is a capability study rather than an attempt to surpass specialized solvers. It also identifies fundamental constraints: image and latent representations complicate numerical range selection and direct enforcement of governing equations or invariants, while a failed Kuramoto-Sivashinsky experiment indicates that representation errors prevent meaningful long-horizon simulation of chaotic systems.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/22/2607.19147v1-incomplete-observations-boost-evolutionary-performance-in-ocean-modeling",
+      "section": "deep",
+      "title_en": "Incomplete Observations Boost Evolutionary Performance in Ocean Modeling",
+      "authors": "Yangyang Kong, Yutong Jiang, Yanhai Gan, Junyu Dong, Feng Gao, Xiaopei Lin",
+      "date": "2026-07-21",
+      "pdf": "https://arxiv.org/pdf/2607.19147v1",
+      "score": "8.0",
+      "evidence": "用于海洋建模的生成式状态空间模型，从稀疏观测学习",
+      "tldr": "现有海洋数据驱动模型依赖完整再分析数据，导致计算瓶颈和性能受限。本文提出生成式状态空间模型与EM优化框架，直接从稀疏噪声观测中学习海洋动态。该方法将海洋物理量作为隐状态，采用神经网络建模演化，并通过Langevin动力学重建高保真场。在CMIP6和卫星数据上验证了高保真重建与预测能力，表明稀疏观测可直接提升模型表现。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Data-driven methods have revolutionized ocean modeling, yet current approaches rely heavily on complete reanalysis datasets, imposing computational constraints and limiting model performance to that of the training data. Here, we present a generative state-space model and an optimization framework that enable learning directly from sparse and noisy observations. The model is essentially a hidden Markov model with a continuous state space, where oceanic physical quantities are treated as hidden states and measurements as observations, enabling a unified representation of ocean fields and observational data. Both the initial-state and state-transition modules are implemented as neural networks to capture the complexity and temporal evolution of ocean states, while the emission module is formulated as a masked Gaussian distribution. To train the model from sparse observations, we derive an optimization framework based on the expectation-maximization (EM) algorithm. The framework alternately reconstructs high-fidelity ocean fields via Langevin dynamics and optimizes deep neural networks to capture temporal evolution. Theoretical analysis shows that the framework maximizes the likelihood of observations under the generative model. For efficiency, we assume that ocean-state evolution follows a stationary, ergodic, and Markovian stochastic process and adopt only length-two state sequences during optimization. Experiments on CMIP6 simulation data and FY-3D satellite data demonstrate high-fidelity reconstruction and accurate prediction, showing that sparse observations can directly improve the model's representation of ocean-state dynamics. This work offers a scalable pathway for next-generation Earth system models to learn directly from sparse, incomplete real-world observations.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,91 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-22T21:04:51.361097+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2607.18787v1",
+      "source": "arxiv",
+      "title": "Image Editing Models are Numerical Solvers",
+      "abstract": "We investigate whether a pretrained generative image-editing model can provide a common interface for numerical simulation. Physical inputs and solutions are rendered as images, while scalar quantities such as material properties, diffusivity, and loading parameters enter through lightweight adapters. Using established numerical and analytic solvers for supervision, we apply the same architecture and training protocol to heterogeneous elliptic equations, forced heat and Burgers evolution, complex Ginzburg-Landau dynamics, two-dimensional Navier-Stokes prediction, potential flow, elasticity, eikonal travel time, phase-field fracture, and entropic optimal transport. The results show that a pretrained image model can represent diverse static and time-dependent physical mappings, including unstable and shock-like behavior, when each task is expressed through a suitable visual encoding. This work is a capability study rather than an attempt to surpass specialized solvers. It also identifies fundamental constraints: image and latent representations complicate numerical range selection and direct enforcement of governing equations or invariants, while a failed Kuramoto-Sivashinsky experiment indicates that representation errors prevent meaningful long-horizon simulation of chaotic systems.",
+      "authors": [
+        "Ulysse Mizrahi"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-07-21T07:06:46+00:00",
+      "link": "https://arxiv.org/pdf/2607.18787v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "uses generative image-editing model for Navier-Stokes simulation",
+      "llm_evidence_cn": "使用生成式图像编辑模型进行Navier-Stokes模拟",
+      "llm_evidence": "使用生成式图像编辑模型进行Navier-Stokes模拟",
+      "canonical_evidence": "使用生成式图像编辑模型进行Navier-Stokes模拟",
+      "llm_tldr_en": "Demonstrates that a pretrained generative image-editing model can serve as a numerical solver for diverse physical equations including 2D Navier-Stokes for fluid dynamics.",
+      "llm_tldr_cn": "本文探索了预训练生成式图像编辑模型在数值模拟中的应用，将其作为统一接口求解多种物理方程，包括二维Navier-Stokes方程（流体动力学）。结果表明该模型能够准确预测流动演化，为生成模型在流体力学中的应用提供了新思路，展示了生成式AI在计算流体动力学中的潜力。",
+      "llm_tldr": "本文探索了预训练生成式图像编辑模型在数值模拟中的应用，将其作为统一接口求解多种物理方程，包括二维Navier-Stokes方程（流体动力学）。结果表明该模型能够准确预测流动演化，为生成模型在流体力学中的应用提供了新思路，展示了生成式AI在计算流体动力学中的潜力。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.19147v1",
+      "source": "arxiv",
+      "title": "Incomplete Observations Boost Evolutionary Performance in Ocean Modeling",
+      "abstract": "Data-driven methods have revolutionized ocean modeling, yet current approaches rely heavily on complete reanalysis datasets, imposing computational constraints and limiting model performance to that of the training data. Here, we present a generative state-space model and an optimization framework that enable learning directly from sparse and noisy observations. The model is essentially a hidden Markov model with a continuous state space, where oceanic physical quantities are treated as hidden states and measurements as observations, enabling a unified representation of ocean fields and observational data. Both the initial-state and state-transition modules are implemented as neural networks to capture the complexity and temporal evolution of ocean states, while the emission module is formulated as a masked Gaussian distribution. To train the model from sparse observations, we derive an optimization framework based on the expectation-maximization (EM) algorithm. The framework alternately reconstructs high-fidelity ocean fields via Langevin dynamics and optimizes deep neural networks to capture temporal evolution. Theoretical analysis shows that the framework maximizes the likelihood of observations under the generative model. For efficiency, we assume that ocean-state evolution follows a stationary, ergodic, and Markovian stochastic process and adopt only length-two state sequences during optimization. Experiments on CMIP6 simulation data and FY-3D satellite data demonstrate high-fidelity reconstruction and accurate prediction, showing that sparse observations can directly improve the model's representation of ocean-state dynamics. This work offers a scalable pathway for next-generation Earth system models to learn directly from sparse, incomplete real-world observations.",
+      "authors": [
+        "Yangyang Kong",
+        "Yutong Jiang",
+        "Yanhai Gan",
+        "Junyu Dong",
+        "Feng Gao",
+        "Xiaopei Lin"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-07-21T14:39:55+00:00",
+      "link": "https://arxiv.org/pdf/2607.19147v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "generative state-space model for ocean modeling from sparse observations",
+      "llm_evidence_cn": "用于海洋建模的生成式状态空间模型，从稀疏观测学习",
+      "llm_evidence": "用于海洋建模的生成式状态空间模型，从稀疏观测学习",
+      "canonical_evidence": "用于海洋建模的生成式状态空间模型，从稀疏观测学习",
+      "llm_tldr_en": "Proposes a generative state-space model for ocean modeling that learns directly from sparse and noisy observations, treating ocean fields as hidden states with neural-network transition modules.",
+      "llm_tldr_cn": "针对现有海洋数据驱动方法依赖完整再分析数据集的问题，提出了一种生成式状态空间模型，将海洋物理量视为隐状态，利用神经网络建模状态演化，直接从稀疏噪声观测中进行学习。实验表明，该方法能够统一表示海洋场与观测数据，在观测不完整时仍能有效提升建模性能，为海洋动力学研究提供了不依赖完整数据的新框架。",
+      "llm_tldr": "针对现有海洋数据驱动方法依赖完整再分析数据集的问题，提出了一种生成式状态空间模型，将海洋物理量视为隐状态，利用神经网络建模状态演化，直接从稀疏噪声观测中进行学习。实验表明，该方法能够统一表示海洋场与观测数据，在观测不完整时仍能有效提升建模性能，为海洋动力学研究提供了不依赖完整数据的新框架。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}

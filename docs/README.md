@@ -6,26 +6,27 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-21
-- 运行时间：2026-07-21 21:05:47 UTC
+- 最新运行日期：2026-07-22
+- 运行时间：2026-07-22 21:07:13 UTC
 - 运行状态：成功
 - 本次总论文数：2
-- 精读区：1
-- 速读区：1
+- 精读区：2
+- 速读区：0
 
 ### 今日简报（AI）
-今日精读湍流通道流机器学习概率分布，速读天气编辑扩散模型，总分9.0与7.0。最值得关注的是高分的湍流合成与流动重建概率分布方法。建议读者结合流体力学与生成模型，探索湍流数据增强及物理约束学习。
-- 详情：[/202607/21/README](/202607/21/README)
+今日精读2篇论文，聚焦图像编辑的数学建模与海洋建模的进化优化。最值得关注的是《Image Editing Models are Numerical Solvers》将编辑过程视为数值求解，以及《Incomplete Observations Boost Evolutionary Performance》用不完整数据提升海洋模型性能。下一步可深入探索AI模型向物理求解器演进的交叉思路。
+- 详情：[/202607/22/README](/202607/22/README)
 
 ### 精读区论文标签
-1. [A machine-learned probability distribution in the phase space of turbulent channel flow for synthetic turbulence and flow reconstruction](/202607/21/2607.18058v1-a-machine-learned-probability-distribution-in-the-phase-space-of-turbulent-channel-flow-for-synthetic-turbulence-and-flow-reconstruction)  
+1. [Image Editing Models are Numerical Solvers](/202607/22/2607.18787v1-image-editing-models-are-numerical-solvers)  
    标签：评分：9.0/10、query:genmod-fluid
-   evidence：基于流的生成模型用于合成湍流
+   evidence：使用生成式图像编辑模型进行Navier-Stokes模拟
+2. [Incomplete Observations Boost Evolutionary Performance in Ocean Modeling](/202607/22/2607.19147v1-incomplete-observations-boost-evolutionary-performance-in-ocean-modeling)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：用于海洋建模的生成式状态空间模型，从稀疏观测学习
 
 ### 速读区论文标签
-1. [Cyclone: Diffusion Model for Cycle-Consistent Weather Editing from Unpaired Driving Data](/202607/21/2607.13927v1-cyclone-diffusion-model-for-cycle-consistent-weather-editing-from-unpaired-driving-data)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：将潜在扩散模型应用于天气编辑，属于流体动力学相关任务
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">
