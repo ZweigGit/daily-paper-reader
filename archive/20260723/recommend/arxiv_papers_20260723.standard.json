@@ -1,0 +1,168 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-23T21:20:02.203603+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2607.19522v1",
+      "source": "arxiv",
+      "title": "Geospatial Diffusion-based Evolution Synthesis (GeoDES) for Storm-Centered Weather Augmentation",
+      "abstract": "While machine learning-based weather models hold significant promise, they struggle to predict the detailed structure of large-scale weather systems such as cyclonic storms. Regional models are constrained by limited historical records within fixed geographic boundaries, while global models are computationally expensive and often operate at resolutions too coarse to capture fine-grained storm dynamics. To bridge this gap, we introduce the Geospatial Diffusion-based Evolution Synthesis (GeoDES) model, a custom image-to-video diffusion model. By focusing generation strictly on the evolving storm structure, GeoDES synthesizes physically consistent, high-fidelity weather events suitable for stress-testing forecast models and expanding meteorological datasets. Evaluations demonstrate that GeoDES outperforms prior methods on key metrics, achieving $52\\%$ lower Peak Vorticity Error and $8\\%$ higher Anomaly Correlation Coefficient than the next strongest methods on the North Atlantic test set.",
+      "authors": [
+        "Sonia Cromp",
+        "Satya Sai Srinath Namburi GNVV",
+        "Youran Wang",
+        "Grace Kisslinger",
+        "Frederic Sala",
+        "James Booth",
+        "Allegra LeGrande"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.CV"
+      ],
+      "published": "2026-07-21T19:10:12+00:00",
+      "link": "https://arxiv.org/pdf/2607.19522v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "diffusion model for storm-centered weather augmentation",
+      "llm_evidence_cn": "基于扩散模型的风暴天气增强",
+      "llm_evidence": "基于扩散模型的风暴天气增强",
+      "canonical_evidence": "基于扩散模型的风暴天气增强",
+      "llm_tldr_en": "Introduces a custom image-to-video diffusion model (GeoDES) that generates physically consistent storm-centered weather events for stress-testing forecast models.",
+      "llm_tldr_cn": "针对现有机器学习天气模型难以预测精细风暴结构的问题，提出了GeoDES模型，一种定制的图像到视频扩散模型。该模型专注于生成演变中的风暴结构，合成物理一致、高保真的天气事件，用于压力测试预测模型并扩展天气模拟数据集。GeoDES填补了区域模型与全局模型在分辨率和历史数据上的空白，为风暴动力学研究提供了新的数据增强工具。",
+      "llm_tldr": "针对现有机器学习天气模型难以预测精细风暴结构的问题，提出了GeoDES模型，一种定制的图像到视频扩散模型。该模型专注于生成演变中的风暴结构，合成物理一致、高保真的天气事件，用于压力测试预测模型并扩展天气模拟数据集。GeoDES填补了区域模型与全局模型在分辨率和历史数据上的空白，为风暴动力学研究提供了新的数据增强工具。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2607.20346v1",
+      "source": "arxiv",
+      "title": "IteraSim RAG: A Multi-Stage Retrieval-Augmented Agentic Back-End for OpenFOAM-Based Computational Fluid Dynamics",
+      "abstract": "Configuring a computational fluid dynamics (CFD) case in OpenFOAM requires assembling a multi-directory input deck of mutually consistent solver, discretisation and boundary-condition dictionaries -- a task that remains a substantial barrier to non-specialist use of open-source CFD software. Large language models (LLMs) coupled with retrieval-augmented generation (RAG) can lower this barrier, but existing systems retrieve with a single flat query, apply one retrieval strategy to operationally distinct requests, and let a single agent both draft and review its own output. We present IteraSim RAG, a retrieval-augmented software back-end for automated OpenFOAM case generation built around these three limitations. An LLM first expands the query into physics, solver-keyword and troubleshooting variants, Reciprocal Rank Fusion then merges the resulting ranked lists, and Maximal Marginal Relevance re-ranks the fused candidates against an HNSW-indexed dense vector store. A deterministic keyword router dispatches tool-conditioned workflow queries and corpus-wide physics queries down separate retrieval paths, and generation is split across an Architect, an InputWriter and a Reviewer agent, backed by a static canonical-knowledge layer covering solver selection, turbulence closures, boundary conditions and finite-volume defaults. On an openly released 28-case benchmark spanning zero-shot setup, few-shot generalisation, single-parameter modifications and turbulence-model swaps, the pipeline attains a mean retrieval coverage of 77.9% (median 79.1%), with the parameter-modification category exceeding 90%. All six reference configurations run to completion on OpenFOAM v2506, and two synthetically corrupted cases are diagnosed and repaired within the bounded Reviewer loop using only the solver log and the canonical layer. The benchmark, scoring rubric and figure scripts are released for reproducibility.",
+      "authors": [
+        "Pratyush Kumar"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE",
+        "physics.flu-dyn"
+      ],
+      "published": "2026-07-22T16:31:51+00:00",
+      "link": "https://arxiv.org/pdf/2607.20346v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Generative AI (LLMs) for automated OpenFOAM case generation",
+      "llm_evidence_cn": "用于自动生成OpenFOAM案例的生成式人工智能（大语言模型）",
+      "llm_evidence": "用于自动生成OpenFOAM案例的生成式人工智能（大语言模型）",
+      "canonical_evidence": "用于自动生成OpenFOAM案例的生成式人工智能（大语言模型）",
+      "llm_tldr_en": "IteraSim RAG uses LLMs with multi-stage retrieval-augmented generation to automate OpenFOAM case configuration, reducing barriers for non-specialist use.",
+      "llm_tldr_cn": "本文针对非专家使用OpenFOAM配置CFD案例的困难，提出了IteraSim RAG系统。该系统利用大语言模型与多阶段检索增强生成技术，自动生成一致的求解器、离散化与边界条件字典。通过迭代精炼与外部验证，提高了配置的准确性和可靠性。该方法将生成式人工智能应用于流体力学中，降低了CFD软件的使用门槛。",
+      "llm_tldr": "本文针对非专家使用OpenFOAM配置CFD案例的困难，提出了IteraSim RAG系统。该系统利用大语言模型与多阶段检索增强生成技术，自动生成一致的求解器、离散化与边界条件字典。通过迭代精炼与外部验证，提高了配置的准确性和可靠性。该方法将生成式人工智能应用于流体力学中，降低了CFD软件的使用门槛。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative artificial intelligence in fluid mechanics",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.14947v1",
+      "source": "arxiv",
+      "title": "Optimal Self-Distillation for Rectified Flow via Linear Probing",
+      "abstract": "Modern generative models are increasingly trained using model-generated signals, creating both opportunities for self-improvement and risks of collapse. We study optimal self-distillation (SD) for rectified flow (RF): given a suboptimal teacher velocity field, can a student trained on a mixture of true RF velocities and teacher velocities provably improve the teacher? For linear RF with ridge regularization on fixed interpolation pairs, we prove an exact affine path identity, derive the optimal mixing coefficient in closed form, and show strict improvement in integrated velocity risk whenever the teacher risk is nonstationary along the regularization path. The optimal coefficient obeys a sign rule: positive mixing corrects under-regularized teachers, while negative mixing corrects over-regularized teachers. We also give one-shot generalized cross-validation (GCV) and validation tuning procedure that avoids grid search over mixing weights and repeated refitting. Combining this theorem with RF Wasserstein convergence bounds, we show that optimal self-distillation improves the velocity estimation terms controlling continuous-time and finite-step generation error. Experiments with Gaussian models, Gaussian mixtures, and image data show that optimal self-distillation improves velocity risk, mode recovery, and finite-step generation relative to both the teacher and pure distillation.",
+      "authors": [
+        "Saptarshi Roy",
+        "Debepsita Mukherjee",
+        "Pratik Patil"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.LG"
+      ],
+      "published": "2026-07-16T12:57:00+00:00",
+      "link": "https://arxiv.org/pdf/2607.14947v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "rectified flow self-distillation method",
+      "llm_evidence_cn": "修正流自蒸馏方法",
+      "llm_evidence": "修正流自蒸馏方法",
+      "canonical_evidence": "修正流自蒸馏方法",
+      "llm_tldr_en": "Theoretical analysis of optimal self-distillation for rectified flow, a flow matching generative model, with provable improvements.",
+      "llm_tldr_cn": "该论文针对修正流（一种流匹配生成模型）的最优自蒸馏问题进行了理论分析。在线性修正流和岭正则化下，推导了最优混合系数的闭式表达式，并证明了学生模型在整合教师模型速度场后能够严格改善教师模型的性能。该工作为流匹配方法的自训练提供了理论基础，可推广至生成模型在流体动力学中的应用。",
+      "llm_tldr": "该论文针对修正流（一种流匹配生成模型）的最优自蒸馏问题进行了理论分析。在线性修正流和岭正则化下，推导了最优混合系数的闭式表达式，并证明了学生模型在整合教师模型速度场后能够严格改善教师模型的性能。该工作为流匹配方法的自训练提供了理论基础，可推广至生成模型在流体动力学中的应用。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.20224v1",
+      "source": "arxiv",
+      "title": "Bayesian finite element regression for vascular flow reconstruction with quantified uncertainty",
+      "abstract": "Reconstructing accurate velocity and pressure fields from under-resolved noisy measurements of blood flow is an ill-posed inverse problem due to unknown inlet and outlet boundary conditions. We present a Bayesian finite element regression framework that reconstructs steady three-dimensional velocity and pressure fields, with quantified uncertainty, from noisy velocity observations without offline training data. We represent velocity and pressure fields in Taylor-Hood finite element basis functions, and construct physics-informed priors on the nodal degrees of freedom from maximum-entropy principles. Combined with a likelihood specified by a noise-model, this yields a posterior whose maximum-a-posteriori estimate (MAP) gives velocity and pressure reconstructions. The MAP estimate is computed by solving a large-scale sparse nonlinear least-squares problem where pressure is eliminated analytically, no-slip walls are enforced exactly, and gradient is computed without forward/adjoint solves or automatic differentiation. A Laplace approximation of the posterior quantifies the uncertainties in our reconstructions and propagates them to clinically relevant quantities of interest including, pressure drop, flow rates, and wall shear stress. On patient-specific cerebral aneurysm, aortic aneurysm, and aortic coarctation geometries, the method reconstructs velocity and pressure more accurately than tricubic interpolation and comparably to a PINN, while recovering region-of-interest wall shear stress more accurately than both.",
+      "authors": [
+        "Cem Gormezano",
+        "Shawn Shadden"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn"
+      ],
+      "published": "2026-07-22T14:46:26+00:00",
+      "link": "https://arxiv.org/pdf/2607.20224v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Bayesian probabilistic model for fluid flow reconstruction",
+      "llm_evidence_cn": "用于流体流动重建的贝叶斯概率模型",
+      "llm_evidence": "用于流体流动重建的贝叶斯概率模型",
+      "canonical_evidence": "用于流体流动重建的贝叶斯概率模型",
+      "llm_tldr_en": "Bayesian finite element regression reconstructs vascular velocity and pressure fields with uncertainty quantification, using physics-informed priors.",
+      "llm_tldr_cn": "本文针对从稀疏噪声测量中重建血流场这一不适定逆问题，提出了一种贝叶斯有限元回归框架。该方法使用泰勒-胡德基函数表示速度与压力场，并通过最大熵原理构建物理信息先验。得到的后验分布的最大后验估计能提供准确的速度与压力场及不确定性量化。在血管流动案例中验证了有效性，展示了流体动力学中概率流动模型的一种原则性方法。",
+      "llm_tldr": "本文针对从稀疏噪声测量中重建血流场这一不适定逆问题，提出了一种贝叶斯有限元回归框架。该方法使用泰勒-胡德基函数表示速度与压力场，并通过最大熵原理构建物理信息先验。得到的后验分布的最大后验估计能提供准确的速度与压力场及不确定性量化。在血管流动案例中验证了有效性，展示了流体动力学中概率流动模型的一种原则性方法。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "probabilistic flow models for fluid dynamics",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -1,0 +1,1877 @@
+Title: Optimal Self-Distillation for Rectified Flow via Linear Probing
+
+URL Source: https://arxiv.org/pdf/2607.14947v1
+
+Published Time: Fri, 17 Jul 2026 01:37:55 GMT
+
+Number of Pages: 29
+
+Markdown Content:
+# Optimal Self-Distillation for Rectified Flow via Linear Probing 
+
+Saptarshi Roy 
+
+University of Texas, Austin 
+
+saptarshiroy@utexas.edu 
+
+Debepsita Mukherjee 
+
+University of Texas, Austin 
+
+debepsitamukherjee@utexas.edu 
+
+Pratik Patil 
+
+University of Texas, Austin 
+
+pratikpatil@utexas.edu 
+
+Abstract 
+
+Modern generative models are increasingly trained using model-generated signals, creating both opportunities for self-improvement and risks of collapse. We study optimal self-distillation (SD) for rectified flow (RF): given a suboptimal teacher velocity field, can a student trained on a mixture of true RF velocities and teacher velocities provably improve the teacher? For linear RF with ridge regularization on fixed interpolation pairs, we prove an exact affine path identity, derive the optimal mixing coefficient in closed form, and show strict improvement in integrated veloc-ity risk whenever the teacher risk is nonstationary along the regularization path. The optimal coefficient obeys a sign rule: positive mixing corrects under-regularized teachers, while negative mixing corrects over-regularized teachers. We also give one-shot generalized cross-validation (GCV) and validation tuning procedure that avoids grid search over mixing weights and repeated refitting. Combining this theorem with RF Wasserstein convergence bounds, we show that optimal self-distillation improves the velocity estimation terms controlling continuous-time and finite-step generation error. Experiments with Gaussian models, Gaussian mixtures, and image data show that optimal self-distillation improves velocity risk, mode recovery, and finite-step generation relative to both the teacher and pure distillation. 
+
+1 Introduction 
+
+Synthetic data and model-generated supervision are increasingly common in modern AI pipelines, with seemingly opposing consequences. Recursively training generative models on their own outputs can lead to model collapse, loss of diversity, or distributional drift [ 34 , 11 , 38 ]. Yet model-generated signals can also be useful: in supervised learning, self-distillation often improves a model by retraining on a mixture of ground-truth labels and teacher predictions. We ask whether this positive self-improvement phenomenon can be isolated and analyzed in a generative model. We focus on rectified flow (RF) within the broader flow matching framework [ 22 , 23 , 1], which offers a simple approach to generative modeling with strong empirical performance [ 9 , 17 , 21 ]. Let 
+
+X0 ∼ ρ0 be source noise and X1 ∼ ρ1 be data, and define 
+
+Xt := (1 − t)X0 + tX 1, u = X1 − X0. (1) RF learns a time-conditioned velocity field v(t, x ) by regressing u on (t, X t) with squared loss, thereby approximating a suitable velocity field v⋆(t, x ). This problem has the same geometry as supervised regression, but the learned field subsequently defines an ODE sampler. RF is therefore a natural setting in which to ask whether a student trained on mixed teacher-generated and true velocity targets can provably improve a suboptimal RF teacher. arXiv:2607.14947v1 [stat.ML] 16 Jul 2026 A Handwritten digits B Fashion-MNIST  
+
+> Real
+> images
+> Real
+> images
+> Teacher Teacher
+> Pure
+> distillation
+> (PD)
+> Pure
+> distillation
+> (PD)
+> Optimal
+> SD
+> Optimal
+> SD
+
+Figure 1: Optimal self-distillation corrects degraded RF teachers. In controlled stress tests on real images from handwritten digits and Fashion-MNIST, we scale down the teacher output to emulate an over-regularized or otherwise miscalibrated teacher field. The resulting teacher and pure-distilled student produce degraded samples, whereas validation selects a negative mixing coefficient for unconstrained SD, which recovers recognizable samples. The corresponding validation RF risks decrease from 1.237 to 0.415 on digits and from 0.828 to 0.210 on Fashion-MNIST. The answer is yes for a linear RF model trained on fixed interpolants. We adopt linear probing 
+
+[20 , 35 ], an efficient adaptation strategy that freezes a pretrained representation or feature map and updates only a lightweight linear head W . We keep the interpolation covariates fixed, fit a teacher 
+
+cWλ with ridge regularization on the true velocity targets, evaluate it at those interpolation points, and train a student on mixed targets (see Figure 2). For a true velocity u, a teacher prediction bu, and a mixing coefficient ξ ∈ R, the mixed target is u(ξ) = (1 − ξ)u + ξbu. Unlike recursive Reflow, which generates new noise–data pairs and changes the endpoint coupling, keeping the interpolants fixed preserves the ridge geometry: the self-distilled student lies on an affine path between the teacher and a pure-distilled refit. Consequently, the integrated RF risk is an exact quadratic in ξ, yielding an optimum in closed form and a theorem guaranteeing strict improvement. 
+
+1.1 Contributions and outline 
+
+1. Optimal self-distillation for RF velocity learning. Section 3 introduces self-distillation of RF velocity targets on fixed interpolants; Figure 2 and Algorithm 1 summarize the procedure. For linear RF with ridge regularization, we prove an exact affine path identity linking the teacher, pure-distilled refit, and self-distilled student (Proposition 1). This identity makes the integrated RF risk an exact quadratic in ξ, yielding an optimum in closed form and strict improvement whenever the teacher risk is nonstationary along the regularization path (Theorem 2). We also propose one-shot tuning procedure based on GCV or validation that avoids grid search and repeated refitting, providing an efficient adaptation strategy for RF models based on fixed features or linear probing. 2. Consequences for generation error. Section 4 connects the improvement in velocity risk to generative performance. RF regression risk decomposes into excess velocity approximation error and an irreducible term, so the strict reduction in RF risk also reduces the velocity error quantity entering RF sampling bounds. Combining this identity with Wasserstein convergence results for RF, we show that optimal SD improves the continuous-time generation error upper bound (Proposition 3) and the velocity estimation term in finite-step Euler bounds (Theorem 4). 3. Empirical validation. Section 5 validates the theory using Gaussian models, nonlinear Gaussian mixtures, random features, and controlled RF experiments on real images. Across these settings, optimal SD improves velocity risk and finite-step generation, one-shot tuning closely tracks the oracle choice, and unconstrained negative mixing is essential for correcting over-regularized teachers; see Figures 1, 3, and 4, as well as Table 1. A time-conditioned U-Net experiment on CIFAR-10 tests the same correction beyond linear probing with fixed features by comparing the teacher, pure distillation, clipped SD, and unconstrained SD. The supplement reports metric definitions, sensitivity to teacher quality and output scaling, and a fine-tuning baseline with matched compute. 21.2 Related work Rectified flow and flow matching. Flow matching and stochastic interpolants learn velocity fields by squared regression against conditional velocity targets [ 1 , 22 ]. Couplings inspired by optimal transport and careful path design can produce straighter flows, stabilize training, and accelerate sampling [ 31 , 33 , 36 ]; complementary deterministic sampling error bounds depend on velocity field approximation error and flow regularity [ 4]. RF specializes this framework to linear interpolants and uses the learned ODE to transport source noise to the data distribution [ 23 ]. A Wasserstein analysis of RF further shows that terminal sampling error is controlled by integrated velocity estimation error and an Euler discretization term governed by straightness [ 3]. We use this regression view of estimation error to analyze optimal self-distillation of the learned velocity field. 
+
+Self-consuming generative models and collapse. Model collapse under recursive synthetic data training has been observed and studied across a range of settings [ 13 , 25 , 5, 34 , 11 , 2 ]. In RF, recursive Reflow repeatedly changes the endpoint coupling; proposed safeguards include mixing real and synthetic endpoint pairs [38] and conic reflow , which learns a spherical linear interpolation between real data and its inverse noise [ 18 ]. Our complementary setting keeps the endpoint coupling and interpolation covariates fixed, isolating a one-shot target mixing mechanism that is analytically tractable and computationally efficient. 
+
+Self-distillation and optimal mixing. Self-distillation retrains a student on the same examples using a mixture of ground-truth labels and teacher predictions. Classical distillation uses soft teacher predictions to train a student, often transferring teacher performance to a smaller or retrained model [ 14 , 12 , 30 , 37 , 16 ]. Theory explains self-distillation gains through implicit regularization, bias– variance tradeoffs, teacher mimicry, and repeated distillation effects [ 26 , 7, 27 ]. Related work also studies uncertainty-aware Bayesian knowledge distillation [ 10 ]; Luo [24] survey distillation methods for diffusion models. For ridge regression, Dang et al. [6] show that unconstrained optimal mixing can strictly improve any nonstationary teacher along the ridge path and that the optimal coefficient can be negative in over-regularized regimes. We transfer this structural geometry from supervised ridge regression to RF velocity matching. 
+
+2 Rectified flow 
+
+Let ρ0 be the source distribution, typically N (0 , I d), and ρ1 the data distribution. We sample endpoint pairs (X0, X 1) from a coupling π of (ρ0, ρ 1), usually the independent coupling π = ρ0 ⊗ ρ1. For 
+
+t ∈ [0 , 1] , define the linear interpolant and pairwise velocity as in (1) . RF learns a time-dependent velocity field by minimizing 
+
+LRF (v) = ET ∼ν, (X0,X 1)∼π
+
+ ∥u − v(T, X T )∥2 , (2) where ν is usually uniform on [0 , 1] . The population minimizer is v⋆(t, x ) = E[u | Xt = x]. If Zt
+
+solves dZt
+
+dt = v⋆(t, Z t), Z0 ∼ ρ0, (3) then Zt has the same marginal law as Xt for every t ∈ [0 , 1] [ 23 ]. The projection identity under squared loss gives 
+
+E ∥u − v(T, X T )∥2 = E ∥v⋆(T, X T ) − v(T, X T )∥2 + E ∥u − v⋆(T, X T )∥2 . (4) Thus RF regression risk equals integrated velocity approximation error plus an irreducible conditional variance term. We study the linear (in parameters) model 
+
+vW (t, x ) = W ⊤ϕ(t, x ), W ∈ Rm×d, (5) where ϕ : [0 , 1] × Rd → Rm is a fixed time-conditioned feature map. For example, let b(t) = (b1(t), . . . , b L(t)) ⊤ be fixed temporal basis functions and set ϕ(t, x ) = b(t) ⊗ x. Writing W =(A⊤ 
+
+> 1
+
+, . . . , A ⊤ 
+
+> L
+
+)⊤ with Aℓ ∈ Rd×d gives vW (t, x ) = AW (t)x, where AW (t) := PLℓ=1 bℓ(t)Aℓ. This yields a time-dependent linear velocity field with parameters shared across time. More generally, the fixed map ϕ may comprise random features, kernel or Nyström approximations, or frozen pretrained 3Fixed RF pairs 
+
+(Ti, X Ti,i )
+
+True velocity 
+
+ui = X1,i − X0,i 
+
+Teacher velocity 
+
+bui = vcWλ (Ti, X Ti,i )
+
+Mixed velocity target 
+
+u(ξ) 
+
+> i
+
+= (1 − ξ)ui + ξbui
+
+Student 
+
+cWsd ,λ,ξ 
+
+Choose ξ to minimize integrated RF risk 
+
+Fixed interpolants 
+
+Figure 2: Schematic of self-distillation for RF velocity targets on fixed interpolants. Unlike recursive Reflow, the endpoint coupling and interpolation covariates remain fixed. The teacher predicts velocities at the same RF training locations, and the student is trained on their mixture with the true targets. representations [ 8 ]; the affine path identity below applies to any fixed choice of ϕ. Once ϕ is fixed, training the RF teacher reduces to estimating the shared coefficient matrix W .Given training triples DN = {(X0,i , X 1,i , T i)}Ni=1 with Ti
+
+> iid
+
+∼ ν, define XTi,i = (1 −Ti)X0,i +TiX1,i .Let ui = X1,i − X0,i and ϕi = ϕ(Ti, X Ti,i ). We use plain italic notation throughout: u and 
+
+ui are velocity vectors, while U denotes the stacked velocity target matrix. Specifically, Φ = (ϕ1, . . . , ϕ N )⊤ ∈ RN ×m and U = ( u1, . . . , u N )⊤ ∈ RN ×d. The RF teacher fitted with ridge regularization is 
+
+cWλ = argmin 
+
+> W
+
+1
+
+N ∥U − ΦW ∥2F + λ ∥W ∥2F =
+
+ Φ⊤Φ
+
+N + λI m
+
+−1 Φ⊤UN . (6) For any learned velocity field v, define the conditional integrated RF risk 
+
+Rν (v | D N ) = E ∥u − v(T, X T )∥2 | D N
+
+, (7) where the expectation is over an independent test triple with T ∼ ν and (X0, X 1) ∼ π. For a linear estimator cW , we use the shorthand Rν (cW | D N ) := Rν (vcW | D N ). When ν is uniform on [0 , 1] ,we omit the subscript and write R(v | D N ).
+
+3 Optimal self-distillation 
+
+The teacher’s fitted velocities at the original RF interpolation points form bUλ = Φ cWλ. Pure distillation retrains on these targets: 
+
+cWpd ,λ = argmin 
+
+> W
+
+1
+
+N bUλ − ΦW 2F
+
++ λ ∥W ∥2F . (8) For ξ ∈ R, define the mixed velocity target matrix 
+
+U (ξ) = (1 − ξ)U + ξ bUλ, (9) and let cWsd ,λ,ξ be the ridge RF fit on (Φ , U (ξ)). For compactness, throughout the linear theory we write 
+
+vλ := vcWλ , vpd ,λ := vcWpd ,λ , vsd ,λ,ξ := vcWsd ,λ,ξ .
+
+3.1 Oracle optimal mixing Proposition 1 (Affine path) . For every λ > 0 and ξ ∈ R,
+
+cWsd ,λ,ξ = (1 − ξ)cWλ + ξcWpd ,λ . (10) 
+
+Consequently, for every (t, x ),
+
+vsd ,λ,ξ (t, x ) = (1 − ξ)vλ(t, x ) + ξv pd ,λ (t, x ).
+
+The affine family in Proposition 1 is reminiscent of classifier-free guidance (CFG) in diffusion and flow models [ 15 , 32 ], but the endpoints and purpose differ. CFG typically extrapolates from an 410 4 10 3 10 2 10 1 10 0 10 1 10 2          
+
+> Ridge penalty
+> 2.5
+> 5.0
+> 7.5
+> 10.0
+> 12.5
+> 15.0
+> 17.5
+> 20.0
+> Excess velocity risk / dimension
+> One-shot tuning tracks oracle SD
+> Teacher
+> Pure distilled
+> Oracle SD
+> One-shot SD
+> 10 410 310 210 110 010 110 2
+> Ridge penalty
+> 0
+> 100
+> 200
+> 300
+> 400
+> Mixing weight
+> Sign and magnitude of the plug-in weight
+> Oracle
+> One-shot
+
+(a) One-shot GCV tuning. 10 4 10 3 10 2 10 1 10 0 10 1 10 2          
+
+> Ridge penalty
+> 0
+> 10
+> 20
+> 30
+> 40
+> Excess velocity risk / dimension
+> Negative mixing is needed when over-regularized
+> Teacher
+> Unconstrained SD
+> Constrained SD, [0, 1]
+> 10 86420246
+> Mixing weight
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> Risk / teacher risk
+> Quadratic risk slices in
+> = 0.01 (under-regularized)
+> = 1.6 (near stationary)
+> = 32 (over-regularized)
+
+(b) Unconstrained mixing is necessary. 
+
+Figure 3: The sign rule in Gaussian RF. (a) In a correctly specified Gaussian RF model, one-shot GCV closely tracks oracle mixing and selects negative mixing in over-regularized regimes. (b) Constraining ξ ∈ [0 , 1] often returns the teacher when the optimal correction is negative. unconditional field toward a conditional field to strengthen conditioning. Here the path joins a teacher trained on true targets and its pure-distilled refit; when ξ < 0, the estimator moves away from the pure-distilled field to correct repeated shrinkage. Negative guidance has also been explored in diffusion models for suppressing unwanted features [19]. For notational simplicity, define 
+
+R(λ) = R(cWλ | D N ), Rpd (λ) = R(cWpd ,λ | D N ), Rsd (λ, ξ ) = R(cWsd ,λ,ξ | D N ). (11) Let (T, X T , u ) denote an independent test triple and define 
+
+C(λ) = E ⟨u − vλ(T, X T ), u − vpd ,λ (T, X T )⟩ | D N
+
+, (12) 
+
+D(λ) = E ∥vλ(T, X T ) − vpd ,λ (T, X T )∥2 | D N
+
+. (13) By expansion, D(λ) = R(λ) + Rpd (λ) − 2C(λ) ≥ 0.
+
+Theorem 2 (Optimal self-distillation for integrated RF risk) . Fix λ > 0 and assume D(λ) > 0. Then, for every ξ ∈ R,
+
+Rsd (λ, ξ ) = R(λ) − 2ξ{R(λ) − C(λ)} + ξ2D(λ). (14) 
+
+Consequently, 
+
+ξ⋆(λ) = R(λ) − C(λ)
+
+D(λ) , R⋆
+
+sd (λ) = R(λ) − (R(λ) − C(λ)) 2
+
+D(λ) . (15) 
+
+Moreover, if R(λ) is differentiable along the ridge path, then 
+
+ξ⋆(λ) = − λ
+
+2
+
+R′(λ)
+
+D(λ) , R⋆
+
+sd (λ) = R(λ) − λ2
+
+4(R′(λ)) 2
+
+D(λ) . (16) 
+
+Thus, whenever R′(λ)̸ = 0 , R⋆
+
+sd (λ) < R (λ) and sign( ξ⋆(λ)) = −sign( R′(λ)) .
+
+The sign rule determines the correction direction: on the increasing side of the ridge risk curve, 
+
+R′(λ) > 0 and ξ⋆(λ) < 0, so the estimator extrapolates away from the pure-distilled field; on the decreasing side, ξ⋆(λ) > 0. Although ξ < 0 makes (9) an affine rather than convex target mixture, fitting the student remains an ordinary ridge regression problem for any real ξ. Appendix D gives the time-dependent extension, its exact gain, and numerical comparisons. 
+
+3.2 Data-dependent tuning 
+
+For the linear ridge model, define the smoother matrix 
+
+Sλ = Φ 
+
+ Φ⊤Φ
+
+N + λI m
+
+−1 Φ⊤
+
+N . (17) Then bUλ = SλU and bUpd ,λ := Φ cWpd ,λ = S2
+
+λU . Following generalized cross-validation (GCV) for ridge regression (see, e.g., [28, 29]), we estimate R, Rpd , and C by 
+
+bR = ∥U − SλU ∥2F /N 
+
+{1 − Tr (Sλ)/N }2 , bRpd = U − S2
+
+λU 2F /N 
+
+{1 − Tr (S2
+
+λ)/N }2 , bC = U − SλU, U − S2
+
+λU F /N 
+
+{1 − Tr (Sλ)/N }{ 1 − Tr (S2
+
+λ)/N } ,
+
+where ⟨A, B ⟩F = Tr (A⊤B). Plugging these estimates into (15) gives 
+
+bξGCV = bR − bC
+
+bR + bRpd − 2 bC . (18) 5Algorithm 1 One-shot RF self-distillation on fixed interpolants  
+
+> 1:
+
+Sample RF triples (X0,i , X 1,i , T i) and form XTi,i and ui = X1,i − X0,i . 
+
+> 2:
+
+Train a teacher v on true velocities ui. 
+
+> 3:
+
+Form teacher velocities bui = v(Ti, X Ti,i ) and train a pure-distilled model vpd on bui. 
+
+> 4:
+
+Estimate ξ by GCV or validation on the family v + ξ(vpd − v). 
+
+> 5:
+
+Use vbξ , or train one student on (1 − bξ)ui + bξ bui.For neural or other nonlinear RF models, train a teacher field v and a pure-distilled field vpd once, then choose ξ by validation over the affine family 
+
+vξ (t, x ) = v(t, x ) + ξ{vpd (t, x ) − v(t, x )}. (19) This one-dimensional search avoids retraining a student for every candidate ξ. Algorithm 1 summa-rizes the resulting one-shot procedure. 
+
+4 Generative consequences 
+
+This section shows how the improvement in velocity risk from optimal self-distillation tightens standard Wasserstein generation error bounds, both in continuous time and for Euler sampling. 
+
+4.1 Generation error upper bounds 
+
+Let v be any learned velocity field and let ρv = Law( Y v 
+
+> 1
+
+), where 
+
+dY vt
+
+dt = v(t, Y vt ), Y v 
+
+> 0
+
+∼ ρ0. (20) For each time t, define the excess velocity approximation error 
+
+Et(v) = E ∥v⋆(t, X t) − v(t, X t)∥2 , E(v) = 
+
+Z 10
+
+Et(v) d t. (21) By (4) , R(v | D N ) and E(v) differ only by the irreducible term E ∥u − v⋆(T, X T )∥2, which is independent of v. Thus, any decrease in RF regression risk yields the same decrease in E(v).The next proposition combines this identity with a standard RF Wasserstein bound. 
+
+Proposition 3 (Continuous-time generation bound improvement) . Assume that v(t, ·) is L-Lipschitz in x, uniformly over t, and that the ODEs (3) and (20) have unique solutions. Then 
+
+W22 (ρv , ρ 1) ≤ exp(1 + 2 L) E(v). (22) 
+
+Consequently, for v⋆ 
+
+> sd
+
+:= vsd ,λ,ξ ⋆(λ), the teacher vλ, and the pure-distilled field vpd ,λ ,
+
+E(v⋆
+
+> sd
+
+) ≤ min {E (vλ), E(vpd ,λ )}, (23) 
+
+and, using a common Lipschitz bound L for these fields, the reduction relative to the teacher’s bound is 
+
+exp(1 + 2 L){E (vλ) − E (v⋆
+
+> sd
+
+)} = exp(1 + 2 L) λ2
+
+4(R′(λ)) 2
+
+D(λ) . (24) The inequality in (22) follows from Bansal et al. [3] . Proposition 3 combines it with Theorem 2: optimal self-distillation weakly improves the continuous-time Wasserstein upper bound relative to both the teacher and pure distillation, with strict improvement over the teacher whenever R′(λ)̸ = 0 .
+
+4.2 Guarantee for the discretized sampler 
+
+For finite-step RF sampling, the same idea applies to the gridwise velocity errors. Let ti = i/K ,
+
+i = 0 , . . . , K , be the uniform Euler grid, and let bρv,K be the law of the output of 
+
+bYti+1 = bYti + ( ti+1 − ti)v(ti, bYti ), bY0 ∼ ρ0. (25) 64 2 0 2 4                 
+
+> x1
+> 4
+> 2
+> 0
+> 2
+> 4
+> x2
+> Target
+> 42024
+> x1
+> Teacher
+> 42024
+> x1
+> Oracle SD
+> 42024
+> x1
+> One-shot SD
+> Oracle-feature MoG, = 7.5, =6.91, =6.46
+
+Figure 4: Generated samples for nonlinear Gaussian mixture RF. At λ ≈ 7.5, the over-regularized teacher blurs the mixture. Oracle and one-shot self-distillation use negative mixing and recover the target modes much more accurately. At a fixed grid time ti, the self-distilled conditional risk has the decomposition 
+
+Rsd ,t i (λ, ξ ) = Rti (λ) − 2ξA ti (λ) + ξ2Dti (λ), Ati (λ) := Rti (λ) − Cti (λ), (26) where Rsd ,t i (λ, ξ ), Rti (λ), Cti (λ), and Dti (λ) are defined as in (11) , (12) , (13) , and (14) , with expectations conditioned on T = ti. Define the gridwise errors 
+
+ε2 
+
+> i
+
+(v) := Eti (v), ¯ε2 
+
+> K
+
+(v) := 1
+
+K
+
+> K−1
+
+X
+
+> i=0
+
+ε2 
+
+> i
+
+(v). (27) All sums below run over i = 0 , . . . , K − 1. When P 
+
+> i
+
+Dti (λ) > 0, the coefficient minimizing the average gridwise error and its gain are 
+
+ξ⋆ 
+
+> U,K
+
+(λ) = 
+
+P 
+
+> i
+
+Ati (λ)
+
+P 
+
+> i
+
+Dti (λ) ,
+
+¯ε2 
+
+> K
+
+(vλ) − ¯ε2 
+
+> K
+
+(vsd ,λ,ξ ⋆ 
+
+> U,K
+
+) = {P 
+
+> i
+
+Ati (λ)}2
+
+K P 
+
+> i
+
+Dti (λ) .
+
+(28) Write v⋆ 
+
+> sd ,K
+
+:= vsd ,λ,ξ ⋆ 
+
+> U,K (λ)
+
+.Let Z⋆ := {Zt}t∈[0 ,1] denote the exact RF trajectory generated by (3) . Following Bansal et al. [3] ,define its piecewise straightness by 
+
+γ2,K (Z⋆) := max 
+
+> 0≤i<K
+
+1
+
+ti+1 − ti
+
+Z ti+1 
+
+> ti
+
+E ddt v⋆(t, Z t)
+
+> 22
+
+dt. 
+
+Theorem 4 (Euler generation bound improvement) . Under the assumptions of Proposition 3, the sampling distribution bρv,K produced by (25) satisfies, conditionally on DN ,
+
+W22 (bρv,K , ρ 1) ≤ CL
+
+γ2,K (Z⋆)/K 2 + ¯ ε2 
+
+> K
+
+(v) , (29) 
+
+where CL = 6 exp(1 + √1 + 12 L2)/(1 + √1 + 12 L2). If P 
+
+> i
+
+Dti (λ) > 0, then for the gridwise optimally mixed field v⋆ 
+
+> sd ,K
+
+, the teacher vλ, and the pure-distilled field vpd ,λ ,
+
+¯ε2 
+
+> K
+
+(v⋆ 
+
+> sd ,K
+
+) ≤ min {¯ε2 
+
+> K
+
+(vλ), ¯ε2 
+
+> K
+
+(vpd ,λ )}, (30) 
+
+and, using a common Lipschitz bound L, the reduction in the velocity error term for the teacher is 
+
+CL{¯ε2 
+
+> K
+
+(vλ) − ¯ε2 
+
+> K
+
+(v⋆ 
+
+> sd ,K
+
+)} = CL
+
+{P 
+
+> i
+
+Ati (λ)}2
+
+K P 
+
+> i
+
+Dti (λ) . (31) Equation (28) is the gridwise analogue of (24) ; whenever P 
+
+> i
+
+Ati (λ)̸ = 0 , it strictly reduces the velocity error term and hence the corresponding upper bound relative to the teacher. Appendix B.2 proves the result; Appendix B.2.2 gives the gridwise derivation. The straightness term in (29) is common to all learned estimators for the same target RF path [ 3]; self-distillation affects only the velocity approximation error on the grid. These results establish an improvement in the RF velocity error component of standard generation error bounds. To complement these general upper bounds, 7(a) Samples at NFE = 32 (b) Time-resolved validation RF risk Figure 5: Neural CIFAR-10 RF experiment. Left: the teacher and pure-distilled samples are degraded. Clipping bξ to [0 , 1] returns the teacher because validation selects bξ < 0, whereas uncon-strained optimal SD produces clearer samples. Right: optimal SD reduces RF risk across the sampled time grid. Appendix B.3 gives exact Wasserstein and KL errors in a Gaussian linear model and shows explicitly how they depend on the integrated RF excess risk. Neither the bounds nor this Gaussian calculation imply that every downstream sample quality metric must strictly improve in every misspecified model: finite-step generation also depends on Lipschitz constants, straightness, ODE stability, discretization, and the expressivity of the learned field. Accordingly, our experiments report both velocity risks and generation metrics. 
+
+5 Numerical evaluations 
+
+We evaluate the theory in Gaussian and nonlinear mixture models, then examine finite-step generation and RF experiments on real images. All experiments use fixed interpolants: the teacher and pure-distilled model are trained once, then ξ is selected by oracle test risk (as a benchmark), GCV, or validation. We report validation and test RF risk because it is the quantity controlled by theory and used in RF generation bounds. 
+
+Gaussian RF. In the correctly specified Gaussian setting X1 ∼ N (0 , 4Id), the population velocity is v⋆(t, x ) = g(t)x (see Appendix B.3) and the feature map is exact. Figure 3 shows that GCV recovers most of the oracle gain. It also illustrates the central sign rule: in over-regularized regimes 
+
+ξ⋆ < 0, so SD constrained to ξ ∈ [0 , 1] cannot improve on the teacher. At λ ≈ 31 .6, for example, the teacher velocity risk is about 1.67 , oracle SD gives 1.14 , and one-shot SD gives 1.22 .
+
+Nonlinear Gaussian mixtures. We next use a four-component Gaussian mixture whose nonlinear population RF velocity is computable and exactly representable by our oracle feature map. Figure 4 shows that the same correction mechanism carries over to nonlinear generation. At λ ≈ 7.5, the teacher risk is 2.077 , pure distillation worsens it to 2.639 , oracle SD reduces it to 0.265 , and GCV-SD gives 0.273 with bξ ≈ − 6.46 . Sliced W22 improves from about 1.02 for the teacher to 0.093 for GCV-SD, while mode mass and covariance errors also improve. 
+
+Finite-step generation. We evaluate Euler sampling across a range of numbers of function evalua-tions (NFEs). In the same Gaussian mixture setting, oracle and GCV-SD improve generation metrics across NFEs. At NFE = 32 , sliced W22 is about 1.18 for the teacher, 0.096 for oracle SD, and 0.091 
+
+for one-shot SD; see Section C.6 for the full curves. These results are consistent with the generation bounds: improving the velocity estimation term can improve finite-step sampling. 
+
+Controlled tests on real images. Figure 1 reports controlled neural RF tests on real images. The teacher output is deliberately scaled down to emulate excessive shrinkage or miscalibration of the velocity scale. Pure distillation compounds the shrinkage, while unconstrained SD selects negative mixing and recovers recognizable samples. For Fashion-MNIST, validation selects bξ = −2.83 
+
+and reduces RF risk from 0.828 to 0.210 . The best Feature-FD improves from 818 .5 to 8.8, and conditioning accuracy at NFE = 64 improves from 0.107 to 0.895 . At NFE = 32 , the same experiment improves Inception-FID from 355 .1 to 14 .8; see Table S1 in the supplement. 8Table 1: Neural CIFAR-10 RF experiment. We scale a trained time-conditioned U-Net RF field by a = 0 .75 to create a teacher with a miscalibrated velocity scale. Pure distillation compounds the shrinkage, clipped SD returns the teacher, and unconstrained SD selects bξ = −1.225 . Metrics use 
+
+10 ,000 generated samples with 32 function evaluations. Method RF risk ↓ FID ↓ KID ↓
+
+Teacher 0.2435 284.26 0.3215 Pure distillation 0.3885 324.77 0.3569 SD clipped [0 , 1] 0.2435 283.56 0.3196 Optimal SD 0.1803 30.08 0.0186 
+
+Neural CIFAR-10 experiment. We further test whether negative mixing remains useful beyond linear probing with fixed features. Starting from a trained time-conditioned U-Net RF field vT on 
+
+32 × 32 CIFAR-10, we use v = av T with a = 0 .75 as the teacher, thereby introducing a controlled miscalibration of the velocity scale. We then train a pure-distilled U-Net and tune ξ by validation over vξ = v + ξ(vpd − v). Validation selects bξ = −1.225 , so restricting ξ to [0 , 1] returns the teacher. Table 1 and Figure 5 show that optimal SD improves RF risk from 0.2435 to 0.1803 , FID from 284 .3
+
+to 30 .1, and KID from 0.3215 to 0.0186 at NFE = 32 , whereas pure distillation worsens the teacher. Table S4 in Appendix C.3 shows the same pattern across output scales: as a increases toward one and the miscalibration becomes milder, the selected negative correction moves toward zero and the gain shrinks. The appendix also reports a fine-tuning baseline with matched compute. 
+
+6 Discussion 
+
+In this paper, we identify a one-shot mechanism by which an RF model can improve from its own predictions. For linear RF trained on fixed interpolants, the self-distilled student follows an affine path from the teacher to its pure-distilled refit, and the geometry of squared risk yields an optimal mixing coefficient in closed form. The resulting student strictly improves every nonstationary teacher along the regularization path. Unlike recursive Reflow, our procedure does not replace endpoint pairs or change interpolation covariates; it optimizes only the mixture of true and teacher velocity targets. The main guarantee concerns integrated RF velocity risk for a fixed teacher regularization level. It does not claim that the teacher is globally optimally tuned, nor that every downstream finite-step generation metric must improve under arbitrary misspecification. Rather, it shows that a suboptimal regularization level defines a teacher-to-pure-distillation direction along which velocity risk can be reduced. Through RF Wasserstein bounds, this risk reduction also tightens natural upper bounds on generation error. Empirically, pure distillation can worsen over-regularized teachers because it repeats the same shrinkage. Optimal SD often corrects this by extrapolating in the opposite direction, yielding a negative mixing coefficient. This need for extrapolation is the main practical distinction from conventional convex distillation. In practice, one can tune ξ by GCV or validation; when the estimated gain is small, the selected coefficient remains close to zero. The strict improvement theorem is exact only for linear RF with ridge regularization; the neural affine family in (19) is therefore an empirical extension, and a corresponding guarantee for end-to-end nonlinear training remains open. Our controlled experiments on real images are diagnostic stress tests of teacher miscalibration: the CIFAR-10 scale sweep in Appendix C.3 traces the correction across miscalibration levels, while the Fashion-MNIST sensitivity analysis shows that gains diminish as the teacher improves. Finally, extending the method to recursive endpoint replacement would bring it closer to Reflow practice, but requires new tools because interpolation covariates change across rounds. 
+
+Acknowledgments 
+
+We thank Hien Dang, Alessandro Rinaldo, and Sujay Sanghavi for helpful conversations. Computing support is in part provided by the Texas Advanced Computing Center (TACC). 9Bibliography 
+
+[1] Michael S. Albergo and Eric Vanden-Eijnden. Building normalizing flows with stochastic interpolants. In Proceedings of the International Conference on Learning Representations ,2023. URL https://arxiv.org/abs/2209.15571 .[2] Sina Alemohammad, Josue Casco-Rodriguez, Lorenzo Luzi, Ahmed Imtiaz Humayun, Hossein Babaei, Daniel LeJeune, Ali Siahkoohi, and Richard G. Baraniuk. Self-consuming generative models go MAD. In Proceedings of the International Conference on Learning Representations ,2024. URL https://arxiv.org/abs/2307.01850 .[3] Vansh Bansal, Saptarshi Roy, Alessandro Rinaldo, and Purnamrita Sarkar. On the convergence and straightness of rectified flow. In Proceedings of the International Conference on Artificial Intelligence and Statistics , 2026. URL https://arxiv.org/abs/2410.14949 .[4] Joe Benton, George Deligiannidis, and Arnaud Doucet. Error bounds for flow matching methods. 
+
+Transactions on Machine Learning Research , 2024. URL https://arxiv.org/abs/2305. 16860 .[5] Matyas Bohacek and Hany Farid. Nepotistically trained generative-AI models collapse. arXiv: 2311.12202, 2023. URL https://arxiv.org/abs/2311.12202 .[6] Hien Dang, Pratik Patil, and Alessandro Rinaldo. Optimal unconstrained self-distillation in ridge regression: Strict improvements, precise asymptotics, and one-shot tuning. arXiv: 2602.17565, 2026. URL https://pratikpatil.io/papers/sd-ridge.pdf .[7] Rudrajit Das and Sujay Sanghavi. Understanding self-distillation in the presence of label noise. In Proceedings of the International Conference on Machine Learning , 2023. URL 
+
+https://arxiv.org/abs/2301.13304 .[8] Jin-Hong Du and Pratik Patil. Implicit regularization paths of weighted neural representations. In Advances in Neural Information Processing Systems , 2024. URL https://pratikpatil. io/papers/weighted-neural-representations.pdf .[9] Patrick Esser, Sumith Kulal, Andreas Blattmann, Rahim Entezari, Jonas Müller, Harry Saini, Yam Levi, Dominik Lorenz, Axel Sauer, Frederic Boesel, Dustin Podell, Tim Dockhorn, Zion English, and Robin Rombach. Scaling rectified flow transformers for high-resolution image synthesis. In Proceedings of the International Conference on Machine Learning , 2024. URL 
+
+https://arxiv.org/abs/2403.03206 .[10] Luyang Fang, Yongkai Chen, Wenxuan Zhong, and Ping Ma. Bayesian knowledge distillation: A bayesian perspective of distillation with uncertainty quantification. In Proceedings of the International Conference on Machine Learning , 2024. URL https://proceedings.mlr. press/v235/fang24a.html .[11] Shi Fu, Sen Zhang, Yingjie Wang, Xinmei Tian, and Dacheng Tao. Towards theoretical understandings of self-consuming generative models. In Proceedings of the International Conference on Machine Learning , 2024. URL https://arxiv.org/abs/2402.11778 .[12] Tommaso Furlanello, Zachary C. Lipton, Michael Tschannen, Laurent Itti, and Anima Anandku-mar. Born again neural networks. In Proceedings of the International Conference on Machine Learning , 2018. URL https://arxiv.org/abs/1805.04770 .[13] Ryuichiro Hataya, Han Bao, and Hiromi Arai. Will large-scale generative models corrupt future datasets? In Proceedings of the International Conference on Computer Vision , 2023. URL 
+
+https://arxiv.org/abs/2211.08095 .[14] Geoffrey Hinton, Oriol Vinyals, and Jeff Dean. Distilling the knowledge in a neural network. arXiv: 1503.02531, 2015. URL https://arxiv.org/abs/1503.02531 .[15] Jonathan Ho and Tim Salimans. Classifier-free diffusion guidance. In NeurIPS 2021 Workshop on Deep Generative Models and Downstream Applications , 2021. URL https://arxiv.org/ abs/2207.12598 .10 [16] Guangda Ji and Zhanxing Zhu. Knowledge distillation in wide neural networks: Risk bound, data efficiency and imperfect teacher. In Advances in Neural Information Processing Systems ,2020. URL https://arxiv.org/abs/2010.10090 .[17] Yang Jin, Zhicheng Sun, Ningyuan Li, Kun Xu, Kun Xu, Hao Jiang, Nan Zhuang, Quzhe Huang, Yang Song, Yadong Mu, and Zhouchen Lin. Pyramidal flow matching for efficient video generative modeling. In Proceedings of the International Conference on Learning Representations , 2025. URL https://arxiv.org/abs/2410.05954 .[18] Shin Seong Kim, Mingi Kwon, Jaeseok Jeong, and Youngjung Uh. Balanced conic rectified flow. In Advances in Neural Information Processing Systems , 2025. URL https://arxiv. org/abs/2510.25229 .[19] Felix Koulischer, Johannes Deleu, Gabriel Raya, Thomas Demeester, and Luca Ambrogioni. Dynamic negative guidance of diffusion models. In Proceedings of the International Conference on Learning Representations , 2025. URL https://arxiv.org/abs/2410.14398 .[20] Ananya Kumar, Aditi Raghunathan, Robbie Matthew Jones, Tengyu Ma, and Percy Liang. Fine-tuning can distort pretrained features and underperform out-of-distribution. In Proceedings of the International Conference on Learning Representations , 2022. URL https://arxiv. org/abs/2202.10054 .[21] Matthew Le, Apoorv Vyas, Bowen Shi, Brian Karrer, Leda Sari, Rashel Moritz, Mary Williamson, Vimal Manohar, Yossi Adi, Jay Mahadeokar, and Wei-Ning Hsu. Voicebox: Text-guided multilingual universal speech generation at scale. In Advances in Neural Informa-tion Processing Systems , 2023. URL https://arxiv.org/abs/2306.15687 .[22] Yaron Lipman, Ricky T. Q. Chen, Heli Ben-Hamu, Maximilian Nickel, and Matthew Le. Flow matching for generative modeling. In Proceedings of the International Conference on Learning Representations , 2023. URL https://arxiv.org/abs/2210.02747 .[23] Xingchao Liu, Chengyue Gong, and Qiang Liu. Flow straight and fast: Learning to generate and transfer data with rectified flow. In Proceedings of the International Conference on Learning Representations , 2023. URL https://arxiv.org/abs/2209.03003 .[24] Weijian Luo. A comprehensive survey on knowledge distillation of diffusion models. arXiv: 2304.04262, 2023. URL https://arxiv.org/abs/2304.04262 .[25] Gonzalo Martínez, Lauren Watson, Pedro Reviriego, José Alberto Hernández, Marc Juarez, and Rik Sarkar. Combining generative artificial intelligence (AI) and the Internet: Heading towards evolution or degradation? arXiv: 2303.01255, 2023. URL https://arxiv.org/abs/2303. 01255 .[26] Hossein Mobahi, Mehrdad Farajtabar, and Peter L. Bartlett. Self-distillation amplifies regular-ization in Hilbert space. In Advances in Neural Information Processing Systems , 2020. URL 
+
+https://arxiv.org/abs/2002.05715 .[27] Divyansh Pareek, Simon Shaolei Du, and Sewoong Oh. Understanding the gains from repeated self-distillation. In Advances in Neural Information Processing Systems , 2024. URL https: //arxiv.org/abs/2407.04600 .[28] Pratik Patil, Yuting Wei, Alessandro Rinaldo, and Ryan J. Tibshirani. Uniform consis-tency of cross-validation estimators for high-dimensional ridge regression. In Proceed-ings of the International Conference on Artificial Intelligence and Statistics , 2021. URL 
+
+https://pratikpatil.io/papers/ridgecv-combined.pdf .[29] Pratik Patil, Alessandro Rinaldo, and Ryan J. Tibshirani. Estimating functionals of the out-of-sample error distribution in high-dimensional ridge regression. In International Conference on Artificial Intelligence and Statistics , 2022. URL https://pratikpatil.io/papers/ functionals-combined.pdf .[30] Mary Phuong and Christoph H. Lampert. Towards understanding knowledge distillation. In Proceedings of the International Conference on Machine Learning , 2019. URL https: //arxiv.org/abs/2105.13093 .11 [31] Aram-Alexandre Pooladian, Heli Ben-Hamu, Carles Domingo-Enrich, Brandon Amos, Yaron Lipman, and Ricky T. Q. Chen. Multisample flow matching: Straightening flows with minibatch couplings. In Proceedings of the International Conference on Machine Learning , 2023. URL 
+
+https://arxiv.org/abs/2304.14772 .[32] Shreshth Saini, Shashank Gupta, and Alan C. Bovik. Rectified-cfg++ for flow based models. In 
+
+Advances in Neural Information Processing Systems , volume 38, pages 149034–149074, 2025. URL https://arxiv.org/abs/2510.07631 .[33] Neta Shaul, Ricky T. Q. Chen, Maximilian Nickel, Matthew Le, and Yaron Lipman. On kinetic optimal probability paths for generative models. In Proceedings of the International Conference on Machine Learning , 2023. URL https://arxiv.org/abs/2306.06626 .[34] Ilia Shumailov, Zakhar Shumaylov, Yiren Zhao, Nicolas Papernot, Ross Anderson, and Yarin Gal. AI models collapse when trained on recursively generated data. Nature , 631(8022): 755–759, 2024. URL https://www.nature.com/articles/s41586-024-07566-y .[35] Akiyoshi Tomihari and Issei Sato. Understanding linear probing then fine-tuning language models from NTK perspective. In Advances in Neural Information Processing Systems , 2024. URL https://arxiv.org/abs/2405.16747 .[36] Alexander Tong, Kilian Fatras, Nikolay Malkin, Guillaume Huguet, Yanlei Zhang, Jarrid Rector-Brooks, Guy Wolf, and Yoshua Bengio. Improving and generalizing flow-based generative models with minibatch optimal transport. Transactions on Machine Learning Research , 2024. URL https://arxiv.org/abs/2302.00482 .[37] Linfeng Zhang, Jiebo Song, Anni Gao, Jingwei Chen, Chenglong Bao, and Kaisheng Ma. Be your own teacher: Improve the performance of convolutional neural networks via self distillation. In Proceedings of the International Conference on Computer Vision , 2019. URL 
+
+https://arxiv.org/abs/1905.08094 .[38] Huminhao Zhu, Fangyikang Wang, Tianyu Ding, Qing Qu, and Zhihui Zhu. Analyzing and mitigating model collapse in rectified flow models. arXiv:2412.08175, 2024. URL https: //arxiv.org/abs/2412.08175 .12 Supplement 
+
+This supplement accompanies the paper “Optimal Self-Distillation for Rectified Flow via Linear Probing”. It contains proofs, further theoretical remarks, and additional experimental details and plots. The supplement is organized as follows. 
+
+A Proofs for Section 3 14 
+
+A.1 Proof of Proposition 1 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14 A.2 Proof of Theorem 2 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14 
+
+B Proofs and Gaussian calculations for Section 4 15 
+
+B.1 Proof of Proposition 3 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15 B.2 Proof of Theorem 4 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15 B.3 Exact terminal errors in the Gaussian linear model . . . . . . . . . . . . . . . . . . 17 
+
+C Additional experiments and details 19 
+
+C.1 Controlled experiments with handwritten digits and Fashion-MNIST . . . . . . . . 19 C.2 Metrics and sensitivity to teacher quality . . . . . . . . . . . . . . . . . . . . . . . 20 C.3 Neural CIFAR-10 RF experiment . . . . . . . . . . . . . . . . . . . . . . . . . . . 21 C.4 Anisotropic Gaussian experiment with temporal basis features . . . . . . . . . . . 23 C.5 Nonlinear Gaussian mixture experiment . . . . . . . . . . . . . . . . . . . . . . . 24 C.6 Finite-step sampling in the Gaussian mixture model . . . . . . . . . . . . . . . . . 25 C.7 Gaussian RF phase diagram across aspect ratios and ridge penalties . . . . . . . . 25 
+
+D Time-dependent optimal mixing 26 
+
+D.1 Pointwise and uniform coefficients . . . . . . . . . . . . . . . . . . . . . . . . . . 26 D.2 Numerical evaluation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27 13 A Proofs for Section 3 
+
+A.1 Proof of Proposition 1 
+
+For fixed λ, the ridge solution is linear in the response matrix. Define 
+
+Qλ =
+
+ Φ⊤Φ
+
+N + λI m
+
+−1
+
+.
+
+Using the definition of the mixed target matrix, 
+
+cWsd ,λ,ξ = Qλ
+
+Φ⊤U (ξ)
+
+N
+
+= (1 − ξ)Qλ
+
+Φ⊤UN + ξQ λ
+
+Φ⊤ bUλ
+
+N
+
+= (1 − ξ)cWλ + ξcWpd ,λ .
+
+The prediction identity follows from the linearity of vW (t, x ) = W ⊤ϕ(t, x ) in W .
+
+A.2 Proof of Theorem 2 
+
+Let 
+
+rT = u − vcWλ (T, X T ), rP = u − vcWpd ,λ (T, X T ).
+
+By Proposition 1, the self-distilled residual is (1 − ξ)rT + ξr P . Expanding the squared norm and taking conditional expectation gives 
+
+Rsd (λ, ξ ) = (1 − ξ)2R(λ) + ξ2Rpd (λ) + 2 ξ(1 − ξ)C(λ)= R(λ) − 2ξ{R(λ) − C(λ)} + ξ2D(λ).
+
+Since D(λ) > 0, completing the square yields 
+
+Rsd (λ, ξ ) = D(λ)
+
+
+
+ξ − R(λ) − C(λ)
+
+D(λ)
+
+2
+
++ R(λ) − {R(λ) − C(λ)}2
+
+D(λ) ,
+
+which proves both identities in (15). It remains to prove the derivative identity. Set bΣ = Φ ⊤Φ/N . Since 
+
+cWλ = ( bΣ + λI m)−1 Φ⊤UN ,
+
+its derivative is 
+
+∂λ cWλ = −(bΣ + λI m)−1 cWλ.
+
+The pure-distilled coefficient is 
+
+cWpd ,λ = ( bΣ + λI m)−1 bΣcWλ.
+
+Using (bΣ + λI m)−1 bΣ = Im − λ(bΣ + λI m)−1 gives 
+
+cWλ − cWpd ,λ = −λ∂ λ cWλ.
+
+Because the velocity field is linear in its coefficient matrix, it follows that 
+
+vpd ,λ (t, x ) − vλ(t, x ) = λ∂ λvλ(t, x ).
+
+Consequently, 
+
+R(λ) − C(λ) = E [⟨u − vλ(T, X T ), v pd ,λ (T, X T ) − vλ(T, X T )⟩ | D N ]= λE [⟨u − vλ(T, X T ), ∂ λvλ(T, X T )⟩ | D N ] .
+
+Differentiating the conditional risk gives 
+
+R′(λ) = −2E [⟨u − vλ(T, X T ), ∂ λvλ(T, X T )⟩ | D N ] ,
+
+Combining the last two displays gives R(λ) − C(λ) = −(λ/ 2) R′(λ). Substituting this identity into (15) proves (16) . Since λ > 0 and D(λ) > 0, the risk reduction is strict whenever R′(λ)̸ = 0 , and the sign of ξ⋆(λ) is the opposite of the sign of R′(λ).14 B Proofs and Gaussian calculations for Section 4 
+
+B.1 Proof of Proposition 3 
+
+The Wasserstein convergence theorem for rectified flow in Bansal et al. [3] gives, under the stated Lipschitz and well-posedness assumptions, 
+
+W22 (ρv , ρ 1) ≤ exp(1 + 2 L)
+
+Z 10
+
+E ∥v⋆(t, X t) − v(t, X t)∥2 dt. 
+
+The integral is E(v). The orthogonal decomposition (4) gives 
+
+R(v | D N ) = E(v) + S, S := E ∥u − v⋆(T, X T )∥2 ,
+
+where S is independent of v. Since the optimized affine family contains both the teacher ( ξ = 0 ) and pure distillation ( ξ = 1 ), 
+
+E(v⋆
+
+> sd
+
+) ≤ min {E (vλ), E(vpd ,λ )}.
+
+Moreover, Theorem 2 gives 
+
+E(vλ) − E (v⋆
+
+> sd
+
+) = R(λ) − R⋆
+
+> sd
+
+(λ) = λ2
+
+4(R′(λ)) 2
+
+D(λ) .
+
+Multiplying this gain by the common factor exp(1 + 2 L) proves Proposition 3. 
+
+B.2 Proof of Theorem 4 B.2.1 Euler Wasserstein bound 
+
+All expectations below are conditional on DN , with the conditioning suppressed for readability. Couple the exact RF trajectory and the Euler sampler through the same initial point: 
+
+dZt
+
+dt = v⋆(t, Z t), Z0 ∼ ρ0. (32) On the uniform grid ti = i/K with h = K−1, the Euler iterates are 
+
+bYti+1 = bYti + hv (ti, bYti ), bY0 = Z0, i = 0 , . . . , K − 1.
+
+For t ∈ [ti, t i+1 ], define the continuous Euler interpolation 
+
+¯Yt := bYti + ( t − ti)v(ti, bYti ), i = 0 , . . . , K − 1. (33) Thus ¯Yti = bYti , ¯Yti+1 = bYti+1 , and d ¯Yt/dt = v(ti, bYti ). Let 
+
+et := ¯Yt − Zt, δt := v(ti, bYti ) − v⋆(t, Z t).
+
+For any α > 0, Young’s inequality gives 
+
+ddt ∥et∥22 = 2 ⟨et, δ t⟩ ≤ α ∥et∥22 + 1
+
+α ∥δt∥22 . (34) Applying the integrating factor exp {− α(t − ti)} and integrating over [ti, t i+1 ] yields 
+
+bYti+1 − Zti+1 
+
+> 22
+
+≤ eαh bYti − Zti
+
+> 22
+
++ eαh 
+
+α
+
+Z ti+1 
+
+> ti
+
+∥δt∥22 dt. 
+
+Define 
+
+∆i := e−αt i E bYti − Zti
+
+> 22
+
+.
+
+Because bY0 = Z0, we have ∆0 = 0 . Taking expectations in the preceding inequality gives 
+
+∆i+1 ≤ ∆i + e−αt i
+
+α
+
+Z ti+1 
+
+> ti
+
+E ∥δt∥22 dt. 
+
+15 Decompose the integral using ∥a + b + c∥2 ≤ 3{∥ a∥2 + ∥b∥2 + ∥c∥2}:
+
+Z ti+1 
+
+> ti
+
+E ∥δt∥22 dt ≤ 3{(I) + (II) + (III) },
+
+where 
+
+(I) := 
+
+Z ti+1 
+
+> ti
+
+E ∥v⋆(t, Z t) − v⋆(ti, Z ti )∥22 dt, 
+
+(II) := 
+
+Z ti+1 
+
+> ti
+
+E ∥v⋆(ti, Z ti ) − v(ti, Z ti )∥22 dt, 
+
+(III) := 
+
+Z ti+1 
+
+> ti
+
+E v(ti, Z ti ) − v(ti, bYti ) 22
+
+dt. 
+
+We bound these three terms in turn. For (I) , the fundamental theorem of calculus and Cauchy– Schwarz give, for t ∈ [ti, t i+1 ],
+
+E ∥v⋆(t, Z t) − v⋆(ti, Z ti )∥22 ≤ (t − ti)
+
+Z tti
+
+E ddτ v⋆(τ, Z τ )
+
+> 22
+
+dτ
+
+≤ h2γi,
+
+(35) where 
+
+γi := 1
+
+h
+
+Z ti+1 
+
+> ti
+
+E ddτ v⋆(τ, Z τ )
+
+> 22
+
+dτ. 
+
+Therefore, 
+
+(I) ≤ h3γi ≤ h3γ2,K (Z⋆).
+
+Since Zti has the same law as Xti , (27) gives 
+
+(II) = hε 2 
+
+> i
+
+(v).
+
+Finally, the L-Lipschitz property of v(ti, ·) implies 
+
+(III) ≤ hL 2E Zti − bYti
+
+> 22
+
+= hL 2eαt i ∆i.
+
+Combining these bounds gives the recursion 
+
+∆i+1 ≤
+
+
+
+1 + 3L2hα
+
+
+
+∆i + 3e−αt i
+
+α
+
+h3γ2,K (Z⋆) + hε 2 
+
+> i
+
+(v) . (36) Let q := 1 + 3 L2h/α . Dividing (36) by qi+1 , summing over i, and using e−αt i /q i+1 ≤ 1 gives 
+
+∆K
+
+qK ≤ 3
+
+α
+
+ γ2,K (Z⋆)
+
+K2 + ¯ ε2 
+
+> K
+
+(v)
+
+
+
+.
+
+Since qK ≤ exp(3 L2/α ) and 
+
+W22 (bρv,K , ρ 1) ≤ E bYtK − ZtK
+
+> 22
+
+= eα∆K ,
+
+we obtain, for every α > 0,
+
+W22 (bρv,K , ρ 1) ≤ 3 exp(3 L2/α + α)
+
+α
+
+ γ2,K (Z⋆)
+
+K2 + ¯ ε2 
+
+> K
+
+(v)
+
+
+
+. (37) The prefactor is minimized at 
+
+α⋆ = 1 + √1 + 12 L2
+
+2 .
+
+Writing s := √1 + 12 L2, substitution into (37) gives the sharper constant 
+
+eCL := 6es
+
+1 + s ≤ 6e1+ s
+
+1 + s = CL.
+
+Thus (29) follows with the stated constant CL.16 B.2.2 Gridwise optimal mixing 
+
+For a fixed grid point ti, the same quadratic expansion as in Theorem 2 gives 
+
+Rsd ,t i (λ, ξ ) = Rti (λ) − 2ξA ti (λ) + ξ2Dti (λ).
+
+The time-specific irreducible term 
+
+Sti := E ∥u − v⋆(ti, X ti )∥22
+
+is independent of v, so the same quadratic and gain hold for Eti . If Dti (λ) > 0, minimizing over a time-specific coefficient gives 
+
+ξ⋆ti (λ) = Ati (λ)
+
+Dti (λ) , Eti (vλ) − E ti (vsd ,λ,ξ ⋆ti
+
+) = Ati (λ)2
+
+Dti (λ) .
+
+Whenever Rti (λ) is differentiable, the fixed-time version of the derivative identity in Appendix A gives 
+
+Ati (λ) = − λ
+
+2 ∂λRti (λ).
+
+For a shared scalar ξ across the grid, the average error is 
+
+¯ε2 
+
+> K
+
+(vsd ,λ,ξ ) = 1
+
+K
+
+> K−1
+
+X
+
+> i=0
+
+Rti (λ) − 2ξA ti (λ) + ξ2Dti (λ) − Sti .
+
+If P 
+
+> i
+
+Dti (λ) > 0, completing the square gives 
+
+ξ⋆ 
+
+> U,K
+
+(λ) = 
+
+P 
+
+> i
+
+Ati (λ)
+
+P 
+
+> i
+
+Dti (λ) ,
+
+and 
+
+¯ε2 
+
+> K
+
+(vλ) − ¯ε2 
+
+> K
+
+(v⋆ 
+
+> sd ,K
+
+) = {P 
+
+> i
+
+Ati (λ)}2
+
+K P 
+
+> i
+
+Dti (λ) .
+
+This proves (28) . Because the shared affine family contains ξ = 0 and ξ = 1 , its optimum is no worse than either the teacher or pure distillation. Combining this fact with the Wasserstein bound above and a common Lipschitz constant proves the remaining claims of Theorem 4. 
+
+B.3 Exact terminal errors in the Gaussian linear model 
+
+This subsection makes explicit, in a Gaussian linear model, how velocity error translates into terminal distribution error. Suppose 
+
+X0 ∼ N (0 , I d), X1 ∼ N (0 , Σ) , X0 ⊥ X1, (38) where Σ ≻ 0. For u = X1 − X0 and Xt = (1 − t)X0 + tX 1,
+
+Ct := Cov( Xt) = (1 − t)2Id + t2Σ, Cov( u, X t) = tΣ − (1 − t)Id.
+
+The Gaussian conditioning formula therefore gives 
+
+v⋆(t, x ) = A⋆t x, A⋆t = {tΣ − (1 − t)Id}C−1 
+
+> t
+
+. (39) Now consider a learned linear velocity v(t, x ) = Atx whose matrices are jointly diagonalizable with 
+
+Σ:
+
+Σ = V diag( s1, . . . , s d)V ⊤, At = V diag( a1(t), . . . , a d(t)) V ⊤.
+
+In this basis, write a⋆j (t) for the corresponding coefficient of A⋆t , and define 
+
+∆j (t) = aj (t) − a⋆j (t), Mj =
+
+Z 10
+
+∆j (t) d t. 
+
+Under the learned ODE, the variance pj (t) in coordinate j satisfies 
+
+dpj (t)dt = 2 aj (t)pj (t), pj (0) = 1 .
+
+17 The target flow has terminal variance sj , so 
+
+pj (1) = exp 
+
+
+
+2
+
+Z 10
+
+aj (t) d t
+
+
+
+= sj e2Mj .
+
+Thus the learned terminal covariance is 
+
+P1 = V diag {s1e2M1 , . . . , s de2Md }V ⊤. (40) Because P1 and Σ share the same eigenvectors, the Gaussian Wasserstein and KL formulas reduce to 
+
+W22 (N (0 , P 1), N (0 , Σ)) = 
+
+> d
+
+X
+
+> j=1
+
+sj (eMj − 1) 2, (41) 
+
+KL (N (0 , P 1) ∥ N (0 , Σ)) = 12
+
+> d
+
+X
+
+> j=1
+
+{e2Mj − 1 − 2Mj }. (42) Finally, the reducible component of RF regression risk is the integrated squared velocity error along the true marginals: 
+
+Z 10
+
+E∥v(t, X t) − v⋆(t, X t)∥2 dt =
+
+> d
+
+X
+
+> j=1
+
+Ej , Ej := 
+
+Z 10
+
+cj (t)∆ j (t)2 dt, (43) where cj (t) = (1 − t)2 + t2sj . Weighted Cauchy–Schwarz yields 
+
+M 2 
+
+> j
+
+≤
+
+Z 10
+
+dtcj (t)
+
+
+
+Ej = π
+
+2√sj
+
+Ej . (44) Equations (41) –(44) therefore connect the exact terminal discrepancies to the same coordinatewise errors that comprise the RF excess risk. These identities underlie the Gaussian experiments in Section 5. 18 C Additional experiments and details 
+
+This appendix supplements Section 5 with detailed metrics and sensitivity checks for the image experiments, followed by additional studies of anisotropy, discretization, and regularization in Gaussian and Gaussian mixture models. 
+
+C.1 Controlled experiments with handwritten digits and Fashion-MNIST Real images      
+
+> 012358
+> Teacher
+> Pure distillation
+> (PD)
+> Optimal SD
+> Handwritten digits
+
+(a) Handwritten digits. Real images       
+
+> 012379
+> Teacher
+> Pure distillation
+> (PD)
+> Optimal SD
+> Fashion-MNIST
+
+(b) Fashion-MNIST. 
+
+Figure S1: Results by dataset underlying Figure 1. The panels show additional generated samples from the experiments with controlled shrinkage. 0.00 0.25 0.50 0.75 1.00 
+
+> time t
+> 0.25
+> 0.50
+> 0.75
+> 1.00
+> 1.25
+> validation risk
+
+Time-resolved RF risk     
+
+> Teacher
+> PD
+> SD [0,1]
+> Optimal SD
+> TD-SD
+> 0.00 0.25 0.50 0.75 1.00
+> time t
+> 2.86
+> 2.84
+> 2.82
+> 2.80
+> (t)
+
+Time-dependent mixing     
+
+> 2223242526
+> NFE
+> 0
+> 200
+> 400
+> 600
+> 800
+> 1000
+> feature-FD
+
+Generation metric 
+
+Figure S2: Diagnostics for the controlled Fashion-MNIST stress test. Left: time-resolved val-idation RF risk Rt. Middle: time-dependent mixing coefficient bξ(t) tuned by validation, with the uniform coefficient shown as a dashed line. Right: Feature-FD versus number of Euler function evaluations. Clipped SD coincides with the teacher because the optimal correction is negative, while unconstrained and time-dependent SD reduce the velocity error terms that enter RF generation bounds. 19 C.2 Metrics and sensitivity to teacher quality 
+
+For the controlled Fashion-MNIST experiment, Feature-FD is the Fréchet distance between generated and held-out real samples in the feature space defined by the penultimate layer of a Fashion-MNIST classifier trained on real training images. Inception-FID is computed after converting grayscale images to RGB and resizing them to 299 × 299 . Conditioning accuracy is the fraction of generated samples classified as the requested class, and confidence is the average classifier probability assigned to that class. Table S1 uses 10 ,000 generated samples and 10 ,000 held-out real samples at NFE = 32 .The Fashion-MNIST result in Figure 1 deliberately uses a teacher with strong output shrinkage to isolate the correction from negative mixing. Table S2 compares this stress test with an unscaled, naturally trained teacher. The latter has much lower initial risk and generation error; accordingly, validation selects a correction closer to zero and yields only a modest gain, consistent with its interpretation as a local correction. Table S1: Generation metrics for the Fashion-MNIST stress test with controlled shrinkage. 
+
+Metrics are computed from 10 ,000 generated samples and 10 ,000 held-out real samples at NFE = 32 ,matching Figure 1. Inception-FID is computed after converting grayscale images to RGB and resizing to 299 × 299 ; Feature-FD uses the penultimate layer of a Fashion-MNIST classifier. Method Feature-FD ↓ Inception-FID ↓ Acc. ↑ Conf. ↑
+
+Teacher 854.18 355.08 0.109 0.111 Pure distillation 983.10 388.11 0.102 0.103 SD clipped [0 , 1] 857.26 355.10 0.113 0.114 Optimal SD 9.65 14.84 0.898 0.863 Table S2: Fashion-MNIST sensitivity to teacher quality. The controlled shrinkage teacher is deliberately degraded and yields a large negative correction. The unscaled, naturally trained teacher requires a much smaller correction and yields a modest gain. Feature-FD values are the best over the evaluated NFE grid. Teacher regime Scale bξ RT RSD Feature-FD T → Feature-FD SD 
+
+Controlled shrinkage 0.35 −2.83 0.828 0.210 818 .5 → 8.8
+
+Unscaled teacher 1.00 0.239 0.205 0.205 9.88 → 9.38 
+
+20 C.3 Neural CIFAR-10 RF experiment 
+
+Using a fully neural RF model on CIFAR-10 at 32 × 32 resolution, we test the correction mechanism beyond linear probing with fixed features. We first train a time-conditioned U-Net velocity field with the standard RF objective, then use its output scaled by a = 0 .75 as a teacher with controlled miscalibration of the velocity scale. We train a pure-distilled U-Net on the scaled teacher velocities and select ξ by validation over vξ = v +ξ(vpd −v). Metrics are computed from 10 ,000 generated samples using Euler sampling at NFE = 32 . FID and KID use Inception features with the preprocessing implemented by torch-fidelity. Table S3 also includes a fine-tuning baseline with matched compute, trained for the same number of adaptation steps as pure distillation. 
+
+Figure S3: Samples from the neural CIFAR-10 RF experiment. We scale the output of a trained time-conditioned U-Net RF field by a = 0 .75 to introduce controlled miscalibration of the velocity scale. Pure distillation compounds the degradation, clipped SD coincides with the teacher because 
+
+bξ < 0, and unconstrained SD recovers substantially clearer samples. The final row shows the fine-tuning baseline with matched compute. Table S3: Neural CIFAR-10 RF experiment with a fine-tuning baseline. The baseline uses matched compute: it is initialized from the same scaled teacher and trained on true RF targets for the same number of adaptation steps as pure distillation. Fine-tuning attains slightly lower RF risk, whereas optimal SD attains lower FID and KID.                        
+
+> Method RF risk ↓FID ↓KID ↓
+> Teacher 0.2435 284.26 0.3215 Pure distillation 0.3885 324.77 0.3569 SD clipped [0 ,1] 0.2435 283.56 0.3196 Optimal SD 0.1803 30.08 0.0186 Compute-matched fine-tune 0.1749 34.94 0.0268
+
+We assess sensitivity to teacher output scaling in Table S4. Across the evaluated scales, the correction selected by validation remains negative, pure distillation worsens the teacher, and optimal SD substantially improves FID. 21 Table S4: Sensitivity of the neural CIFAR-10 experiment to teacher output scaling. Each row uses the same trained U-Net RF field scaled by a, 3,000 generated samples, NFE = 32 , and the same adaptation budget. Table 1 reports a separate evaluation with 10 ,000 samples at a = 0 .75 .
+
+Scale a bξ RF risk T → SD FID T → SD FID fine-tune 
+
+0.55 −1.78 0.396 → 0.179 324 .4 → 35 .0 47 .00.65 −1.49 0.310 → 0.181 321 .1 → 35 .3 46 .90.75 −1.23 0.245 → 0.182 291 .9 → 41 .6 46 .90.85 −0.88 0.201 → 0.182 212 .4 → 56 .5 47 .00.0 0.2 0.4 0.6 0.8 1.0 
+
+time t
+
+0.2 
+
+0.3 
+
+0.4 
+
+0.5 
+
+0.6 
+
+> validation RF risk
+
+CIFAR-10 neural RF: time-resolved risk 
+
+> Teacher
+> Pure distillation
+> SD clipped [0,1]
+> Optimal SD
+> Fine-tune
+
+Figure S4: Time-resolved validation RF risk for the neural CIFAR-10 RF experiment. Optimal SD reduces RF risk relative to the scaled teacher and pure distillation across the time grid; clipped SD returns the teacher because validation selects a negative correction. Teacher 
+
+> Pure distillation
+> SD clipped [0,1]
+> Optimal SD
+> Fine-tune
+> 0
+> 100
+> 200
+> 300
+> FID
+
+CIFAR-10 neural RF, NFE=32 
+
+Figure S5: FID comparison for the neural CIFAR-10 RF experiment. At NFE = 32 , optimal SD substantially improves FID relative to the scaled teacher, pure distillation, clipped SD, and the fine-tuning baseline with matched compute. 22 C.4 Anisotropic Gaussian experiment with temporal basis features 
+
+We use an anisotropic Gaussian target with covariance eigenvalues logarithmically spaced between 
+
+0.15 and 6 and a model with a Legendre basis in time, vW (t, x ) = P5
+
+ℓ=0 bℓ(t)Wℓx. Figure S6 shows that the sign rule and strict improvement persist beyond the scalar Gaussian model with exact features. 0
+
+> 20
+> 40
+> 60
+> 80
+> 100
+> 120
+> Excess velocity risk / dimension
+
+Integrated over time 
+
+> Teacher
+> Pure distilled
+> Optimal SD
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> 120
+> Excess velocity risk / dimension
+
+Time slice t = 0.1           
+
+> 10 410 310 210 110 010 110 2
+> Ridge penalty
+> 0
+> 2
+> 4
+> 6
+> 8
+> 10
+> 12
+> 14
+> Excess velocity risk / dimension
+
+Time slice t = 0.5           
+
+> 10 410 310 210 110 010 110 2
+> Ridge penalty
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> Excess velocity risk / dimension
+
+Time slice t = 0.9 
+
+Figure S6: Anisotropic Gaussian RF with temporal basis features. Optimal self-distillation improves both integrated velocity risk and the risk at individual times; over-regularized regimes require negative mixing. 23 C.5 Nonlinear Gaussian mixture experiment 
+
+We use a four-component Gaussian mixture (MoG) in two dimensions. The population velocity 
+
+E[u | Xt = x] is nonlinear but computable from posterior responsibilities; we use an oracle feature map in which this velocity is exactly representable. At λ ≈ 7.5, the teacher velocity risk is 2.08 ,pure distillation worsens it to 2.64 , while oracle SD and one-shot SD reduce the risk to 0.265 and 
+
+0.273 , respectively. Figure S7 shows that the same correction improves sliced Wasserstein distance, maximum mean discrepancy (MMD), mode mass error, and covariance error. Figure 4 visualizes the effect: the teacher produces a blurred mixture, while optimal SD with negative mixing recovers the four modes. 10 3 10 2 10 1 10 0 10 1                      
+
+> Ridge penalty
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> 1.2
+> 1.4
+> Sliced W22
+> Teacher
+> Pure distilled
+> Oracle SD
+> One-shot SD
+> 10 310 210 110 010 1
+> Ridge penalty
+> 0.04
+> 0.06
+> 0.08
+> 0.10
+> 0.12
+> 0.14
+> 0.16
+> Mode-mass L1 error
+> 10 310 210 110 010 1
+> Ridge penalty
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> 0.20
+> 0.25
+> RBF MMD 2
+> 10 310 210 110 010 1
+> Ridge penalty
+> 1
+> 2
+> 3
+> 4
+> Covariance Frobenius error
+
+Figure S7: Quantitative generation metrics for nonlinear Gaussian mixture RF. With oracle features, the MoG setting has a nonlinear population velocity but remains exactly representable. Optimal self-distillation with negative mixing improves velocity risk and metrics of the generated distribution; the coefficient selected by GCV is close to the oracle coefficient. 24 C.6 Finite-step sampling in the Gaussian mixture model 
+
+Because RF generation requires numerical ODE integration, we evaluate Euler sampling over a range of numbers of function evaluations (NFEs). This experiment examines whether the improvement in velocity risk translates into improved finite-step generation under the Euler discretization addressed by (29). In the MoG experiment with oracle features, SD improves generation metrics across NFEs. At NFE = 32 , sliced W22 is approximately 1.18 for the teacher, 1.52 for pure distillation, 0.096 for oracle SD, and 0.091 for one-shot SD; mode mass error drops from about 0.087 for the teacher to 
+
+0.025 for one-shot SD. The corresponding curves appear in Figure S8. 10 0 10 1     
+
+> Euler function evaluations
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> 1.2
+> 1.4
+> Generation error
+> Sliced W22
+> Teacher
+> Pure distilled
+> Oracle SD
+> One-shot SD
+> 10 010 1
+> Euler function evaluations
+> 0.02
+> 0.04
+> 0.06
+> 0.08
+> 0.10
+> 0.12
+> 0.14
+> Mode-mass L1 error
+> MoG sampler discretization at = 7.5, =6.91
+
+Figure S8: Finite-step generation in nonlinear Gaussian mixture RF. Self-distillation improves generation metrics across Euler function evaluations, showing that the velocity correction persists under discretized RF sampling. 
+
+C.7 Gaussian RF phase diagram across aspect ratios and ridge penalties 
+
+Figure S9 varies the aspect ratio d/n and regularization level in Gaussian RF with exact features. The largest relative gains occur away from the optimal ridge region for the teacher, and the sign of ξ⋆
+
+changes across the boundary between under- and over-regularization. 4 3 2 1 0 1 2        
+
+> log 10
+> 0.25
+> 0.5
+> 0.75
+> 1.0
+> 1.5
+> 2.5
+> 4.0
+> Aspect ratio  d/n
+> Relative velocity-risk gain
+> 4321012
+> log 10
+> Mean (clipped to [ 8, 8])
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 8
+> 6
+> 4
+> 2
+> 0
+> 2
+> 4
+> 6
+> 8
+
+Figure S9: Phase diagram of optimal self-distillation in Gaussian RF with exact features. Relative gain and sign of ξ⋆ vary systematically with aspect ratio and ridge penalty. 25 D Time-dependent optimal mixing 
+
+D.1 Pointwise and uniform coefficients 
+
+Theorem 2 optimizes a single mixing coefficient shared across time. Allowing a measurable function 
+
+t 7 → ξt instead gives the time-dependent affine family 
+
+vsd ,λ,ξ (·)(t, x ) = vλ(t, x ) + ξt{vpd ,λ (t, x ) − vλ(t, x )}. (45) Let Rt(λ), Ct(λ), and Dt(λ) denote the analogues of (12) – (13) at a fixed time t, and set At(λ) = 
+
+Rt(λ) − Ct(λ). Then the time-slice risk is 
+
+Rsd ,t (λ, ξ t) = Rt(λ) − 2ξtAt(λ) + ξ2 
+
+> t
+
+Dt(λ). (46) Whenever Dt(λ) > 0, the pointwise optimum is ξ⋆t (λ) = At(λ)/D t(λ). If R 10 Dt(λ) d t > 0, the best coefficient shared across time is 
+
+ξ⋆
+
+> U
+
+(λ) = 
+
+R 10 At(λ) d t
+
+R 10 Dt(λ) d t . (47) Assume now that Dt(λ) > 0 for almost every t, and define wλ(t) = Dt(λ)/ R 10 Ds(λ) d s. The additional gain in integrated risk from pointwise rather than uniform mixing is 
+
+Z 10
+
+At(λ)2
+
+Dt(λ) dt −
+
+R 10 At(λ) d t
+
+2
+
+R 10 Dt(λ) d t =
+
+Z 10
+
+Dt(λ) d t
+
+
+
+Var wλ {ξ⋆t (λ)} ≥ 0. (48) Thus pointwise mixing performs at least as well as the best uniform mixture, with strict improvement precisely when ξ⋆t (λ) is not wλ-almost surely constant. The gridwise analogue in Appendix B.2.2 yields the reduction in velocity error used in the Euler generation bound (29). 26 D.2 Numerical evaluation 
+
+We evaluate this time-dependent extension on four targets in two dimensions—a Gaussian mixture with four components (MoG-4), checkerboard, moons, and spiral—using RF with fixed random features and fixed interpolants. The affine identity in Proposition 1 applies directly to a coefficient shared across all training samples. With time-varying coefficients, however, refitting on targets mixed according to each sample’s time generally differs from applying the affine construction (45) directly to the fields. We therefore distinguish TD-affine , which evaluates (45) , from TD-refit , which retrains on time-dependent mixed targets. Figure S10 compares their integrated RF risks with those of the teacher and the best uniform mixture across ridge penalties. TD-affine provides modest, consistent improvements over the best uniform mixture, whereas TD-refit is not covered by (48) and can perform worse. Figure S11 localizes the gains across time, and Figure S12 reports the corresponding finite-step generation metrics. The downstream improvements depend on the setting and metric, consistent with the scope of our guarantee on velocity risk. 10 4 10 3 10 2 10 1 10 0 10 1 10 2                                                                        
+
+> 4.0
+> 4.5
+> 5.0
+> 5.5
+> integrated RF risk
+> MoG-4
+> Teacher
+> Uniform
+> Time-dependent (t)
+> TD-refit
+> [0, 1]
+> 10 410 310 210 110 010 110 2
+> 10
+> 5
+> 0
+> 5
+> mixing coefficient
+> MoG-4
+> uniform
+> range of (t)
+> 10 410 310 210 110 010 110 2
+> 3.6
+> 3.8
+> 4.0
+> 4.2
+> 4.4
+> integrated RF risk
+> Checkerboard
+> 10 410 310 210 110 010 110 2
+> 20
+> 15
+> 10
+> 5
+> 0
+> 5
+> mixing coefficient
+> Checkerboard
+> 10 410 310 210 110 010 110 2
+> 3.2
+> 3.4
+> 3.6
+> 3.8
+> 4.0
+> 4.2
+> integrated RF risk
+> Moons
+> 10 410 310 210 110 010 110 2
+> 10
+> 5
+> 0
+> 5
+> mixing coefficient
+> Moons
+> 10 410 310 210 110 010 110 2
+> 3.5
+> 4.0
+> 4.5
+> integrated RF risk
+> Spiral
+> 10 410 310 210 110 010 110 2
+> 15
+> 10
+> 5
+> 0
+> 5
+> mixing coefficient
+> Spiral
+> Uniform versus time-dependent mixing in same-interpolant RF
+
+Figure S10: Integrated RF risk under uniform and time-dependent mixing. Left: risk versus the teacher ridge penalty λ for the teacher, the best uniform mixture, TD-affine, TD-refit, and uniform mixing constrained to ξ ∈ [0 , 1] . Right: the optimal uniform coefficient (solid line) and the range of pointwise optimal coefficients ξ⋆t (λ) across time (shaded region). TD-affine weakly improves on the best uniform mixture, as predicted by (48); TD-refit need not do so. 27 0.0 0.2 0.4 0.6 0.8 1.0 
+
+2
+
+3
+
+4
+
+5
+
+6
+
+> Rt
+
+MoG-4: time-slice RF risk 
+
+> Teacher
+> Uniform
+> TD-affine
+> TD-refit
+> TD-oracle
+
+0.0 0.2 0.4 0.6 0.8 1.0 
+
+0.00 
+
+0.01 
+
+0.02 
+
+0.03 
+
+0.04 
+
+> relative risk gain
+
+MoG-4: gain and (t)
+
+0.0 0.2 0.4 0.6 0.8 1.0 
+
+2.5 
+
+3.0 
+
+3.5 
+
+4.0 
+
+4.5 
+
+> Rt
+
+Checkerboard: time-slice RF risk 
+
+0.0 0.2 0.4 0.6 0.8 1.0 
+
+0.01 
+
+0.00 
+
+0.01 
+
+0.02 
+
+0.03 
+
+0.04 
+
+> relative risk gain
+
+Checkerboard: gain and (t)
+
+0.0 0.2 0.4 0.6 0.8 1.0 
+
+2.5 
+
+3.0 
+
+3.5 
+
+4.0 
+
+> Rt
+
+Moons: time-slice RF risk 
+
+0.0 0.2 0.4 0.6 0.8 1.0 
+
+0.010 
+
+0.005 
+
+0.000 
+
+0.005 
+
+0.010 
+
+0.015 
+
+> relative risk gain
+
+Moons: gain and (t)
+
+0.0 0.2 0.4 0.6 0.8 1.0 
+
+t
+
+2.5 
+
+3.0 
+
+3.5 
+
+4.0 
+
+4.5 
+
+> Rt
+
+Spiral: time-slice RF risk 
+
+0.0 0.2 0.4 0.6 0.8 1.0 
+
+t
+
+0.01 
+
+0.00 
+
+0.01 
+
+0.02 
+
+> relative risk gain
+
+Spiral: gain and (t)
+
+12 
+
+10 
+
+8
+
+6
+
+4
+
+2
+
+0
+
+> (t)
+
+20 
+
+15 
+
+10 
+
+5
+
+> (t)
+
+12 
+
+11 
+
+10 
+
+9
+
+8
+
+> (t)
+
+16 
+
+14 
+
+12 
+
+10 
+
+8
+
+6
+
+> (t)
+
+Time-resolved effects of time-dependent mixing Figure S11: Time-resolved RF risk and pointwise mixing coefficients. Left: risks at each time for the teacher, uniform mixing, TD-affine, TD-refit, and the pointwise oracle. Right: the relative risk gain of TD-affine over uniform mixing (solid line; positive values favor TD-affine) and the selected 
+
+ξt (dashed line). The gains concentrate at particular times, revealing where a shared coefficient under-or over-corrects. 28 MoG-4 
+
+> Checkerboard
+> Moons
+> Spiral
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> 0.20
+> 0.25
+> 0.30
+> 0.35
+> 0.40
+> SW 22
+
+Generated distribution: sliced Wasserstein 
+
+> Teacher
+> Uniform
+> TD-affine
+> TD-refit
+> Constrained
+> PD
+> MoG-4
+> Checkerboard
+> Moons
+> Spiral
+> 0.00
+> 0.01
+> 0.02
+> 0.03
+> 0.04
+> MMD 2
+
+Generated distribution: MMD Figure S12: Finite-step generation metrics under uniform and time-dependent mixing. Squared sliced Wasserstein distance (left) and squared MMD (right) for the four targets; lower is better. The comparison includes the teacher, uniform mixing, TD-affine, TD-refit, mixing constrained to 
+
+[0 , 1] , and pure distillation (PD). Time-dependent mixing improves some target–metric pairs, but the guarantee on velocity risk does not imply uniform improvement in either generation metric. 29

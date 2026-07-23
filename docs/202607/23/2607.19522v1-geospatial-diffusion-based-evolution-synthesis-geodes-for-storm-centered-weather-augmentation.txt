@@ -1,0 +1,1167 @@
+Title: Geospatial Diffusion-based Evolution Synthesis (GeoDES) for Storm-Centered Weather Augmentation
+
+URL Source: https://arxiv.org/pdf/2607.19522v1
+
+Published Time: Thu, 23 Jul 2026 00:13:03 GMT
+
+Number of Pages: 31
+
+Markdown Content:
+# Geospatial Diffusion-based Evolution Synthesis (GeoDES) for Storm-Centered Weather Augmentation 
+
+Sonia Cromp sonic@cs.wisc.edu University of Wisconsin-Madison 
+
+Satya Sai Srinath Namburi GNVV sgnamburi@wisc.edu GE HealthCare 
+
+Youran Wang wang3488@wisc.edu University of Wisconsin-Madison 
+
+Grace Kisslinger grace.kisslinger@uga.edu University of Georgia 
+
+Frederic Sala fredsala@cs.wisc.edu University of Wisconsin-Madison 
+
+James Booth jbooth@ccny.cuny.edu City College of New York 
+
+Allegra LeGrande al2035@columbia.edu NASA Goddard Institute for Space Studies 
+
+## Abstract 
+
+While machine learning-based weather models hold significant promise, they struggle to predict the detailed structure of large-scale weather systems such as cyclonic storms. Re-gional models are constrained by limited historical records within fixed geographic bound-aries, while global models are computationally expensive and often operate at resolutions too coarse to capture fine-grained storm dynamics. To bridge this gap, we introduce the Geospatial Diffusion-based Evolution Synthesis (GeoDES) model, a custom image-to-video diffusion model. By focusing generation strictly on the evolving storm structure, GeoDES synthesizes physically consistent, high-fidelity weather events suitable for stress-testing fore-cast models and expanding meteorological datasets. Evaluations demonstrate that GeoDES outperforms prior methods on key metrics, achieving 52% lower Peak Vorticity Error and 
+
+8% higher Anomaly Correlation Coefficient than the next strongest methods on the North Atlantic test set. 
+
+## 1 Introduction 
+
+The majority of weather hazards that impact Europe and North America, from flooding to straight-line winds, are associated with extratropical cyclone storms. While most of these storms are benign, the rare extreme instances are notoriously difficult to predict. Because they lack the simplifying properties of other storms (e.g., hurricanes’ axisymmetry (Willoughby et al., 2006)), reliable probabilistic models for these dangerous storms remain underdeveloped. Furthermore, extreme storms are inherently difficult to study due to limited observational sample sizes, which cause machine learning (ML) methods to underperform traditional physics-based forecasting on extreme events (Zhang et al., 2026). As climate change shifts baseline weather conditions (Gertler & O’Gorman, 2019), the need for improved models of extratropical cyclones has become increasingly urgent for enabling the synthesis of realistic storm observations beyond past historical constraints. Preexisting ML weather models (Table 1) encounter structural challenges when applied to extratropical cyclones. Current architectures remain largely constrained to either global or regional prediction (Shi et al., 2025b), both of which are poorly suited for tracking detailed, far-moving storms. Global models require immense compute—yielding heavily smoothed predictions at tractable resolutions or spurious dynamics via masking strategies—while regional models are restricted to static areas. Furthermore, both approaches waste significant training capacity on calm, non-stormy conditions. 1arXiv:2607.19522v1 [cs.LG] 21 Jul 2026 {                                      
+
+> {
+> {T
+> {
+> Random Noise Input
+> V×L1×L2
+> Output: Synthetic Storm Frame
+> V×L1×L2
+> Input
+> T×V×L1×L2
+> Output: Synthetic Storm Evolution
+> T×V×L1×L2
+> V × L1 × L2
+> V × L1 × L2
+> T × V × L1 × L2
+> T × V × L1 × L2
+> H × L1 × L2
+> 2H × L1
+> 2 × L2
+> 2
+> 4H × L1
+> 4 × L2
+> 4
+> 4H × L1
+> 4 × L2
+> 4
+> 2H × L1
+> 2 × L2
+> 2
+> H × L1 × L2
+> T × H × L1 × L2
+> T × 2H ×
+> L1
+> 2 × L2
+> 2
+> T × 4H ×
+> L1
+> 4 × L2
+> 4
+> T × 4H ×
+> L1
+> 4 × L2
+> 4
+> T × H × L1 × L2
+> T × 2H ×
+> L1
+> 2 × L2
+> 2
+> { V
+> {T
+> {
+> {
+> {
+> Initial Condition Prompt
+> and Noise
+> (Noisy Prompt) V
+> (Pure Noise) V
+> (Pure Noise) V
+> (Prompt) V
+> (Prediction at Time )V1
+> (Prediction at Time )VT−1
+> T×V×L1×L21×V×L1×L2
+
+Spatial Model 
+
+> GeoDES
+
+2D U-Net 
+
+3D U-Net 
+
+> { V
+
+Spatiotemporal Model Figure 1: Overview of the GeoDES model with hidden dimension H (at bottom, with blue background), as well as the intermediate pretraining-phase model (at top, in green background), for a dataset of storm-centered bounding boxes with dimensions L1 ×L2, over T timesteps and V variables. GeoDES uses a prompt of initial storm conditions to predict the following T − 1 timesteps of storm evolution. Real Wind 
+
+Magnitude        
+
+> 0h 6h 12h 18h 24h 30h 36h 42h
+
+GeoDES Synthetic 
+
+Wind Magnitude        
+
+> 0h (Prompt) 6h 12h 18h 24h 30h 36h 42h
+> 0.0
+> 6.7
+> 13.3
+> 20.0
+> 26.7
+> 33.3
+> 40.0
+> 46.7
+> 53.3
+> 60.0
+> Wind Magnitude (m/s)
+
+Figure 2: Prompted with real 0h wind magnitude data (500hPa), GeoDES synthesizes an alternative cyclone lifecycle (bottom) that maintains the complex, high-frequency patterns of the real storm (top) over 42 hours. We address these challenges by introducing Geospatial Diffusion-based Evolution Synthesis (GeoDES) for modeling extratropical cyclone structures. We follow a storm-centered approach (e.g., Booth et al., 2018), treating each cyclone as a “video” anchored to its moving low-pressure center (Figure 4). To support this, GeoDES incorporates architectural advancements tailored for atmospheric modeling. We treat time as an independent dimension to enable non-autoregressive synthesis , first training a 2D-image spatial model before using temporal inflation (Singer et al., 2022) to create a 3D-video spatiotemporal model. The storm-centered framing and temporal inflation strategy directly resolve structural limitations of existing models. By moving with the storm, GeoDES tracks detailed, far-moving systems without the constraints of static regional boundaries. Isolating the domain to the storm itself reduces wasted capacity spent modeling calm weather and sidesteps the immense compute and heavy smoothing associated with global grids. Further, by synthesizing the entire spatiotemporal storm lifecycle simultaneously, our non-autoregressive design avoids the compounding temporal errors of traditional, autoregressive methods. Additional benefits include: 
+
+• Downstream compatibility: GeoDES’ outputs are directly useful for meteorological analysis, where storm-centered data is a common format (e.g., Booth et al., 2018; Clancy et al., 2022; Naud et al., 2025). 
+
+• High resolution: By dedicating model capacity entirely to the storm area, GeoDES captures fine-scale dynamics without the smoothing typical of global models. Representing storms over a ( 1600 km) 2 area in a 
+
+32 ×32 matrix corresponds to an effective resolution of up to 0.45 ◦ ×0.45 ◦, enabling detailed representation. 
+
+• Computational accessibility: Because this localized strategy reduces the overall spatial domain, the mem-ory footprint remains small, allowing for training from scratch on standard consumer-grade GPUs. Evaluated on North Atlantic extratropical cyclones from 2016-2024, GeoDES outperforms existing methods across a variety of storm quality metrics . As detailed in Section 3, it achieves a 52% lower Peak Vorticity Error and an 8% higher Anomaly Correlation Coefficient than the next strongest base-line. Furthermore, GeoDES is uniquely capable of accurately recovering the kinetic energy distribution of 2ground-truth storms, achieving a near-perfect Frequency Bias Index of 1.02 and a High-Frequency Spectral Ratio of 0.95. This generative fidelity holds even for the top 10% most extreme storms, allowing GeoDES to accurately synthesize severe weather phenomena without succumbing to the spatial smoothing or unphysical hallucinations common in global models. In summary, our core contributions are: 
+
+• Task Formalization: We formalize the data augmentation task of conditional storm synthesis .
+
+• Novel Architecture: We present GeoDES, a spatiotemporal diffusion model that uses storm-centered framing and temporal inflation to bypass the computational limits and spatial smoothing of global models. 
+
+• State-of-the-Art Generative Realism: We demonstrate that GeoDES significantly outperforms existing baselines (Table 1) in preserving rotational structure and extreme wind energy distributions. 
+
+• Extreme Event Augmentation: We show that GeoDES successfully generates physically consistent severe storms to enrich the training distribution of rare, high-intensity events for downstream climate study. We formally define GeoDES in Section 2. Evaluations in Section 3 demonstrate GeoDES’ generative fidelity compared to prior approaches. We then discuss prior work, future work and conclusions in Sections 4-6. 
+
+## 2 The Geospatial Diffusion-based Evolution Synthesis (GeoDES) Method 
+
+We design GeoDES, a custom image-to-video diffusion model, to resolve the issues of prior ML models for extratropical cyclone synthesis. Rather than attempting to learn a complex spatiotemporal manifold from scratch—which leads to physical hallucinations or dynamic range collapse as demonstrated by our Section 3.5 ablations—we decouple spatial structure from temporal evolution. GeoDES is constructed via a three-phase pipeline: (1) two-dimensional spatial pretraining, (2) temporal inflation and (3) three-dimensional spatiotemporal fine-tuning. This end-to-end procedure, formalized in Algorithm 1 and visualized in Figure 4, serves as the foundation for the architectural details described below. GeoDES is based on the Denoising Diffusion Probabilistic Model (DDPM) (Ho et al., 2020), which learns to generate synthetic data by reversing a Markovian process that progressively adds Gaussian noise to a true data sample x0 over N steps. Further background on diffusion models is provided in Appendix B and a glossary of terms is available in Appendix A. 
+
+Algorithm 1: GeoDES Two-Stage Training Procedure                                                                        
+
+> Input :Spatiotemporal dataset D3D , Uninitialized U-Nets Θ2,Θ3, Frame count T
+> Output: Trained 3D spatiotemporal model Θ∗
+> 3
+> Procedure Train (Θ,D,NoiseStrategy ):while not converged do
+> Sample batch from Dand apply hybrid normalization Apply NoiseStrategy to form noisy batch Compute SNR-weighted denoising loss L
+> Update weights: Θ←Θ−η∇ΘL
+> return Θ
+> ▷Phase 1: Two-Dimensional Spatial Pretraining
+> let D2D be D3D with dimension Tflattened into the sample dimension
+> Θ′
+> 2←Train (Θ 2, D 2D ,Variance-preserving schedule )
+> ▷Phase 2: Temporal Inflation (2D-to-3D Weight Conversion)
+> foreach parameter w2∈Θ′
+> 2matching w3∈Θ3do if dim( w2) = dim( w3)then w3←w2
+> else w3←1
+> TRepeat (w2, T )▷Inflate: (∗)→(T, ∗)
+> ▷Phase 3: Three-Dimensional Spatiotemporal Fine-Tuning
+> Θ′
+> 3←Train (Θ 3, D 3D ,Correlated noise ϵ(t)conditioned on x0(0))
+> return Θ∗
+> 3
+
+32.1 Phase 1: The Spatial Prior Network ( fΘ2 )
+
+The goal of the first phase is to learn a Spatial Prior Network, denoted as fΘ2 . Weather systems are governed by strict spatial dependencies (e.g., the physical relationship between pressure gradients and surrounding wind fields). By training a two-dimensional image model first, fΘ2 learns to accurately represent these multivariate atmospheric relationships without the compounding complexity of temporal dynamics. Suppose each 2D training datapoint x0 ∈ D2D is a tensor x0 ∈ RV ×L1×L2 , where V denotes the number of climate variables (e.g., temperature, sea-level pressure) and L1 and L2 represent the spatial grid dimensions. To ensure fΘ2 captures the full variability of the weather data without suffering dynamic range collapse, we first apply a variable-specific hybrid normalizer. We use log-scaling for long-tailed distributions (e.g., wind magnitude) and robust linear scaling for centered distributions (e.g., temperature). In both cases, each variable is scaled according to the 1st and 99 th percentiles present in the training distribution. The network fΘ2 is parameterized by an unconditional pixel-space U-Net (Ronneberger et al., 2015). Begin-ning with randomly-initialized weights, we optimize the model using a variance-preserving schedule (Song et al., 2020) and a Signal-to-Noise Ratio (SNR) weighted objective (Hang et al., 2023), 
+
+L2D = Ex,ϵ,t 
+
+[λ(t)∥ϵ − fΘ2 (xt, t )∥22
+
+] ,
+
+where λ(t) is the SNR weight. This weighting explicitly forces the model to dedicate representational capacity to intermediate noise scales—which correspond to meaningful, large-scale storm structures—rather than wasting capacity on imperceptible, high-frequency noise. 
+
+2.2 Phase 2: Temporal Inflation 
+
+Once the spatial priors are established, we transition to the Spatiotemporal Evolution Network, denoted as fΘ3 . To introduce time without destroying the atmospheric representations learned by fΘ2 , we perform temporal inflation (Phase 2 of Algorithm 1), adapting the strategy of Singer et al. (2022). Let T denote the number of evolution timesteps. We initialize fΘ3 by copying all spatially-equivalent blocks from Θ2 to Θ3. For any spatial block w2 that requires an expanded temporal dimension in the 3D model, we initialize the corresponding weights w3 at each time t as w3(t) = w2/T .
+
+2.3 Phase 3: The Spatiotemporal Evolution Network ( fΘ3 )
+
+With the architecture inflated, Phase 3 fine-tunes fΘ3 on temporal dynamics. Suppose a 3D datapoint is a tensor x0 ∈ RT ×V ×L1×L2 .
+
+Training Phase: We use a standard forward diffusion process for training. Because atmospheric state is highly autocorrelated across time, we find using standard independent Gaussian noise for each frame disrupts this inherent consistency, allowing for physically impossible state jumps. While diffusion methods usually rely solely on network convolutions learning temporal smoothness, we explicitly inject this prior into the forward process by correlating the noise at frame t with the preceding frame t − 1 via a tunable parameter 
+
+ρ. Given uncorrelated noise ϵu ∼ N (0, I), we set ϵ(0) = ϵu(0) and subsequent frames t ∈ [1 , T ) as 
+
+ϵ(t) = ρϵ(t − 1) + √1 − ρ2ϵu(t).
+
+In our experiments, we set ρ = 0 .95 . Real atmospheric variables exhibit complex, variable-specific covariance structures; thus, developing dynamic, physics-informed noise schedules remains a valuable direction for future work. The reverse process then trains fΘ3 to denoise ϵ using the same SNR-weighted objective as Phase 1. 
+
+Sampling Phase: At sample time, the goal is to predict future storm evolution conditioned strictly on an initial observation (prompt) x0(0) . To obscure the future from the model, the forward process forms the noisy sample xn by setting all non-initial frames to pure noise ( xn(1 , T − 1) = ϵ(1 , T − 1) ), while the initial frame receives standard diffusion noise, xn(0) = √¯αnx0(0) + √1 − ¯αnϵ(0) .
+
+During the reverse denoising process, we anchor the temporal generation by re-injecting the un-noised prompt 
+
+x0(0) at every step of the sampling sequence (Lugmayr et al., 2022; Ho et al., 2022). This process ensures that the generated storm remains tied to the initial prompt. 43 Evaluations 
+
+To assess the capabilities of GeoDES, our evaluation framework is designed to directly address the core limitations of current meteorological machine learning models. Specifically, we design our experiments to validate the following four claims: 1. GeoDES outperforms prior works in storm realism. Because the utility of synthetic weather data depends entirely on its physical plausibility, we verify that our architecture captures atmospheric dynamics more accurately than existing state-of-the-art baselines. 2. GeoDES’ realistic storm synthesis capabilities are especially apparent for extreme storms. 
+
+The primary motivation of this work is to augment datasets of rare, high-impact weather hazards. There-fore, we prove that the model does not fail on the most severe (and most difficult to synthesize) events. 3. GeoDES maintains reasonable compute requirements during training and inference. A key limitation of global weather models is their immense computational cost. We demonstrate that our localized, storm-centered approach is accessible on standard hardware. 4. Ablations: Individual components are critical to GeoDES’ success. 
+
+We detail our evaluation strategy, including metrics and baselines, in Section 3.1, then validate our claims se-quentially in Sections 3.2 through 3.5. Definitions, while provided throughout, are also listed in Appendix A. 
+
+3.1 Conditional Storm Synthesis: Evaluation Setup 20 40 60 80 
+
+> Maximum Storm Windspeed (m/s)
+> 0.00
+> 0.01
+> 0.02
+> 0.03
+> Density
+> Maximum Wind Speed: North Atlantic Train vs Test Set Storms
+> Train Set
+> Test Set
+
+Figure 3: Normalized distribution of maxi-mum 500hPa wind speeds for train vs test set. The test set exhibits a slightly higher intensity bias, reflecting recent trends. 
+
+Dataset: We focus on extratropical cyclones , which are mid-latitude low-pressure systems that are primary drivers of global atmospheric energy transfer (Martin, 2013). Forming along surface temperature gradients (fronts) (Catto, 2016), they are associated with severe winds and heavy precipitation (Hawcroft et al., 2012; Attinger et al., 2021), making them at times highly destructive weather events (Steiner, 2021). Global atmospheric data is sourced from the ERA5 reanaly-sis dataset (Hersbach et al., 2020), with training data from January 1940 to August 2015 and test data from January 2016 through December 2024. This partition prevents co-occurrence leakage in the global model baselines, which may otherwise ob-serve a test set storm during training if a separate train set storm happens to occur simultaneously. As a byproduct of shifting global climate, this split induces a slight distributional shift towards intense storms in the test set (Figure 3). As our target use-case is study and evaluation by climate scientists, we focus on a lightweight selection of five climate variables useful to analyzing an extratropical cyclone: sea-level pressure (SLP), U- and V-components of wind at the 500hPa pressure-level, temperature at 925hPa and humidity at 500hPa. While global models are trained on the full training time span and permitted to view the full global data, cyclone-centered baselines are trained solely on cyclone-centered bounding boxes such as Figure 4. At test-time, the outputs of cyclone-centered models are used directly, while cyclone-centered bounding boxes are first extracted from global models’ outputs. More details on dataset processing and the creation of cyclone-centered bounding boxes are available in Appendix C.1. 
+
+Metrics: We evaluate our architectures using a hybrid suite of metrics drawn from both deep learning and meteorology, broadly categorized into three areas: Physical and Structural Coherence: 
+
+• Peak Relative Vorticity Error: The maximum rotational intensity of the cyclone via spatial gradients (ζ = dv dx − du dy ), identifying models that fail to generate tight, organized cyclones (Holton & Hakim, 2012). 
+
+• High-Frequency (HF) Spectral Ratio: The ratio of integrated energy in the high-frequency domain of the Power Spectral Density between the prediction and ground truth (Skamarock, 2004; Ravuri et al., 2021). This metric exposes models that output overly-smoothed, safe predictions, or inflate intensity scores by outputting unconstrained, high-frequency noise. An ideal ratio is 1.0. 5Table 1: Comparison of the methods evaluated in Section 3. The first row specifies the underlying architecture of each model, the second row lists whether the model operates directly on pixel space or uses an additional encoder model, while the third row states whether the model is a pretrained WFM.                        
+
+> GeoDES SVD CEF CoDiCast ClimaX Aurora
+> Architecture Diffusion Diffusion Diffusion Diffusion Transformer Transformer
+> Encoder vs Pixel Space Pixel Pixel Pixel Encoder Pixel Encoder
+> Pretrained Foundation Model No No No No Yes Yes
+
+Extreme Intensity and Distribution: 
+
+• Frequency Bias Index (FBI): The ratio of predicted extreme wind pixels ( > 20 m/s) to actual extreme wind pixels (Wilks, 2011). An FBI of 1.0 indicates perfect extreme energy recovery, while > 1.0 indicates generative hallucination (over-forecasting) and < 1.0 indicates unphysical smoothing. 
+
+• Fractions Skill Score (FSS): A neighborhood-based spatial verification metric (using a 3 × 3 grid cell win-dow) that measures the spatial overlap accuracy specifically for the extreme ( > 20 m/s) wind distribution (Roberts & Lean, 2008). FSS is formulated as 1 minus the ratio of the fractional Mean Squared Error (MSE) to a worst-case reference MSE, yielding a score strictly bounded between 0.0 (no overlap) and 1.0
+
+(perfect overlap). Spatial and Navigational Accuracy: 
+
+• Synoptic Anomaly Correlation Coefficient (ACC): Measures the spatial pattern correlation of the pre-dicted fields (Wilks, 2011; Jolliffe & Stephenson, 2011). To avoid penalizing structurally sound storms that are offset from ground-truth examples, we apply a spatial Gaussian filter ( σ = 1 .5) prior to correla-tion, allowing for a fair comparison against heavily smoothed autoregressive baselines. We also provide average and per-variable root mean square error (RMSE), synoptic and non-synoptic ACC scores in Appendix D.2. Our primary metrics listed above were selected to give a fair evaluation of weather synthesis, rather than forecasting performance: Pixel-wise metrics (e.g., RMSE) can be misleading for weather synthesis tasks, penalizing realistic features that are slightly displaced compared to ground truth, through a phenomenon known as the “double penalty” problem (Roberts & Lean, 2008; Ebert, 2008). 
+
+Methods: We evaluate GeoDES against a diverse suite of baselines, including statistical climatology, prior diffusion-based architectures and pretrained global Weather Foundation Models (WFMs). To ensure rele-vance for computationally-accessible, specialized storm analysis, these baselines were selected according to three criteria: (1) feasibility of execution on a single GPU; (2) the capacity to be trained and sampled using a sparse, five-variable atmospheric state rather than a full deep-column ERA5 initialization; and (3) the availability of a public codebase and, for WFMs, pretrained weights. We describe each baseline below. 
+
+• Climatology: As a naive baseline, we simply average all training datapoints together, forming a single composite storm climatology (Rasp et al., 2020). We predict this average storm for all test datapoints. 
+
+• Stable Video Diffusion (SVD): Blattmann et al. (2023) represents an off-the-shelf diffusion baseline. We train a randomly initialized SVD model in pixel-space on linearly normalized data. Similar to GeoDES, time is represented as a native dimension within the model, enabling non-autoregressive sampling. The remainder of our evaluation suite is composed of global forecasting models, selected due to the lack of modern patch-based baselines. To adapt these methods to our setting, we execute their training and inference scripts over global ERA5 data. For each storm, we extract the initial frame ( t = 0 ) from the spatial coordinates of the ground truth storm, then track the storm through the synthetic global forecast via minimum Sea Level Pressure (SLP). More details are in Appendix C.1. 
+
+• Continuous Ensemble Forecasting (CEF): Andrae et al. (2025) is a diffusion-based global forecasting ensemble operating on a 5.625 ◦ grid. Conditioned on an initial global state, CEF maps the forecast into a latent space and uses a continuous deterministic ODE solver to generate ensemble trajectories in parallel. 
+
+• CoDiCast: Shi et al. (2025a) is a diffusion-based global forecasting model designed to operate on a 5.625 ◦
+
+grid. Conditioned on an initial state encoded via a pretrained deterministic autoencoder, CoDiCast autoregressively predicts each subsequent atmospheric timestep. 
+
+• ClimaX WFM (Public and Fine-tuned Variants): Nguyen et al. (2023) is a transformer-based global WFM. Because pretrained ClimaX does not offer SLP, we instead derive SLP from ClimaX geopotential and 2-meter temperature predictions—see Appendix C.1. We use the highest-resolution checkpoint (1.40625 ◦). 6ClimaX’s pretraining set spans January 1940-December 2015, which aligns with our train/test split. We include two variants of ClimaX in our evaluations: ClimaX FT , which we fine-tune on our five-variable subset of ERA5, and the publicly-available ClimaX , without additional fine-tuning. 
+
+• Aurora WFM: Bodnar et al. (2024) is a transformer-based global WFM with an additional encoder. We use the 0.25 ◦ checkpoint. We note that publicly available Aurora checkpoints are fine-tuned on 2016–2021 data. Consequently, evaluation on our 2016–2024 test set contains temporal data leakage. Even with this artificial advantage, we demonstrate in Sections 3.2 and 3.3 that off-the-shelf global WFMs fail to resolve the fine-grained rotational dynamics of extratropical cyclones. 
+
+3.2 Storm Modeling Capabilities 
+
+We begin by validating our first claim. 
+
+Claim 1: GeoDES outperforms prior modeling approaches in storm realism. 
+
+Setup: Table 2 includes results for our primary metrics across all evaluated methods on the North Atlantic basin test set ( n = 893 ). Hyperparameter selection information for GeoDES and baselines is available in Appendix C.2. Apart from the inference-only methods (ClimaX, Aurora and climatology), evaluations are averaged across three training/sampling runs. As an example of each model’s outputs, Figure 4 visualizes synthesized wind magnitude for the same real storm initial conditions. In the figure, each model has been prompted with the 0h conditions of the real storm sample in the top row. Additional metrics are presented in Appendix D.2 and Table 6. In Appendix E, we also evaluate GeoDES on additional basins. 
+
+Results: GeoDES outperforms probabilistic methods across evaluation metrics. In particular, GeoDES is the only model capable of recovering the kinetic energy distribution of ground-truth storms, achieving a near-perfect Frequency Bias Index of 1.02 and a High-Frequency (HF) Spectral Ratio of 0.95 .Meanwhile, baselines present one of two contrasting failure modes. Off-the-shelf SVD collapses into overly-noisy predictions, injecting over 50 times the natural high-frequency energy into its synthetic storms (HF Spectral Ratio of 52 .52 ) while failing to represent a cyclone storm structure, resulting in a Peak Vorticity Er-ror of 48 .40 . This collapse is a consequence of its approaches to data normalization and temporal processing, which are better-adapted to RGB image generation than to atmospheric data. CoDiCast presents a similar noisy failure mode, while the other global weather models of CEF, ClimaX FT, ClimaX and Aurora fall into a pattern of low-energy, blurry predictions. This pattern is generally characterized by low HF Spectral Ratio and Synoptic ACC, as well as moderately high Peak Vorticity Error. It is worth noting the deceptively high Synoptic ACC scores achieved by the climatology baseline. As a smooth average of all training storms, it captures the broad, low-frequency information of a cyclone while lacking sharp, high-intensity gradients. Consequently, it avoids the severe spatial penalty that dynamic models face when predicting fine-grained features that are even slightly displaced. While this smoothing allows the composite to game spatial correlation metrics, its low HF Spectral Ratio and poor Frequency Bias Index confirm it lacks the physical realism and kinetic energy required for actual storm synthesis. Table 2: Comparison of generative storm realism for North Atlantic extratropical cyclones. GeoDES suc-cessfully maintains physical constraints and extreme energy distributions, avoiding both the high-frequency hallucination of SVD and the spatial smoothing of global Weather Foundation Models. In the far left column, (↓) and ( ↑) respectively indicate lower or higher scores are better, while ( ·1) indicates that scores closer to 
+
+1 are better. Best results are bolded.                                                                                                                          
+
+> GeoDES SVD CoDiCast CEF ClimaX FT ClimaX Aurora Climatology
+> Peak Vorticity Error ( ↓)5.04 ±0.47 48 .40 ±0.02 10 .52 ±1.72 11 .04 ±0.77 10 .68 ±1.01 12 .32 13 .80 7.86
+> HF Spectral Ratio ( ·1)0.95 ±0.17 52 .52 ±0.00 3.65 ±1.09 0.59 ±0.02 0.41 ±0.02 0.02 0.00 0.29
+> Frequency Bias Index ( ·1)1.02 ±0.17 1.10 ±0.00 2.26 ±0.09 0.60 ±0.05 1.86 ±0.03 1.04 0.00 0.75
+> Fractions Skill Score ( ↑)0.76 ±0.04 0.76 ±0.00 0.65 ±0.01 0.61 ±0.01 0.72 ±0.01 0.00 0.00 0.71
+> Synoptic ACC ( ↑)0.39 ±0.03 0.15 ±0.00 0.06 ±0.01 0.19 ±0.02 0.28 ±0.00 0.09 0.10 0.64
+> Synoptic ACC T-Final ( ↑)0.44 ±0.03 0.14 ±0.00 0.06 ±0.01 0.18 ±0.02 0.24 ±0.00 0.05 0.11 0.64
+
+7Successes and failure modes of each method are also demonstrated by their outputs in Figure 4. While GeoDES (second row) synthesizes a realistic, detailed and dynamic extratropical cyclone, the fine-tuned global models (CoDiCast, CEF and ClimaX FT) present odd distortions indicative of a failure to model high-frequency storm attributes. Worse, the zero-shot models (ClimaX and Aurora) present very blurry predictions that somewhat resemble the climatology baseline. Due to reliance on encoders, rather than operating in pixel-space, CoDiCast and Aurora fail to reproduce the 0h prompt conditions altogether. SVD, our only cyclone-centered baseline, presents the most significant collapse: while the top third of each frame perhaps represents the transition from calm seas to a storm front, the bottom half of each frame contains significant amounts of static noise indicative of collapse and inability to recreate accurate storm features. These findings contextualize the baselines’ original design objectives. Existing ML weather models primarily assess their performance via grid-wise error metrics (e.g., RMSE) rather than the localized generative fidelity of specific severe weather phenomena like extratropical cyclones . Because optimizing for pixel-wise error incentivizes spatial mean-seeking, these models are predisposed to smoothing. 
+
+3.3 Severe Storm Representation 
+
+Claim 2: GeoDES’ realistic storm synthesis capabilities are especially apparent for extreme storms. 
+
+Setup: We follow a similar experimental setup to Section 3.2, evaluating strictly on the 90th percentile of most extreme storms within the North Atlantic basin test set (n=89), defined by storm-lifetime maximum wind magnitude (Young & Ribal, 2019). Given the relative rarity of extreme training examples, compounded by the out-of-distribution severity bias of the test set (see Figure 3), this subset represents a challenging synthesis task. Results are presented in Table 3 with supplemental metrics in Appendix D.2 and Table 7. 
+
+Results: Under the extreme storm setting, the performance gap between GeoDES and the baseline models widens regarding physical realism and the representation of extreme-energy behavior. While ClimaX FT achieves a highly competitive Fractions Skill Score (0.81 compared to GeoDES’s 0.82) and the climatology baseline continues to display misleading ACC scores (refer to Section 3.2), most methods struggle to accu-rately represent the kinetic energy and structural integrity of severe storms. For example, the global WFMs (ClimaX and Aurora) experience catastrophic spatial smoothing. Both models produce FBI scores of 0.00 and HF Spectral Ratios near 0.00, indicating that their predictions are overly regularized by the climato-logical mean, preventing them from synthesizing extreme weather. Conversely, off-the-shelf SVD attempts to match the ground-truth high-intensity of these storms, but completely fails to constrain the physics; it generates 36 times the natural high-frequency atmospheric energy (HF Spectral Ratio of 36.00) and suffers massive rotational deformation (Peak Vorticity Error of 47.08), indicating severe generative hallucination rather than coherent storm synthesis. In contrast, GeoDES generates realistic extreme storms. GeoDES matches or slightly exceeds its full-dataset performance on key structural metrics. Despite the severity of this data subset, GeoDES correctly preserves the rotational core (Peak Vorticity Error of 4.47 ± 1.04 ) and safely recovers the vast majority of the extreme wind distribution (Frequency Bias Index of 0.83 ± 0.13 ). This performance demonstrates that the GeoDES architecture correctly parameterizes severe weather without reverting to the mean or hallucinating unphysical noise. Table 3: Comparison of generative storm realism for the subset of most extreme North Atlantic extratropical cyclones (defined as top 10% of storm-lifetime wind magnitude). GeoDES maintains its strong synthesis performance demonstrated in Table 2 in this more challenging setting. In the far left column, ( ↓) and ( ↑)respectively indicate lower or higher scores are better, while ( ·1) indicates that scores closer to 1 are better. Best results are bolded.                                                                                                                          
+
+> GeoDES SVD CoDiCast CEF ClimaX FT ClimaX Aurora Climatology
+> Peak Vorticity Error ( ↓)4.47 ±1.04 47 .08 ±0.02 6.90 ±2.28 11 .80 ±0.95 11 .14 ±1.18 12 .96 14 .37 8.28
+> HF Spectral Ratio ( ·1)0.71 ±0.14 36 .00 ±0.00 2.02 ±0.94 0.36 ±0.02 0.27 ±0.01 0.01 0.00 0.19
+> Frequency Bias Index ( ·1)0.83 ±0.13 0.88 ±0.00 1.79 ±0.08 0.42 ±0.06 1.55 ±0.08 0.00 0.00 0.59
+> Fractions Skill Score ( ↑)0.82 ±0.07 0.78 ±0.00 0.75 ±0.01 0.53 ±0.04 0.81 ±0.01 0.00 0.00 0.79
+> Synoptic ACC ( ↑)0.45 ±0.05 0.16 ±0.00 0.06 ±0.01 0.18 ±0.02 0.34 ±0.00 0.12 0.13 0.70
+> Synoptic ACC T-Final ( ↑)0.50 ±0.06 0.17 ±0.00 0.04 ±0.02 0.18 ±0.01 0.28 ±0.01 0.05 0.14 0.70
+
+80h (Prompt) 6h 12h 
+
+Real Wind Magnitude     
+
+> 18h 24h 30h 36h 42h
+
+GeoDES (Ours) 
+
+SVD 
+
+CoDiCast 
+
+CEF 
+
+ClimaX Fine-Tuned 
+
+ClimaX 
+
+Aurora 
+
+Climatology          
+
+> 0.0 6.7 13.3 20.0 26.7 33.3 40.0 46.7 53.3 60.0
+> Wind Magnitude at 500hPa (m/s)
+
+Figure 4: Wind magnitude of a real extratropical cyclone in the North Atlantic ( 57 .60 ◦ N, 26 .87 ◦ W at 0h) on October 3-5, 2018, and corresponding output from each synthesis method. GeoDES creates a realistic, novel storm, while other methods generate blurry (ClimaX, Aurora) or noisy (SVD, CoDiCast) outputs. 9Table 4: Test-time computational requirements for each evaluated model, including model size, sampling paradigm, inference steps, FLOPs, latency, VRAM and energy to produce one 42 -hour sample. While GeoDES contains more parameters than other models, all other metrics such as latency and energy usage are competitive with other models. *: FLOPs could not be empirically measured for Aurora due to system RAM limitations; please see estimate derivation in Appendix C.3.                                                 
+
+> GeoDES SVD CoDiCast CEF ClimaX Aurora
+> Params (M) 1802 1525 63 56 111 1256
+> Paradigm Storm Storm Continuous Continuous Continuous Continuous
+> Inference Steps 893 893 13145 13145 13145 13145
+> FLOPs (T) 123 .757 .693 .534 .62.2∼4557 *
+> Latency (s) 17 .37.71029 .24.10.947 .6
+> VRAM (GB) 7.16.01.10.31.613 .4
+> Energy (Wh) 1.44 0.64 85 .77 0.34 0.07 3.97
+
+3.4 Computational Requirements 
+
+Claim 3: GeoDES maintains reasonable compute requirements during training and inference. 
+
+Setup: For each model listed in Section 3.1, Table 4 reports the model parameter count, sampling paradigm (per-storm versus continuously over the 2016–2024 test span) and the resulting number of inference steps, as well as the FLOPs, latency, VRAM and energy required to produce one 42 -hour sample. Model parameter count and FLOPs are both calculated using the Python fvcore library implementations for all models except the TensorFlow-implemented CoDiCast, for which we calculate these metrics from scratch. All measurements are performed on the same machine with an NVIDIA RTX A6000 GPU. Due to the prohibitive System RAM requirements of tracing Aurora’s execution graphs for 0.25 ◦ global inputs (>1M spatial tokens), exact FLOP counts for Aurora could not be profiled natively. We instead estimate FLOPs as a function of parameter count and sequence size according to transformer scaling laws Kaplan et al. (2020). Refer to Appendix C.3 for additional details. As a signal of train-time compute requirements, we also measure the 2D spatial model used to train GeoDES. To sample the same number of frames as the 3D model (i.e., T = 8 ), the 2D model uses 9.4 TFLOPs. 
+
+Results: At test time: GeoDES demonstrates practical inference requirements. While GeoDES has the largest parameter footprint of the evaluated models ( 1.8B), the storm-centered approach restricts its com-putation strictly to the spatial bounding box of the storm. This design choice bypasses the large compute explosion characteristic of high-resolution global Weather Foundation Models (WFMs). For instance, while Aurora contains fewer parameters ( 1.25 B) than GeoDES, processing its high-resolution global grid requires over 36 times as many FLOPs and nearly double the VRAM ( 13 .4 GB). GeoDES also avoids computational traps of autoregressive architectures. Despite CoDiCast’s smaller pa-rameter count ( 63 M), its autoregressive sequence generation results in severe per-sample latency ( 1029 .2s) and energy consumption ( 85 .77 Wh), whereas GeoDES uses a fraction of the time ( 17 .3s) and energy ( 1.44 
+
+Wh). Continuous evaluation models (CoDiCast, CEF, ClimaX, Aurora) further compound this cost over the 2016–2024 period, performing over 13 , 000 inference steps. Consequently, heavier architectures like CoD-iCast cumulatively exceed 1 MWh, heavily outpacing the storm-centric paradigm of GeoDES that is only prompted once for each of the 893 storms in the test set. Ultimately, GeoDES maintains highly accessible compute requirements that enable its use on a single stan-dard commercial GPU. While heavily smoothed global models like ClimaX offer lower absolute latency, GeoDES strikes a more reliable balance between generative capability (demonstrated in Sections 3.2 and 3.3) and practical computational cost for storm-centric tasks. 
+
+At train time: GeoDES’ temporal inflation scheme results in significant time and computational resource savings compared to training the 3D spatiotemporal model from scratch. Because half of the GeoDES training epochs are allocated to the 2D stage, we reduce the computational bottleneck associated with spatiotemporal diffusion. In particular, because the 2D spatial generation phase requires only 9.4 TFLOPs per sample, compared to the 123 .7 TFLOPs at 3D temporal phase, GeoDES achieves its final performance with only 53 .8% of the total theoretical compute that would have been required to train the 3D architecture from scratch. 10 Table 5: Ablation study of the GeoDES architecture evaluated on the North Atlantic test set. We evaluate models trained without signal-to-noise ratio weighting (No SNR), without the correlated noise schedule (Non-Stoch.), using standard linear scaling rather than the variable-specific hybrid normalizer (Linear Norm.) and training the spatiotemporal architecture entirely from scratch (3D W/Out 2D). Results demonstrate that the entire GeoDES pipeline contributes to physical realism, with the 2D-to-3D temporal inflation phase proving especially critical for overall model stability. Best results are bolded. 
+
+GeoDES No SNR Non-Stoch. Linear Norm. 3D W/Out 2D Peak Vorticity Error ( ↓) 5.04 ± 0.47 5.21 ± 0.36 5.43 ± 0.28 4.96 ± 0.05 5.07 ± 0.04 
+
+HF Spectral Ratio ( ·1) 0.95 ± 0.17 0.71 ± 0.19 0.76 ± 0.08 0.79 ± 0.11 1.09 ± 0.35 
+
+Frequency Bias Index ( ·1) 1.02 ± 0.17 0.93 ± 0.08 0.95 ± 0.04 1.06 ± 0.12 1.10 ± 0.19 
+
+Fractions Skill Score ( ↑) 0.76 ± 0.04 0.73 ± 0.05 0.72 ± 0.02 0.76 ± 0.00 0.62 ± 0.08 
+
+Synoptic ACC ( ↑) 0.39 ± 0.03 0.36 ± 0.04 0.37 ± 0.00 0.37 ± 0.01 0.33 ± 0.01 
+
+Synoptic ACC T-Final ( ↑) 0.44 ± 0.03 0.41 ± 0.04 0.39 ± 0.01 0.42 ± 0.00 0.38 ± 0.02 
+
+3.5 Ablations 
+
+Claim 4: Ablation analysis demonstrates the effectiveness of GeoDES as a whole. 
+
+Setup: We test four ablation variants of GeoDES: 
+
+• No SNR: Signal-to-noise weighting is disabled. 
+
+• Non-Stoch.: The model is sampled deterministically without correlated noise. 
+
+• Linear Norm.: All atmospheric channels are normalized linearly. 
+
+• 3D W/Out 2D: A randomly initialized spatiotemporal GeoDES model is trained entirely from scratch for the total number of training epochs. Primary evaluation metrics are in Table 5; supplementary metrics are in Appendix D.2 and Table 8. 
+
+Results: The ablation study confirms that all components of the GeoDES pipeline are necessary to achieve high-quality storm synthesis. 
+
+Temporal Inflation (3D W/Out 2D): Training the 3D spatiotemporal model from scratch yields significant performance collapse, particularly in spatial overlap and navigational accuracy. Without the spatial represen-tation learned during 2D pretraining, Fractions Skill Score drops sharply from 0.76 to 0.62 and Synoptic ACC falls to 0.33 . This confirms that the two-stage training approach is not merely a computational optimization (as established in Section 3.4), but a critical requirement for spatial stability. 
+
+Hybrid Normalization (Linear Norm.): While relying purely on linear normalization yields a competitive Peak Vorticity Error ( 4.96 ), the model fails to accurately preserve the energy distribution of extreme wind, demonstrated by its degraded HF Spectral Ratio ( 0.79 down from 0.95 ). This demonstrates that applying log-scaling to long-tailed variables helps to prevent dynamic range collapse. 
+
+Noise and Sampling Mechanisms (No SNR & Non-Stoch.): Removing signal-to-noise ratio weighting or using deterministic sampling impairs the model’s ability to represent fine-grained, chaotic dynamics of weather systems. Both ablations result in higher Peak Vorticity Errors ( > 5.20 ) and drops in high-frequency energy recovery (HF Spectral Ratios falling from 0.95 to 0.71 and 0.76 , respectively). This proves that properly weighted stochasticity is required to maintain realistic atmospheric turbulence. 
+
+## 4 Related Work 
+
+GeoDES is most closely related to the areas of synoptic storms research, weather modeling and diffusion architectures. We now provide more background on each of these areas. 
+
+Synoptic storms research: Synoptic storms are large-scale weather systems that span approximately 
+
+1000 km or more (Holton & Hakim, 2012). Well-known examples include extratropical cyclones, large hurri-canes and atmospheric rivers. Decades of meteorology research has improved the understanding of how these 11 storms occur and evolve, leading to improved forecasting capabilities. However, notable knowledge deficits remain, including the understanding of dangerous phenomena such as extratropical cyclone bombogenesis (Steiner, 2021) and the impact of climate change on synoptic storms (Gertler & O’Gorman, 2019). An effective paradigm for the study of synoptic storm behavior is the storm-centered approach, which involves the analysis of bounding boxes centered on the storm(s) of interest (Booth et al., 2018). 
+
+Weather modeling: Significant improvements over recent decades have resulted in a diversity of weather models. While traditional numerical weather models remain trusted for operational meteorology, machine learning has been increasingly applied towards the development of novel weather modeling approaches. Much research interest has been devoted to the development of weather foundation models (WFMs), with top-performing architectures including ClimaX (Nguyen et al., 2023), Prithvi WxC (Schmude et al., 2024) and GraphCast (Lam et al., 2023). Historically, ML-based weather models have been strictly divided into global or regional scopes (Shi et al., 2025b). Standalone regional models, such as Andrychowicz et al. (2023) or Mardani et al. (2024), are generally dependent on land-based data and struggle to track the full lifecycle of a storm across large oceanic regions. Conversely, as we show in Section 3.5, deterministic global WFMs tend to smooth predictions of fine-grained storm details. While recent probabilistic frameworks, such as GenCast (Price et al., 2023) and NeuralGCM (Kochkov et al., 2024), mitigate this blurring through generative diffusion, they often impose prohibitive computational overheads for continuous high-resolution synthesis. Relatedly, deep learning has been applied to targeted aspects of extratropical cyclone analysis, such as estimating boundary-layer wind risks (Snaiki & Wu, 2022). However, the efficient modeling of the complete spatiotemporal evolution of these synoptic storms has remained relatively under-explored. 
+
+Diffusion architectures: Diffusion modeling (Ho et al., 2020) is a popular generative deep learning archi-tecture often applied for image and video synthesis (Ho et al., 2022; Blattmann et al., 2023); see Section B for details. Diffusion models applied to weather modeling have focused on the problems of global forecasting, for instance CoDiCast (Shi et al., 2025a) and Continuous Ensemble Forecasting (CEF) (Andrae et al., 2025), and regional forecasting (Mardani et al., 2024). Relatedly, diffusion models have been successfully applied to high-resolution precipitation nowcasting (Gao et al., 2023) and the scalable generation of probabilistic forecast ensembles (Li et al., 2023). 
+
+## 5 Limitations and Future Work 
+
+GeoDES demonstrates strong generative fidelity for large-scale storm structures at the 500hPa pressure level (representing the mid-level atmosphere), a standard and useful domain for analyzing storm evolution. However, future work should expand this framework to include precipitation and surface-level phenomena. Precipitation is a notorious challenge due to its sparse, discontinuous manner. Synthesizing 10-meter wind fields introduces additional complexities, such as boundary layer dynamics and topographical friction. In-corporating these extreme surface distributions is an important step for applying synthetic storms directly to infrastructural stress testing and hazard mitigation. Furthermore, transitioning GeoDES into a fully op-erational tool will require pairing the model with an intuitive inference pipeline, allowing meteorologists to easily condition, generate and interpret synthetic storms within standard climate science workflows. 
+
+## 6 Conclusion 
+
+We present Geospatial Diffusion-based Evolution Synthesis (GeoDES), a model for the synthesis of large-scale storm structures. We demonstrate that GeoDES’ storm-centered approach, 2D-to-3D temporal inflation strategy and weather-adapted data normalization enable realistic extratropical cyclone synthesis, useful to data augmentation and validation of downstream forecasting models. 
+
+Broader Impact Statement 
+
+While we foresee few negative repercussions of GeoDES in particular, we note that all empirical deep learning research requires the consumption of energy which, in aggregate, negatively impacts the environment. We have taken efforts to be transparent about compute resources through Section 3.4. 12 Acknowledgments 
+
+We thank the NASA Climate Change Research Initiative (CCRI), the National Science Foundation (NSF CCF-2106707), the Defense Advanced Research Projects Agency (DARPA) Young Faculty Award and the Wisconsin Alumni Research Foundation (WARF) for funding this work. We are also grateful to the University of Wisconsin-Madison Center for High Throughput Computing (CHTC) for providing GPU resources and to Kellie O’Grady for feedback on an early stage of this work. 
+
+## References 
+
+Martin Andrae, Tomas Landelius, Joel Oskarsson, and Fredrik Lindsten. Continuous ensemble weather forecasting with diffusion models. In International Conference on Learning Representations , volume 2025, pp. 26392–26416, 2025. Marcin Andrychowicz, Lasse Espeholt, Di Li, Samier Merchant, Alexander Merose, Fred Zyda, Shreya Agrawal, and Nal Kalchbrenner. Deep learning for day forecasts from sparse observations. arXiv preprint arXiv:2306.06079 , 2023. Roman Attinger, Elisa Spreitzer, Maxi Boettcher, Heini Wernli, and Hanna Joos. Systematic assessment of the diabatic processes that modify low-level potential vorticity in extratropical cyclones. Weather and Climate Dynamics , 2:1073–1091, November 2021. doi: 10.5194/wcd-2-1073-2021. Andreas Blattmann, Tim Dockhorn, Sumith Kulal, Daniel Mendelevitch, Maciej Kilian, Dominik Lorenz, Yam Levi, Zion English, Vikram Voleti, Adam Letts, Varun Jampani, and Robin Rombach. Stable Video Diffusion: Scaling Latent Video Diffusion Models to Large Datasets, November 2023. URL http: //arxiv.org/abs/2311.15127 . arXiv:2311.15127 [cs]. Cristian Bodnar, Wessel P Bruinsma, Ana Lucic, Megan Stanley, Johannes Brandstetter, Patrick Garvan, Maik Riechert, Jonathan Weyn, Haiyu Dong, Anna Vaughan, et al. Aurora: A foundation model of the atmosphere. arXiv preprint arXiv:2405.13063 , 1(8), 2024. James F. Booth, Catherine M. Naud, and Jeyavinoth Jeyaratnam. Extratropical Cyclone Precipitation Life Cycles: A Satellite-Based Analysis. Geophysical Research Letters , 45(16):8647–8654, 2018. ISSN 1944-8007. doi: 10.1029/2018GL078977. URL https://onlinelibrary.wiley.com/doi/abs/10.1029/ 2018GL078977 . _eprint: https://onlinelibrary.wiley.com/doi/pdf/10.1029/2018GL078977. J. L. Catto. Extratropical cyclone classification and its use in climate studies. Reviews of Geophysics , 54(2): 486–520, 2016. doi: https://doi.org/10.1002/2016RG000519. URL https://agupubs.onlinelibrary. wiley.com/doi/abs/10.1002/2016RG000519 .Aakanksha Chowdhery, Sharan Narang, Jacob Devlin, Maarten Bosma, Gaurav Mishra, Adam Roberts, Paul Barham, Hyung Won Chung, Charles Sutton, Sebastian Gehrmann, Parker Schuh, Kensen Shi, Sasha Tsvyashchenko, Joshua Maynez, Abhishek Rao, Parker Barnes, Yi Tay, Noam Shazeer, Vinodkumar Prabhakaran, Emily Reif, Nan Du, Ben Hutchinson, Reiner Pope, James Bradbury, Jacob Austin, Michael Isard, Guy Gur-Ari, Pengcheng Yin, Toju Duke, Anselm Levskaya, Sanjay Ghemawat, Sunipa Dev, Henryk Michalewski, Xavier Garcia, Vedant Misra, Kevin Robinson, Liam Fedus, Denny Zhou, Daphne Ippolito, David Luan, Hyeontaek Lim, Barret Zoph, Alexander Spiridonov, Ryan Sepassi, David Dohan, Shivani Agrawal, Mark Omernick, Andrew M. Dai, Thanumalayan Sankaranarayana Pillai, Marie Pellat, Aitor Lewkowycz, Erica Moreira, Rewon Child, Oleksandr Polozov, Katherine Lee, Zongwei Zhou, Xuezhi Wang, Brennan Saeta, Mark Diaz, Orhan Firat, Michele Catasta, Jason Wei, Kathy Meier-Hellstern, Douglas Eck, Jeff Dean, Slav Petrov, and Noah Fiedel. Palm: Scaling language modeling with pathways, 2022. URL https://arxiv.org/abs/2204.02311 .Robin Clancy, Cecilia M Bitz, Edward Blanchard-Wrigglesworth, Marie C McGraw, and Steven M Cavallo. A cyclone-centered perspective on the drivers of asymmetric patterns in the atmosphere and sea ice during arctic cyclones. Journal of Climate , 35(1):73–89, 2022. 13 Elizabeth E Ebert. Fuzzy verification of high-resolution gridded forecasts: a review and proposed framework. 
+
+Meteorological Applications , 15(1):51–64, 2008. Zhihan Gao, Xingjian Shi, Boran Han, Hao Wang, Xiaoyong Jin, Danielle Maddix, Yi Zhu, Mu Li, and Yuyang Bernie Wang. Prediff: Precipitation nowcasting with latent diffusion models. Advances in Neural Information Processing Systems , 36:78621–78656, 2023. Charles G Gertler and Paul A O’Gorman. Changing available energy for extratropical cyclones and associated convection in northern hemisphere summer. Proceedings of the National Academy of Sciences , 116(10): 4105–4110, 2019. Johannes Hagemann, Samuel Weinbach, Konstantin Dobler, Maximilian Schall, and Gerard de Melo. Efficient parallelization layouts for large-scale distributed model training, 2024. URL https://arxiv.org/abs/ 2311.05610 .Tiankai Hang, Shuyang Gu, Chen Li, Jianmin Bao, Dong Chen, Han Hu, Xin Geng, and Baining Guo. Efficient diffusion training via min-snr weighting strategy. In Proceedings of the IEEE/CVF international conference on computer vision , pp. 7441–7451, 2023. M. K. Hawcroft, L. C. Shaffrey, K. I. Hodges, and H. F. Dacre. How much Northern Hemisphere precipitation is associated with extratropical cyclones? Geophysical Research Letters , 39(24), 2012. ISSN 1944-8007. doi: 10.1029/2012GL053866. URL https://onlinelibrary.wiley.com/doi/abs/10.1029/2012GL053866 ._eprint: https://onlinelibrary.wiley.com/doi/pdf/10.1029/2012GL053866. Hans Hersbach, Bill Bell, Paul Berrisford, Shoji Hirahara, András Horányi, Joaquín Muñoz-Sabater, Julien Nicolas, Carole Peubey, Raluca Radu, Dinand Schepers, et al. The era5 global reanalysis. Quarterly journal of the royal meteorological society , 146(730):1999–2049, 2020. Jonathan Ho, Ajay Jain, and Pieter Abbeel. Denoising diffusion probabilistic models. Advances in neural information processing systems , 33:6840–6851, 2020. Jonathan Ho, Tim Salimans, Alexey Gritsenko, William Chan, Mohammad Norouzi, and David J Fleet. Video diffusion models. Advances in neural information processing systems , 35:8633–8646, 2022. James R Holton and Gregory J Hakim. An introduction to dynamic meteorology , volume 88. Academic press, 2012. Ian T Jolliffe and David B Stephenson. Forecast verification: a practitioner’s guide in atmospheric science .John Wiley & Sons, 2011. Jared Kaplan, Sam McCandlish, Tom Henighan, Tom B. Brown, Benjamin Chess, Rewon Child, Scott Gray, Alec Radford, Jeffrey Wu, and Dario Amodei. Scaling laws for neural language models, 2020. URL 
+
+https://arxiv.org/abs/2001.08361 .Dmitrii Kochkov, Janni Yuval, Ian Langmore, Peter Norgaard, Jamie Smith, Griffin Mooers, Milan Klöwer, James Lottes, Stephan Rasp, Peter Düben, et al. Neural general circulation models for weather and climate. Nature , 632(8027):1060–1066, 2024. Solomon Kullback and Richard A Leibler. On information and sufficiency. The annals of mathematical statistics , 22(1):79–86, 1951. Remi Lam, Alvaro Sanchez-Gonzalez, Matthew Willson, Peter Wirnsberger, Meire Fortunato, Ferran Alet, Suman Ravuri, Timo Ewalds, Zach Eaton-Rosen, Weihua Hu, et al. Learning skillful medium-range global weather forecasting. Science , 382(6677):1416–1421, 2023. Lizao Li, Rob Carver, Ignacio Lopez-Gomez, Fei Sha, and John Anderson. Seeds: Emulation of weather forecast ensembles with diffusion models. arXiv preprint arXiv:2306.14066 , 2023. 14 Andreas Lugmayr, Martin Danelljan, Andres Romero, Fisher Yu, Radu Timofte, and Luc Van Gool. Repaint: Inpainting using denoising diffusion probabilistic models. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pp. 11461–11471, 2022. Morteza Mardani, Noah Brenowitz, Yair Cohen, Jaideep Pathak, Chieh-Yu Chen, Cheng-Chin Liu, Arash Vahdat, Karthik Kashinath, Jan Kautz, and Mike Pritchard. Residual diffusion modeling for km-scale atmospheric downscaling. 2024. Jonathan E Martin. Mid-latitude atmospheric dynamics: a first course . John Wiley & Sons, 2013. Catherine M. Naud, Jonathan E. Martin, Poushali Ghosh, Gregory S. Elsaesser, James F. Booth, and Derek J. Posselt. Lifecycle-type matters for extratropical cyclone precipitation production. Geo-physical Research Letters , 52(8):e2025GL115153, 2025. doi: https://doi.org/10.1029/2025GL115153. URL https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1029/2025GL115153 . e2025GL115153 2025GL115153. Tung Nguyen, Johannes Brandstetter, Ashish Kapoor, Jayesh K Gupta, and Aditya Grover. Climax: Afoundation model for weather and climate. arXiv preprint arXiv:2301.10343 , 2023. Reiner Pope, Sholto Douglas, Aakanksha Chowdhery, Jacob Devlin, James Bradbury, Jonathan Heek, Kefan Xiao, Shivani Agrawal, and Jeff Dean. Efficiently scaling transformer inference. Proceedings of machine learning and systems , 5:606–624, 2023. Ilan Price, Alvaro Sanchez-Gonzalez, Ferran Alet, Tom R Andersson, Andrew El-Kadi, Dominic Masters, Timo Ewalds, Jacklynn Stott, Shakir Mohamed, Peter Battaglia, et al. Gencast: Diffusion-based ensemble forecasting for medium-range weather. arXiv preprint arXiv:2312.15796 , 2023. Stephan Rasp, Peter D Dueben, Sebastian Scher, Jonathan A Weyn, Soukayna Mouatadid, and Nils Thuerey. Weatherbench: a benchmark data set for data-driven weather forecasting. Journal of Advances in Modeling Earth Systems , 12(11):e2020MS002203, 2020. Suman Ravuri, Karel Lenc, Matthew Willson, Dmitry Kangin, Remi Lam, Piotr Mirowski, Megan Fitzsi-mons, Maria Athanassiadou, Sheleem Kashem, Simon Madge, et al. Skilful precipitation nowcasting using deep generative models of radar. Nature , 597(7878):672–677, 2021. Nigel M Roberts and HW Lean. Scale-selective verification of rainfall accumulations from high-resolution forecasts of convective events. Monthly Weather Review , 136(1):78–97, 2008. Olaf Ronneberger, Philipp Fischer, and Thomas Brox. U-net: Convolutional networks for biomedical image segmentation. In International Conference on Medical image computing and computer-assisted interven-tion , pp. 234–241. Springer, 2015. Johannes Schmude, Sujit Roy, Will Trojak, Johannes Jakubik, Daniel Salles Civitarese, Shraddha Singh, Julian Kuehnert, Kumar Ankur, Aman Gupta, Christopher E Phillips, et al. Prithvi wxc: Foundation model for weather and climate. arXiv preprint arXiv:2409.13598 , 2024. Jimeng Shi, Bowen Jin, Jiawei Han, Sundararaman Gopalakrishnan, and Giri Narasimhan. Codicast: Con-ditional diffusion model for global weather forecasting with uncertainty quantification. International Joint Conferences on Artificial Intelligence Organization, 2025a. Jimeng Shi, Azam Shirali, Bowen Jin, Sizhe Zhou, Wei Hu, Rahuul Rangaraj, Shaowen Wang, Jiawei Han, Zhaonan Wang, Upmanu Lall, Yanzhao Wu, Leonardo Bobadilla, and Giri Narasimhan. Deep learning and foundation models for weather prediction: A survey, 2025b. URL https://arxiv.org/abs/2501.06907 .Uriel Singer, Adam Polyak, Thomas Hayes, Xi Yin, Jie An, Songyang Zhang, Qiyuan Hu, Harry Yang, Oron Ashual, Oran Gafni, et al. Make-a-video: Text-to-video generation without text-video data. arXiv preprint arXiv:2209.14792 , 2022. William C Skamarock. Evaluating mesoscale nwp models using kinetic energy spectra. Monthly weather review , 132(12):3019–3032, 2004. 15 Reda Snaiki and Teng Wu. Knowledge-enhanced deep learning for simulation of extratropical cyclone wind risk. Atmosphere , 13(5):757, 2022. Yang Song, Jascha Sohl-Dickstein, Diederik P Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-based generative modeling through stochastic differential equations. arXiv preprint arXiv:2011.13456 , 2020. Joshua C Steiner. A regional comparison of bomb cyclones in the central plains and western atlantic. Master’s thesis, The Ohio State University, 2021. Daniel S Wilks. Statistical methods in the atmospheric sciences , volume 100. Academic press, 2011. Hugh E Willoughby, RWR Darling, and ME Rahn. Parametric representation of the primary hurricane vortex. part ii: A new family of sectionally continuous profiles. Monthly weather review , 134(4):1102–1120, 2006. Ian R. Young and Agustinus Ribal. Multiplatform evaluation of global trends in wind speed and wave height. 
+
+Science , 364(6440):548–552, 2019. doi: 10.1126/science.aav9527. URL https://www.science.org/doi/ abs/10.1126/science.aav9527 .Zhongwei Zhang, Erich Fischer, Jakob Zscheischler, and Sebastian Engelke. Physics-based models outperform ai weather forecasts of record-breaking extremes. Science Advances , 12(18):eaec1433, 2026. 
+
+## A Glossary of Terms and Abbreviations 
+
+We include definitions for common abbreviations in this section, as well as important technical terms. 
+
+• ACC (Anomaly Correlation Coefficient): A standard meteorological metric that measures the spa-tial pattern correlation of predicted fields to evaluate spatial and navigational accuracy (Wilks, 2011). 
+
+• Autoregressive Synthesis: A generation approach where the model predicts each subsequent timestep based on the previous one(s). 
+
+• CEF (Continuous Ensemble Forecasting): A diffusion-based global forecasting ensemble that oper-ates via a continuous deterministic ODE solver (Andrae et al., 2025). 
+
+• DDPM (Denoising Diffusion Probabilistic Model): A generative machine learning framework that synthesizes data by learning to reverse a Markovian forward diffusion process that progressively adds Gaussian noise to a sample, see Appendix B (Ho et al., 2020). 
+
+• ERA5 : The fifth generation ECMWF atmospheric reanalysis of the global climate, used as the primary data source for training and evaluating the models in this study (Hersbach et al., 2020). 
+
+• Extratropical Cyclone : An evolving, mid-latitude weather system driven by atmospheric temperature gradients, associated with strong wind, heavy precipitation and large-scale energy transfer (Martin, 2013). 
+
+• Fine-tuning: A machine learning procedure where a pre-trained model is further trained on a task-specific dataset (such as climate fields) to adapt its generalized capabilities to a specialized domain. 
+
+• FBI (Frequency Bias Index): A metric evaluating extreme intensity, calculated as the ratio of pre-dicted extreme wind pixels ( > 20 m/s) to actual extreme wind pixels (Wilks, 2011). 
+
+• FSS (Fractions Skill Score): A neighborhood-based spatial verification metric that measures the spatial overlap accuracy specifically for extreme ( > 20 m/s) wind distributions (Roberts & Lean, 2008). 
+
+• GeoDES (Geospatial Diffusion-based Evolution Synthesis): The primary architecture proposed in this work; a storm-centered, spatiotemporal diffusion model designed for synthesizing large-scale storm structure evolution. 
+
+• Hallucination: An undesirable effect of generative model outputs appearing structurally coherent, but physically incorrect or purely fabricated, often failing to respect underlying scientific laws. 
+
+• Latent Space: A compressed, low-dimensional mathematical representation of data where a model encodes key features, allowing for efficient processing and synthesis of complex spatial structures. 16 • MCMS (Modeling, Analysis and Prediction Climatology of Mid-latitude Storminess): Code-base and methodology used to identify and track the coordinates of extratropical cyclones within the global ERA5 dataset, see Appendix C.1. 
+
+• MSE (Mean Squared Error): Standard loss function used during training, measuring the pixel-wise difference between ground-truth and predicted atmospheric states (Ho et al., 2022). 
+
+• Non-Autoregressive Synthesis : A generation approach where the model synthesizes an entire sequence of data (like a time-series of storm frames) simultaneously rather than step-by-step. This contrasts with autoregressive synthesis. 
+
+• RMSE (Root Mean Square Error): A standard pixel-wise evaluation metric calculated across all un-normalized atmospheric variables (Roberts & Lean, 2008). 
+
+• SACC (Synoptic Anomaly Correlation Coefficient): An adaptation of the ACC metric that applies a spatial Gaussian filter prior to correlation, mitigating the double-penalty effect for structurally sound but slightly displaced storm predictions (Wilks, 2011). 
+
+• SLP (Sea-Level Pressure): One of the five primary atmospheric variables analyzed in this study; the minimum SLP is tracked to determine the center coordinates of the cyclonic storms. 
+
+• SNR (Signal-to-Noise Ratio): A weighting mechanism applied to the reverse denoising training ob-jective to prioritize physical accuracy and stabilize intermediate noise scales (Hang et al., 2023). 
+
+• SVD (Stable Video Diffusion): An off-the-shelf image-to-video diffusion baseline model evaluated for its zero-shot physical viability in storm synthesis (Blattmann et al., 2023). 
+
+• Transformer: A prominent neural network architecture that relies on attention mechanisms to capture long-range dependencies in data; widely used as the backbone for modern foundation models. 
+
+• U-Net: A convolutional neural network architecture commonly used in diffusion models, featuring a symmetric encoder-decoder structure that preserves spatial resolution for tasks like storm synthesis. 
+
+• WFM (Weather Foundation Model): Large-scale machine learning architectures (such as ClimaX and Aurora) pretrained on vast amounts of atmospheric data to perform generalized weather tasks. 
+
+• Zero-shot Evaluation: An evaluation paradigm where a machine learning model is tested on a task or dataset it was not explicitly trained for, demonstrating its ability to generalize to unseen scenarios without parameter updates. 
+
+## B Background on Diffusion Modeling 
+
+A Diffusion Model (DM) is capable of generating synthetic datapoints by learning a mapping from pure Gaussian noise to the desired data distribution (Ho et al., 2020). Denote a training dataset by D ⊆ Rd. The 
+
+forward diffusion process is responsible for transforming a real datapoint x0 ∈ D with distribution q(x0) into a tensor of Gaussian noise xN over N diffusion steps. This process is represented by a Markov chain and acts according to a variance schedule {β1, β 2, . . . , β n}, to produce 
+
+q(xn|xn−1) = N (xn; √1 − βnxn−1, β nI) and (1) 
+
+q(x1: N |x0) = 
+
+> N
+
+∏
+
+> n=1
+
+q(xn|xn−1), n ∈ [1 , N ]. (2) The forward process can also be described in the closed form across steps as 
+
+q(xn|x0) = N (xn; √¯αnx0, (1 − ¯αn)I),
+
+where αn = 1 − βn and ¯αn = ∏ns=1 αs.In the reverse denoising process , the denoiser network uses xN to predict a denoised version of x0 in steps. Given that pΘ(xn) is the distribution at noise step n parameterized by the denoiser Θ, this process is performed as 
+
+pΘ(x0: N ) = p(xN )
+
+> N
+
+∏
+
+> n=1
+
+pΘ(xn−1|xn). (3) 17 For each noise step n ∈ [1 , N ], the training process aims to minimize the Kullback-Leibler (KL) Divergence (Kullback & Leibler, 1951) between the predicted and ground-truth sample distribution at noise step n − 1,
+
+Ln = DKL (q(xn−1|xn)|| pΘ(xn−1|xn)) .
+
+The term q(xn−1|xn) is computed from q(xn|xn−1) using Bayes theorem and the open-form equation for the forward process. Note that in practice, most diffusion implementations (including GeoDES) use mean squared error (MSE) loss in place of KL Divergence, for computational efficiency and to encourage sharper, more detailed outputs (Ho et al., 2022). 
+
+## C Experimental Setup 
+
+In this appendix, we provide further information on the setups for the experiments performed in Section 3. Appendix C.1 includes information on how non-synthetic data, as well as model outputs, were processed, while Appendix C.2 describes model hyperparameters. Appendix C.3 provides details on how computational requirements were determined as presented in Section 3.4. 
+
+C.1 Data Processing Details 
+
+Storm selection: Extratropical cyclones are identified within the ERA5 Sea Level Pressure 1940-2024 6-hourly global data on a 0.25 ◦ × 0.25 ◦ grid using the NASA Modeling, Analysis and Prediction Climatology of Mid-latitude Storminess (MCMS) codebase 1. For each extratropical cyclone, the codebase returns a list of timeframes in which the cyclone occurs, as well as the latitude and longitude of the storm’s low-pressure center at each timeframe. We filter to only include storms that begin equatorward of 70 ◦ and that persist for at least 8 timeframes. For storms longer than 8 timepoints, we only include the first 8 timeframes. Next, we use a region mask to categorize and retain storms that occur in the North/South Atlantic and Pacific basins. 
+
+Global models 
+
+Train-time procedure: Global model codebases are designed to expect continuous 6-hourly global data over a given period. Accordingly, models are trained on 6-hourly data over our entire training period (January 1940-August 2015). 
+
+Test-time procedure: We sample each model using a 7-step lead time. For each storm in our test set (January 2016-December 2024), we select the model output that is prompted from the timestep that the storm begins. Beginning at the ground-truth initial storm location, we then track the storm through the synthetic global forecast in subsequent timesteps by locating the minimum Sea Level Pressure (SLP) within a 10 ◦ × 10 ◦
+
+bounding box centered on the previous frame’s location. At each timestep, we then extract a 1600 × 1600 km equal-area bounding box, centered at the storm’s minimum SLP location. We perform interpolation as necessary to reach a 32 × 32 × V tensor, where V is the number of climate variables. 
+
+ClimaX SLP Derivation: Because pretrained ClimaX does not offer SLP, we instead condition on and predict geopotential at 925 hPa and 2-meter temperature. The ClimaX-predicted SLP is then derived via the hypsometric equation, 
+
+Pslp = ℓe Φ/(RdT2m),
+
+where ℓ is the reference pressure level (925 hPa), Φ is the predicted geopotential, Rd is the specific gas constant for dry air and T2m is 2-meter temperature. Consequently, storm tracking for ClimaX relies on geopotential minima in place of SLP. 
+
+Patch-based models (GeoDES and SVD) 
+
+Train-time procedure: Using the ground-truth storm location data created by MCMS for train-time storms in a given basin of interest, we extract bounding boxes around each storm at each timestep of its lifecycle, centered on its minimum SLP location. Interpolating as needed, each storm is represented as a 32 × 32 × V
+
+tensor, where the first two dimensions represent grid area and V is the number of climate variables ( V = 5 
+
+in our experiments). GeoDES and SVD are trained on these samples directly. 
+
+> 1https://github.com/jfbooth/MIKE_BAUERS_MCMSV4
+
+18 Test-time procedure: Forming ground-truth test set datapoints in an analogous fashion to the GeoDES and SVD train set datapoints above, both models are then prompted with the 0-th timeframe of each storm in the test set. 
+
+Evaluations 
+
+Given the storm-centered bounding boxes created by or extracted from each method, evaluations are per-formed against the ground-truth test set storm-centered bounding boxes created during the GeoDES/SVD test-time procedure. 
+
+C.2 Hyperparameters 
+
+GeoDES: GeoDES was implemented in Python 3.11.11 with Diffusers 0.35.0 and PyTorch 2.6.0. U-Net block out channels are set to [512 , 1024 , 2048] and we leave the layers per block and cross-attention dimension to the diffusers library defaults of 2 and 768 , respectively. We train GeoDES for a maximum total of 40 epochs (20 at 2D phase and 20 at 3D phase). The 2D and 3D phases are both performed with a patience of 5 epochs, with patience determined according to the training loss. The learning rate is 1e −5 at the start of both 2D and 3D phases, selected from a search over 
+
+{1e −3, 1e −4, 1e −5, 1e −6, 1e −7, 1e −8}. We perform the learning rate search at the 2D phase, select the two learning rates with lowest losses ( 1e −4 and 1e −5), then perform the 3D loss search using both of these 2D settings to select the 3D model with lowest overall loss. Both 2D and 3D phases use the diffusers cosine schedule learning rate decay implementations with no warmup. We use MSE loss function and SNR of 5.The training phase uses an AdamW optimizer and a DDPM scheduler with 1000 timesteps. Our batch size is 1, with 8 gradient accumulation steps and no weight decay. Model weights are updated directly without the use of an Exponential Moving Average (EMA). At the 3D phase, we train and sample with BFloat16 (bf16) mixed precision and use temporal noise corre-lation ρ = 0 .95 (see Section 2.3 for details). At sample time, we use the DDIM sampler with 50 timesteps and η = 1 .0 (we find that η = 0 .0 also produces viable, but more conservative, predictions). 
+
+Baselines: For the prior work baselines (CoDiCast, CEF, ClimaX, ClimaX FT, Aurora), we use the highest-resolution model available, with the hyperparameters selected in their respective codebases. We use BFloat 16 mixed precision fine-tuning for ClimaX FT. For SVD, we use the same hyperparameter search protocol as the GeoDES model to reach a learning rate of 1e −4.
+
+C.3 Details on Computational Requirements Estimation 
+
+Estimation of Aurora FLOPs: Because Aurora operates on global 0.25 ◦ inputs, empirical FLOP calcu-lation requires prohibitive amounts of system RAM and we instead estimate the FLOPs for this model. Aurora is a 1.25B-parameter transformer-based model, with inputs of dimensions 721 × 1440 per variable. A Perceiver encoder model performs 3D convolutions to extract 4 × 4 patches, compressing the grid to 
+
+180 × 360 = 64800 tokens per level. Vertically, the encoder cross-attends the inputs to a latent depth of 
+
+Z = 4 levels (one surface and three atmospheric), regardless of the number of input variables or atmospheric levels 2. Accordingly, the encoded input contains 4 ∗ 64800 = 259200 tokens. According to Kaplan et al. (2020), the cost of a single transformer inference-time forward pass may be estimated as 2P N for a P -parameter model and N input tokens. Accordingly, each Aurora forward pass is approximately 2 ∗ (1 .25 × 10 9) ∗ (2 .59 × 10 6) ≈ 651 TFLOPs. Multiplying by 7 inference timesteps to achieve the 48 -hour forecasts within Section 3.2 yields a total approximation of 4557 TFLOPs. We validate this FLOP estimate by calculating the corresponding Model FLOPs Utilization (MFU, Chowd-hery et al. (2022)). As stated in Table 4, we observe a 47 .6-second wall-clock latency for Aurora, which 
+
+> 2According to the official Microsoft Aurora implementation, https://github.com/microsoft/aurora
+
+19 indicates a rate of 95 .74 TFLOP/second. These evaluations were performed on an NVIDIA RTX A6000, with a dense FP16/BF16 Tensor Core peak throughput of 154 .8 TFLOP/second. As such, the MFU is calculated as Model TFLOP/second Theoretical Peak Hardware TFLOP/second ≈ 61 .8% . Because Aurora performs a dense volumetric forward pass over a 259200 token sequence at each autoregressive step, the computation maintains high arithmetic intensity. As such, the observed MFU aligns well with the established real-world vs theoretical upper bounds of dense PyTorch Transformer utilization (Hagemann et al., 2024; Pope et al., 2023). 
+
+Estimation of Saved Compute Using 2D vs 3D GeoDES Training: The 3D model uses 123 , 662 
+
+GFLOPs to produce all 8 frames of a single datapoint. The 2D model uses 1, 182 GFLOPs to produce a single (non-temporal) frame, or 9, 455 GFLOPs to produce 8 frames. As such, we estimate the saved compute: 
+
+12 + 12 · 9455 123662 = 0 .538 .
+
+## D Additional Storm Modeling Realism Results 
+
+We now present additional analyses of our main paper experiments presented in Section 3. Appendix D.1 provides visualizations to accompany our main results on generative storm realism in Section 3.2, while Appendix D.2 contains additional performance metrics (average and per-variable RMSE, synoptic and non-synoptic ACC) for the experiments presented in Sections 3.2, 3.3 and 3.5 
+
+D.1 Supplemental Plots and Visualizations 
+
+In this section, we provide additional figures to visualize the performance of each method from Section 3.2. For explanations of each method, please refer to Section 3.1. 
+
+Example storm outputs: We visualize the sea-level pressure, temperature and humidity outputs of each method compared to a real storm in Figures 5, 6, 7, respectively. The wind magnitude outputs for the same storm across all methods are presented in Figure 4. Together, these figures support the narrative told by the performance metrics in Table 2. Global Weather Foundation Models (ClimaX, Aurora) and other global autoregressive models (CEF) suffer from catastrophic smoothing. They fail to resolve the sharp thermodynamic gradients of moving weather fronts (visible in humidity and temperature) and wash out the high-frequency energy bands of the wind field. Conversely, the off-the-shelf video diffusion baseline (SVD) generates high-frequency energy but lacks physical constraints, collapsing into unorganized visual noise. CoDiCast, while not as severe as SVD, presents a similar high-energy failure mode, with overly energetic wind field and steep spatial gradients in its SLP, temperature and humidity predictions. GeoDES is the only architecture capable of preserving both the sharp frontal boundaries and the organized, high-frequency turbulence of the cyclone, balancing structural realism with intensity. 20 0h (Prompt) 6h 12h 
+
+Real Sea Level Pressure (SLP)     
+
+> 18h 24h 30h 36h 42h
+
+GeoDES (Ours) 
+
+SVD 
+
+CoDiCast 
+
+CEF 
+
+ClimaX Fine-Tuned 
+
+ClimaX 
+
+Aurora 
+
+Climatology          
+
+> 975.4 980.5 985.6 990.7 995.8 1000.9 1006.0 1011.1 1016.2 1021.3
+> Sea Level Pressure (hPa)
+
+Figure 5: Sea Level Pressure (SLP) of the extratropical cyclone in Figure 4 and corresponding predictions from each synthesis method. While global WFMs correctly identify the macroscopic background pressure gradient, they fail to resolve the deep, localized minimum of the storm core. Conversely, GeoDES perfectly captures the tight pressure gradients and depth of the localized cyclone core. 21 0h (Prompt) 6h 12h 
+
+Real Temperature     
+
+> 18h 24h 30h 36h 42h
+
+GeoDES (Ours) 
+
+SVD 
+
+CoDiCast 
+
+CEF 
+
+ClimaX Fine-Tuned 
+
+ClimaX 
+
+Aurora 
+
+Climatology          
+
+> 262.9 265.5 268.1 270.7 273.4 276.0 278.6 281.2 283.8 286.4
+> Temperature at 925hPa (K)
+
+Figure 6: Temperature at 925hPa of the extratropical cyclone in Figure 4. Extratropical cyclones are fundamentally driven by the interaction of contrasting air masses. While baseline models act as spatial low-pass filters that blur these boundaries, GeoDES successfully preserves the sharp thermodynamic gradients of the moving weather fronts and the swirling thermal advection of the storm over the 42-hour rollout. 22 0h (Prompt) 6h 12h 
+
+Real Specific Humidity     
+
+> 18h 24h 30h 36h 42h
+
+GeoDES (Ours) 
+
+SVD 
+
+CoDiCast 
+
+CEF 
+
+ClimaX Fine-Tuned 
+
+ClimaX 
+
+Aurora 
+
+Climatology          
+
+> 0.000050 0.000409 0.000767 0.001126 0.001485 0.001843 0.002202 0.002561 0.002919 0.003278
+> Specific Humidity at 500hPa (kg/kg)
+
+Figure 7: Specific Humidity at 500hPa of the extratropical cyclone in Figure 4. Similar to the temperature fields, GeoDES accurately maintains the structural integrity and sharp gradients of the moisture fronts, avoiding the catastrophic spatial smoothing exhibited by the global baselines and the unconstrained noise injection of CoDiCast and SVD. 23 0.05 0.10 0.20 0.50   
+
+> Wavenumber (Frequency)
+> 10 4
+> 10 2
+> 10 0
+> 10 2
+> 10 4
+> 10 6
+> Power Spectral Density
+
+GeoDES (Ours)      
+
+> Real Test Set
+> GeoDES (Ours) Synthetic 0.05 0.10 0.20 0.50
+> Wavenumber (Frequency)
+> 10 4
+> 10 2
+> 10 0
+> 10 2
+> 10 4
+> 10 6
+> Power Spectral Density
+
+SVD      
+
+> Real Test Set
+> SVD Synthetic 0.05 0.10 0.20 0.50
+> Wavenumber (Frequency)
+> 10 4
+> 10 2
+> 10 0
+> 10 2
+> 10 4
+> 10 6
+> Power Spectral Density
+
+CoDiCast      
+
+> Real Test Set
+> CoDiCast Synthetic 0.05 0.10 0.20 0.50
+> Wavenumber (Frequency)
+> 10 4
+> 10 2
+> 10 0
+> 10 2
+> 10 4
+> 10 6
+> Power Spectral Density
+
+CEF      
+
+> Real Test Set
+> CEF Synthetic 0.05 0.10 0.20 0.50
+> Wavenumber (Frequency)
+> 10 4
+> 10 2
+> 10 0
+> 10 2
+> 10 4
+> 10 6
+> Power Spectral Density
+
+ClimaX-FT      
+
+> Real Test Set
+> ClimaX-FT Synthetic 0.05 0.10 0.20 0.50
+> Wavenumber (Frequency)
+> 10 4
+> 10 2
+> 10 0
+> 10 2
+> 10 4
+> 10 6
+> Power Spectral Density
+
+ClimaX      
+
+> Real Test Set
+> ClimaX Synthetic 0.05 0.10 0.20 0.50
+> Wavenumber (Frequency)
+> 10 4
+> 10 2
+> 10 0
+> 10 2
+> 10 4
+> 10 6
+> Power Spectral Density
+
+Aurora      
+
+> Real Test Set
+> Aurora Synthetic 0.05 0.10 0.20 0.50
+> Wavenumber (Frequency)
+> 10 4
+> 10 2
+> 10 0
+> 10 2
+> 10 4
+> 10 6
+> Power Spectral Density
+
+Climatology 
+
+> Real Test Set
+> Climatology
+
+Figure 8: Power Spectral Density (PSD) of Wind Magnitude, visualizing how kinetic energy is distributed across spatial scales from macro-scale (left) to fine-grained, localized structures (right). Global models (Cli-maX, Aurora) fall below the ground-truth test set (blue), indicating spatial smoothing. SVD and CoDiCast diverge above the ground truth at high frequencies, indicating noise hallucination. GeoDES uniquely pre-serves the kinetic energy distribution across spatial scales. 
+
+Power Spectral Density (PSD) Graphs: Figure 8 contains one PSD graph per method, with the synthesis method represented by the orange line and the non-synthetic test set represented by the blue line. A PSD plot visualizes how kinetic energy is distributed across different spatial scales within a storm. The x-axis represents spatial frequency (wavenumber), transitioning from large, macro-scale weather patterns on the left to fine-grained, highly localized storm structures on the right. A physically realistic model will produce a synthetic energy spectrum that tightly tracks the ground-truth observational spectrum. Most models (CEF, ClimaX FT, ClimaX and Aurora) have PSD lines that fall consistently beneath the test set PSD line, resembling the climatology baseline PSD. This behavior is indicative of overly smooth predictions and a failure to generate fine grained storm structures, which agrees with the general failure mode of these models as described in Section 3.2 according to Table 2. Meanwhile, SVD’s and CoDiCast’s PSD lines both fall above the test set line in the right half of their respective plots, which represents an over-prediction of high-energy features. While GeoDES presents a slight over-estimation bias in the highest-frequency features, across the full range of spatial frequencies, GeoDES is the model that tracks the closest to the non-synthetic test set. 
+
+Single-variable Storm-Lifetime Distributions: We use violin plots to compare methods’ storm-lifetime distributions of maximum wind speed in Figure 9, minimum sea-level pressure in Figure 10 and maximum humidity in Figure 11. Most methods fare acceptably with reproducing the general range and distribution of these single variables, except for the bias of global models towards calmer weather conditions (e.g. lower wind magnitudes, higher SLP and lower humidity). The two most notable exceptions are Aurora, with a strong bias towards high minimum SLP, and CoDiCast, with a bias towards low minimum SLP and apparent outlier values in its wind magnitude and humidity distributions. Despite both methods’ use of batch-based normalization, these issues are perhaps artifacts of both methods’ autoregressive sampling approaches. The core ( 25% − 75% )percentiles of GeoDES’ distributions track similarly to the test set distribution, although the violin plots represent a drawback of its normalization strategy: clipping between the 1st and 99 th percentiles as described 24 in Section 2 prevents the model from generating the outlier values that naturally occur in the non-synthetic test set. Future work in this area could explore more advanced normalization strategies that enable the generation of reasonable outlier values without allowing the predictions to explode into the overly energetic failure modes demonstrated by CoDiCast or SVD. Test Set GeoDES (Ours) SVD CoDiCast CEF ClimaX-FT ClimaX Aurora 
+
+> 20
+> 40
+> 60
+> 80
+> 100
+> 120
+> 140
+> Wind Magnitude at 500hPa (m/s)
+
+# Storm-Lifetime Maximum Wind Magnitude 
+
+Figure 9: Violin plots detailing the distributions of storm-lifetime maximum wind speeds across the North Atlantic test set. While GeoDES successfully recovers the core distribution without succumbing to the unphysical runaway hallucinations of autoregressive baselines (e.g., CoDiCast), its maximum tail is bounded at roughly 75 m/s due to the 99th-percentile clipping enforced by the hybrid normalizer. This clipping prevents the undesirable outlier effects demonstrated by SVD and CoDiCast. 
+
+Wind-Pressure Relationship: Figure 12 displays the relationships between storm-lifetime maximum wind speed (y-axis) and minimum sea-level pressure (x-axis) for each method, in orange, compared to the real test set, in blue. Each marker represents one storm. These plots are useful for discerning methods’ multivariate relationship modeling capabilities. 
+
+GeoDES’ wind-pressure relationship is most similar to that of the non-synthetic test set . Similar to the patterns presented in previous metrics and plots, ClimaX and Aurora both underestimate wind magnitude and overestimate sea-level pressure in most storms. Oddly, Aurora’s storms fall into three clear groups along the sea-level pressure axis (we perform one run, using the publicly available Aurora checkpoint and deterministic sampling; thus, these groups are not the result of differences across runs). ClimaX predictions fall into two general groups as well, with one group falling within the area occupied by the ground-truth test set storms and the other group falling into an area indicative of calm weather. ClimaX FT largely improves on these issues and resembles the test set more closely, although still with a bias towards calmer weather indicated by the large number of synthetic datapoints that fall below the area of test set points. A similar pattern is visible for the CEF model, while SVD and CoDiCast continue to output overly high-energy predictions. 25 Test Set GeoDES (Ours) SVD CoDiCast CEF ClimaX-FT ClimaX Aurora 
+
+500 
+
+600 
+
+700 
+
+800 
+
+900 
+
+1000 
+
+1100 
+
+1200 
+
+> Sea-Level Pressure (hPa)
+
+# Storm-Lifetime Minimum Sea-Level Pressure Figure 10: Distributions of storm-lifetime minimum Sea-Level Pressure (SLP) across the North Atlantic test set. Global foundation models exhibit a strong bias toward higher pressures (calmer weather), with Aurora suffering from severe pressure overestimation. CoDiCast hallucinates unphysically deep pressure minimums. GeoDES closely tracks the ground-truth distribution. Test Set GeoDES (Ours) SVD CoDiCast CEF ClimaX-FT ClimaX Aurora 
+
+0.000 
+
+0.002 
+
+0.004 
+
+0.006 
+
+0.008 
+
+> Specific Humidity at 500hPa (kg/kg)
+
+# Storm-Lifetime Mean Specific Humidity 
+
+Figure 11: Distributions of storm-lifetime mean specific humidity at 500hPa across the North Atlantic test set. GeoDES captures the range of the true distribution, while most baseline models compress toward the calm-weather mean or generating unphysical outliers (CoDiCast). 26 900 1000 
+
+Minimum Sea Level Pressure 
+
+0
+
+50 
+
+100 
+
+150 
+
+200 
+
+> Maximum Wind Speed (m/s)
+
+GeoDES (Ours) 
+
+> Test Set
+> GeoDES (Ours)
+
+900 1000 
+
+Minimum Sea Level Pressure 
+
+0
+
+50 
+
+100 
+
+150 
+
+200 
+
+> Maximum Wind Speed (m/s)
+
+SVD 
+
+> Test Set
+> SVD
+
+900 1000 
+
+Minimum Sea Level Pressure 
+
+0
+
+50 
+
+100 
+
+150 
+
+200 
+
+> Maximum Wind Speed (m/s)
+
+CoDiCast 
+
+> Test Set
+> CoDiCast
+
+900 1000 
+
+Minimum Sea Level Pressure 
+
+0
+
+50 
+
+100 
+
+150 
+
+200 
+
+> Maximum Wind Speed (m/s)
+
+CEF 
+
+> Test Set
+> CEF
+
+900 1000 
+
+Minimum Sea Level Pressure 
+
+0
+
+50 
+
+100 
+
+150 
+
+200 
+
+> Maximum Wind Speed (m/s)
+
+ClimaX-FT 
+
+> Test Set
+> ClimaX-FT
+
+900 1000 
+
+Minimum Sea Level Pressure 
+
+0
+
+50 
+
+100 
+
+150 
+
+200 
+
+> Maximum Wind Speed (m/s)
+
+ClimaX 
+
+> Test Set
+> ClimaX
+
+900 1000 
+
+Minimum Sea Level Pressure 
+
+0
+
+50 
+
+100 
+
+150 
+
+200 
+
+> Maximum Wind Speed (m/s)
+
+Aurora 
+
+> Test Set
+> Aurora
+
+900 1000 
+
+Minimum Sea Level Pressure 
+
+0
+
+50 
+
+100 
+
+150 
+
+200 
+
+> Maximum Wind Speed (m/s)
+
+Climatology 
+
+> Test Set
+> Climatology
+
+Figure 12: The multivariate physical relationship between storm-lifetime maximum wind speed and minimum sea-level pressure. Each marker represents a single storm system. GeoDES (orange) best matches the ground-truth test set distribution (blue), demonstrating its ability to jointly model the low pressure storm core with the corresponding kinetic increase in wind speed. Global models systematically underestimate wind magnitude while overestimating pressure. 27 D.2 Supplemental Metrics 
+
+We provide the following supplementary metrics for the synthesis experiments presented in Sections 3.2, 3.3 and 3.5: 
+
+• Overall Root Mean Square Error (RMSE): The standard pixel-wise RMSE across all un-normalized vari-ables (Wilks, 2011). 
+
+• Per-variable RMSE: The standard pixel-wise RMSE calculated individually for each of the five atmo-spheric variables (sea-level pressure, U- and V-wind components, temperature and specific humidity) to identify variable-specific generative performance (Wilks, 2011). 
+
+• Skill vs Persistence: A comparative skill score evaluating the model’s predictive accuracy relative to a naive persistence forecast (where the initial conditions at t = 0 are held constant). It is calculated as 1 − (MSE model /MSE persistence ), where positive values indicate forecasting skill superior to persistence (Wilks, 2011). 
+
+• Per-Variable Synoptic Anomaly Correlation Coefficient (SACC): The spatial pattern correlation calcu-lated individually for each atmospheric variable, following the application of a spatial Gaussian filter (σ = 1 .5) to mitigate the double-penalty effect for structurally sound but slightly displaced features (Jolliffe & Stephenson, 2011). 
+
+• Anomaly Correlation Coefficient (ACC): The standard spatial pattern correlation between the predicted and ground-truth anomaly fields without any spatial smoothing applied, providing a strict evaluation of localized structural alignment (Jolliffe & Stephenson, 2011). 
+
+• Per-Variable Anomaly Correlation Coefficient (ACC): The standard, un-smoothed ACC calculated indi-vidually for each atmospheric variable to isolate spatial correlation capabilities across disparate thermo-dynamic and kinematic fields (Jolliffe & Stephenson, 2011). Results for the main experiment in Section 3.2 are in Table 6, Section 3.3 on extreme storms in Table 7 and Section 3.5 ablations in Table 8. For each metric, best-performing models are bolded—as a naive baseline, we present climatology but do not bold its results. We analyze these results together, grouped by metric: 
+
+RMSE and Skill: As stated in Section 3.1, RMSE suffers from the “double penalty” problem where synthesis methods that generate realistic novel storms are penalized twice (for the presence of the storm features that did not occur in the ground truth storm, as well as the lack of storm features that did occur in the ground truth storm), whereas overly smoothed methods are only penalized for the lack of storm features occurring in the ground truth (Roberts & Lean, 2008; Ebert, 2008). We include RMSE for completeness, due to the ubiquity of this metric. 
+
+GeoDES has the best overall synthesis model RMSE and skill vs persistence scores for both overall storm generation (Table 6) and extreme storm generation (Table 7). Still, Climatology achieves the best scores by a wide margin—for example, GeoDES’ general storms RMSE is 13 .95 compared to the Climatology’s 9.79 
+
+in Table 6. This discrepancy highlights the known issues associated with this metric for weather synthesis assessment. Accordingly, it is difficult to assess whether a method scores low RMSE because it forecasts mostly accurate features and mostly in the same locations compared to the test set, or because it only predicts smooth predictions for all inputs to minimize its error. This pattern continues in the ablations, where the Linear Normalization method scores lowest RMSE in Table 8. Because outlier values skew the linear normalization scheme and prevent the model from making effective use of its dynamic range, it is reasonable that the model learns to generate smooth outputs that are more similar to the climatology or global baselines such as ClimaX and Aurora. 
+
+SACC and ACC: Synoptic and non-synoptic ACC induce similar relative orderings of methods. Synoptic scores are globally higher than non-synoptic scores, indicating that all methods benefit from the use of the synoptic spatial filter. GeoDES scores the highest average ACC and SACC in overall storm generation, extreme storm generation and the ablations (Tables 6, 7 and 8). Most global baselines perform poorly on these metrics, while Climatology is surprisingly competitive, with best overall (S)ACC in extreme storm generation (Table 7). The storm-centric baseline (SVD) is the only method that is significantly aided by the synoptic spatial filter (e.g., its overall SACC score 0.15 versus its ACC score of 0.03 in Table 6), but even 28 Table 6: Supplemental metrics to the North Atlantic storm synthesis experiment in Section 3.2. We report overall and per-variable Root Mean Square Error (RMSE), Skill vs. Persistence, Synoptic Anomaly Corre-lation Coefficient (SACC) and standard Anomaly Correlation Coefficient (ACC). GeoDES achieves the best overall generative performance among the evaluated dynamic models. Best results are bolded (excluding the statistical Climatology baseline). 
+
+GeoDES SVD CoDiCast CEF ClimaX FT ClimaX Aurora Climatology 
+
+Overall RMSE ( ↓) 13 .95 ± 0.24 15 .38 ± 0.00 36 .21 ± 4.87 16 .10 ± 0.24 18 .19 ± 1.38 16 .50 14 .47 9 .79 
+
+SLP RMSE ( ↓) 15 .27 ± 1.46 15 .73 ± 0.00 35 .74 ± 5.07 19 .63 ± 0.46 22 .83 ± 1.02 20 .71 14 .02 10 .58 
+
+Wind U RMSE ( ↓) 18 .22 ± 0.11 21 .65 ± 0.00 46 .91 ± 6.63 17 .84 ± 0.45 19 .53 ± 1.32 17 .15 18 .22 12 .98 
+
+Wind V RMSE ( ↓) 15 .57 ± 0.29 16 .62 ± 0.00 45 .90 ± 12 .15 20 .10 ± 1.04 17 .39 ± 0.10 14 .32 15 .16 10 .56 
+
+Temperature RMSE ( ↓) 12 .75 ± 1.62 13 .80 ± 0.00 29 .69 ± 5.66 13 .71 ± 0.15 21 .09 ± 3.83 20 .80 17 .00 9 .32 
+
+Humidity RMSE ( ↓) 0.00 ± 0.00 0.00 ± 0.00 0.01 ± 0.00 0.00 ± 0.00 0.00 ± 0.00 0.00 0.00 0 .00 
+
+Skill vs Persistence ( ↑) −0.66 ± 0.03 −0.83 ± 0.00 −3.30 ± 0.58 −0.91 ± 0.03 −1.16 ± 0.16 −0.96 −0.72 −0 .16 
+
+Avg. SACC ( ↑) 0.39 ± 0.04 0.15 ± 0.00 0.06 ± 0.01 0.19 ± 0.03 0.28 ± 0.00 0.09 0.10 0 .64 
+
+SLP SACC ( ↑) 0.54 ± 0.05 0.18 ± 0.00 0.28 ± 0.02 0.38 ± 0.07 0.33 ± 0.04 0.15 0.44 0 .73 
+
+Wind U SACC ( ↑) 0.61 ± 0.04 0.18 ± 0.00 −0.02 ± 0.06 0.35 ± 0.09 0.64 ± 0.02 0.14 0.08 0 .77 
+
+Wind V SACC ( ↑) 0.48 ± 0.02 0.12 ± 0.00 0.00 ± 0.02 −0.31 ± 0.15 −0.32 ± 0.03 0.02 0.08 0 .71 
+
+Temperature SACC ( ↑) 0.45 ± 0.08 0.19 ± 0.00 0.04 ± 0.04 0.44 ± 0.09 0.51 ± 0.02 −0.04 −0.11 0 .68 
+
+Humidity SACC ( ↑) 0.10 ± 0.01 0.04 ± 0.00 −0.01 ± 0.00 0.07 ± 0.04 0.02 ± 0.05 0.00 0.04 0 .27 
+
+Avg. ACC ( ↑) 0.37 ± 0.04 0.03 ± 0.00 0.06 ± 0.01 0.18 ± 0.03 0.27 ± 0.00 0.08 0.08 0 .63 
+
+SLP ACC ( ↑) 0.54 ± 0.04 0.05 ± 0.00 0.28 ± 0.02 0.38 ± 0.07 0.33 ± 0.04 0.13 0.42 0 .74 
+
+Wind U ACC ( ↑) 0.59 ± 0.04 0.04 ± 0.00 −0.01 ± 0.05 0.33 ± 0.09 0.61 ± 0.02 0.12 0.05 0 .76 
+
+Wind V ACC ( ↑) 0.45 ± 0.02 0.03 ± 0.00 0.00 ± 0.01 −0.29 ± 0.15 −0.30 ± 0.03 0.01 0.07 0 .69 
+
+Temperature ACC ( ↑) 0.43 ± 0.08 0.05 ± 0.00 0.03 ± 0.04 0.42 ± 0.09 0.49 ± 0.02 −0.04 −0.10 0 .66 
+
+Humidity ACC ( ↑) 0.09 ± 0.01 0.01 ± 0.00 −0.01 ± 0.00 0.06 ± 0.03 0.02 ± 0.04 0.00 0.01 0 .25 
+
+Table 7: Supplemental metrics to extreme result experiment in Section 3.3, where we evaluate on the top 10% most severe storms in the North Atlantic test set by maximum wind magnitude. GeoDES maintains superior spatial pattern correlation (SACC and ACC) and the lowest overall RMSE among dynamic models even under extreme, out-of-distribution severity conditions. 
+
+GeoDES SVD CoDiCast CEF ClimaX FT ClimaX Aurora Climatology 
+
+Overall RMSE ( ↓) 14 .79 ± 1.31 17 .50 ± 0.00 37 .43 ± 5.93 18 .26 ± 0.16 18 .11 ± 1.13 19 .88 18 .16 11 .69 
+
+SLP RMSE ( ↓) 16 .35 ± 0.99 19 .27 ± 0.01 35 .82 ± 3.34 18 .77 ± 0.60 21 .01 ± 2.11 27 .13 19 .97 14 .20 
+
+Wind U RMSE ( ↓) 20 .88 ± 2.42 25 .94 ± 0.00 52 .01 ± 11 .78 23 .98 ± 0.29 21 .06 ± 0.49 24 .17 25 .90 16 .99 
+
+Wind V RMSE ( ↓) 16 .15 ± 0.32 18 .30 ± 0.00 46 .35 ± 11 .17 22 .30 ± 1.13 19 .82 ± 0.18 17 .20 18 .22 12 .47 
+
+Temperature RMSE ( ↓) 11 .20 ± 2.66 12 .35 ± 0.00 28 .11 ± 4.44 15 .54 ± 0.37 18 .90 ± 2.81 18 .97 15 .72 6 .13 
+
+Humidity RMSE ( ↓) 0.00 ± 0.00 0.00 ± 0.00 0.01 ± 0.00 0.00 ± 0.00 0.00 ± 0.00 0.00 0.00 0 .00 
+
+Skill vs Persistence ( ↑) −0.32 ± 0.12 −0.56 ± 0.00 −2.33 ± 0.53 −0.63 ± 0.01 −0.61 ± 0.10 −0.77 −0.62 −0 .04 
+
+Avg. SACC ( ↑) 0.45 ± 0.06 0.16 ± 0.00 0.06 ± 0.02 0.18 ± 0.03 0.34 ± 0.01 0.12 0.13 0 .70 
+
+SLP SACC ( ↑) 0.58 ± 0.10 0.21 ± 0.00 0.29 ± 0.03 0.41 ± 0.04 0.32 ± 0.04 0.13 0.52 0 .79 
+
+Wind U SACC ( ↑) 0.74 ± 0.07 0.24 ± 0.00 −0.04 ± 0.08 0.29 ± 0.07 0.78 ± 0.02 0.21 0.27 0 .90 
+
+Wind V SACC ( ↑) 0.51 ± 0.06 0.14 ± 0.00 −0.03 ± 0.04 −0.30 ± 0.19 −0.27 ± 0.04 −0.01 0.04 0 .75 
+
+Temperature SACC ( ↑) 0.55 ± 0.12 0.22 ± 0.00 0.01 ± 0.08 0.44 ± 0.12 0.57 ± 0.03 −0.08 −0.20 0 .79 
+
+Humidity SACC ( ↑) 0.13 ± 0.02 0.05 ± 0.00 −0.02 ± 0.03 0.06 ± 0.04 0.00 ± 0.05 −0.01 0.06 0 .26 
+
+Avg. ACC ( ↑) 0.43 ± 0.06 0.04 ± 0.00 0.06 ± 0.02 0.18 ± 0.03 0.33 ± 0.00 0.10 0.10 0 .69 
+
+SLP ACC ( ↑) 0.58 ± 0.09 0.05 ± 0.00 0.29 ± 0.02 0.41 ± 0.04 0.32 ± 0.04 0.12 0.49 0 .79 
+
+Wind U ACC ( ↑) 0.71 ± 0.07 0.05 ± 0.00 −0.04 ± 0.08 0.28 ± 0.07 0.75 ± 0.02 0.18 0.18 0 .88 
+
+Wind V ACC ( ↑) 0.49 ± 0.06 0.03 ± 0.00 −0.03 ± 0.04 −0.29 ± 0.19 −0.26 ± 0.04 −0.01 0.03 0 .73 
+
+Temperature ACC ( ↑) 0.52 ± 0.12 0.05 ± 0.00 0.01 ± 0.07 0.42 ± 0.13 0.55 ± 0.03 −0.08 −0.18 0 .77 
+
+Humidity ACC ( ↑) 0.11 ± 0.02 0.01 ± 0.00 −0.02 ± 0.03 0.06 ± 0.03 0.00 ± 0.04 0.00 0.02 0 .24 
+
+this metric does not allow SVD to be competitive with other methods. SVD’s poor performance highlights the importance of GeoDES’ approach to achieving high performance as a storm-centered method, without the global context afforded to the other baselines. 
+
+29 Table 8: Supplemental metrics to ablations in Section 3.5. The table highlights the performance degradation associated with removing Signal-to-Noise Ratio (SNR) weighting, deterministic sampling (Non-Stoch.), using standard linear scaling (Linear Norm.) and removing the 2D pretraining phase (3D W/Out 2D). The Linear Normalization ablation achieves the lowest RMSE, mathematically demonstrating that lower RMSE often correlates with unphysical spatial smoothing and dynamic range collapse rather than structural realism. 
+
+GeoDES No SNR Non-Stoch. Linear Norm. 3D W/Out 2D Overall RMSE ( ↓) 13 .95 ± 0.24 14 .61 ± 0.21 14 .19 ± 0.07 13 .87 ± 0.86 18 .93 ± 4.88 
+
+SLP RMSE ( ↓) 15 .27 ± 1.46 17 .56 ± 1.42 14 .77 ± 0.34 14 .89 ± 1.13 26 .02 ± 9.33 
+
+Wind U RMSE ( ↓) 18 .22 ± 0.11 17 .72 ± 0.82 19 .19 ± 0.24 17 .51 ± 0.79 24 .62 ± 8.26 
+
+Wind V RMSE ( ↓) 15 .57 ± 0.29 14 .72 ± 0.16 15 .13 ± 0.03 16 .31 ± 2.05 15 .59 ± 0.06 
+
+Temperature RMSE ( ↓) 12 .75 ± 1.62 15 .02 ± 1.54 13 .84 ± 0.30 12 .89 ± 0.32 15 .73 ± 0.96 
+
+Humidity RMSE ( ↓) 0.00 ± 0.00 0.00 ± 0.00 0.00 ± 0.00 0.00 ± 0.00 0.00 ± 0.00 
+
+Skill vs Persistence ( ↑) −0.66 ± 0.03 −0.74 ± 0.02 −0.69 ± 0.01 −0.65 ± 0.10 −1.25 ± 0.58 
+
+Avg. SACC ( ↑) 0.39 ± 0.04 0.36 ± 0.06 0.37 ± 0.01 0.37 ± 0.01 0.33 ± 0.02 
+
+SLP SACC ( ↑) 0.54 ± 0.05 0.53 ± 0.03 0.47 ± 0.02 0.51 ± 0.01 0.34 ± 0.18 
+
+Wind U SACC ( ↑) 0.61 ± 0.04 0.52 ± 0.15 0.50 ± 0.00 0.56 ± 0.04 0.59 ± 0.08 
+
+Wind V SACC ( ↑) 0.48 ± 0.02 0.49 ± 0.03 0.44 ± 0.02 0.44 ± 0.03 0.54 ± 0.10 
+
+Temperature SACC ( ↑) 0.45 ± 0.08 0.41 ± 0.01 0.43 ± 0.02 0.48 ± 0.02 0.37 ± 0.13 
+
+Humidity SACC ( ↑) 0.10 ± 0.01 0.09 ± 0.06 0.10 ± 0.01 0.12 ± 0.03 0.07 ± 0.03 
+
+Avg. ACC ( ↑) 0.37 ± 0.04 0.35 ± 0.05 0.35 ± 0.00 0.35 ± 0.01 0.30 ± 0.03 
+
+SLP ACC ( ↑) 0.54 ± 0.04 0.54 ± 0.03 0.48 ± 0.02 0.52 ± 0.01 0.33 ± 0.20 
+
+Wind U ACC ( ↑) 0.59 ± 0.04 0.50 ± 0.14 0.48 ± 0.00 0.54 ± 0.04 0.56 ± 0.07 
+
+Wind V ACC ( ↑) 0.45 ± 0.02 0.46 ± 0.03 0.41 ± 0.02 0.42 ± 0.03 0.51 ± 0.09 
+
+Temperature ACC ( ↑) 0.43 ± 0.08 0.39 ± 0.01 0.41 ± 0.02 0.45 ± 0.02 0.34 ± 0.13 
+
+Humidity ACC ( ↑) 0.09 ± 0.01 0.08 ± 0.05 0.08 ± 0.01 0.10 ± 0.02 0.06 ± 0.03 
+
+30 Table 9: GeoDES results for each basin after 2D-phase pretraining on all basins, according to the setup in Appendix E. Model performance on fidelity metrics scales with the observational fidelity of the underlying basin data, rather than raw data volume, achieving highest ACC/SACC in the densely-observed Northern Hemisphere (North Pacific/Atlantic) and fuzzier predictions in the satellite-dependent Southern Hemisphere, despite greater overall data quantity and accordingly better energy-matching metrics (Frequency Bias Index, Peak Vorticity Error) in the Southern Hemisphere. N. Atlantic S. Atlantic N. Pacific S. Pacific # Train 8589 11262 5782 16358 
+
+# Test 893 1280 614 1917 
+
+Overall RMSE ( ↓) 14 .60 15 .05 12 .96 14 .63 
+
+Peak Vorticity Error ( ↓) 5.10 1.91 4.92 2.72 
+
+HF Spectral Ratio ( ·1) 0.71 1.30 1.04 0.91 
+
+Frequency Bias Index ( ·1) 1.16 1.04 0.79 1.17 
+
+Fractions Skill Score ( ↑) 0.77 0.78 0.66 0.83 
+
+Synoptic ACC ( ↑) 0.33 0.36 0.37 0.34 
+
+Synoptic ACC T-Final ( ↑) 0.38 0.40 0.40 0.41 
+
+ACC ( ↑) 0.32 0.34 0.35 0.33 
+
+ACC T-Final ( ↑) 0.36 0.38 0.38 0.39 
+
+## E Biases Introduced Via Whole-World Pretraining and Performance Across Basins 
+
+Setup: To evaluate the generalization capabilities of our diffusion architecture, we experimented with training on all storms from any of the four ocean basins at the 2D pretraining phase, followed by fine-tuning on a specific basin at the 3D fine-tuning phase. Notably, the distribution of storms in the pretraining dataset is highly asymmetric, following the order: North Pacific < North Atlantic < South Atlantic < South Pacific. 
+
+Results: Table 9 displays an at first unusual relationship between data volume and model performance. GeoDES achieved its highest spatial accuracy and optimal variance in the North Pacific (Overall RMSE 12.96, Spectral Ratio 1.03), despite this basin representing the smallest fraction of the pretraining data. Rather than a failure of the architecture, this hemispheric split highlights a well-documented disparity in global meteorological observational fidelity. Ground-truth reanalysis in the Northern Hemisphere is aided by dense on-site observations and aircraft reconnaissance, providing more structurally precise, high-fidelity targets. In contrast, Southern Hemisphere reanalysis relies predominantly on smoother, satellite-derived estimates characterized by higher spatial uncertainty. The model’s performance directly reflects this information gap. The sharp, high-quality gradients in the Northern Hemisphere data allowed GeoDES to learn precise spatial and multivariate relationships during the 2D phase, requiring minimal correction during 3D specialization. The high volume of South Atlantic data—a basin characterized by high wind shear and unorganized convection—taught the model a chaotic structural prior, contributing to the prediction of over-energized, high-frequency fields (Spectral Ratio of 
+
+1.30 ) generated when fine-tuning for that domain. Ultimately, GeoDES scales not with raw data volume, but with the physical fidelity of the underlying observations. 31

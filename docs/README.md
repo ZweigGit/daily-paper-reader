@@ -6,27 +6,34 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-22
-- 运行时间：2026-07-22 21:07:13 UTC
+- 最新运行日期：2026-07-23
+- 运行时间：2026-07-23 21:26:51 UTC
 - 运行状态：成功
-- 本次总论文数：2
+- 本次总论文数：4
 - 精读区：2
-- 速读区：0
+- 速读区：2
 
 ### 今日简报（AI）
-今日精读2篇论文，聚焦图像编辑的数学建模与海洋建模的进化优化。最值得关注的是《Image Editing Models are Numerical Solvers》将编辑过程视为数值求解，以及《Incomplete Observations Boost Evolutionary Performance》用不完整数据提升海洋模型性能。下一步可深入探索AI模型向物理求解器演进的交叉思路。
-- 详情：[/202607/22/README](/202607/22/README)
+今日精读两篇高分论文：气象数据增强的GeoDES（9.0）与CFD模拟的IteraSim RAG（8.0），速读两篇流体重建与扩散模型优化。  
+最值得关注的是地理空间扩散模型用于风暴天气增强，以及多阶段检索增强后端加速OpenFOAM计算流体力学仿真。  
+建议优先精读GeoDES和IteraSim RAG，可了解AI在气象与工程仿真中的前沿融合应用。
+- 详情：[/202607/23/README](/202607/23/README)
 
 ### 精读区论文标签
-1. [Image Editing Models are Numerical Solvers](/202607/22/2607.18787v1-image-editing-models-are-numerical-solvers)  
+1. [Geospatial Diffusion-based Evolution Synthesis (GeoDES) for Storm-Centered Weather Augmentation](/202607/23/2607.19522v1-geospatial-diffusion-based-evolution-synthesis-geodes-for-storm-centered-weather-augmentation)  
    标签：评分：9.0/10、query:genmod-fluid
-   evidence：使用生成式图像编辑模型进行Navier-Stokes模拟
-2. [Incomplete Observations Boost Evolutionary Performance in Ocean Modeling](/202607/22/2607.19147v1-incomplete-observations-boost-evolutionary-performance-in-ocean-modeling)  
+   evidence：基于扩散模型的风暴天气增强
+2. [IteraSim RAG: A Multi-Stage Retrieval-Augmented Agentic Back-End for OpenFOAM-Based Computational Fluid Dynamics](/202607/23/2607.20346v1-iterasim-rag-a-multi-stage-retrieval-augmented-agentic-back-end-for-openfoam-based-computational-fluid-dynamics)  
    标签：评分：8.0/10、query:genmod-fluid
-   evidence：用于海洋建模的生成式状态空间模型，从稀疏观测学习
+   evidence：用于自动生成OpenFOAM案例的生成式人工智能（大语言模型）
 
 ### 速读区论文标签
-- 本次无速读推荐。
+1. [Optimal Self-Distillation for Rectified Flow via Linear Probing](/202607/23/2607.14947v1-optimal-self-distillation-for-rectified-flow-via-linear-probing)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：修正流自蒸馏方法
+2. [Bayesian finite element regression for vascular flow reconstruction with quantified uncertainty](/202607/23/2607.20224v1-bayesian-finite-element-regression-for-vascular-flow-reconstruction-with-quantified-uncertainty)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：用于流体流动重建的贝叶斯概率模型
 
 
 <div class="dpr-home-promo-card">
