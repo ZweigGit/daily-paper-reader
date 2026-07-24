@@ -1,0 +1,39 @@
+{
+  "label": "2026-07-24",
+  "date": "2026-07-24",
+  "generated_at": "2026-07-24T21:40:19",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202607/24/2607.18924v1-learning-explicit-physical-parameter-control-and-benchmarking-for-video-generation",
+      "section": "quick",
+      "title_en": "Learning Explicit Physical Parameter Control and Benchmarking for Video Generation",
+      "authors": "Yanxun Li, Hao Wen, Bingze Song, Jiashu Zhu, Aiming Hao, Chubin Chen, Jintao Chen, Jiahong Wu, Xiangxiang Chu, Miao Wang",
+      "date": "2026-07-21",
+      "pdf": "https://arxiv.org/pdf/2607.18924v1",
+      "score": "6.0",
+      "evidence": "利用仿真数据的物理感知视频生成",
+      "tldr": "视频生成模型在物理一致性上仍显不足，缺乏显式物理参数控制。为此，提出PhyParam-Dataset，包含13万段带密集物理参数（力、质量、摩擦等）的模拟视频；设计PhyParam模型，通过物理注意力路由机制和语义结构特征监督实现物体级物理参数控制。实验表明，该方法在保持高视觉质量的同时显著提升物理一致性。同时建立PhyParam-Bench基准，推动显式刚体物理参数控制在视频生成中的发展。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Recent advances in image-to-video generation have improved visual realism, making physically grounded and controllable dynamics an important step toward future world simulation.   Current models often generate plausible motion, but it is not reliably governed by explicit physical causes, and instance-level constraints can leak or become entangled in multi-object interactions.   We attribute this gap to two missing pieces: large-scale, fine-grained physical parameterization, and model designs that correctly bind physical attributes to instances and emphasize dynamics over appearance.   To bridge this gap, we introduce PhyParam-Dataset, an interaction-centric collection of 130K physically simulated videos with dense physical parameterization, including force vectors, object material properties, and environmental constants across five representative rigid-body motion types.   Built on this data, we present PhyParam, a physics-guided image-to-video diffusion model that conditions on object-level forces, masses, friction, restitution, and scene-level gravity via a lightweight physical-attention routing mechanism, and further improves motion learning with semantic-structural feature-space supervision.   We also establish PhyParam-Bench, a benchmark for physical-law consistency in image-to-video generation, with a multi-level protocol evaluating temporal dynamics, spatial stability, and semantic--physical alignment. Experiments show that PhyParam improves physical consistency while maintaining high visual fidelity, advancing explicit rigid-body physical-parameter control for image-to-video generation.   We will publicly release the dataset, benchmark, and code to support future research.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/24/2607.21585v1-expanding-flow-maps",
+      "section": "quick",
+      "title_en": "Expanding Flow Maps",
+      "authors": "Sophia Tang, Pranam Chatterjee",
+      "date": "2026-07-23",
+      "pdf": "https://arxiv.org/pdf/2607.21585v1",
+      "score": "6.0",
+      "evidence": "提出了扩展流映射，一种新型基于流的生成模型",
+      "tldr": "现有流模型受限于固定维度或序列长度，无法处理输出大小可变的生成任务。本文提出扩张生成流（EFlows），通过定义维度递增的插值分布实现状态空间扩展，并蒸馏为扩张流映射（EFMs），将任意两时间步间映射分解为扩展算子和传输算子。该方法统一了固定画布流模型，并推广到离散单纯形，支持变长图与序列生成。连续与离散模态实验验证了其作为输出大小可学习自由度的框架有效性。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Flow-based generative models have enabled remarkable progress in fast and controllable generation across continuous and discrete state spaces, yet existing parameterizations are constrained to fixed dimensions or fixed sequence lengths. Here, we introduce Expanding Generative Flows (EFlows), which define flows between distributions of increasing dimensionality along an expanding interpolant that grows the state by augmenting it with conditional noise. Building on this construction, we propose Expanding Flow Maps (EFMs), a new class of flow maps that distill the expanding interpolant into efficient few-step generative models. Each EFM factors the map between any two timesteps into two learnable operations: an expand operator, which augments the state space with new coordinates or tokens conditioned on the current state, and a transport map, which pushes the expanded state forward along the interpolant. Composing these operators yields a single map that jointly expands and denoises the state, recovering existing fixed-canvas flows and flow maps as the special case in which the expand operator is the identity. We further extend the framework to the discrete simplex, enabling variable-size graph generation and variable-length sequence generation. Across both continuous and discrete modalities, we establish EFlows and EFMs as a principled framework for settings in which output size is itself a learned, controllable degree of freedom.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

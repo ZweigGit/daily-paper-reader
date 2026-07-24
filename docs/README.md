@@ -6,34 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-23
-- 运行时间：2026-07-23 21:26:51 UTC
+- 最新运行日期：2026-07-24
+- 运行时间：2026-07-24 21:40:12 UTC
 - 运行状态：成功
-- 本次总论文数：4
-- 精读区：2
+- 本次总论文数：2
+- 精读区：0
 - 速读区：2
 
 ### 今日简报（AI）
-今日精读两篇高分论文：气象数据增强的GeoDES（9.0）与CFD模拟的IteraSim RAG（8.0），速读两篇流体重建与扩散模型优化。  
-最值得关注的是地理空间扩散模型用于风暴天气增强，以及多阶段检索增强后端加速OpenFOAM计算流体力学仿真。  
-建议优先精读GeoDES和IteraSim RAG，可了解AI在气象与工程仿真中的前沿融合应用。
-- 详情：[/202607/23/README](/202607/23/README)
+1）今日速读2篇视频生成论文，聚焦物理参数控制与流图扩展方法。
+2）值得关注《Learning Explicit Physical Parameter Control and Benchmarking for Video Generation》中显式物理参数对视频可控性的提升。
+3）建议进一步对比两篇论文在生成质量与物理一致性上的差异，寻找融合改进方向。
+- 详情：[/202607/24/README](/202607/24/README)
 
 ### 精读区论文标签
-1. [Geospatial Diffusion-based Evolution Synthesis (GeoDES) for Storm-Centered Weather Augmentation](/202607/23/2607.19522v1-geospatial-diffusion-based-evolution-synthesis-geodes-for-storm-centered-weather-augmentation)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：基于扩散模型的风暴天气增强
-2. [IteraSim RAG: A Multi-Stage Retrieval-Augmented Agentic Back-End for OpenFOAM-Based Computational Fluid Dynamics](/202607/23/2607.20346v1-iterasim-rag-a-multi-stage-retrieval-augmented-agentic-back-end-for-openfoam-based-computational-fluid-dynamics)  
-   标签：评分：8.0/10、query:genmod-fluid
-   evidence：用于自动生成OpenFOAM案例的生成式人工智能（大语言模型）
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Optimal Self-Distillation for Rectified Flow via Linear Probing](/202607/23/2607.14947v1-optimal-self-distillation-for-rectified-flow-via-linear-probing)  
+1. [Learning Explicit Physical Parameter Control and Benchmarking for Video Generation](/202607/24/2607.18924v1-learning-explicit-physical-parameter-control-and-benchmarking-for-video-generation)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：修正流自蒸馏方法
-2. [Bayesian finite element regression for vascular flow reconstruction with quantified uncertainty](/202607/23/2607.20224v1-bayesian-finite-element-regression-for-vascular-flow-reconstruction-with-quantified-uncertainty)  
+   evidence：利用仿真数据的物理感知视频生成
+2. [Expanding Flow Maps](/202607/24/2607.21585v1-expanding-flow-maps)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：用于流体流动重建的贝叶斯概率模型
+   evidence：提出了扩展流映射，一种新型基于流的生成模型
 
 
 <div class="dpr-home-promo-card">

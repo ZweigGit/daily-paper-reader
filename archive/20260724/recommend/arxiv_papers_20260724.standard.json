@@ -1,0 +1,97 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-24T21:38:11.683169+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.18924v1",
+      "source": "arxiv",
+      "title": "Learning Explicit Physical Parameter Control and Benchmarking for Video Generation",
+      "abstract": "Recent advances in image-to-video generation have improved visual realism, making physically grounded and controllable dynamics an important step toward future world simulation.   Current models often generate plausible motion, but it is not reliably governed by explicit physical causes, and instance-level constraints can leak or become entangled in multi-object interactions.   We attribute this gap to two missing pieces: large-scale, fine-grained physical parameterization, and model designs that correctly bind physical attributes to instances and emphasize dynamics over appearance.   To bridge this gap, we introduce PhyParam-Dataset, an interaction-centric collection of 130K physically simulated videos with dense physical parameterization, including force vectors, object material properties, and environmental constants across five representative rigid-body motion types.   Built on this data, we present PhyParam, a physics-guided image-to-video diffusion model that conditions on object-level forces, masses, friction, restitution, and scene-level gravity via a lightweight physical-attention routing mechanism, and further improves motion learning with semantic-structural feature-space supervision.   We also establish PhyParam-Bench, a benchmark for physical-law consistency in image-to-video generation, with a multi-level protocol evaluating temporal dynamics, spatial stability, and semantic--physical alignment. Experiments show that PhyParam improves physical consistency while maintaining high visual fidelity, advancing explicit rigid-body physical-parameter control for image-to-video generation.   We will publicly release the dataset, benchmark, and code to support future research.",
+      "authors": [
+        "Yanxun Li",
+        "Hao Wen",
+        "Bingze Song",
+        "Jiashu Zhu",
+        "Aiming Hao",
+        "Chubin Chen",
+        "Jintao Chen",
+        "Jiahong Wu",
+        "Xiangxiang Chu",
+        "Miao Wang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-07-21T10:06:55+00:00",
+      "link": "https://arxiv.org/pdf/2607.18924v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "physics-aware video generation using simulated data",
+      "llm_evidence_cn": "利用仿真数据的物理感知视频生成",
+      "llm_evidence": "利用仿真数据的物理感知视频生成",
+      "canonical_evidence": "利用仿真数据的物理感知视频生成",
+      "llm_tldr_en": "Introduces PhyParam-Dataset, 130K physically simulated videos with dense physical parameterization, enabling explicit control of physical dynamics in video generation, bridging generative AI and physics simulation.",
+      "llm_tldr_cn": "针对当前视频生成模型无法可靠遵循显式物理规律的问题，本文提出了PhyParam-Dataset，包含13万段带有密集物理参数标注的物理仿真视频，并设计了将物理属性正确绑定到实例的模型，从而实现了可控制的物理运动生成。实验表明该方法在物理真实性方面显著优于现有方法，为物理世界模拟提供了新基准。",
+      "llm_tldr": "针对当前视频生成模型无法可靠遵循显式物理规律的问题，本文提出了PhyParam-Dataset，包含13万段带有密集物理参数标注的物理仿真视频，并设计了将物理属性正确绑定到实例的模型，从而实现了可控制的物理运动生成。实验表明该方法在物理真实性方面显著优于现有方法，为物理世界模拟提供了新基准。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.21585v1",
+      "source": "arxiv",
+      "title": "Expanding Flow Maps",
+      "abstract": "Flow-based generative models have enabled remarkable progress in fast and controllable generation across continuous and discrete state spaces, yet existing parameterizations are constrained to fixed dimensions or fixed sequence lengths. Here, we introduce Expanding Generative Flows (EFlows), which define flows between distributions of increasing dimensionality along an expanding interpolant that grows the state by augmenting it with conditional noise. Building on this construction, we propose Expanding Flow Maps (EFMs), a new class of flow maps that distill the expanding interpolant into efficient few-step generative models. Each EFM factors the map between any two timesteps into two learnable operations: an expand operator, which augments the state space with new coordinates or tokens conditioned on the current state, and a transport map, which pushes the expanded state forward along the interpolant. Composing these operators yields a single map that jointly expands and denoises the state, recovering existing fixed-canvas flows and flow maps as the special case in which the expand operator is the identity. We further extend the framework to the discrete simplex, enabling variable-size graph generation and variable-length sequence generation. Across both continuous and discrete modalities, we establish EFlows and EFMs as a principled framework for settings in which output size is itself a learned, controllable degree of freedom.",
+      "authors": [
+        "Sophia Tang",
+        "Pranam Chatterjee"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-07-23T17:57:38+00:00",
+      "link": "https://arxiv.org/pdf/2607.21585v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "proposes Expanding Flow Maps, a new flow-based generative model class",
+      "llm_evidence_cn": "提出了扩展流映射，一种新型基于流的生成模型",
+      "llm_evidence": "提出了扩展流映射，一种新型基于流的生成模型",
+      "canonical_evidence": "提出了扩展流映射，一种新型基于流的生成模型",
+      "llm_tldr_en": "Expanding Flow Maps (EFMs) are a new type of flow-based generative model that distills an expanding interpolant into efficient few-step generation, offering potential for fluid flow matching tasks.",
+      "llm_tldr_cn": "本文针对现有基于流的生成模型参数化受限于固定维度或序列长度的问题，提出了扩展生成流（EFlows）和扩展流映射（EFMs）。EFlows通过增广条件噪声定义了一种维度递增的插值路径，EFMs则将其蒸馏为高效几步生成模型。该方法在生成建模中实现了灵活的维度扩展，有望被应用于流体动力学的流匹配任务，为生成式流体仿真提供新的工具。",
+      "llm_tldr": "本文针对现有基于流的生成模型参数化受限于固定维度或序列长度的问题，提出了扩展生成流（EFlows）和扩展流映射（EFMs）。EFlows通过增广条件噪声定义了一种维度递增的插值路径，EFMs则将其蒸馏为高效几步生成模型。该方法在生成建模中实现了灵活的维度扩展，有望被应用于流体动力学的流匹配任务，为生成式流体仿真提供新的工具。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
