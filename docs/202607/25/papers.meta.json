@@ -1,0 +1,24 @@
+{
+  "label": "2026-07-25",
+  "date": "2026-07-25",
+  "generated_at": "2026-07-25T21:17:01",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202607/25/2607.18861v1-learning-sufficient-low-dimensional-structures-through-conditional-optimal-transport",
+      "section": "quick",
+      "title_en": "Learning sufficient low-dimensional structures through conditional optimal transport",
+      "authors": "Kaiqiang Alan Zeng, Efstathia Bura",
+      "date": "2026-07-21",
+      "pdf": "https://arxiv.org/pdf/2607.18861v1",
+      "score": "7.0",
+      "evidence": "通过最优传输启发的条件流匹配准则用于充分降维",
+      "tldr": "针对充分降维问题，提出SDR-COT方法，通过条件最优传输将响应分布与参考响应耦合，使得充分性迫使最优三角映射的响应分量通过低维表示分解。二次成本下插值具有Borel速度且保持分解，进而设计条件流匹配准则。线性降维时利用松弛经验耦合证明相合性，并处理欧几里得与希尔伯特值响应。数值实验表明，该方法在条件均值不充分时仍具竞争力。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Sufficient dimension reduction seeks a low-dimensional covariate representation that preserves the conditional law of a response. We introduce SDR-COT, which represents that law by conditional optimal transport from an independent reference response. On separable Hilbert spaces, sufficiency forces the response component of the optimal triangular map to factor through the reduction. For quadratic cost, the induced interpolation has a Borel current-state velocity on every truncated time interval, without global injectivity of the terminal map, and this velocity has the same factorisation. These results motivate a conditional-flow-matching criterion. For linear reductions, we prove consistency using a suitably tuned relaxed empirical coupling. Euclidean responses are treated through slicewise Caffarelli bounds; Hilbert-valued responses are treated through Gaussian Sobolev regularity, interpolation compression and uniqueness of a Gaussian continuity equation. Numerical studies with Euclidean and functional data show competitive performance, especially when sufficient information is not solely contained in the conditional mean.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
