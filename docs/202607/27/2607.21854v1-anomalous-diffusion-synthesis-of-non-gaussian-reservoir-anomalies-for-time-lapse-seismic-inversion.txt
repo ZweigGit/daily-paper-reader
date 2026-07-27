@@ -1,0 +1,272 @@
+Title: Anomalous-diffusion synthesis of non-Gaussian reservoir anomalies for time-lapse seismic inversion
+
+URL Source: https://arxiv.org/pdf/2607.21854v1
+
+Published Time: Mon, 27 Jul 2026 00:14:34 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+# Anomalous-diffusion synthesis of non-Gaussian reservoir anomalies for time-lapse seismic inversion 
+
+Anderson Mateus de Sousa Nogueira, 1 Paulo Vitor Ferreira, 1 Katerine Rincon Perez, 1 Jo˜ ao M. de Ara´ ujo, 1 Tiago Barros, 2, 3 Samuel Xavier-de-Souza, 2, 3 S´ ergio Luiz da Silva, 3 and Gilberto Corso 4, ∗
+
+> 1
+
+Department of Physics, Universidade Federal do Rio Grande do Norte (UFRN), Natal, RN, Brazil 
+
+> 2
+
+Department of Computer Engineering and Automation, Universidade Federal do Rio Grande do Norte, Natal, Brazil 
+
+> 3
+
+Laboratory of Parallel Architectures for Signal Processing, Digital Metropolis Institute, Universidade Federal do Rio Grande do Norte, Natal, Brazil 
+
+> 4
+
+Department of Biophysics and Pharmacology, Universidade Federal do Rio Grande do Norte, Natal, Brazil 
+
+(Dated: July 27, 2026) We develop a physics-informed framework for learned time-lapse (4D) seismic inversion that es-timates production-induced velocity changes associated with subsurface fluid migration. Existing learned inversion methods are commonly trained on seismic data generated from Gaussian diffusion models, which fail to capture the anomalous transport characteristic of heterogeneous subsurface reservoirs. To overcome this limitation, we introduce a data generator based on space-time frac-tional diffusion, in which the temporal and spatial fractional orders independently control memory effects and nonlocal transport, while elliptical anisotropy represents preferential flow. By sampling this parameter space, we generate a broad ensemble of physically consistent velocity perturba-tions spanning normal, subdiffusive, superdiffusive, and intermediate transport regimes. We then train a convolutional neural network to map time-lapse seismic residuals directly to velocity up-dates. Through extensive Monte Carlo validation, we show that the network accurately reconstructs production-induced anomalies across all transport regimes, with reconstruction errors governed pri-marily by anomaly amplitude and interface sharpness rather than by the diffusion regime itself. Our results demonstrate that embedding anomalous-transport physics into the training distribution substantially extends the applicability of amortized 4D seismic inversion, enabling robust recovery of heavy-tailed and anisotropic reservoir signatures beyond the Gaussian assumptions underlying existing approaches. 
+
+I. INTRODUCTION 
+
+Inverse problems are central to the physical sciences: from observations recorded outside a system, one seeks the internal parameters that produced them [1]. A grow-ing body of work replaces the classical, per-instance op-timization of such problems with amortized inference, in which a neural network is trained once to approximate the inverse map and thereafter returns a solution in a single forward pass [2, 3]. The appeal is acute wherever the forward model is expensive, and many inversions are required. It is also where the method is most fragile: a learned inverse operator is only as reliable as the dis-tribution of examples it was trained on. In scientific settings, the labeled data are not collected but gener-ated by simulation, and so the generative model of the physics is not a preprocessing detail—it is the effective prior that determines what the network can and cannot resolve. This paper examines that premise in the con-text of subsurface monitoring and argues, with a concrete construction, that grounding the generator in the correct diffusion physics unlocks generalization. Reflection seismic, a geophysical method based on the emission of acoustic waves and the analysis of signals re-flected at interfaces between rock layers with different  
+
+> ∗Corresponding author; gfcorso@gmail.com
+
+acoustic impedances, constitutes the fundamental tool for subsurface imaging [4, 5]. 4D seismic, or time-lapse 
+
+seismic, extends this technique by repeatedly acquiring 3D seismic surveys over the same field throughout the production life of a reservoir [6]. Changes in the physic-ochemical properties of the reservoir induced by produc-tion and injection operations (water or CO 2) that mod-ify fluid saturation and pressure, and consequently the acoustic impedance of the rock, generate so-called seismic anomalies between different seismic surveys [7]. The suc-cessful, accurate imaging of these anomalies is therefore directly correlated with the ability to monitor subsur-face fluid dynamics, enabling the optimization of recovery strategies, the location of remaining hydrocarbon zones, and the validation of reservoir simulation models, thereby establishing itself as an important tool for production management and monitoring [8, 9]. The state-of-the-art deterministic approach, full-waveform inversion (FWI), fits a velocity model directly to the recorded wavefield by minimizing a least-squares misfit [10, 11]. FWI is power-ful but computationally demanding and notoriously non-convex: the misfit landscape is riddled with local minima (“cycle skipping”) [12], so convergence to the physical solution requires an accurate starting model and care-ful regularization [13]. These costs are multiplied in 4D, where the quantity of interest is a small differential up-date embedded in a much larger background [14]. Convolutional neural networks (CNNs) have emerged arXiv:2607.21854v1 [physics.geo-ph] 23 Jul 2026 2as an efficient alternative for seismic velocity-model building and inversion [15–17]. By learning a direct map-ping from data to model, a CNN amortizes the inver-sion cost into a one-time training stage and exploits the translation-equivariant structure of wavefield data [18]. For 4D monitoring specifically, recent studies demon-strate that networks can map differential seismic data to impedance- or velocity-change models with competi-tive efficiency and useful robustness to noise [19, 20]. A common—and, we argue, limiting—feature of this prior work is the statistical model used to synthesize the train-ing anomalies: production-induced changes are repre-sented as smooth, Gaussian-shaped perturbations consis-tent with classical (Fickian) diffusion around wells. The network is then asked, at test time, to resolve changes drawn from the same idealized family. High-fidelity 4D seismic imaging, crucial for monitor-ing fluid dynamics in reservoirs, faces the fundamental challenge of non-repeatability between surveys, where differences in data acquisition, environmental conditions, and noise attenuate the signal of true production anoma-lies [6]. Advanced processing techniques, such as Full Waveform Inversion (FWI), seek to mitigate this prob-lem by fitting velocity models directly to seismic data; however, the methodology is computationally expensive and requires sophisticated parameterization [21]. In con-trast, modern machine learning approaches, particularly Convolutional Neural Networks (CNNs), have emerged as promising alternatives for 4D seismic inversion, offering a significant reduction in computational cost after an ini-tial training stage. Recent work, such as that of [19, 20], demonstrates substantial progress on this front, devel-oping CNN architectures capable of mapping differential seismic data directly into impedance change models with greater efficiency and robustness to noise, thereby paving the way for more agile and accessible monitoring solu-tions. The effectiveness of machine learning techniques, and CNNs in particular, strongly depends on a good train-ing set; as a general rule, the generalization capacity of a neural network depends heavily on the representative-ness of the training set [22, 23]. 4D seismic inversion is no different: 4D imaging is intrinsically dependent on the availability of robust and representative training models that encode reservoir properties in response to the seismic impulse. To build a comprehensive training database, it is imperative to generate a wide range of realistic seismic anomalies, simulating the variations that occur during production. This synthesis requires the use of sophis-ticated statistical techniques that go beyond the purely Gaussian models often employed to generate spatial vari-ability in the medium. Indeed, the quality and diver-sity of synthetic anomalies are therefore fundamental to the generalizable performance of the neural network, en-abling the CNN to learn to discriminate geological signal from noise and produce reliable subsurface images. Fluid dynamics in hydrocarbon reservoirs can be de-scribed by different stochastic transport regimes, the na-ture of which is defined by the interaction between the porous medium’s microstructure and the fluid molecules and the pressure gradients in the reservoir [24]. In the ideal case of a homogeneous medium with no dominant external gradients, molecular trajectories approximate Brownian motion, resulting in normal diffusion and a Gaussian distribution of displacements. However, the presence of a strong pressure gradient between injec-tor and producer wells introduces a coherent advective component that shifts the mean of the distribution and breaks the symmetry of transport, opening the path to anomalous superdiffusion [25]. Conversely, in low-porosity and low-permeability zones, where rock-fluid interactions are intensified, par-ticles undergo frequent retention and immobilization, transforming the random walk into a subdiffusive pro-cess in which the mean square displacement grows more slowly than in normal diffusion [26]. A particularly complex scenario emerges in formations characterized by rocks with low effective porosity, such as certain dense carbonates or highly compacted sandstones [24]. In this context, reduced porosity is typically associated with very low permeability, significantly enhancing the physic-ochemical interactions between the rock matrix and the fluids [27, 28]. This phenomenon amplifies capillary and adsorption forces, effectively increasing the apparent fluid viscosity and introducing an additional resistance to flow [29]. The transition between Brownian, superdiffusive, and subdiffusive regimes encapsulates the vast range of possi-ble transport anomalies in real reservoirs. In the context of inverting reservoir anomaly properties using machine learning, it is important to consider all these possibil-ities in the training process so that a neural network can be built that is capable of handling these diverse scenarios and producing reliable responses. In this con-text, we present a theoretical model using a generalized diffusion equation to simulate non-Gaussian anomalies that are used to train neural networks to produce time-lapse inversion. The rest of the paper is organized as follows. The methodology section is divided into three parts: the mathematical framework of the generalized diffusion, the machine learning strategy of inversion, and the seismic problem we address in the study. The results section shows both the non-Gaussian anomalies gener-ated by generalized diffusion as well as the seismic in-version produced by the Machine Learning approach. In the last section we conclude the work and point out the limitations and the strong aspects of the paper.  
+
+> II. METHODS
+
+The methodology of the paper is split into three parts. Initially, we address the challenges of modeling particle diffusion in a non-heterogeneous and complex reservoir— where anomalous transport behavior defies classical dif-fusion, and we employ fractional derivatives to capture 3the memory and non-local effects inherent to such porous media. Subsequently, a machine learning methodol-ogy based on Convolutional Neural Networks (CNNs) is developed to perform seismic inversion, leveraging the CNN’s ability to extract spatial hierarchies and complex patterns from high-dimensional data. These methods are applied to the context of time-lapse seismic moni-toring, where repeated seismic surveys are acquired over the same reservoir to detect dynamic changes in fluid sat-uration and pore pressure due to production or injection. In this framework, the seismic data consist of pre-stack volumes that record differences in acoustic velocities over time.  
+
+> A. Anomalous diffusion
+
+Classical diffusion describes the regime in which both the microscopic jump lengths and waiting times of trans-ported particles possess finite mean and variance. In this context, the probability density P (x, t ) for an ensemble of particles satisfies Fick’s second law, 
+
+∂P (x, t )
+
+∂t = K ∆P (x, t ), (1) whose Green’s function for this equation is Gaussian, and the mean-square displacement (MSD) increases lin-early with time, ⟨| x|2⟩ ∝ t. This statistical behavior underlies the common modeling of reservoir anomalies as Gaussian distributions centered around wells. However, when the waiting-time or jump-length distributions ex-hibit heavy tails, as observed in trapping-rich or fracture-rich rock, the classical central-limit theorem does not ap-ply. In such cases, the continuum limit of the underlying continuous-time random walk is governed by the space– time fractional diffusion equation [30–33],  
+
+> C
+
+Dαt 
+
+> t
+
+P (x, t ) = −K (−∆) αs/2 P (x, t ), (2) for 0 < α t ≤ 1, 0 < α s ≤ 2. Here, K > 0 is a generalized diffusivity, C Dαt 
+
+> t
+
+represents the Caputo fractional deriva-tive in time, and ( −∆) αs/2 denotes the Riesz fractional Laplacian in space. Both operators are nonlocal, acting in time and space respectively, and each reduces to its classical counterpart at the endpoints of its parameter range. The Caputo derivative of order 0 < α t ≤ 1 encodes temporal memory: the evolution at time t depends on the entire history of P through the weakly singular ker-nel C Dαt 
+
+> t
+
+f (t) = 1Γ(1 −αt)
+
+R t    
+
+> 0
+> f′(τ)(t−τ)αt
+
+dτ , where Γ( ·) denotes the gamma function. When αt = 1, the kernel reduces to a delta function and the operator becomes the or-dinary time derivative, C D1 
+
+> t
+
+P = ∂tP , thereby recover-ing Eq. (1). In physical terms, αt < 1 characterizes prolonged, heavy-tailed trapping events in confined pore spaces, corresponding to subdiffusion [34, 35]. The Riesz fractional Laplacian is most cleanly defined spectrally: it is the operator whose action multiplies the Fourier transform of a field by |k|αs ,
+
+F
+
+n
+
+(−∆) αs/2f
+
+o
+
+(k) = |k|αs bf (k), bf (k) ≡ F{ f (x)}.
+
+(3) When αs = 2, this operator reduces to the classical Laplacian, |k|2. For αs < 2, it becomes genuinely nonlo-cal and produces the heavy-tailed spatial jumps char-acteristic of L´ evy flights, corresponding to superdiffu-sion [32, 36]. Therefore, αt governs temporal memory (trapping), while αs determines spatial nonlocality (long-range connectivity). Together, these parameters define a two-dimensional family of diffusion regimes. Under periodic boundary conditions, Eq. (2) is diag-onal in the Fourier basis: each mode evolves indepen-dently, and its exact solution is the Mittag-Leffler prop-agator 
+
+bP (k, t ) = Eαt
+
+  − K |k|αs tαt  bP (k, 0) , (4) where Eαt (z) = P∞ 
+
+> n=0
+
+zn/Γ( αtn + 1) is the one-parameter Mittag-Leffler function. For αt = 1 this col-lapses to the exponential exp( −K|k|αs t), recovering the classical propagator (Gaussian for αs = 2), whereas for 
+
+αt < 1 its algebraic decay in t encodes the memory of the Caputo operator. The anomaly field is reconstructed in physical space by the inverse Fourier transform of Eq. (4). The self-similar structure of Eq. (2) is characterized by the scaling variable |x|/t αt/α s , indicating that the char-acteristic spreading length grows as tH , where H is the anomalous (Hurst) exponent, 
+
+H = αt
+
+αs
+
+. (5) For αs = 2, the second moment is finite and H re-duces to the conventional MSD exponent, ⟨| x|2⟩ ∝ tαt ,which yields subdiffusion when αt < 1. In contrast, for 
+
+αs < 2, the spatial propagator exhibits algebraic tails and its variance diverges; in this regime, spreading is char-acterized by the self-similar scaling exponent (5) rather than by the MSD, and the bulk expands faster than lin-early, indicating superdiffusion. The two exponents may also interact: 0 < α t < 1 combined with 0 < α s < 2results in time-subordinated diffusion, where temporal trapping partially compensates for spatial flights, and the net spreading is determined by (5). Table I summarizes the canonical cases used to classify the ensemble.                                          
+
+> TABLE I. Diffusion regimes spanned by the fractional-diffusion generator and the parameter domains used to label the training ensemble. The anomalous exponent is H=αt/α s
+> [Eq. (5)].
+> Regime Parameter domain Spreading
+> Normal diffusion αt= 1 , α s= 2 H= 1 /2Subdiffusion 0< α t<1, α s= 2 H < 1/2Superdiffusion αt= 1 ,0< α s<2H > 12
+> Time-subordinated 0 < α t<1,0< α s<2Hfrom Eq. (5)
+
+4In practice, sedimentary media are directionally struc-tured (bedding, aligned fractures), so isotropic spreading is the exception. In this regard, we introduce elliptical anisotropy by promoting the scalar diffusivity to a sym-metric positive-definite tensor, 
+
+K =
+
+Kxx Kxy 
+
+Kyx Kyy 
+
+
+
+, (6) with Kxy = Kyx , Kxx , K yy > 0, det K > 0. The spec-tral multiplier then becomes the anisotropic quadratic form 
+
+K|k|αs −→ (k⊤Kk )αs/2 (7) =  Kxx k2 
+
+> x
+
++ 2 Kxy kxky + Kyy k2
+
+> y
+
+αs/2 (8) and the propagator (4) carries through with K|k|αs re-placed by ( k⊤Kk )αs/2. The eigenvectors of K set the principal axes of the plume and the eigenvalue ratio its elongation, allowing the generator to mimic preferential flow directions. Figure 1 shows representative anoma-lies for the four regimes of Table I under a common anisotropy, displayed on a logarithmic scale with the equiprobable contour outlined to make the heavy-tailed structure visible.  
+
+> FIG. 1. Representative reservoir anomalies synthesized with the fractional-diffusion generator [Eqs. (4) and (8)]; color scale logarithmic with a lower cutoff, and the equiprobable surface outlined. (a) Subdiffusion, (b) normal diffusion, (c) superdif-fusion, and (d) time-subordinated superdiffusion. All cases share the same elliptical anisotropy, isolating the effect of the fractional exponents ( αt, α s) on plume morphology and tail weight.
+
+The field P (x, t ) describes the spatial pattern of production-induced change—the redistribution of the saturating or injected phase. To obtain the seismic ob-servable we map this pattern to a perturbation of the acoustic velocity. We adopt a linear rock-physics proxy in which the local velocity change is proportional to the normalized transport field, ∆V (x) = δv max 
+
+P (x, t )max x P (x, t ) , (9) with a prescribed peak amplitude δv max sampled per realization. This proxy preserves the morphology and tail structure of the anomalous plume—the features that distinguish the diffusion regimes and that the net-work must learn to resolve—while abstracting the con-stitutive details of saturation-to-impedance coupling. A first-principles substitution (Gassmann fluid substitution [37, 38]), which would tie δv max and its spatial depen-dence to porosity, saturation, and pressure, is a natural refinement and is discussed in Sec. IV. The generator exposes a small set of physically mean-ingful controls—the exponents (αt, α s) that fix the regime, the tensor K that fixes the anisotropy and ori-entation, the snapshot time t that fixes the extent, and the amplitude δv max . Sampling these controls produces a diverse ensemble of non-Gaussian anomalies {∆Vn} span-ning the four regimes of Table I. We generate N = 5000 such anomalies and confine each to the reservoir interval of the baseline model described in Sec. II B, forming the targets for the learned inversion.  
+
+> B. Forward Problem and 4D Seismic Formalism
+
+The seismic inverse problem seeks the subsurface pa-rameters that produced a set of recordings made at the surface or seabed. We write M ⊆ RNm for the model space of those parameters and D ⊆ RNd for the data space of recorded seismograms. Time-lapse monitoring is intrinsically differential: it compares two states of the 
+
+same reservoir and attributes their difference to produc-tion. We therefore introduce the 4D observable before the forward operator that generates it. Let mbase ∈ M be the baseline model, acquired be-fore or early in production, and mmon = mbase + ∆ m
+
+the monitor model, acquired after a period of injection and withdrawal. The perturbation ∆ m is the velocity anomaly induced by the redistribution of fluids and pore pressure, synthesized by the anomalous-transport gener-ator of Sec. II A. Repeating the survey over each state yields data dbase = F(mbase ) and dmon = F(mmon ), where F : M → D is the nonlinear forward operator defined below. The quantity that carries the monitoring signal is their difference, the time-lapse residual, ∆d = dmon − dbase = F(mbase + ∆ m) − F (mbase ). (10) The subtraction in Eq. (10) is the crux of the 4D method: in the idealized limit of perfectly repeated acquisition, 5the response of the static, unchanged earth cancels ex-actly, leaving a residual sensitive only to the production-induced change ∆ m. In practice the cancellation is imperfect—differences in source signature, receiver po-sitioning, coupling, and ambient noise between vintages leave a non-repeatability floor that competes with the true signal and constitutes the defining obstacle of field 4D monitoring [6, 13]. The present study isolates the inverse-modeling question from this floor by working with repeated acquisition; we return to non-repeatability in Sec. IV. The operator F is fixed by the physics of wave prop-agation. In a linear, isotropic, heterogeneous acoustic medium parametrized by the velocity v(x) ∈ M , the pressure wavefield u(x, t ) obeys the scalar wave equation 
+
+L[v] u(x, t ) ≡
+
+
+
+∇2 − 1
+
+v2(x)
+
+∂2
+
+∂t 2
+
+
+
+u(x, t ) = s(x, t ), (11) where x ∈ R2, t denotes time, and s(xs, t ) is the source, a band-limited wavelet at the shot location x = xs.The wave equation in (11) is integrated with absorbing boundary conditions and sampled at the receiver array, so that the forward operator is the composition of the PDE solution map with a restriction operator S that records the wavefield at the Nr receivers, d = F(m) = S u[m]. The map is nonlinear in m because the wavefield depends on the very medium through which it propagates. However, recovering ∆ m from ∆ d is an ill-posed and an ill-conditioned problem. In this way, typically, ∆ m is obtained using methods such as FWI and Least-Squares Reverse-Time Migration (LSRTM), which are computa-tionally very expensive. These are gradient-based meth-ods and therefore require the determination of the Jaco-bian matrix. The Jacobian J carries a large effective null space: a finite array and a finite source bandwidth illumi-nate only a portion of the model wavenumber spectrum, so many distinct perturbations map to nearly identical data and the normal operator J⊤J is severely ill con-ditioned. The standard deterministic remedy estimates ∆m by minimizing a regularized least-squares functional, 
+
+J (∆ m) = 12 F(mbase + ∆ m) − dmon  
+
+> 2
+> D
+
++ λ R(∆ m),
+
+(12) in which the data-misfit term enforces consistency with the observations, the stabilizer R (e.g. Tikhonov, 
+
+R(∆ m) = ∥L∆m∥22) injects prior smoothness or sparse-ness, and λ > 0 balances the two [4, 11]. This is the least-squares functional for FWI and LSRTM problems, for instance, and two features make its minimization costly. First, the operator F is strongly nonlinear and the mis-fit is non-convex: the oscillatory character of seismic data generates secondary minima (cycle skipping) that trap gradient-based methods unless the starting model already predicts arrivals to within half a period [11, 12]. Second, each gradient evaluation is expensive, so that each iteration requires at least two wave-equation solves per shot s. Incurred anew for every monitor survey, this cost—together with the dependence on an accurate ini-tial model—is precisely what motivates replacing per-instance optimization with a single, amortized inverse operator, learned once and evaluated in one forward pass (Sec. II D).  
+
+> C. The Seismic Model and Data Generation
+
+To evaluate the proposed methodology, we consider a baseline velocity model representative of a Brazilian pre-salt formation [39, 40]; the model is 20 km wide and 7.5 km deep, with a reservoir target roughly 1.6 km thick and 4 km in lateral extent (Fig. 2). The acquisition geometry consists of an Ocean Bottom Node (OBN) system with 49 receivers (nodes) distributed over a 20 km horizontal distance on the ocean floor, with a single-shot position located at the center of the velocity model on the sea sur-face. An overview of the baseline model and the acqui-sition setup is shown in Figure 2. To isolate the variable under study—the statistics of the training anomalies— from confounding acquisition effects, we adopt a deliber-ately controlled OBN configuration: a single shot at the center of the model and 49 receivers distributed over the 20 km aperture. 
+
+> FIG. 2. We employ a realistic 20 km wide, 7.5 km deep veloc-ity model from a pre-salt oil field. The acquisition geometry consists of a single shot and 49 receivers. This velocity model is representative of typical pre-salt formations.
+
+The reservoir was positioned to represent a realistic geological scenario, with an approximate thickness of 1.6 km and a lateral extension of 4 km. To build the training dataset, this baseline model is used to generate 5000 synthetic monitor models considering four distinct non-Gaussian fractional diffusion scenarios. Each moni-tor model is obtained by introducing velocity anomalies (∆ V ), as described in Section II A, within this reservoir region. For each synthetic monitor model, the corresponding seismic response is obtained via forward acoustic-wave simulations using the aforementioned acquisition geome-try. The input data for the neural network consists of the normalized seismic differences (∆ S) between the baseline and monitor datasets, gathered around the reservoir re-gion. 6 
+
+> D. Deep Learning Inversion and CNN Architecture
+
+To address computational bottlenecks in iterative opti-mization for minimizing Eq. (12), deep learning inversion reformulates the problem by introducing a parameter-ized inverse operator Gθ : D → M , where θ denotes the trainable parameters of a deep neural network, includ-ing weights and biases. Here, ∆ S ∈ D represents the normalized seismic difference input, and ∆ V ∈ M de-notes the predicted velocity update. The objective is to approximate the inverse mapping as follows: ∆V ≈ G θ (∆ S). (13) As illustrated in Figure 3, we employ a Convolutional Neural Network (CNN) architecture for its ability to ex-ploit spatial correlations in seismic data through trans-lation invariance. The network functions as a hybrid morphological mapper, comprising a feature-extraction module and a regression head. The feature extraction phase includes sequential con-volutional layers combined with spatial downsampling. The core operation in a discrete convolutional layer, which maps an input I to a feature map F using a kernel 
+
+K, is defined as: 
+
+F (i, j ) = σ X
+
+> m
+
+X
+
+> n
+
+I(i − m, j − n)K(m, n ) + b
+
+!
+
+,
+
+(14) where b is the bias term and σ(·) is a non-linear activa-tion function, such as the Rectified Linear Unit (ReLU [3, 18]). This stage progressively reduces the spatial di-mensions of the residual data ∆ S while increasing feature depth, extracting hierarchical, kinematic, and dynamic signatures from the wavefield. After feature extraction, the resulting tensor is vector-ized into a one-dimensional latent-space representation. This vector feeds the regression head, which consists of fully connected layers mapping the extracted features to the predicted velocity update. These layers perform global linear transformations followed by activation func-tions: 
+
+a(l) = σ
+
+
+
+W(l)a(l−1) + b(l)
+
+, (15) where W(l) ∈ RNl×Nl−1 is the weight matrix for the l-th layer, a(l−1) ∈ RNl−1 is the input activation vector from the previous layer, and b(l) ∈ RNl is the bias vector asso-ciated with the current layer l. The function σ(·) denotes the element-wise non-linear activation function. Conse-quently, a(l) represents the output activation vector of the l-th layer, which will serve as the input for the subse-quent layer. The final fully connected layer contains Ns
+
+neurons, corresponding to the spatial grid of the reser-voir anomaly. The output is subsequently reshaped into the two-dimensional spatial domain to reconstruct ∆ V .The network parameters θ are optimized iteratively via backpropagation. The dataset is randomly divided into    
+
+> FIG. 3. Proposed CNN architecture for velocity-update pre-diction from time-lapse seismic data. The network receives normalized seismic differences (∆ S) between baseline and monitor datasets as input. Feature extraction is performed through successive Conv2D and max-pooling layers, followed by fully connected layers that map the extracted features into the predicted velocity update (∆ V). The final reshape oper-ation reconstructs the 2D velocity-update model within the reservoir region.
+
+training and test subsets containing 80% and 20% of the samples, respectively. Thirty independent training runs use Monte Carlo cross-validation to ensure statistical ro-bustness. The loss function is the Mean Squared Er-ror (MSE) over the entire spatial domain of the training batch: 
+
+L(θ) = 1
+
+Nbatch Nbatch X
+
+> k=1
+
+∥∆V true  
+
+> k
+
+− G θ (∆ Sk)∥22. (16) While the network is trained holistically over the entire domain to capture the global mapping, the quantitative evaluation of predicted anomalies is conducted a posteri-ori. To ensure rigorous physical assessment and prevent the background medium (where ∆ V = 0) from artifi-cially lowering the overall error, a localized binary mask is applied to the predictions. This restricts the MSE computation solely to the spatial support of the diffusion plume.  
+
+> III. RESULTS
+
+We assess the learned operator’s ability to reconstruct the velocity update ∆ V from the time-lapse residual ∆ S
+
+across the four diffusion regimes in Table I. We perform the reconstruction on the 11 × 101 reservoir grid ( Ns =1111 output nodes) of the network (Fig. 3). We compute all statistics below on the held-out test predictions of the Monte Carlo cross-validation (MCCV), so no sample influences the model scoring it, and we read performance from the distribution over the 30 folds rather than from any single split. Figure 4 presents the median-performing fold (fold #05): over 160 epochs, both training and val-idation mean-square error [Eq. (16)] decrease by 7 
+
+> FIG. 4. Convergence history of the Convolutional Neural Net-work for the median-performing fold, selected from the 30 in-dependent Monte Carlo cross-validation runs. The training (solid blue) and validation (dashed red) Mean Squared Error (MSE) losses are plotted on a logarithmic scale as a function of the training epochs.
+
+approximately two and a half orders of magnitude, from ∼ 10 −3 to a plateau near 2 × 10 −6. After initial oscillations between epochs 10 and 30, the loss declines smoothly and converges by epoch 60. The validation curve closely follows the training curve throughout, with no late divergence, indicating that the operator general-izes across the anomaly family rather than memorizing specific cases. The low final loss demonstrates the network’s capacity to fit the fractional-diffusion targets. Expanding to the full ensemble, Figure 5 summa-rizes the two plume-restricted metrics across all 30 folds. Structural similarity [Fig. 5(a)] is consistently high: the median SSIM is ≈ 0.999, the interquartile range is 0 .998 to 0 .9995, and all folds exceed ≈ 0.997. Since SSIM mea-sures local luminance, contrast, and structure [41], these values indicate that predicted anomalies closely match the position, orientation, and shape of the true updates, regardless of the data split. The masked MSE [Fig. 5(b)] is also low, with a median below 0 .1 and an interquar-tile range from 0 .02 to 0 .18, though a few outliers reach 
+
+≈ 1.4. These metrics are complementary: SSIM ap-proaches unity because the morphology is almost always correct, while MSE highlights the few cases where ampli-tude is less accurately resolved. The narrow distributions confirm that performance reflects the method itself, not a favorable data split. To illustrate these statistics, Figure 6 presents held-out cases ranked by error, from best (top row) to worst (bottom row), showing the true anomaly, prediction, and residual (true minus predicted). The best case [Fig. 6(a– c)] features a large, smooth, quasi-radial anomaly with moderate peak amplitude ( ∼ 60 m /s); the prediction is visually indistinguishable from the reference, and the residual is a low-amplitude speckle ( ±0.3 m /s) without coherent structure. The first-quartile and median cases   
+
+> FIG. 5. Statistical evaluation of the CNN inversion perfor-mance over the 30-fold cross-validation at the 10.0 km receiver position. (a) Structural Similarity Index Measure (SSIM) dis-tribution, highlighting the high spatial coherence and mor-phological fidelity of the predicted velocity anomalies. (b) Mean Squared Error (MSE) distribution, indicating the ab-solute pixel-wise error variance and the presence of localized outliers.
+
+[rows (d–f) and (g–i)] are more compact and higher in amplitude ( ∼ 80 and ∼ 110 m /s), with residuals ( ±1 and 
+
+±7.5 m /s) localized at the anomaly core, indicating slight underfitting of sharp central gradients rather than mis-placement. The third-quartile case [rows (j–l)] is a mildly elongated elliptical anomaly ( ∼ 140 m /s) with weak resid-ual ringing at the rim. The worst case [Fig. 6(m–o)] is a strongly elongated, obliquely oriented anomaly of simi-lar amplitude, representing the anisotropic, heavy-tailed superdiffusive regime. Even in this case, the network recovers the core, position, and orientation; the largest residual ( ±10 m /s) appears along the plume margins and tails, where steep, direction-dependent gradients are most challenging to fit. Two trends are consistent across these cases. First, residuals remain confined to the anomaly core and mar-gins, never appearing in the background. This sup-ports the use of plume-restricted scoring and indicates that the operator has no systematic positional or orien-tational bias. Second, reconstruction difficulty depends more on peak amplitude and gradient sharpness than on the diffusion-regime label: large, smooth, low-amplitude plumes are reconstructed nearly perfectly, while compact or highly anisotropic high-amplitude plumes contribute to the upper tail of the MSE distribution in Fig. 5(b). Because the masked MSE sums squared residuals over the plume support, a sharp but localized misfit, as in the median case, can yield a lower score than a milder error spread over a larger plume, as in the third-quartile case. This explains why peak residual amplitude does not al-ways increase with error rank. The remaining errors are related to amplitude and edge resolution, not structure or location, which aligns with the near-unity SSIM.  
+
+> IV. FINAL REMARKS
+
+The results from seismic inversion using convolutional neural networks (CNNs) trained on synthetic datasets 8
+
+FIG. 6. Comprehensive visual analysis of the predictive performance across the Monte Carlo cross-validation folds for the velocity updates (∆ V ). To illustrate the full spectrum of the network’s accuracy, the rows are organized according to the error distribution. From top to bottom: the first row (a-c) illustrates the best-case scenario, demonstrating excellent morphological reconstruction of the anomaly; the second row (d-f) represents the 25th percentile (first quartile) performance; the third row (g-i) presents the median-case scenario, reflecting the typical spatial coherence achieved by the model across the entire dataset; the fourth row (j-l) shows the 75th percentile; and the bottom row (m-o) displays the worst-case scenario, where the network struggled the most to resolve the complex heavy-tailed fractional diffusion. Columns from left to right correspond to the true reference anomaly, the CNN prediction, and the residual error (defined as the true minus the predicted velocity), respectively. 
+
+have demonstrated good performance across both subd-iffusive and superdiffusive transport regimes. The ML approach successfully captured the distinct signatures of anomalous diffusion: the heavy-tailed distributions and accelerated spreading associated with superdiffusive transport in high-permeability zones under strong pres-sure gradients, as well as the slower dispersion and par-ticle retention patterns typical of subdiffusive regimes in 9low-porosity formations with intense rock-fluid interac-tions. By incorporating training examples that encode the full spectrum of fractional diffusion behaviors, from long-range connectivity effects to temporary particle im-mobilization in tight matrix sites, the neural networks learned to map seismic data directly from velocity change models. The results indicate that CNNs can effectively learn the complex, non-linear relationships between rock property distributions and fluid dynamics that govern production-induced seismic signatures. The extreme lithological and structural diversity of hy-drocarbon reservoirs gives rise to a broad spectrum of dynamical behaviors, extending beyond the scope of clas-sical homogeneous models. In heterogeneous media, the combination of advection, preferential channeling, com-plex connectivity, and permeability contrasts can pro-duce effectively non-Fickian behaviors and, in some cases, superdiffusive spreading. The successful inversion of non-Gaussian anomalies represents a significant advancement beyond previously published results limited to Gaussian-distributed reser-voir changes [19, 20]. While earlier work demonstrated the viability of ML for seismic inversion under idealized conditions assuming normal diffusion and homogeneous property distributions, the current findings show that CNN architectures can robustly handle the heavy-tailed, and spatially correlated patterns arising from genuine anomalous diffusion processes. This capability is par-ticularly significant for unconventional reservoirs where subdiffusive behavior dominates due to nanoporous for-mations and complex fracture networks. To conclude, the adequate performance across both subdiffusive and su-perdiffusive regimes confirms that it is possible to design neural networks that properly model time-lapse seismic data to monitor reservoirs. 
+
+ACKNOWLEDGMENTS 
+
+The authors gratefully acknowledge NPAD/UFRN for the computational support, FINEP Brazilian research agency and CNPq Brazilian research agency for funding (grant no. 307907/2019-8, 314906/2023-1). 
+
+[1] M. Razavy, An Introduction to Inverse Problems in Physics (WORLD SCIENTIFIC, 2020). [2] G. E. Karniadakis, I. G. Kevrekidis, L. Lu, P. Perdikaris, S. Wang, and L. Yang, Physics-informed machine learn-ing, Nature Reviews Physics 3, 422 (2021). [3] Y. LeCun, Y. Bengio, and G. Hinton, Deep learning, Na-ture 521 , 436 (2015). [4] A. Tarantola, Inverse Problem Theory and Methods for Model Parameter Estimation (Society for Industrial and Applied Mathematics (SIAM), Philadelphia, PA, 2005). [5] ¨Oz Yilmaz, Seismic Data Analysis: Processing, Inver-sion, and Interpretation of Seismic Data , Vol. 1-2 (Soci-ety of Exploration Geophysicists, Tulsa, OK, 2001). [6] D. H. Johnston, Practical Applications of Time-lapse Seismic Data (Society of Exploration Geophysicists, 2013). [7] P. K. T. Nguyen, M. J. Nam, and C. Park, A review on time-lapse seismic data processing and interpretation, Geosciences Journal 19 , 375 (2015). [8] C. Sambo, C. C. Iferobia, A. A. Babasafari, S. Rezaei, and O. A. Akanni, The role of time lapse(4d) seismic technology as reservoir monitoring and surveillance tool: A comprehensive review, Journal of Natural Gas Science and Engineering 80 , 103312 (2020). [9] N. M. Cruz, J. M. Cruz, L. M. Teixeira, M. M. da Costa, L. B. de Oliveira, E. N. Urasaki, T. P. Bispo, M. de S´ a Jardim, M. H. Grochau, and A. Maul, Tupi nodes pilot: A successful 4d seismic case for brazilian presalt reservoirs, The Leading Edge 40 , 886 (2021). [10] G. Sun, Q. Chang, and P. Sheng, Full waveform inversion with optimal basis functions, Phys. Rev. Lett. 90 , 104301 (2003). [11] J. Virieux and S. Operto, An overview of full-waveform inversion in exploration geophysics, Geophysics 74 ,WCC1 (2009). [12] S. L. E. F. da Silva and G. Kaniadakis, κ-statistics ap-proach to optimal transport waveform inversion, Phys. Rev. E 106 , 034113 (2022). [13] D. E. Lumley, Time-lapse seismic reservoir monitoring, Geophysics 66 , 50 (2001). [14] S. L. E. F. da Silva, A. Karsou, R. M. Moreira, and M. Cetale, Bayesian weighted time-lapse full-waveform inversion using a receiver-extension strategy, IEEE Transactions on Geoscience and Remote Sensing 62 , 1 (2024). [15] M. Araya-Polo, J. Jennings, A. Adler, and T. Dahlke, Deep-learning tomography, The Leading Edge 37 , 58 (2018). [16] F. Yang and J. Ma, Deep-learning inversion: A next-generation seismic velocity model building method, Geo-physics 84 , R583 (2019). [17] Y. Wu and Y. Lin, InversionNet: An efficient and accu-rate data-driven full waveform inversion, IEEE Transac-tions on Computational Imaging 6, 419 (2020). [18] A. Krizhevsky, I. Sutskever, and G. E. Hinton, Imagenet classification with deep convolutional neural networks, in Advances in Neural Information Processing Systems ,Vol. 25 (2012) pp. 1097–1105. [19] K. Rincon, R. C. F. Ara´ ujo, M. M. Galv˜ ao, S. Xavier-de Souza, J. M. de Ara´ ujo, T. Barros, and G. Corso, Single-Shot Time-Lapse Target-Oriented velocity inver-sion using machine learning, Applied Sciences 14 , 10047 (2024). [20] P. Ferreira, K. Rincon, R. Araujo, T. Barros, G. Corso, J. D. Araujo, and J. Lopez, Ai-assisted 4d seismic inversion using very sparse OBN geometries, First EAGE/SBGf Workshop on Marine Seismic Acquisition 
+
+2025 , 1 (2025). [21] W. Zhou and D. Lumley, Nonrepeatability effects on time-lapse 4d seismic full-waveform inversion for ocean-10 
+
+bottom node data, Geophysics 86 , R547 (2021). [22] F. Pedregosa, G. Varoquaux, A. Gramfort, V. Michel, B. Thirion, O. Grisel, M. Blondel, P. Prettenhofer, R. Weiss, V. Dubourg, J. Vanderplas, A. Passos, D. Cour-napeau, M. Brucher, M. Perrot, and E. Duchesnay, Scikit-learn: Machine learning in Python, Journal of Ma-chine Learning Research 12 , 2825 (2011). [23] Q. Kong, D. T. Trugman, Z. E. Ross, M. J. Bianco, B. J. Meade, and P. Gerstoft, Machine learning in seismology: Turning data into insights, Seismological Research Let-ters 90 , 3 (2019). [24] L. P. Dake, Fundamentals of Reservoir Engineering , 1st ed., Developments in Petroleum Science, Vol. 8 (Elsevier Science, 1983). [25] J.-P. Bouchaud and A. Georges, Anomalous diffusion in disordered media: Statistical mechanisms, models and physical applications, Physics Reports 195 , 127 (1990). [26] D. Tiab and E. C. Donaldson, Petrophysics: Theory and Practice of Measuring Reservoir Rock and Fluid Trans-port Properties , 3rd ed. (Gulf Professional Publishing, 2011). [27] B. Berkowitz and H. Scher, On characterization of anomalous dispersion in porous and fractured media, Wa-ter Resources Research 31 , 1461 (1995). [28] L. R. Evangelista and E. K. Lenzi, An Introduction to Anomalous Diffusion and Relaxation , PoliTO Springer Series (Springer, Cham, 2023). [29] F. Civan, Effective correlation of apparent gas permeabil-ity in tight porous media, Transport in Porous Media 82 ,375 (2010). [30] E. W. Montroll and G. H. Weiss, Random walks on lat-tices. ii, Journal of Mathematical Physics 6, 167 (1965). [31] H. Scher and E. W. Montroll, Anomalous transit-time dispersion in amorphous solids, Phys. Rev. B 12 , 2455 (1975). [32] R. Metzler and J. Klafter, The random walk’s guide to anomalous diffusion: A fractional dynamics approach, Physics Reports 339 , 1 (2000). [33] R. Metzler and J. Klafter, The restaurant at the end of the random walk: recent developments in the description of anomalous transport by fractional dynamics, Jour-nal of Physics A: Mathematical and General 37 , R161 (2004). [34] F. Mainardi, Fractional Calculus and Waves in Linear Viscoelasticity (Imperial College Press, London, 2010). [35] R. Gorenflo, A. A. Kilbas, F. Mainardi, and S. V. Ro-gosin, Mittag-Leffler Functions, Related Topics and Ap-plications (Springer, Berlin, Heidelberg, 2014). [36] J. Klafter, A. Blumen, and M. F. Shlesinger, Stochastic pathway to anomalous diffusion, Phys. Rev. A 35 , 3081 (1987). [37] F. Gassmann, ¨Uber die elastizit¨ at por¨ oser medien, Vierteljahrsschrift der Naturforschenden Gesellschaft in Z¨ urich 96 , 1 (1951), english translation available in Pelissier, M. A., et al. (2007), Classics of Elastic Wave Theory , Geophysical Reprint Series No. 24, Society of Exploration Geophysicists. [38] G. Mavko, T. Mukerji, and J. Dvorkin, The Rock Physics Handbook: Tools for Seismic Analysis of Porous Media ,2nd ed. (Cambridge University Press, Cambridge, 2009). [39] L. Cypriano and et al., OBN for pre-salt imaging and reservoir monitoring – potential and road ahead, in Pro-ceedings of the 16th International Congress of the Brazil-ian Geophysical Society , Vol. 318 (Rio de Janeiro, Brazil, 2019). [40] S. L. E. F. da Silva, J. M. d. Ara´ ujo, and G. Corso, Full-waveform inversion based on q-laplace distribution, Pure and Applied Geophysics 178 , 3415 (2021). [41] Z. Wang, A. C. Bovik, H. R. Sheikh, and E. P. Simoncelli, Image quality assessment: from error visibility to struc-tural similarity, IEEE Transactions on Image Processing 
+
+13 , 600 (2004).

@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-07-27 <!--dpr-date:20260727-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/27/2607.21854v1-anomalous-diffusion-synthesis-of-non-gaussian-reservoir-anomalies-for-time-lapse-seismic-inversion" data-sidebar-item="{&quot;title&quot;: &quot;Anomalous-diffusion synthesis of non-Gaussian reservoir anomalies for time-lapse seismic inversion&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.21854v1-anomalous-diffusion-synthesis-of-non-gaussian-reservoir-anomalies-for-time-lapse-seismic-inversion&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;使用分数阶扩散合成地下流体异常的生成模型&quot;}">Anomalous-diffusion synthesis of non-Gaussian reservoir anomalies for time-lapse seismic inversion</a>
   * 2026-07-25 <!--dpr-date:20260725-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/25/2607.18861v1-learning-sufficient-low-dimensional-structures-through-conditional-optimal-transport" data-sidebar-item="{&quot;title&quot;: &quot;Learning sufficient low-dimensional structures through conditional optimal transport&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.18861v1-learning-sufficient-low-dimensional-structures-through-conditional-optimal-transport&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;通过最优传输启发的条件流匹配准则用于充分降维&quot;}">Learning sufficient low-dimensional structures through conditional optimal transport</a>

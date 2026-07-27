@@ -1,0 +1,24 @@
+{
+  "label": "2026-07-27",
+  "date": "2026-07-27",
+  "generated_at": "2026-07-27T21:30:11",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202607/27/2607.21854v1-anomalous-diffusion-synthesis-of-non-gaussian-reservoir-anomalies-for-time-lapse-seismic-inversion",
+      "section": "quick",
+      "title_en": "Anomalous-diffusion synthesis of non-Gaussian reservoir anomalies for time-lapse seismic inversion",
+      "authors": "Anderson Mateus de Sousa Nogueira, Paulo Vitor Ferreira, Katerine Rincon Perez, João M. de Araújo, Tiago Barros, Samuel Xavier-de-Souza, Sérgio Luiz da Silva, Gilberto Corso",
+      "date": "2026-07-23",
+      "pdf": "https://arxiv.org/pdf/2607.21854v1",
+      "score": "7.0",
+      "evidence": "使用分数阶扩散合成地下流体异常的生成模型",
+      "tldr": "时移地震反演通常基于高斯扩散假设，但真实储层存在非高斯异常输运。本文引入时空分数阶扩散生成器，产生涵盖多种输运机制的速度扰动，训练卷积神经网络进行反演。蒙特卡洛验证表明，网络能准确重建异常，误差主要受异常幅度和界面锐度影响，而非扩散机制。该方法将异常输运物理嵌入训练分布，突破了高斯假设局限，适用于非高斯各向异性储层。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We develop a physics-informed framework for learned time-lapse (4D) seismic inversion that estimates production-induced velocity changes associated with subsurface fluid migration. Existing learned inversion methods are commonly trained on seismic data generated from Gaussian diffusion models, which fail to capture the anomalous transport characteristic of heterogeneous subsurface reservoirs. To overcome this limitation, we introduce a data generator based on space-time fractional diffusion, in which the temporal and spatial fractional orders independently control memory effects and nonlocal transport, while elliptical anisotropy represents preferential flow. By sampling this parameter space, we generate a broad ensemble of physically consistent velocity perturbations spanning normal, subdiffusive, superdiffusive, and intermediate transport regimes. We then train a convolutional neural network to map time-lapse seismic residuals directly to velocity updates. Through extensive Monte Carlo validation, we show that the network accurately reconstructs production-induced anomalies across all transport regimes, with reconstruction errors governed primarily by anomaly amplitude and interface sharpness rather than by the diffusion regime itself. Our results demonstrate that embedding anomalous-transport physics into the training distribution substantially extends the applicability of amortized 4D seismic inversion, enabling robust recovery of heavy-tailed and anisotropic reservoir signatures beyond the Gaussian assumptions underlying existing approaches.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

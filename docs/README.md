@@ -6,22 +6,24 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-26
-- 运行时间：2026-07-26 20:40:32 UTC
+- 最新运行日期：2026-07-27
+- 运行时间：2026-07-27 21:30:06 UTC
 - 运行状态：成功
-- 本次总论文数：0
+- 本次总论文数：1
 - 精读区：0
-- 速读区：0
+- 速读区：1
 
 ### 今日简报（AI）
-> 今日无新推荐，系统未产出可展示论文。
-- 详情：[/202607/26/README](/202607/26/README)
+今日速读1篇关于时移地震反演中非高斯异常合成的研究论文。核心方向是利用异常扩散合成非高斯储层异常，提升反演效果。建议关注该方法在真实地震数据中的适用性。
+- 详情：[/202607/27/README](/202607/27/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-- 本次无速读推荐。
+1. [Anomalous-diffusion synthesis of non-Gaussian reservoir anomalies for time-lapse seismic inversion](/202607/27/2607.21854v1-anomalous-diffusion-synthesis-of-non-gaussian-reservoir-anomalies-for-time-lapse-seismic-inversion)  
+   标签：评分：7.0/10、query:genmod-fluid
+   evidence：使用分数阶扩散合成地下流体异常的生成模型
 
 
 <div class="dpr-home-promo-card">
