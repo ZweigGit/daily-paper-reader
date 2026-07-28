@@ -6,24 +6,34 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-27
-- 运行时间：2026-07-27 21:30:06 UTC
+- 最新运行日期：2026-07-28
+- 运行时间：2026-07-28 20:27:39 UTC
 - 运行状态：成功
-- 本次总论文数：1
-- 精读区：0
-- 速读区：1
+- 本次总论文数：4
+- 精读区：1
+- 速读区：3
 
 ### 今日简报（AI）
-今日速读1篇关于时移地震反演中非高斯异常合成的研究论文。核心方向是利用异常扩散合成非高斯储层异常，提升反演效果。建议关注该方法在真实地震数据中的适用性。
-- 详情：[/202607/27/README](/202607/27/README)
+今天盘点4篇生成式AI最新进展，精读1篇物理引导的3D多孔介质设计论文获8.0高分。  
+最值得关注的方向是物理约束生成模型的实际应用，以及扩散模型的理论分析。  
+建议优先精读《Physics-Guided Generative AI for Property-Targeted 3D Porous Media Design》，后续可追踪扩散模型的端到端泛化研究。
+- 详情：[/202607/28/README](/202607/28/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [Physics-Guided Generative AI for Property-Targeted 3D Porous Media Design](/202607/28/2607.24274v1-physics-guided-generative-ai-for-property-targeted-3d-porous-media-design)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：物理引导生成模型用于多孔介质流体相关设计
 
 ### 速读区论文标签
-1. [Anomalous-diffusion synthesis of non-Gaussian reservoir anomalies for time-lapse seismic inversion](/202607/27/2607.21854v1-anomalous-diffusion-synthesis-of-non-gaussian-reservoir-anomalies-for-time-lapse-seismic-inversion)  
+1. [From Score Learning to Discretized Sampling: An End-to-End Generalization Analysis of Diffusion Models](/202607/28/2607.23226v1-from-score-learning-to-discretized-sampling-an-end-to-end-generalization-analysis-of-diffusion-models)  
    标签：评分：7.0/10、query:genmod-fluid
-   evidence：使用分数阶扩散合成地下流体异常的生成模型
+   evidence：分数扩散模型的端到端泛化分析，为流体应用奠定理论基础
+2. [Joint Flow Matching for Generator-Consistent Classification](/202607/28/2607.23946v1-joint-flow-matching-for-generator-consistent-classification)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：流匹配生成模型方法，可应用于流体动力学模拟
+3. [Rethinking Classifier-Free Guidance in On-Policy Diffusion Distillation](/202607/28/2607.24731v1-rethinking-classifier-free-guidance-in-on-policy-diffusion-distillation)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：在线扩散蒸馏中无分类器引导的分析，对改进流体动力学扩散模型相关
 
 
 <div class="dpr-home-promo-card">

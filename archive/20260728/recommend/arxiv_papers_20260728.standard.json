@@ -1,0 +1,171 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-28T20:24:10.764037+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2607.24274v1",
+      "source": "arxiv",
+      "title": "Physics-Guided Generative AI for Property-Targeted 3D Porous Media Design",
+      "abstract": "Inverse design of three-dimensional porous media is central to applications in filtration, catalysis, energy storage, fuel cells, thermal management, and biomedical scaffolds, but remains challenging because many distinct pore geometries can share similar porosity or permeability while small structural changes can strongly affect transport behaviour. This paper proposes a physics-guided generative AI framework for property-targeted porous media design, combining a property-aware variational autoencoder, a conditional latent diffusion model, and an independently trained differentiable structure-to-property surrogate. The framework learns a compact, physically informative latent design space, generates porous structures conditioned on target porosity and directional permeability, and refines generated samples using property-level feedback during denoising and decoding. Experiments on procedurally generated structures and real micro-CT porous-media datasets show improved target-property matching, directional permeability control, and property correlation compared with representative property-aware variational-autoencoder and latent-diffusion baselines. The results demonstrate a scalable route towards controllable inverse design of complex porous geometries and establish a foundation for simulation-informed generative AI tools in engineering and advanced materials discovery.",
+      "authors": [
+        "Peng Wang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-07-27T11:17:52+00:00",
+      "link": "https://arxiv.org/pdf/2607.24274v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "physics-guided generative AI for porous media design involves fluid dynamics",
+      "llm_evidence_cn": "物理引导生成模型用于多孔介质流体相关设计",
+      "llm_evidence": "物理引导生成模型用于多孔介质流体相关设计",
+      "canonical_evidence": "物理引导生成模型用于多孔介质流体相关设计",
+      "llm_tldr_en": "Proposes a framework combining VAE and conditional latent diffusion for property-targeted 3D porous media design, directly relevant to generative models in fluid dynamics.",
+      "llm_tldr_cn": "本文针对多孔介质的逆设计难题，提出物理引导的生成式AI框架，结合属性感知变分自编码器和条件潜扩散模型，生成符合目标孔隙度和渗透率的三维多孔结构。实验表明该框架能有效生成具有指定物理属性的结构，为流体动力学相关的生成模型应用提供了实例。",
+      "llm_tldr": "本文针对多孔介质的逆设计难题，提出物理引导的生成式AI框架，结合属性感知变分自编码器和条件潜扩散模型，生成符合目标孔隙度和渗透率的三维多孔结构。实验表明该框架能有效生成具有指定物理属性的结构，为流体动力学相关的生成模型应用提供了实例。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.23226v1",
+      "source": "arxiv",
+      "title": "From Score Learning to Discretized Sampling: An End-to-End Generalization Analysis of Diffusion Models",
+      "abstract": "Despite the empirical success of score-based diffusion models, a complete theoretical understanding of how finite-sample learning, network parameterization, and numerical discretization jointly dictate generative quality remains underdeveloped. Existing sampling analyses often evaluate the generative performance conditional on an oracle score or a pre-specified error threshold. In this work, we establish a unified convergence and generalization framework for score-based diffusion models parameterized by practical ResNet-type architectures. We analyze the generalization and convergence properties from the practical finite-sample, discrete-time learning problem of the score function to the ideal continuous-time, population-level objective. Based on the generalization result of the learning problem of score function, we analyze the sampling process induced by the learned score function and provide an end-to-end total variation distance estimate for the generated terminal distribution. This estimate explicitly decomposes the overall generative error into four interpretable components: the truncation error of the forward process, the reverse-time discretization error, the generalization error incorporating both finite data and forward-time discretization, and the training optimization gap. Our results quantitatively characterize how the training sample size, temporal discretization grids, and optimization accuracy jointly control the final fidelity of samples generated by diffusion models.",
+      "authors": [
+        "Jinshu Huang",
+        "Yiming Jiang",
+        "Chunlin Wu"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.ST"
+      ],
+      "published": "2026-07-25T14:24:38+00:00",
+      "link": "https://arxiv.org/pdf/2607.23226v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "end-to-end generalization analysis of score-based diffusion models, foundational for fluid applications",
+      "llm_evidence_cn": "分数扩散模型的端到端泛化分析，为流体应用奠定理论基础",
+      "llm_evidence": "分数扩散模型的端到端泛化分析，为流体应用奠定理论基础",
+      "canonical_evidence": "分数扩散模型的端到端泛化分析，为流体应用奠定理论基础",
+      "llm_tldr_en": "Unified convergence and generalization framework for score-based diffusion models with ResNet architectures, from finite-sample learning to discretized sampling.",
+      "llm_tldr_cn": "该论文针对分数扩散模型的理论理解不足，建立了一个统一的收敛与泛化框架，分析了从有限样本分数函数学习到离散时间采样的完整流程，并考虑了实际ResNet网络参数化。理论结果将分数学习、神经网络近似和数值离散化联合考虑，为扩散模型在流体力学等领域的可靠应用提供了理论保障。",
+      "llm_tldr": "该论文针对分数扩散模型的理论理解不足，建立了一个统一的收敛与泛化框架，分析了从有限样本分数函数学习到离散时间采样的完整流程，并考虑了实际ResNet网络参数化。理论结果将分数学习、神经网络近似和数值离散化联合考虑，为扩散模型在流体力学等领域的可靠应用提供了理论保障。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "score-based generative models for fluid flow",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.23946v1",
+      "source": "arxiv",
+      "title": "Joint Flow Matching for Generator-Consistent Classification",
+      "abstract": "We introduce Joint Flow Matching (JFM), a training framework for continuous normalising flows over multiple variables. Standard flow matching transports variables from noise to data simultaneously, offering no natural mechanism for forward and reverse conditional inference from a shared joint model. JFM resolves this by assigning opposite roles to each variable at the temporal endpoints. We prove that JFM produces a consistent joint distribution where that forward or reverse integration are conditionals of the same joint. We explore this consistency in the context of joint classification and generation as the basis for interpretability in discriminative-generative models. We validate JFM on conditional datasets producing competitive accuracy with inherently well-calibrated confidence scores without post-hoc calibration, and classifier-consistent image generation.",
+      "authors": [
+        "Hayden McAlister",
+        "Lech Szymanski"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-07-27T02:45:39+00:00",
+      "link": "https://arxiv.org/pdf/2607.23946v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "flow matching generative model method, applicable to fluid dynamics simulation",
+      "llm_evidence_cn": "流匹配生成模型方法，可应用于流体动力学模拟",
+      "llm_evidence": "流匹配生成模型方法，可应用于流体动力学模拟",
+      "canonical_evidence": "流匹配生成模型方法，可应用于流体动力学模拟",
+      "llm_tldr_en": "Joint Flow Matching enables consistent forward and reverse conditional inference for joint classification and generation, validated on conditional datasets.",
+      "llm_tldr_cn": "该论文针对标准流匹配缺乏条件推断机制的问题，提出联合流匹配(JFM)框架，通过为每个变量在时间端点分配相反角色，使得前向和反向积分成为同一联合分布的条件。JFM在联合分类与生成任务上展示了竞争性精度，为生成模型在判别-生成统一建模中提供了可解释性基础，可推广至流体动力学等领域的条件生成。",
+      "llm_tldr": "该论文针对标准流匹配缺乏条件推断机制的问题，提出联合流匹配(JFM)框架，通过为每个变量在时间端点分配相反角色，使得前向和反向积分成为同一联合分布的条件。JFM在联合分类与生成任务上展示了竞争性精度，为生成模型在判别-生成统一建模中提供了可解释性基础，可推广至流体动力学等领域的条件生成。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.24731v1",
+      "source": "arxiv",
+      "title": "Rethinking Classifier-Free Guidance in On-Policy Diffusion Distillation",
+      "abstract": "On-policy distillation (OPD) adapts diffusion models by querying a teacher along trajectories generated by the current student, but how it should behave under classifier-free guidance (CFG), a default component of modern diffusion systems, remains poorly understood. Existing OPD methods naturally extend velocity matching to the CFG-composed prediction, directly matching teacher and student guided velocities. We show that this objective is under-identified at the branch level: positive- and negative-branch errors can compensate in the guided prediction. Through two contrasting cases, we find that naive matching remains effective under shared negative conditioning, where both branch errors decrease jointly. When the model's native CFG schema retains privileged information in the teacher's negative branch that is unavailable to the student, however, this joint reduction breaks down and the composed objective induces antagonistic branch-error dynamics, reducing the positive-branch error while increasing the negative-branch error. We term this failure mode Negative Branch Asymmetry (NBA). To address NBA, we introduce Positive--Direction Matching (PDM), a branch-aware OPD objective that separately constrains the positive prediction and the CFG conditional direction. We apply PDM to dense-to-sparse video control, where naive guided matching is highly sensitive to inference guidance scales, while branch-aware supervision enables more robust and effective knowledge transfer.",
+      "authors": [
+        "Bingnan Li",
+        "Haozhe Wang",
+        "Haozhong Xiong",
+        "Fangtai Wu",
+        "Jinpeng Yu",
+        "Yang Shi",
+        "Jiaming Liu",
+        "Ruihua Huang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-07-27T17:57:02+00:00",
+      "link": "https://arxiv.org/pdf/2607.24731v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "analysis of classifier-free guidance in on-policy diffusion distillation, relevant to improving diffusion models for fluid dynamics",
+      "llm_evidence_cn": "在线扩散蒸馏中无分类器引导的分析，对改进流体动力学扩散模型相关",
+      "llm_evidence": "在线扩散蒸馏中无分类器引导的分析，对改进流体动力学扩散模型相关",
+      "canonical_evidence": "在线扩散蒸馏中无分类器引导的分析，对改进流体动力学扩散模型相关",
+      "llm_tldr_en": "Shows under-identification in guided velocity matching for on-policy distillation of diffusion models, proposes effective matching under shared negative conditioning.",
+      "llm_tldr_cn": "该论文针对在线扩散蒸馏中无分类器引导(CFG)的行为理解不足，发现直接匹配引导速度会导致分支级欠识别问题，即正负分支误差可互相补偿。通过分析两种对比情况，指出共享负条件时两类误差协同下降，为扩散模型在流体动力学等领域的应用提供了引导策略的改进方向。",
+      "llm_tldr": "该论文针对在线扩散蒸馏中无分类器引导(CFG)的行为理解不足，发现直接匹配引导速度会导致分支级欠识别问题，即正负分支误差可互相补偿。通过分析两种对比情况，指出共享负条件时两类误差协同下降，为扩散模型在流体动力学等领域的应用提供了引导策略的改进方向。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion model applications in computational fluid dynamics",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
