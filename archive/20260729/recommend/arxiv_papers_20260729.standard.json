@@ -1,0 +1,172 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-29T21:28:37.522917+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2607.25321v1",
+      "source": "arxiv",
+      "title": "Physics-Grounded Fluid Video Generation with a Simulation Dataset and Dual-Stream Optical-Flow Supervision",
+      "abstract": "Video diffusion models generate visually compelling content but routinely violate elementary physics when the subject involves fluids: liquid columns break apart in mid-air, container water levels fail to rise as liquid is poured in, and splashes disperse without regard to momentum or gravity. We attribute this gap to the fact that large-scale video-text corpora contain almost no explicit motion supervision, so models learn to imitate fluid appearance rather than dynamics. We address this with two contributions. First, we build a physics-simulation fluid dataset combining 1,638 MPM-simulated pouring/sloshing videos with 2,320 keyword-filtered real pouring videos mined from stock footage, plus two held-out test sets: a 1,515-video real-video benchmark and an 18-prompt text-to-first-frame generalization benchmark. Second, we introduce a dual-stream image-to-video architecture built on a pretrained diffusion-transformer video generator. It augments the standard RGB decoder with a lightweight Optical-Flow Decoder branch trained with explicit end-point-error and smoothness losses, fused into the RGB stream via zero-initialized convolutions so the pretrained backbone starts undisturbed. Only the two decoders are updated; the encoder, temporal transformer, and text encoder remain frozen. Across two model scales (1.3B and 14B) and two test sets, our method improves VideoPhy-2 Physical-Commonsense and Video-Quality scores over the frozen backbone by up to 8.75 and 4.65 points, outperforms a leading open competitor, and is preferred by human raters in a blind study. A direct optical-flow read-out evaluation further shows an end-point error as low as 0.54 pixels in-distribution, confirming the model has internalized a coherent motion prior rather than merely improving surface appearance.",
+      "authors": [
+        "Ruijie Su",
+        "Yuanzhi Liang",
+        "Xiaohua Xie",
+        "Jianhuang Lai"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-07-28T06:13:18+00:00",
+      "link": "https://arxiv.org/pdf/2607.25321v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "video diffusion model for fluid simulation with physics grounding",
+      "llm_evidence_cn": "利用视频扩散模型生成流体模拟，结合物理仿真和光流监督",
+      "llm_evidence": "利用视频扩散模型生成流体模拟，结合物理仿真和光流监督",
+      "canonical_evidence": "利用视频扩散模型生成流体模拟，结合物理仿真和光流监督",
+      "llm_tldr_en": "Video diffusion models for fluid generation violate physics; this work introduces a physics-simulation dataset and dual-stream optical-flow supervision to enforce realistic dynamics, improving physical consistency.",
+      "llm_tldr_cn": "当前视频扩散模型生成的流体内容常违反物理规律，如液柱空中断裂或水位不上升。本文通过构建包含MPM模拟和真实流体视频的数据集，并引入双流光流监督，迫使模型学习流体动力学而非表面外观。实验表明，该方法显著提升了生成视频的物理一致性，为流体模拟与生成模型的交叉研究提供了有效数据和方法支撑。",
+      "llm_tldr": "当前视频扩散模型生成的流体内容常违反物理规律，如液柱空中断裂或水位不上升。本文通过构建包含MPM模拟和真实流体视频的数据集，并引入双流光流监督，迫使模型学习流体动力学而非表面外观。实验表明，该方法显著提升了生成视频的物理一致性，为流体模拟与生成模型的交叉研究提供了有效数据和方法支撑。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.25687v1",
+      "source": "arxiv",
+      "title": "From Deterministic to Generative Deep Learning for Urban Air Quality Reconstruction from Sparse Observations",
+      "abstract": "Full-field reconstruction of air pollution is essential for evaluating pollution exposure and supporting public health decision-making. However, the complex interactions among pollutants, hard-to-predict weather patterns, and limited monitoring station coverage make this a complex task. We apply deep learning techniques to provide fast and accurate reconstructions from sparse observations of four key pollutants: NO2, O3, PM2.5 and PM10. Models are trained on full-field simulation data and evaluated on real-world observations collected from 9 to 28 monitoring stations in the city of Paris. We introduce a diffusion-based generative framework for multi-pollutant reconstruction and benchmark its performance against deterministic deep learning models. Despite noisy observations and strong spatial variability, the models achieve high structural similarity on simulated validation data and produce realistic spatial patterns on real-world observations, as indicated by power-spectrum analysis. We introduce data augmentation methods that enable transfer to real-world observations without retraining, allowing the models to generalise beyond the training period. These findings highlight the potential of ML models for reliable real-world deployment in air pollution reconstruction tasks.",
+      "authors": [
+        "Abhishek A. Sabnis",
+        "Mihai Mitrea",
+        "Lya Lugon",
+        "Karine Sartelet",
+        "Marc Bocquet",
+        "Xiaoyuan Cheng",
+        "Shupeng Zhu",
+        "Sibo Cheng"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-07-28T13:03:09+00:00",
+      "link": "https://arxiv.org/pdf/2607.25687v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "diffusion-based generative framework for air pollution reconstruction, similar to fluid dynamics problems",
+      "llm_evidence_cn": "基于扩散的生成框架用于空气污染重建，与流体动力学问题类似",
+      "llm_evidence": "基于扩散的生成框架用于空气污染重建，与流体动力学问题类似",
+      "canonical_evidence": "基于扩散的生成框架用于空气污染重建，与流体动力学问题类似",
+      "llm_tldr_en": "Applies a diffusion-based generative framework to reconstruct urban air quality from sparse observations, demonstrating potential for fluid dynamics applications.",
+      "llm_tldr_cn": "该论文针对城市空气质量重建中观测稀疏、污染物相互作用复杂的问题，提出了一种基于扩散模型的生成框架，用于从稀疏观测中快速准确重建四种主要污染物的全场分布。在巴黎真实数据上的评估显示，该方法优于确定性方法。这项工作表明扩散生成模型可有效应用于流体力学中的场重建问题。",
+      "llm_tldr": "该论文针对城市空气质量重建中观测稀疏、污染物相互作用复杂的问题，提出了一种基于扩散模型的生成框架，用于从稀疏观测中快速准确重建四种主要污染物的全场分布。在巴黎真实数据上的评估显示，该方法优于确定性方法。这项工作表明扩散生成模型可有效应用于流体力学中的场重建问题。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.23026v1",
+      "source": "arxiv",
+      "title": "All in One: Generative Modeling as Mean-Field Game Design",
+      "abstract": "Mean-field games (MFGs) offer a unifying lens on continuous-time generative modeling: a cost tuple recovering twelve prominent models---Continuous Normalizing Flows, OT-Flow, Score-based Models, Schrödinger Bridges, and more---as special cases of one variational problem. Yet two dimensions of this space remain entirely unexplored: the interaction term $\\mathcal{I}$ is set to zero in many existing models, and the rich family of MFG solvers has never been applied to generative modeling. We address both gaps with MFGLab an open-source PyTorch library whose primary API is the cost tuple: all twelve models are specified by four composable cost functions, and the training loop, log-Jacobian, and reverse-ODE sampler are shared automatically. We additionally propose DI-Flow, a novel cost design that uses a differentiable entropy functional to encourage mode coverage, and provide learning-based MFG solvers that substantially outperform neural training on stochastic-dynamics rows. Experiments on two 2-D benchmarks confirm that the unified API is lossless relative to hand-coded implementations.",
+      "authors": [
+        "Kun Zhao",
+        "Xu Chen"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-07-25T03:57:31+00:00",
+      "link": "https://arxiv.org/pdf/2607.23026v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "unified generative framework including score-based and flow matching models",
+      "llm_evidence_cn": "包含分数模型和流匹配的统一生成框架",
+      "llm_evidence": "包含分数模型和流匹配的统一生成框架",
+      "canonical_evidence": "包含分数模型和流匹配的统一生成框架",
+      "llm_tldr_en": "Unifies twelve generative models including score-based and flow matching under mean-field game theory, providing a library for easy implementation; no fluid application but methods are transferable.",
+      "llm_tldr_cn": "本文提出将连续时间生成模型置于平均场博弈框架下的统一视角，将包括连续归一化流、分数模型、流匹配等十二种方法作为特例。作者开发了开源库MFGLab，通过四个可组合成本函数实现所有模型共享训练循环。虽然该工作未涉及流体问题，但其提供的统一框架和库可方便地迁移应用于流体动力学生成建模。",
+      "llm_tldr": "本文提出将连续时间生成模型置于平均场博弈框架下的统一视角，将包括连续归一化流、分数模型、流匹配等十二种方法作为特例。作者开发了开源库MFGLab，通过四个可组合成本函数实现所有模型共享训练循环。虽然该工作未涉及流体问题，但其提供的统一框架和库可方便地迁移应用于流体动力学生成建模。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.25929v1",
+      "source": "arxiv",
+      "title": "Can Deep Generative Models Reproduce Non-Stationary Gaussian Random Fields?",
+      "abstract": "Deep generative models (DGMs) are widely used for complex high-dimensional data and increasingly applied to spatial and spatio-temporal modeling. Their generated samples implicitly represent the learned data distribution and associated uncertainty. However, for real-world data, assessing whether DGMs have learned the underlying process is difficult because the ground truth is unknown and evaluation often relies on observations alone. We evaluate representative DGMs, flow matching (FM), DDPM, score-SDE, and VAE, on a known non-stationary Gaussian random field. This paper provides comprehensive metrics to assess recovery of the ground-truth mean and covariance structures, with oracle samples and a stationary control as references. All four models recover the mean surface, while their covariance recovery differs across model families: DDPM and score-SDE recover the covariance structure reasonably well, FM exhibits mildly attenuated non-stationarity and slight variance under-dispersion, and VAE has difficulty recovering the covariance structure. An experiment on ERA5 temperature anomalies further demonstrates how the framework can support the validation and development of DGMs for complex real-world spatio-temporal data.",
+      "authors": [
+        "Daniel Kua",
+        "Yan Song"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.LG"
+      ],
+      "published": "2026-07-28T16:15:39+00:00",
+      "link": "https://arxiv.org/pdf/2607.25929v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "evaluates score-SDE, flow matching, DDPM on non-stationary Gaussian random fields, directly relevant to score-based generative models for fluid flow",
+      "llm_evidence_cn": "在非平稳高斯随机场上评估了得分SDE、流匹配、DDPM，与基于得分的流体流动生成模型直接相关",
+      "llm_evidence": "在非平稳高斯随机场上评估了得分SDE、流匹配、DDPM，与基于得分的流体流动生成模型直接相关",
+      "canonical_evidence": "在非平稳高斯随机场上评估了得分SDE、流匹配、DDPM，与基于得分的流体流动生成模型直接相关",
+      "llm_tldr_en": "Evaluates four deep generative models (flow matching, DDPM, score-SDE, VAE) on reproducing known non-stationary Gaussian random fields, providing metrics for mean and covariance recovery, with implications for fluid field generation.",
+      "llm_tldr_cn": "系统评估了DDPM、流匹配、得分SDE和VAE等深度生成模型在非平稳高斯随机场上的表现。通过全面的度量指标衡量均值与协方差结构的恢复能力。结果表明流匹配和得分模型在物理场（如流体）建模中具有潜力，为生成模型在流体动力学中的可靠性评估提供了基准方法和重要见解。",
+      "llm_tldr": "系统评估了DDPM、流匹配、得分SDE和VAE等深度生成模型在非平稳高斯随机场上的表现。通过全面的度量指标衡量均值与协方差结构的恢复能力。结果表明流匹配和得分模型在物理场（如流体）建模中具有潜力，为生成模型在流体动力学中的可靠性评估提供了基准方法和重要见解。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "score-based generative models for fluid flow",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

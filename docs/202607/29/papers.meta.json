@@ -1,0 +1,69 @@
+{
+  "label": "2026-07-29",
+  "date": "2026-07-29",
+  "generated_at": "2026-07-29T21:31:47",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202607/29/2607.25321v1-physics-grounded-fluid-video-generation-with-a-simulation-dataset-and-dual-stream-optical-flow-supervision",
+      "section": "deep",
+      "title_en": "Physics-Grounded Fluid Video Generation with a Simulation Dataset and Dual-Stream Optical-Flow Supervision",
+      "authors": "Ruijie Su, Yuanzhi Liang, Xiaohua Xie, Jianhuang Lai",
+      "date": "2026-07-28",
+      "pdf": "https://arxiv.org/pdf/2607.25321v1",
+      "score": "10.0",
+      "evidence": "利用视频扩散模型生成流体模拟，结合物理仿真和光流监督",
+      "tldr": "视频扩散模型生成流体时常违反物理规律，如液体空中断裂、水位不升。本文构建了包含1638个MPM模拟和2320个真实视频的流体数据集，并提出双流光流监督架构，在预训练扩散Transformer上附加光流解码器，通过零初始化卷积融合RGB与光流流，仅更新解码器。在1.3B和14B模型上，物理常识评分提升8.75分，视频质量提升4.65分，端到端光流误差低至0.54像素，优于开源方法且被人类偏好。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Video diffusion models generate visually compelling content but routinely violate elementary physics when the subject involves fluids: liquid columns break apart in mid-air, container water levels fail to rise as liquid is poured in, and splashes disperse without regard to momentum or gravity. We attribute this gap to the fact that large-scale video-text corpora contain almost no explicit motion supervision, so models learn to imitate fluid appearance rather than dynamics. We address this with two contributions. First, we build a physics-simulation fluid dataset combining 1,638 MPM-simulated pouring/sloshing videos with 2,320 keyword-filtered real pouring videos mined from stock footage, plus two held-out test sets: a 1,515-video real-video benchmark and an 18-prompt text-to-first-frame generalization benchmark. Second, we introduce a dual-stream image-to-video architecture built on a pretrained diffusion-transformer video generator. It augments the standard RGB decoder with a lightweight Optical-Flow Decoder branch trained with explicit end-point-error and smoothness losses, fused into the RGB stream via zero-initialized convolutions so the pretrained backbone starts undisturbed. Only the two decoders are updated; the encoder, temporal transformer, and text encoder remain frozen. Across two model scales (1.3B and 14B) and two test sets, our method improves VideoPhy-2 Physical-Commonsense and Video-Quality scores over the frozen backbone by up to 8.75 and 4.65 points, outperforms a leading open competitor, and is preferred by human raters in a blind study. A direct optical-flow read-out evaluation further shows an end-point error as low as 0.54 pixels in-distribution, confirming the model has internalized a coherent motion prior rather than merely improving surface appearance.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/29/2607.25687v1-from-deterministic-to-generative-deep-learning-for-urban-air-quality-reconstruction-from-sparse-observations",
+      "section": "quick",
+      "title_en": "From Deterministic to Generative Deep Learning for Urban Air Quality Reconstruction from Sparse Observations",
+      "authors": "Abhishek A. Sabnis, Mihai Mitrea, Lya Lugon, Karine Sartelet, Marc Bocquet, Xiaoyuan Cheng, Shupeng Zhu, Sibo Cheng",
+      "date": "2026-07-28",
+      "pdf": "https://arxiv.org/pdf/2607.25687v1",
+      "score": "7.0",
+      "evidence": "基于扩散的生成框架用于空气污染重建，与流体动力学问题类似",
+      "tldr": "城市空气质量全场重构对于评估污染暴露和支持公共卫生决策至关重要，但污染物复杂相互作用、难预测的天气模式和有限的监测站覆盖带来挑战。本文应用深度学习，从稀疏观测数据快速准确重构NO2、O3、PM2.5和PM10四种关键污染物，模型基于全场模拟数据训练，并在巴黎9-28个监测站的实际观测上评估。提出基于扩散的生成框架进行多污染物重构，与确定性深度学习模型对比，在模拟验证数据上取得高结构相似性，并通过功率谱分析显示实际观测中生成 realistic 空间模式。引入数据增强方法，无需重新训练即可迁移到实际观测，使模型能泛化至训练期外，凸显了机器学习在空气污染重构任务中可靠实际部署的潜力。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Full-field reconstruction of air pollution is essential for evaluating pollution exposure and supporting public health decision-making. However, the complex interactions among pollutants, hard-to-predict weather patterns, and limited monitoring station coverage make this a complex task. We apply deep learning techniques to provide fast and accurate reconstructions from sparse observations of four key pollutants: NO2, O3, PM2.5 and PM10. Models are trained on full-field simulation data and evaluated on real-world observations collected from 9 to 28 monitoring stations in the city of Paris. We introduce a diffusion-based generative framework for multi-pollutant reconstruction and benchmark its performance against deterministic deep learning models. Despite noisy observations and strong spatial variability, the models achieve high structural similarity on simulated validation data and produce realistic spatial patterns on real-world observations, as indicated by power-spectrum analysis. We introduce data augmentation methods that enable transfer to real-world observations without retraining, allowing the models to generalise beyond the training period. These findings highlight the potential of ML models for reliable real-world deployment in air pollution reconstruction tasks.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/29/2607.25929v1-can-deep-generative-models-reproduce-non-stationary-gaussian-random-fields",
+      "section": "quick",
+      "title_en": "Can Deep Generative Models Reproduce Non-Stationary Gaussian Random Fields?",
+      "authors": "Daniel Kua, Yan Song",
+      "date": "2026-07-28",
+      "pdf": "https://arxiv.org/pdf/2607.25929v1",
+      "score": "7.0",
+      "evidence": "在非平稳高斯随机场上评估了得分SDE、流匹配、DDPM，与基于得分的流体流动生成模型直接相关",
+      "tldr": "深度生成模型在时空建模中广泛应用，但评估其是否真实学习到数据生成过程缺乏标准方法。本文以已知非平稳高斯随机场为基准，系统评估了流匹配、DDPM、score-SDE和VAE四种模型。结果表明所有模型均能恢复均值面，但协方差恢复差异显著：DDPM和score-SDE结构合理，FM非平稳性减弱，VAE则难以恢复。该评估框架为复杂时空数据的模型验证提供了有效工具。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Deep generative models (DGMs) are widely used for complex high-dimensional data and increasingly applied to spatial and spatio-temporal modeling. Their generated samples implicitly represent the learned data distribution and associated uncertainty. However, for real-world data, assessing whether DGMs have learned the underlying process is difficult because the ground truth is unknown and evaluation often relies on observations alone. We evaluate representative DGMs, flow matching (FM), DDPM, score-SDE, and VAE, on a known non-stationary Gaussian random field. This paper provides comprehensive metrics to assess recovery of the ground-truth mean and covariance structures, with oracle samples and a stationary control as references. All four models recover the mean surface, while their covariance recovery differs across model families: DDPM and score-SDE recover the covariance structure reasonably well, FM exhibits mildly attenuated non-stationarity and slight variance under-dispersion, and VAE has difficulty recovering the covariance structure. An experiment on ERA5 temperature anomalies further demonstrates how the framework can support the validation and development of DGMs for complex real-world spatio-temporal data.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/29/2607.23026v1-all-in-one-generative-modeling-as-mean-field-game-design",
+      "section": "quick",
+      "title_en": "All in One: Generative Modeling as Mean-Field Game Design",
+      "authors": "Kun Zhao, Xu Chen",
+      "date": "2026-07-25",
+      "pdf": "https://arxiv.org/pdf/2607.23026v1",
+      "score": "6.0",
+      "evidence": "包含分数模型和流匹配的统一生成框架",
+      "tldr": "连续时间生成模型可统一为平均场博弈（MFG）设计，但现有方法将交互项置零且未利用MFG求解器。本文提出MFGLab库，通过四个可组合成本函数指定12种模型（如CNF、Score-based Models等），自动共享训练循环和对数雅可比。新设计DI-Flow使用可微熵鼓励模式覆盖，学习型MFG求解器在随机动力学上大幅超越神经训练。实验证明统一API无损，填补了MFG与生成建模的交叉空白。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Mean-field games (MFGs) offer a unifying lens on continuous-time generative modeling: a cost tuple recovering twelve prominent models---Continuous Normalizing Flows, OT-Flow, Score-based Models, Schrödinger Bridges, and more---as special cases of one variational problem. Yet two dimensions of this space remain entirely unexplored: the interaction term $\\mathcal{I}$ is set to zero in many existing models, and the rich family of MFG solvers has never been applied to generative modeling. We address both gaps with MFGLab an open-source PyTorch library whose primary API is the cost tuple: all twelve models are specified by four composable cost functions, and the training loop, log-Jacobian, and reverse-ODE sampler are shared automatically. We additionally propose DI-Flow, a novel cost design that uses a differentiable entropy functional to encourage mode coverage, and provide learning-based MFG solvers that substantially outperform neural training on stochastic-dynamics rows. Experiments on two 2-D benchmarks confirm that the unified API is lossless relative to hand-coded implementations.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
