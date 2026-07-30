@@ -1,0 +1,95 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-30T21:45:11.503374+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2607.27093v1",
+      "source": "arxiv",
+      "title": "A New Paradigm for 3D Turbomachinery Design: Generative Diffusion Model Based Framework with Direct Geometry Encoding",
+      "abstract": "The aerodynamic design of turbomachinery is critical to the performance of the overall energy system, yet it is challenging due to the complex non-linear flow physics and the presence of multiple-target design compromises. Denoising diffusion model, as one of the leading approaches in generative machine learning, has shown its advantages of high design solution accuracy and diversity in many engineering applications. In this study, we bring it to the 3D inverse design problem of turbomachinery, using centrifugal compressors as a classic representative, to demonstrate the new methodology for complex geometry designs. A diffusion model-centred design framework has been developed in this study. By specifying the desired design condition (mass flow rate and rotational speed) and targeted performance (pressure ratio and efficiency), the trained diffusion model returns directly the 3D compressor geometry that satisfies the condition inputs. Compared to traditional deterministic forward design approaches, the proposed method not only generates accurate geometry solutions to inverse design problems, but also enables effective exploration of the entire design space, providing a diverse set of candidate solutions. In addition, this paper presents the first study to directly train on 3D blade geometry coordinates rather than parametrised representations, demonstrating the feasibility of coordinate-based learning while enabling a highly flexible framework applicable to a wide range of designs. The trained diffusion model achieves excellent design capability, with solution accuracy up to 99% and unfeasible designs less than 1%. Furthermore, the solution diversity of the trained diffusion model is also quantitatively verified by means of comparing the distribution of the solution sets generated from the diffusion model and from direct sampling of physical parameters.",
+      "authors": [
+        "Yingfan Geng",
+        "Jinhong Wang",
+        "Lazaros Papachristodoulou",
+        "Sibo Cheng",
+        "Teng Cao"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn"
+      ],
+      "published": "2026-07-29T16:23:08+00:00",
+      "link": "https://arxiv.org/pdf/2607.27093v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "uses denoising diffusion model for turbomachinery design in fluid dynamics",
+      "llm_evidence_cn": "使用去噪扩散模型进行流体动力学中的涡轮机械设计",
+      "llm_evidence": "使用去噪扩散模型进行流体动力学中的涡轮机械设计",
+      "canonical_evidence": "使用去噪扩散模型进行流体动力学中的涡轮机械设计",
+      "llm_tldr_en": "Proposes a generative diffusion model framework for 3D inverse design of turbomachinery, demonstrating high accuracy and diversity in centrifugal compressor designs.",
+      "llm_tldr_cn": "该论文提出了一种基于去噪扩散模型的生成式框架，用于三维涡轮机械的逆向设计。传统设计面临复杂非线性流动物理和多目标权衡的挑战。该方法以离心压缩机为例，直接编码几何形状，利用扩散模型生成高质量且多样化的设计方案。实验表明，该方法在准确性和多样性上均优于现有方法，为流体机械设计提供了新途径。",
+      "llm_tldr": "该论文提出了一种基于去噪扩散模型的生成式框架，用于三维涡轮机械的逆向设计。传统设计面临复杂非线性流动物理和多目标权衡的挑战。该方法以离心压缩机为例，直接编码几何形状，利用扩散模型生成高质量且多样化的设计方案。实验表明，该方法在准确性和多样性上均优于现有方法，为流体机械设计提供了新途径。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.26398v1",
+      "source": "arxiv",
+      "title": "Flow Map Learning via Nongradient Vector Flow",
+      "abstract": "Diffusion and flow-based models benefit from simple regression losses, but inference incurs significant overhead because sampling requires integration. Consistency models address this by directly learning the flow maps along the ODE trajectory, opening a design space between one-step and many-step approaches. However, existing methods face computational challenges such as requiring model inverses or backpropagation through iterated model calls, and do not always prove that the desired ODE flow map is a solution to the loss. We introduce SGFlow, an approach for learning flow maps that bypasses explicit invertibility constraints and expensive differentiation through model iteration. SGFlow trains a model to compute both the ODE solutions and the implied velocity from scratch by following non-conservative dynamics with a stationary point at the desired flow map. On the CIFAR image benchmark, no single method attains the best FID at every step count: SGFlow attains the best FID at 10 sampling steps and remains competitive with flow matching, Meanflow, and Lagrangian map matching at other step counts, while being the only one with a proven stationary-point guarantee for its stopgrad-based dynamics.",
+      "authors": [
+        "Mark Goldstein",
+        "Anshuk Uppal",
+        "Raghav Singhal",
+        "Aahlad Puli",
+        "Rajesh Ranganath"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-07-29T02:17:27+00:00",
+      "link": "https://arxiv.org/pdf/2607.26398v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "introduces SGFlow for learning flow maps in ODE trajectories, related to flow matching methods",
+      "llm_evidence_cn": "提出SGFlow学习ODE流映射，与流匹配方法相关",
+      "llm_evidence": "提出SGFlow学习ODE流映射，与流匹配方法相关",
+      "canonical_evidence": "提出SGFlow学习ODE流映射，与流匹配方法相关",
+      "llm_tldr_en": "SGFlow learns flow maps without invertibility constraints or backpropagation through model iteration, applicable to flow matching models in any domain.",
+      "llm_tldr_cn": "扩散模型和流模型推理缓慢，现有一致性模型需要模型逆或反向传播。本文提出SGFlow，一种无需显式可逆约束和昂贵迭代微分的学习流映射方法。SGFlow从零开始同时训练ODE解和隐式速度，避免了现有方法的计算开销。该方法可应用于任何预设的流匹配模型，提升了采样效率和灵活性。虽然本文未展示流体应用，但其流映射学习方法对流体动力学中的流匹配模拟具有重要借鉴意义。",
+      "llm_tldr": "扩散模型和流模型推理缓慢，现有一致性模型需要模型逆或反向传播。本文提出SGFlow，一种无需显式可逆约束和昂贵迭代微分的学习流映射方法。SGFlow从零开始同时训练ODE解和隐式速度，避免了现有方法的计算开销。该方法可应用于任何预设的流匹配模型，提升了采样效率和灵活性。虽然本文未展示流体应用，但其流映射学习方法对流体动力学中的流匹配模拟具有重要借鉴意义。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

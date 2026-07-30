@@ -1,0 +1,39 @@
+{
+  "label": "2026-07-30",
+  "date": "2026-07-30",
+  "generated_at": "2026-07-30T21:47:45",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202607/30/2607.27093v1-a-new-paradigm-for-3d-turbomachinery-design-generative-diffusion-model-based-framework-with-direct-geometry-encoding",
+      "section": "deep",
+      "title_en": "A New Paradigm for 3D Turbomachinery Design: Generative Diffusion Model Based Framework with Direct Geometry Encoding",
+      "authors": "Yingfan Geng, Jinhong Wang, Lazaros Papachristodoulou, Sibo Cheng, Teng Cao",
+      "date": "2026-07-29",
+      "pdf": "https://arxiv.org/pdf/2607.27093v1",
+      "score": "9.0",
+      "evidence": "使用去噪扩散模型进行流体动力学中的涡轮机械设计",
+      "tldr": "涡轮机械气动设计因复杂非线性流动与多目标折衷而极具挑战。本研究提出基于去噪扩散模型的3D逆设计框架，以质量流量、转速等为条件直接输出离心压缩机几何，并首次在3D叶片坐标而非参数化表示上训练。模型设计精度达99%，不可行设计低于1%，且能生成多样候选方案。该方法实现了高精度、高灵活性与高多样性的设计新范式。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "The aerodynamic design of turbomachinery is critical to the performance of the overall energy system, yet it is challenging due to the complex non-linear flow physics and the presence of multiple-target design compromises. Denoising diffusion model, as one of the leading approaches in generative machine learning, has shown its advantages of high design solution accuracy and diversity in many engineering applications. In this study, we bring it to the 3D inverse design problem of turbomachinery, using centrifugal compressors as a classic representative, to demonstrate the new methodology for complex geometry designs. A diffusion model-centred design framework has been developed in this study. By specifying the desired design condition (mass flow rate and rotational speed) and targeted performance (pressure ratio and efficiency), the trained diffusion model returns directly the 3D compressor geometry that satisfies the condition inputs. Compared to traditional deterministic forward design approaches, the proposed method not only generates accurate geometry solutions to inverse design problems, but also enables effective exploration of the entire design space, providing a diverse set of candidate solutions. In addition, this paper presents the first study to directly train on 3D blade geometry coordinates rather than parametrised representations, demonstrating the feasibility of coordinate-based learning while enabling a highly flexible framework applicable to a wide range of designs. The trained diffusion model achieves excellent design capability, with solution accuracy up to 99% and unfeasible designs less than 1%. Furthermore, the solution diversity of the trained diffusion model is also quantitatively verified by means of comparing the distribution of the solution sets generated from the diffusion model and from direct sampling of physical parameters.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/30/2607.26398v1-flow-map-learning-via-nongradient-vector-flow",
+      "section": "quick",
+      "title_en": "Flow Map Learning via Nongradient Vector Flow",
+      "authors": "Mark Goldstein, Anshuk Uppal, Raghav Singhal, Aahlad Puli, Rajesh Ranganath",
+      "date": "2026-07-29",
+      "pdf": "https://arxiv.org/pdf/2607.26398v1",
+      "score": "6.0",
+      "evidence": "提出SGFlow学习ODE流映射，与流匹配方法相关",
+      "tldr": "扩散和流模型推理需积分，开销大。一致性模型直接学习ODE流映射，但现有方法需模型逆或反向传播迭代，计算成本高且缺乏理论保证。本文提出SGFlow，通过非保守动力学训练模型，同时计算ODE解和速度，利用停止梯度确保稳定点。在CIFAR图像上，SGFlow在10步采样时取得最佳FID，其他步数与前沿方法相当，且唯一具有稳定点理论保证。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Diffusion and flow-based models benefit from simple regression losses, but inference incurs significant overhead because sampling requires integration. Consistency models address this by directly learning the flow maps along the ODE trajectory, opening a design space between one-step and many-step approaches. However, existing methods face computational challenges such as requiring model inverses or backpropagation through iterated model calls, and do not always prove that the desired ODE flow map is a solution to the loss. We introduce SGFlow, an approach for learning flow maps that bypasses explicit invertibility constraints and expensive differentiation through model iteration. SGFlow trains a model to compute both the ODE solutions and the implied velocity from scratch by following non-conservative dynamics with a stationary point at the desired flow map. On the CIFAR image benchmark, no single method attains the best FID at every step count: SGFlow attains the best FID at 10 sampling steps and remains competitive with flow matching, Meanflow, and Lagrangian map matching at other step counts, while being the only one with a proven stationary-point guarantee for its stopgrad-based dynamics.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
