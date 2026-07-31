@@ -6,26 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-30
-- 运行时间：2026-07-30 21:47:38 UTC
+- 最新运行日期：2026-07-31
+- 运行时间：2026-07-31 21:57:20 UTC
 - 运行状态：成功
-- 本次总论文数：2
+- 本次总论文数：4
 - 精读区：1
-- 速读区：1
+- 速读区：3
 
 ### 今日简报（AI）
-今天精读了一篇关于3D涡轮机械设计新范式的论文，采用生成扩散模型实现直接几何编码。最值得关注的方向是扩散模型在工程设计中直接编码几何形状的创新方法，以及非梯度向量流的学习策略。建议重点关注扩散模型在几何设计领域的应用，可阅读精读文章了解直接几何编码与生成模型的结合方式。
-- 详情：[/202607/30/README](/202607/30/README)
+今日精读4篇论文，聚焦生成模型与流体模拟，最高分8.0为生成模型复现非平稳高斯随机场研究。最值得关注深度生成模型在非平稳随机场的表现，以及扩散过程的常微分方程模拟方法。建议普通读者优先精读高分论文，速读部分可先看扩散方程模拟方向。
+- 详情：[/202607/31/README](/202607/31/README)
 
 ### 精读区论文标签
-1. [A New Paradigm for 3D Turbomachinery Design: Generative Diffusion Model Based Framework with Direct Geometry Encoding](/202607/30/2607.27093v1-a-new-paradigm-for-3d-turbomachinery-design-generative-diffusion-model-based-framework-with-direct-geometry-encoding)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：使用去噪扩散模型进行流体动力学中的涡轮机械设计
+1. [Can Deep Generative Models Reproduce Non-Stationary Gaussian Random Fields?](/202607/31/2607.25929v2-can-deep-generative-models-reproduce-non-stationary-gaussian-random-fields)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：评估了流匹配、DDPM、score-SDE和VAE在非平稳高斯随机场上的表现，对流体流动建模直接相关
 
 ### 速读区论文标签
-1. [Flow Map Learning via Nongradient Vector Flow](/202607/30/2607.26398v1-flow-map-learning-via-nongradient-vector-flow)  
+1. [Mimicking diffusion processes with differential equations](/202607/31/2607.25685v1-mimicking-diffusion-processes-with-differential-equations)  
+   标签：评分：7.0/10、query:genmod-fluid
+   evidence：为基于分数的生成模型（PF-ODE）提供理论基础，可迁移至流体流动生成。
+2. [Context-weighted Discrete Flow Matching](/202607/31/2607.21427v1-context-weighted-discrete-flow-matching)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：提出SGFlow学习ODE流映射，与流匹配方法相关
+   evidence：离散结构的流匹配框架，与流体流动的生成建模相关
+3. [Neptuna: A Comprehensive Machine Learning Framework for Benchmarking Complex Multiphase Flows](/202607/31/2607.22280v2-neptuna-a-comprehensive-machine-learning-framework-for-benchmarking-complex-multiphase-flows)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：面向激波驱动多相流的机器学习代理模型大规模基准，为生成式代理模型提供数据集和评估。
 
 
 <div class="dpr-home-promo-card">

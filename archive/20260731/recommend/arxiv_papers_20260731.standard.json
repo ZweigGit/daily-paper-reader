@@ -1,0 +1,169 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-31T21:50:24.307200+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2607.25929v2",
+      "source": "arxiv",
+      "title": "Can Deep Generative Models Reproduce Non-Stationary Gaussian Random Fields?",
+      "abstract": "Deep generative models (DGMs) are widely used for complex high-dimensional data and increasingly applied to spatial and spatio-temporal modeling. Their generated samples implicitly represent the learned data distribution and associated uncertainty. However, for real-world data, assessing whether DGMs have learned the underlying process is difficult because the ground truth is unknown and evaluation often relies on observations alone. We evaluate representative DGMs, flow matching (FM), DDPM, score-SDE, and VAE, on a known non-stationary Gaussian random field. This paper provides comprehensive metrics to assess recovery of the ground-truth mean and covariance structures, with oracle samples and a stationary control as references. All four models recover the mean surface, while their covariance recovery differs across model families: DDPM and score-SDE recover the covariance structure reasonably well, FM exhibits mildly attenuated non-stationarity and slight variance under-dispersion, and VAE has difficulty recovering the covariance structure. An experiment on ERA5 temperature anomalies further demonstrates how the framework can support the validation and development of DGMs for complex real-world spatio-temporal data.",
+      "authors": [
+        "Daniel Kua",
+        "Yan Song"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.LG"
+      ],
+      "published": "2026-07-28T16:15:39+00:00",
+      "link": "https://arxiv.org/pdf/2607.25929v2",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Evaluation of DGMs (flow matching, DDPM, score-SDE, VAE) on non-stationary random fields, directly relevant to fluid flow modeling",
+      "llm_evidence_cn": "评估了流匹配、DDPM、score-SDE和VAE在非平稳高斯随机场上的表现，对流体流动建模直接相关",
+      "llm_evidence": "评估了流匹配、DDPM、score-SDE和VAE在非平稳高斯随机场上的表现，对流体流动建模直接相关",
+      "canonical_evidence": "评估了流匹配、DDPM、score-SDE和VAE在非平稳高斯随机场上的表现，对流体流动建模直接相关",
+      "llm_tldr_en": "Evaluates flow matching, DDPM, score-SDE, and VAE on a non-stationary Gaussian random field, proposing metrics for mean-covariance recovery; guides generative modeling of spatio-temporal fields such as fluid flows.",
+      "llm_tldr_cn": "深度生成模型越来越多地用于空间与时空建模，但在真实数据上难以验证是否学到真实过程。本文在已知非平稳高斯随机场上对流程匹配、DDPM、score-SDE和VAE进行系统评估，提出综合指标衡量均值与协方差结构的恢复程度，并以独立样本和稳态控制为参照。结果表明这些模型在非平稳场上的表现和局限，为流体动力学等时空建模中生成模型的选择提供了重要参考。",
+      "llm_tldr": "深度生成模型越来越多地用于空间与时空建模，但在真实数据上难以验证是否学到真实过程。本文在已知非平稳高斯随机场上对流程匹配、DDPM、score-SDE和VAE进行系统评估，提出综合指标衡量均值与协方差结构的恢复程度，并以独立样本和稳态控制为参照。结果表明这些模型在非平稳场上的表现和局限，为流体动力学等时空建模中生成模型的选择提供了重要参考。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.25685v1",
+      "source": "arxiv",
+      "title": "Mimicking diffusion processes with differential equations",
+      "abstract": "The probability-flow ordinary differential equation (PF-ODE) associated with a diffusion process is widely used in score-based generative modeling as a deterministic sampler that reproduces the marginal distributions of the diffusion. While this marginal-matching property is sometimes taken for granted, its validity depends on the well-posedness of an ordinary differential equation whose velocity field is constructed from the score function of the diffusion. We examine the precise mathematical relation between a diffusion process, the Fokker-Planck equation and the associated PF-ODE under weak regularity assumptions on the drift and score.   We first establish existence and uniqueness of the marginal density flow as a solution of the Fokker--Planck equation under minimal assumptions on the diffusion coefficients. We then study the corresponding Lagrangian problem using the DiPerna-Lions-Ambrosio theory of regular Lagrangian flows. We prove existence, uniqueness and stability of the flow, and show that it transports the initial distribution onto the diffusion marginals, under Sobolev or bounded-variation regularity of the score together with one-sided bounds on the divergence of the probability-flow velocity. We identify sufficient conditions for the required regularity in diffusion models relevant for applications.   Our analysis underlines a fundamental distinction between Eulerian and Lagrangian descriptions. We construct a counterexample in which the Fokker--Planck equation has a unique density flow while the associated PF-ODE fails to admit a regular Lagrangian flow from the initial time, demonstrating that uniqueness of the density evolution does not in general imply the existence of a deterministic probability-flow representation. Finally, we derive stability estimates for probability-flow trajectories under learned score approximations.",
+      "authors": [
+        "Rama Cont"
+      ],
+      "primary_category": "math.PR",
+      "categories": [
+        "math.PR",
+        "math.AP",
+        "math.CA"
+      ],
+      "published": "2026-07-28T13:01:23+00:00",
+      "link": "https://arxiv.org/pdf/2607.25685v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Theoretical foundations for score-based generative models (PF-ODE), transferable to fluid flow generation.",
+      "llm_evidence_cn": "为基于分数的生成模型（PF-ODE）提供理论基础，可迁移至流体流动生成。",
+      "llm_evidence": "为基于分数的生成模型（PF-ODE）提供理论基础，可迁移至流体流动生成。",
+      "canonical_evidence": "为基于分数的生成模型（PF-ODE）提供理论基础，可迁移至流体流动生成。",
+      "llm_tldr_en": "Examines the probability-flow ODE for diffusion processes, establishing well-posedness conditions for marginal matching in score-based generative models; provides theoretical grounding for flow generation in fluid dynamics.",
+      "llm_tldr_cn": "该论文研究扩散过程的概率流常微分方程（PF-ODE），在弱正则条件下建立了边缘分布匹配的适定性，为基于分数的生成模型提供了严格的理论基础，对流体流动等领域的生成建模具有重要的方法论价值。",
+      "llm_tldr": "该论文研究扩散过程的概率流常微分方程（PF-ODE），在弱正则条件下建立了边缘分布匹配的适定性，为基于分数的生成模型提供了严格的理论基础，对流体流动等领域的生成建模具有重要的方法论价值。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "score-based generative models for fluid flow",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.21427v1",
+      "source": "arxiv",
+      "title": "Context-weighted Discrete Flow Matching",
+      "abstract": "Discrete flow matching provides a flexible framework for generative modeling on discrete structures. However, the standard factorized training objective exposes the model to targets of varying difficulty, mixing well-conditioned, predictable tokens with ambiguous, high-entropy ones. We empirically demonstrate that the uncertainty over the value of each token is closely related to the density of available context in its neighborhood. Motivated by this observation, we propose a simple modification to the underlying continuous-time Markov chain (CTMC) that incorporates local context information. Our context-weighted sampler improves generation quality with negligible computational overhead, while our scaled cross-entropy loss function reweights the training signal from different tokens and reduces generative perplexity by up to 63% on OpenWebText. Moreover, our approach matches a strong semi-autoregressive block diffusion baseline in quality while retaining the ability to perform generation in any order. These results highlight the role of local context as an important factor in discrete generative modeling and show that simple context-aware modifications can significantly improve both sampling and training efficiency.",
+      "authors": [
+        "Daniil Cherniavskii",
+        "Daniel Severo",
+        "Karen Ullrich"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-07-23T15:29:49+00:00",
+      "link": "https://arxiv.org/pdf/2607.21427v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Flow matching framework for discrete structures, relevant to generative modeling of fluid flows",
+      "llm_evidence_cn": "离散结构的流匹配框架，与流体流动的生成建模相关",
+      "llm_evidence": "离散结构的流匹配框架，与流体流动的生成建模相关",
+      "canonical_evidence": "离散结构的流匹配框架，与流体流动的生成建模相关",
+      "llm_tldr_en": "Improves discrete flow matching via context-weighted Markov chain sampling and reweighted loss, enhancing generation quality with negligible overhead; framework transferable to fluid dynamics generative modeling.",
+      "llm_tldr_cn": "该论文针对离散流匹配中标准因子化训练目标对难易不同的token处理不均的问题，提出基于局部上下文的连续时间马尔可夫链修改和缩放交叉熵损失。通过上下文加权采样，在几乎不增加计算开销的情况下提升了生成质量，为离散结构生成提供了更鲁棒的方法。该工作虽未直接涉及流体力学，但其流匹配思路可迁移至流体流动的生成建模。",
+      "llm_tldr": "该论文针对离散流匹配中标准因子化训练目标对难易不同的token处理不均的问题，提出基于局部上下文的连续时间马尔可夫链修改和缩放交叉熵损失。通过上下文加权采样，在几乎不增加计算开销的情况下提升了生成质量，为离散结构生成提供了更鲁棒的方法。该工作虽未直接涉及流体力学，但其流匹配思路可迁移至流体流动的生成建模。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.22280v2",
+      "source": "arxiv",
+      "title": "Neptuna: A Comprehensive Machine Learning Framework for Benchmarking Complex Multiphase Flows",
+      "abstract": "Compressible multiphase flows involving shocks and material interfaces arise in applications such as bubble collapse and droplet breakup, where strong nonlinear interactions produce complex interface deformation, mixing, and multiscale dynamics. Developing reliable machine learning surrogates for these flows remains challenging due to the simultaneous presence of compressibility, sharp discontinuities, and multiphase effects. In this work, we introduce the first large-scale benchmark specifically designed for shock-driven compressible multiphase flows, comprising 2.4 TB of high-fidelity 2D and 3D datasets featuring shock-induced bubble collapse and droplet breakup. We evaluate diverse surrogate model families on our benchmarking framework: Neptuna {https://github.com/tumaer/Neptuna}, including convolutional, spectral, transformer-based, and pre-trained PDE foundation models. Beyond standard MSE training, we investigate composite losses combining MSE with Sobolev, interface-aware, and structure-aware terms, together with adaptive loss balancing using SoftAdapt and GradNorm. Evaluation includes pointwise, spectral, feature-focused, structural, and physics-informed metrics. Results show that no single model performs best across all datasets and metrics, while composite losses significantly improve interface preservation and spectral fidelity. Among adaptive weighting strategies, SoftAdapt provides the most consistent improvements with almost no overhead compared to MSE-only training.",
+      "authors": [
+        "Harish Ramachandran",
+        "Björn Kimpel",
+        "Thomas Paula",
+        "Josef Winter",
+        "Steffen Schmidt",
+        "Nikolaus Adams"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn",
+        "cs.AI"
+      ],
+      "published": "2026-07-24T13:20:01+00:00",
+      "link": "https://arxiv.org/pdf/2607.22280v2",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Large-scale benchmark for ML surrogates of shock-driven multiphase flows, providing datasets and evaluation for generative surrogate models.",
+      "llm_evidence_cn": "面向激波驱动多相流的机器学习代理模型大规模基准，为生成式代理模型提供数据集和评估。",
+      "llm_evidence": "面向激波驱动多相流的机器学习代理模型大规模基准，为生成式代理模型提供数据集和评估。",
+      "canonical_evidence": "面向激波驱动多相流的机器学习代理模型大规模基准，为生成式代理模型提供数据集和评估。",
+      "llm_tldr_en": "Introduces the first large-scale benchmark with 2.4 TB of high-fidelity multiphase flow data and evaluates multiple surrogate model families, supporting research on generative models for fluid dynamics.",
+      "llm_tldr_cn": "本文提出了首个专门用于激波驱动的可压缩多相流大规模基准测试集，包含2.4 TB高保真二维和三维数据，涵盖激波诱导气泡坍塌和液滴破碎等场景。作者评估了多种代理模型族，为机器学习在复杂多相流模拟中的研究和生成式模型的测试提供了统一平台。",
+      "llm_tldr": "本文提出了首个专门用于激波驱动的可压缩多相流大规模基准测试集，包含2.4 TB高保真二维和三维数据，涵盖激波诱导气泡坍塌和液滴破碎等场景。作者评估了多种代理模型族，为机器学习在复杂多相流模拟中的研究和生成式模型的测试提供了统一平台。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
