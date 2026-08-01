@@ -1,0 +1,54 @@
+{
+  "label": "2026-08-01",
+  "date": "2026-08-01",
+  "generated_at": "2026-08-01T19:50:29",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202608/01/2607.23667v1-no-free-lunch-in-flow-surrogates-under-time-varying-boundary-conditions-a-two-regime-study",
+      "section": "deep",
+      "title_en": "No Free Lunch in Flow Surrogates under Time-Varying Boundary Conditions: A Two-Regime Study",
+      "authors": "Georg Winkler, Martin Stoll",
+      "date": "2026-07-26",
+      "pdf": "https://arxiv.org/pdf/2607.23667v1",
+      "score": "8.0",
+      "evidence": "针对时变边界条件下瞬态流动的数据驱动代理模型基准研究。",
+      "tldr": "在时变边界条件下，流动代理模型的适用性备受质疑。本研究针对化学机械平坦化中的浆料膜和圆柱后的卡门涡街两类瞬态流动，比较了八种代理模型。结果表明，没有单一架构能同时胜出：全场一步模型在膜上以3.2%误差重建累积壁面剪切应力，而潜在自回归DeepONet在尾流中保留了96%的脱落功率。点级RMSE会选错模型，改用五类物理问题评估后，代理模型比有限元求解器快三个数量级。代理选择应匹配流动的动力学特性，验证需采用失效模式解析指标。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "A flow surrogate validated on a simple regime is often taken as evidence that the approach will carry to a richer one. We test this assumption on two transient flows under time-varying boundary conditions emulating the process startup: the three-dimensional slurry film in chemical-mechanical planarisation (CMP), a core semiconductor-manufacturing process, and the two-dimensional Karman vortex street (KVS) behind a cylinder. Eight surrogate models are compared on one shared evaluation pipeline, differing in whether they learn the full field or a latent representation, and whether they predict trajectories in one shot or step by step. No single architecture wins both regimes. On the film, a one-shot full-field model reconstructs the process-relevant cumulative wall shear stress to 3.2% relative error. On the wake, a latent autoregressive DeepONet retains 96% of the shedding power that direct and one-shot models damp to almost zero. The deciding axis is the treatment of time. The self-sustained wake requires the phase memory that autoregressive feedback provides, while the boundary-driven film rewards a direct map. Pointwise RMSE picks the wrong model in both regimes, so the evaluation scores five physical questions instead, the field, its structure, invented motion, amplitude, and timing. The trained surrogates answer queries $10^3$ to $10^4$ times faster than the finite-element solver, but the offline cost of the training simulations means they pay off from the first query beyond the training set for CMP and the third for the KVS. The choice of surrogate should follow the dynamical character of the target flow, and its validation should use failure-mode-resolved metrics, since neither the winning architecture nor its validation transfers.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/01/2607.23026v1-all-in-one-generative-modeling-as-mean-field-game-design",
+      "section": "quick",
+      "title_en": "All in One: Generative Modeling as Mean-Field Game Design",
+      "authors": "Kun Zhao, Xu Chen",
+      "date": "2026-07-25",
+      "pdf": "https://arxiv.org/pdf/2607.23026v1",
+      "score": "7.0",
+      "evidence": "将流匹配、得分、扩散等十二种生成模型统一为平均场博弈设计，可作为流体流匹配方法的工具库",
+      "tldr": "均值场博弈为连续时间生成建模提供统一视角，但现有模型忽略交互项且未利用丰富求解器。为此提出MFGLab库，通过四个可组合成本函数统一十二种模型，并设计DI-Flow使用可微熵促进模式覆盖。实验表明统一API与手写实现无损，学习型求解器在随机动力学任务上显著优于神经训练。工作填补了该空间两大空白，为生成建模提供新工具与设计。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Mean-field games (MFGs) offer a unifying lens on continuous-time generative modeling: a cost tuple recovering twelve prominent models---Continuous Normalizing Flows, OT-Flow, Score-based Models, Schrödinger Bridges, and more---as special cases of one variational problem. Yet two dimensions of this space remain entirely unexplored: the interaction term $\\mathcal{I}$ is set to zero in many existing models, and the rich family of MFG solvers has never been applied to generative modeling. We address both gaps with MFGLab an open-source PyTorch library whose primary API is the cost tuple: all twelve models are specified by four composable cost functions, and the training loop, log-Jacobian, and reverse-ODE sampler are shared automatically. We additionally propose DI-Flow, a novel cost design that uses a differentiable entropy functional to encourage mode coverage, and provide learning-based MFG solvers that substantially outperform neural training on stochastic-dynamics rows. Experiments on two 2-D benchmarks confirm that the unified API is lossless relative to hand-coded implementations.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/01/2607.25119v1-score-based-stabilization-for-time-dependent-problems",
+      "section": "quick",
+      "title_en": "Score-Based Stabilization for Time-Dependent Problems",
+      "authors": "Eshed Gal, Eldad Haber, Uri Ascher",
+      "date": "2026-07-27",
+      "pdf": "https://arxiv.org/pdf/2607.25119v1",
+      "score": "6.0",
+      "evidence": "学习到的分数模型稳定包括Burgers方程在内的含时PDE数值模拟",
+      "tldr": "针对偏微分方程数值模拟中出现的非物理不稳定，提出基于分数的稳定化框架。利用学习到的分数模型构造稳定化算子，对标准时间步进得到的临时解进行修正，将其拉向容许状态流形。该算子表现为压缩映射，具有盆地条件稳定性。在平流、KdV、NLS和Burgers方程上的实验表明，该方法增强鲁棒性、抑制非物理振荡并保持定性动力学。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We propose a score-based stabilization framework for numerical simulation of partial differential equations, in which a learned score model defines a stabilization operator applied to provisional numerical updates. This operator augments standard time-stepping schemes by enforcing structure and physical consistency through a correction that drives iterates toward the manifold of admissible states. We show that the stabilization operator acts as a contraction toward this manifold, yielding a correction mechanism with basin-conditional stability. Numerical experiments on Advection, Korteweg-de Vries (KdV), Nonlinear Schrodinger (NLS), and Burgers' equations demonstrate improved robustness, suppression of nonphysical instabilities, and preservation of qualitative dynamics.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

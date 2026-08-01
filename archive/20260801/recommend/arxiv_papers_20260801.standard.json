@@ -1,0 +1,130 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-01T19:47:53.773977+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2607.23667v1",
+      "source": "arxiv",
+      "title": "No Free Lunch in Flow Surrogates under Time-Varying Boundary Conditions: A Two-Regime Study",
+      "abstract": "A flow surrogate validated on a simple regime is often taken as evidence that the approach will carry to a richer one. We test this assumption on two transient flows under time-varying boundary conditions emulating the process startup: the three-dimensional slurry film in chemical-mechanical planarisation (CMP), a core semiconductor-manufacturing process, and the two-dimensional Karman vortex street (KVS) behind a cylinder. Eight surrogate models are compared on one shared evaluation pipeline, differing in whether they learn the full field or a latent representation, and whether they predict trajectories in one shot or step by step. No single architecture wins both regimes. On the film, a one-shot full-field model reconstructs the process-relevant cumulative wall shear stress to 3.2% relative error. On the wake, a latent autoregressive DeepONet retains 96% of the shedding power that direct and one-shot models damp to almost zero. The deciding axis is the treatment of time. The self-sustained wake requires the phase memory that autoregressive feedback provides, while the boundary-driven film rewards a direct map. Pointwise RMSE picks the wrong model in both regimes, so the evaluation scores five physical questions instead, the field, its structure, invented motion, amplitude, and timing. The trained surrogates answer queries $10^3$ to $10^4$ times faster than the finite-element solver, but the offline cost of the training simulations means they pay off from the first query beyond the training set for CMP and the third for the KVS. The choice of surrogate should follow the dynamical character of the target flow, and its validation should use failure-mode-resolved metrics, since neither the winning architecture nor its validation transfers.",
+      "authors": [
+        "Georg Winkler",
+        "Martin Stoll"
+      ],
+      "primary_category": "math.NA",
+      "categories": [
+        "math.NA",
+        "cs.LG",
+        "physics.flu-dyn"
+      ],
+      "published": "2026-07-26T14:02:46+00:00",
+      "link": "https://arxiv.org/pdf/2607.23667v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Benchmark of data-driven flow surrogate models for transient fluid flows under time-varying boundary conditions.",
+      "llm_evidence_cn": "针对时变边界条件下瞬态流动的数据驱动代理模型基准研究。",
+      "llm_evidence": "针对时变边界条件下瞬态流动的数据驱动代理模型基准研究。",
+      "canonical_evidence": "针对时变边界条件下瞬态流动的数据驱动代理模型基准研究。",
+      "llm_tldr_en": "Tests whether flow surrogates generalize across regimes by comparing eight models on a slurry film and Karman vortex street, finding no architecture dominates both regimes.",
+      "llm_tldr_cn": "流体代理模型在简单工况下的表现常被外推到复杂工况，但这种外推是否可靠未知。本文针对三维化学机械抛光浆液膜和二维圆柱绕流两种时变边界瞬态流动，统一评估了八种代理模型，包括全场/隐空间和单步/逐步预测架构。结果显示没有一种架构在两个工况下同时最优，说明代理模型选择高度依赖具体流动状态与预测策略。该研究为流体力学中数据驱动或生成式代理模型的适用边界提供了重要实证。",
+      "llm_tldr": "流体代理模型在简单工况下的表现常被外推到复杂工况，但这种外推是否可靠未知。本文针对三维化学机械抛光浆液膜和二维圆柱绕流两种时变边界瞬态流动，统一评估了八种代理模型，包括全场/隐空间和单步/逐步预测架构。结果显示没有一种架构在两个工况下同时最优，说明代理模型选择高度依赖具体流动状态与预测策略。该研究为流体力学中数据驱动或生成式代理模型的适用边界提供了重要实证。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.23026v1",
+      "source": "arxiv",
+      "title": "All in One: Generative Modeling as Mean-Field Game Design",
+      "abstract": "Mean-field games (MFGs) offer a unifying lens on continuous-time generative modeling: a cost tuple recovering twelve prominent models---Continuous Normalizing Flows, OT-Flow, Score-based Models, Schrödinger Bridges, and more---as special cases of one variational problem. Yet two dimensions of this space remain entirely unexplored: the interaction term $\\mathcal{I}$ is set to zero in many existing models, and the rich family of MFG solvers has never been applied to generative modeling. We address both gaps with MFGLab an open-source PyTorch library whose primary API is the cost tuple: all twelve models are specified by four composable cost functions, and the training loop, log-Jacobian, and reverse-ODE sampler are shared automatically. We additionally propose DI-Flow, a novel cost design that uses a differentiable entropy functional to encourage mode coverage, and provide learning-based MFG solvers that substantially outperform neural training on stochastic-dynamics rows. Experiments on two 2-D benchmarks confirm that the unified API is lossless relative to hand-coded implementations.",
+      "authors": [
+        "Kun Zhao",
+        "Xu Chen"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-07-25T03:57:31+00:00",
+      "link": "https://arxiv.org/pdf/2607.23026v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "unifies flow matching, score-based, diffusion and other generative models under a mean-field game framework; directly reusable for fluid flow matching methods",
+      "llm_evidence_cn": "将流匹配、得分、扩散等十二种生成模型统一为平均场博弈设计，可作为流体流匹配方法的工具库",
+      "llm_evidence": "将流匹配、得分、扩散等十二种生成模型统一为平均场博弈设计，可作为流体流匹配方法的工具库",
+      "canonical_evidence": "将流匹配、得分、扩散等十二种生成模型统一为平均场博弈设计，可作为流体流匹配方法的工具库",
+      "llm_tldr_en": "This paper frames continuous-time generative modeling as mean-field game design, unifying twelve models including score-based, flow matching, CNF and Schrodinger bridge under one cost tuple. It also releases MFGLab, an open-source library with shared training and reverse-ODE samplers, and proposes DI-Flo. The framework is directly reusable for fluid-flow generative modeling.",
+      "llm_tldr_cn": "现有连续时间生成模型（连续归一化流、最优传输流、基于得分模型、薛定谔桥等）看似各异，作者发现它们都可作为平均场博弈的特例，由成本元组统一描述。他们提出MFGLab开源库，用户只需指定四个可组合成本函数即可训练所有十二种模型，并共享训练循环、log-Jacobian和逆ODE采样器，还提出新变体DI-Flo。该统一框架为将扩散、流匹配等生成模型迁移到流体力学提供了一个通用工具平台。",
+      "llm_tldr": "现有连续时间生成模型（连续归一化流、最优传输流、基于得分模型、薛定谔桥等）看似各异，作者发现它们都可作为平均场博弈的特例，由成本元组统一描述。他们提出MFGLab开源库，用户只需指定四个可组合成本函数即可训练所有十二种模型，并共享训练循环、log-Jacobian和逆ODE采样器，还提出新变体DI-Flo。该统一框架为将扩散、流匹配等生成模型迁移到流体力学提供了一个通用工具平台。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.25119v1",
+      "source": "arxiv",
+      "title": "Score-Based Stabilization for Time-Dependent Problems",
+      "abstract": "We propose a score-based stabilization framework for numerical simulation of partial differential equations, in which a learned score model defines a stabilization operator applied to provisional numerical updates. This operator augments standard time-stepping schemes by enforcing structure and physical consistency through a correction that drives iterates toward the manifold of admissible states. We show that the stabilization operator acts as a contraction toward this manifold, yielding a correction mechanism with basin-conditional stability. Numerical experiments on Advection, Korteweg-de Vries (KdV), Nonlinear Schrodinger (NLS), and Burgers' equations demonstrate improved robustness, suppression of nonphysical instabilities, and preservation of qualitative dynamics.",
+      "authors": [
+        "Eshed Gal",
+        "Eldad Haber",
+        "Uri Ascher"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.NA"
+      ],
+      "published": "2026-07-27T22:26:54+00:00",
+      "link": "https://arxiv.org/pdf/2607.25119v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Learned score model stabilizes time-dependent PDEs including Burgers equation",
+      "llm_evidence_cn": "学习到的分数模型稳定包括Burgers方程在内的含时PDE数值模拟",
+      "llm_evidence": "学习到的分数模型稳定包括Burgers方程在内的含时PDE数值模拟",
+      "canonical_evidence": "学习到的分数模型稳定包括Burgers方程在内的含时PDE数值模拟",
+      "llm_tldr_en": "Proposes a score-based stabilization framework for PDE time-stepping, using a learned score model to correct updates; tested on advection, KdV, NLS, and Burgers equations.",
+      "llm_tldr_cn": "该论文提出一种基于分数的稳定化框架，利用学习到的分数模型定义稳定化算子，对数值时间推进进行修正，使其朝向物理允许状态流形收缩。在平流、KdV、非线性薛定谔和Burgers方程上展示了鲁棒性提升和非物理不稳定性抑制。Burgers方程属于流体动力学，因此该方法为分数生成模型思想在流体模拟中的应用提供了新途径。",
+      "llm_tldr": "该论文提出一种基于分数的稳定化框架，利用学习到的分数模型定义稳定化算子，对数值时间推进进行修正，使其朝向物理允许状态流形收缩。在平流、KdV、非线性薛定谔和Burgers方程上展示了鲁棒性提升和非物理不稳定性抑制。Burgers方程属于流体动力学，因此该方法为分数生成模型思想在流体模拟中的应用提供了新途径。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "score-based generative models for fluid flow",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

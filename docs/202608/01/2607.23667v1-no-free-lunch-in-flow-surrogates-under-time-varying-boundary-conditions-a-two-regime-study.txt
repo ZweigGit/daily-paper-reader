@@ -1,0 +1,704 @@
+Title: No Free Lunch in Flow Surrogates under Time-Varying Boundary Conditions: A Two-Regime Study
+
+URL Source: https://arxiv.org/pdf/2607.23667v1
+
+Published Time: Tue, 28 Jul 2026 01:08:35 GMT
+
+Number of Pages: 19
+
+Markdown Content:
+# No Free Lunch in Flow Surrogates under Time-Varying Boundary Conditions: A Two-Regime Study 
+
+Georg Winkler a, ∗, Martin Stoll a
+
+> aDepartment of Mathematics, Chemnitz University of Technology, 09111, Chemnitz, Germany
+
+Abstract 
+
+A flow surrogate validated on a simple regime is often taken as evidence that the approach will carry to a richer one. We test this assumption on two transient flows under time-varying boundary conditions emulating the process startup: the three-dimensional slurry film in chemical-mechanical planarisation (CMP), a core semiconductor-manufacturing process, and the two-dimensional Kármán vortex street (KVS) behind a cylinder. Eight surrogate models are compared on one shared evaluation pipeline, di ff ering in whether they learn the full field or a latent representation, and whether they predict trajectories in one shot or step by step. No single architecture wins both regimes. On the film, a one-shot full-field model reconstructs the process-relevant cumulative wall shear stress to 3 .2% relative error. On the wake, a latent autoregressive DeepONet retains 96% of the shedding power that direct and one-shot models damp to almost zero. The deciding axis is the treatment of time. The self-sustained wake requires the phase memory that autoregressive feedback provides, while the boundary-driven film rewards a direct map. Pointwise RMSE picks the wrong model in both regimes, so the evaluation scores five physical questions instead, the field, its structure, invented motion, amplitude, and timing. The trained surrogates answer queries 10 3 to 10 4 times faster than the finite-element solver, but the o ffl ine cost of the training simulations means they pay o ff from the first query beyond the training set for CMP and the third for the KVS. The choice of surrogate should follow the dynamical character of the target flow, and its validation should use failure-mode-resolved metrics, since neither the winning architecture nor its validation transfers. 
+
+Keywords: surrogate modeling, reduced-order modeling, state-space models, Kármán vortex street, chemical-mechanical planarisation, operator learning 
+
+Highlights 
+
+• One-shot direct models win the film and autoregressive latent models win the wake. 
+
+• The treatment of time decides who wins and the represen-tation influences the margin. 
+
+• Aggregate errors such as pointwise RMSE pick the wrong model in both regimes. 
+
+• The metric suite scores field, structure, invented motion, amplitude, and timing. 
+
+• The break-even is set by the training simulations, not by the training compute. 
+
+1. Introduction 
+
+Chemical-mechanical planarisation (CMP) is a fundamental process step in the manufacture of integrated circuits. Modern chips are built as stacks of many patterned layers, and each newly deposited layer must be polished back to a globally flat surface before the next can be added. Surface non-uniformities 
+
+> ∗Corresponding author. E-mail: georg.winkler@mathematik.tu-chemnitz.de
+> Figure 1: Schematic illustration of the CMP process: a rotating wafer (held by a carrier under controlled down-force) is pressed against a slurry-fed, rotating polishing pad. The slurry chemically softens the surface while the pad and the abrasive particles mechanically abrade it, removing material to planarise each deposited layer. Schematic reproduced from our open-access review [ 2] under the terms of the Creative Commons Attribution 4.0 (CC BY 4.0) license.
+
+left by imperfect planarisation propagate into defects in the subsequent layers and reduce manufacturing yield [ 1]. As its name implies, CMP combines a chemical softening of the wafer surface with mechanical abrasion. A rotating wafer is pressed against a rotating polishing pad, with an abrasive slurry fed into the interface between them (Fig. 1). Optimising CMP experimentally is hard. The space of pro-cess configurations, classically called the recipe in CMP, is high-dimensional, spanning many factors such as slurry composition, arXiv:2607.23667v1 [math.NA] 26 Jul 2026 operating velocities, and applied pressure. With a wafer con-sumed per physical characterisation run, only a handful of con-figurations can ever be explored. Compounding this, the coupled chemical-mechanical interactions are strongly non-linear: first-principles models remain too unreliable to verify or optimise real processes [ 3], and conventional statistical process-control methods struggle to capture these interactions [ 4 ]. Process set-up therefore often draws on accumulated engineering experience to compensate for an incomplete information base, leading to a heightened dependence on process experts while accepting sub-optimal configurations and the associated yield loss. Simulating the process and screening configurations in sil-ico rather than in the fab makes this search tractable, trading scarce silicon for compute and accuracy for speed. The more accurately the simulation reproduces the process, the more ex-pensive each run becomes, and a screening or optimisation loop quickly makes simulation time the dominant cost. To speed up this screening, a surrogate model trained on simulated data can be leveraged, predicting the process response and ranking candidates orders of magnitude faster than the solver, at a further loss of accuracy relative to the simulation it emulates. Choosing an appropriate architecture is not trivial. The best choice shifts with the fidelity of the simulation, so a method that excels on a simple process model may fail on a richer one. This study compares two contrasting flow regimes. The slurry film in CMP is simplified to a quasi-static 3D Stokes flow. The 2D flow past a cylinder shedding a Kármán vortex street (KVS) is its counterpart. Its self-sustained oscillation carries dynamics of a richness that is not to be expected of the simplified CMP flow but could arise in a more realistic model. The pairing targets exactly this contrast in dynamical character. We refer to the two regimes by their flow features as the film and the wake .Both are driven by a gradual ramp in their boundary conditions. In CMP, the ramp-up is necessary to reduce scratch defects at startup, but can introduce wafer-scale non-uniformities, which are also to be avoided. The prediction target is therefore the tran-sient flow itself, not a steady snapshot. Predicting such transients with a surrogate raises three questions. Does a single architecture win both regimes? Which failure modes emerge, and does a sin-gle aggregate error expose them? And when does the surrogate route pay o ff against direct simulation? Governing equations, geometries, and the polishing-relevant material-removal target are deferred to Sec. 3. 
+
+Contributions. 
+
+1. A break-even cost accounting. Each query runs three to four orders of magnitude faster than the finite-element solver, but the gain only materialises beyond a break-even query count set almost entirely by training-set size, 
+
+Q∗ ≈ 70 for the CMP film and ≈ 647 for the KVS wake. The surrogate is a many-query instrument, not a free lunch for individual predictions (Sec. 6.3). 2. A CMP-motivated no-free-lunch result. No single archi-tecture evaluated on a shared pipeline wins both regimes. A one-shot operator that maps the whole trajectory at once wins the film, recurrent latent state-space models (S4D, Mamba) win the wake, and neither transfers (Sec. 6, 7). 3. A problem-specific evaluation suite that resolves what aggregate root-mean-square error (RMSE) conceals: limit-cycle damping, pre-onset hallucination, and onset latency are each rated as mild deviations by a pointwise RMSE, while the wake’s mirror-branch ambiguity is instead over-penalised by it. RMSE and the suite diverge on both regimes, on the wake by rewarding the damped prediction and on the film by reversing the ranking that the process target sets (Sec. 5, 7). 4. A validation caution for CMP surrogate programmes. 
+
+Cheap validation on a simplified regime is no evidence of reliability on a richer one: the architecture ranked best on the simple CMP flow can be the one that fails once the physics becomes more complex (Sec. 7). The remainder of the paper is structured as follows. Sec. 2 situates the study among reduced-order models and operator learning. Sec. 3 defines the two regimes and their prediction targets, Sec. 4 describes the surrogate architectures and their training, and Sec. 5 sets out the evaluation metrics. Sec. 6 reports the results for both regimes and the computational cost. Sec. 7 discusses the findings, Sec. 8 states the limitations together with the follow-up work they motivate, and Sec. 9 concludes. 
+
+2. Related Work 
+
+Machine learning has taken on a growing role in CMP. The focus lies on direct applications such as process monitoring [ 5, 6]and the prediction of post-polish quantities [ 7– 10 ], surveyed in [ 2]. Machine learning for the prediction of the slurry flow itself has so far received little attention. CMP is a closed process, and the flow field between pad and wafer cannot be measured directly. The physics must therefore come from numerical simulation. Simulating such flows is well established [ 11 ], but the time integration takes many expensive solver steps. Model reduction emerged early as a remedy that restricts the problem to its dominant modes. A classical choice is proper orthogonal decomposition with Galerkin projection, which builds a linear subspace from solution snapshots [ 12 , 13 ]. These linear reductions are interpretable, but they struggle once the dynamics turn strongly nonlinear or oscillatory. Data-driven surrogates use a learned nonlinear map instead. Many of them share one pattern: encode the field into a low-dimensional latent state [ 14 , 15 ], advance that state with a temporal model, and decode it back into the original space [ 16 – 18 ]. This pattern captures dynamics that a linear basis represents only with many modes. The latent surrogates above describe the dynamics of one fixed system and learn a map between finite-dimensional vectors. Operator learning instead models the solution operator itself, the map from an input function to the solution function [ 19 ]. The input can be a boundary condition or a coe ffi cient field, the output the full flow field. One trained model then covers a whole class of inputs, at the price that the training data must span that class [20]. Two families realise this idea. Encoder-decoder networks such as PCA-Net [ 21 ] and DeepONet compress the input func-2tion into a finite number of coe ffi cients and expand them over learned basis functions. They stay close to the encoding strategy above. In DeepONet, a branch and a trunk network take these two roles [ 22 ], a construction with approximation-theoretic er-ror bounds in infinite dimensions [ 23 ]. Neural operators, the second family, keep the function throughout the network. Each layer integrates the input function against a learned kernel, an operation the Fourier neural operator evaluates as a multipli-cation in Fourier space [ 24 ]. Both families have since been refined in many variants [ 25 – 32 ]. Across sixteen benchmarks under matched conditions, Lu et al. found no consistent winner between the two families [33]. Transient problems, as treated in this work, pose the addi-tional question of how to traverse time. One route predicts the whole trajectory at once. This is a complex learning problem, and it fixes the prediction to the trained time horizon. The alter-native is an autoregressive rollout, which advances one step at a time and feeds each prediction back as input. The model be-comes more flexible and the learning problem simpler, but small errors accumulate over long horizons [ 34 – 36 ]. The instability has been linked to states that the training data do not constrain [ 37 ]. Training the rollout on its own outputs counters this drift [38]. The two schemes therefore fail in di ff erent ways. Operator and latent surrogates have been applied to a wide range of evolution problems [ 39 , 40 ], and extensions that sta-bilise long horizons report good accuracy [ 41 , 42 ]. Across these studies, the varied input is usually an initial condition, a coe ffi -cient field, or a load history. To the best of our knowledge, a flow driven by a boundary condition that changes during the transient remains to be addressed. Closest to our setting, Abueidda et al. drive their model with a time-varying load history [ 43 ], though for solid mechanics rather than a flow. A general concern is the fair and meaningful comparison of reported performance. McGreivy and Hakim reviewed 82 studies on machine learning for fluid-related partial di ff erential equations (PDEs) and found that 79% of those claiming to out-perform a standard method used weak baselines and that negative results are systematically underreported, which complicates a sound assessment of the findings [ 44 ]. Beyond the baselines, the error measure itself can mislead. A low aggregate error can coexist with unphysical dynamics [ 45 ], and an error measured against the solver that generated the training data penalises an emulator that surpasses it [ 46 ]. A low one-step loss does not imply long-horizon reliability [ 47 ], and cost-blind comparisons overstate the practical gain [ 48 ]. These findings call for metrics that resolve where a model fails (Sec. 5). 
+
+3. Datasets and Problem Setup 
+
+This study considers the prediction of flow evolutions under time-varying boundary conditions. The flow of an incompress-ible fluid can be described by the incompressible Navier–Stokes equations 
+
+∂tu + (u · ∇ )u = − 1 
+
+> ρ
+
+∇p + ν∇2u, ∇ · u = 0, (1) with velocity u, pressure p, density ρ, and kinematic viscosity 
+
+ν. In both datasets, the boundary conditions vary in time fol-lowing the same construction. The flow is not switched on at full strength but brought up through a multi-stage, piecewise-linear ramp s(t) (Fig. 3), with piecewise-constant rate ˙s(t). The boundary conditions ramp up over one second, and the case-dependent knot times are drawn as Dirichlet partitions of the ramp window. The two datasets instantiate this construction di ff erently. The KVS ramps rise over five levels in steps of 0 .2 at concentration α = 2, with 20 schedules shared across the inflow grid. The CMP ramps rise over four levels in steps of 0 .25 at 
+
+α = 1, with an individual schedule per case. Within each regime the schedule family is fixed and shared between training and test. The ramp schedule is part of the control parameters θ on which each surrogate is conditioned. The surrogate must predict the full time-resolved flow fields this ramp produces (Fig. 2). Reference solutions come from finite-element simulations, dis-cretised with Taylor–Hood ( P2/P1) elements in DOLFINx [ 49 ]. The time-stepping di ff ers between the two datasets and is noted with each. 
+
+3.1. CMP: Chemical-Mechanical Planarisation 
+
+Our first dataset is inspired by CMP. In simplified terms, the wafer to be polished is pressed against a slurry-covered, counter-rotating pad, and the slurry flow between the two influences where material is removed. To first order, the local material-removal rate is described by Preston’s law MRR = kp p v rel , (2) with Preston coe ffi cient kp, contact pressure p set by the ap-plied down-force, and relative pad-wafer velocity vrel , where the influence of the slurry flow enters [ 50 ]. The shear force law generalises this relation and links removal to the frictional shear force at the wafer [ 51 ]. Our study considers its hydrodynamic part, the wall shear stress the slurry exerts on the wafer. The pro-cess target is its time integral at fixed positions in the laboratory frame, the cumulative wall shear stress (cum-WSS) field 
+
+S(x) =
+
+Z T
+
+> 0
+
+τw(x, t) dt , τw = μ u∥,top − u∥,bot 
+
+h , (3) where τw is the film-averaged stress across the gap of height h
+
+and μ = ρν the dynamic viscosity. We simulate this flow in simplified form, as a flat cylinder of radius 0 .5 m and height 40 μm that represents the slurry-filled gap between wafer and pad. The upper side carries the wafer, a rotating 300-mm no-slip disk, o ff set from the pad centre by 
+
+xc ∈ [0 , 0.34] m. The lower side, the pad, carries a Navier-slip condition with slip length b = 20 μm , standing in for a soft pad that yields to the slurry instead of resolving its texture. The wafer spins at 60 to 120 rpm, the pad at the same rate in the opposite direction, and both rates follow the ramp. The mantle is sealed by a normal impedance condition, and no slurry enters or leaves the domain. In the real process, slurry is fed continuously and leaves over the pad edge. The control parameters θ are the rotation rate, the o ff set xc, and the knot times of the ramp. 3t = 0.2 s (a) t = 0.5 s t = 1.0 s t = 1.5 s t = 2.0 s                                          
+
+> 0
+> 20
+> 40
+> 60
+> 80 cum-WSS [N s/m 2]t= 0.4 s (b) t= 0.8 s t= 1.0 s t= 1.3 s t= 1.8 s
+> 1
+> 0
+> 1
+> v [m/s] Figure 2: Temporal evolution of the ground-truth finite element method solution under the boundary-condition ramp. (a) CMP: the cumulative wall shear stress (cum-WSS) on the wafer builds up monotonically over the transient, accumulated in the co-rotating wafer frame, with white lines marking its iso-levels. This wafer-frame view shows the cumulative wall shear stress (cum-WSS) received by wafer material points and complements the benchmark quantity of Eq. (3) , which integrates at fixed laboratory positions. (b) KVS: the v-velocity field of a representative case at Re ≈167 develops from near-rest, through the ramp ( t≤1 s), into self-sustained vortex shedding. 0.0 0.2 0.4 0.6 0.8 1.0 1.2
+> t[s]
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> ramp factor  s(t)
+> (a)
+> Tramp = 1 s
+> 0.0 0.2 0.4 0.6 0.8 1.0 1.2
+> t[s]
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> ramp rate  s(t)
+> (b)
+> Figure 3: The piecewise-linear boundary-condition ramp (representative KVS schedules). (a) Six example ramps s(t) reach fixed levels [0 .2,0.4,0.6,0.8,1.0] at case-dependent knot times τ. (b) The corresponding ramp rate ˙ s(t) is piecewise-constant between knots. The schedule τis part of the control parameters θ.
+
+In this thin film, the slurry is set in motion almost entirely by shear. The pad below and the counter-rotating wafer above drag the viscous fluid along at speeds of order 1 m/s . With the water-like slurry viscosity ν = 10 −6 m2/s , the gap Reynolds number is 
+
+Re h = Uh /ν ≈ 40, and the thin-film aspect ratio h/L ≈ 3 × 10 −4
+
+reduces the e ff ective inertia to Re h (h/L) ≈ 10 −2. The convective term is therefore negligible, and the momentum balance reduces to the unsteady Stokes equations 
+
+ρ ∂ tu = −∇ p + μ∇2u, ∇ · u = 0, (4) integrated in time by a backward-Euler /BDF2 scheme. We retain the time derivative and resolve the ramp transient rather than assuming a steady flow. The viscous term enters in the Laplacian form of Eq. (4) , whose di ff erence to the full-stress form is confined to the slip boundary and scales with the gap-to-radius ratio. Viscous relaxation across the gap, h2/ν ≈ 1.6 ×
+
+10 −3 s, is far faster than the one-second ramp, so the field follows the boundary conditions with negligible lag and the flow turns out quasi-static. The dataset comprises 100 cases of 201 snapshots each, cov-ering t ∈ [0 , 2] s. Each snapshot contains the three-dimensional velocity field on 1 ,817 ,169 finite-element nodes in 29 z-levels. For training, we subsample this field to 233 ,322 nodes. The wall planes at wafer and pad keep their full resolution of 62 ,661 nodes each, since the moving walls drive the flow and the veloc-ity varies most steeply there. The 27 interior levels are thinned to 4,000 nodes each. One case takes about 11 h of solver wall-clock time, detailed in the cost accounting of Sec. 6.3. For evaluation, cum-WSS is not predicted directly but com-puted from the predicted velocity fields. The shear of Eq. (3) is evaluated as the di ff erence quotient across the gap and reported on the 62 ,661 in-plane positions. The film develops an almost exactly linear (slip-Couette) profile, so this agrees with the re-solved wafer-side wall shear to within a few percent across the pad land. Localised peaks over under-resolved zones of the FE solution are excluded by construction, and the same operator is applied to predicted and reference fields, so the relative film metrics are insensitive to this convention. 40.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7             
+
+> x[m]
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> y [m]
+> D= 0.10 m
+> inflow ux(y) = 4 Umax y(Hy)/ H2
+> to pressure outlet
+> (x= 2.2 m)
+> no-slip wall
+> no-slip wall
+> H = 0.41 m Figure 4: KVS setup, following the Schäfer–Turek benchmark [ 53 ]. The parabolic inflow of Eq. (5) enters from the left, the channel walls and the cylinder are no-slip, and the channel continues to a pressure outlet. Only the front region is shown.
+
+3.2. KVS: Kármán Vortex Street 
+
+The second dataset is the flow past a circular cylinder in a two-dimensional channel, which develops a KVS. We choose this flow because it is thoroughly characterised [ 52 ]. The geom-etry follows the Schäfer–Turek benchmark [ 53 ], which spans a startup case with time-varying inflow (2D-3) and a time-periodic shedding case (2D-2) with a documented reference frequency at Re = 100. After the ramp our flow settles into the same time-periodic regime. The geometry is taken unchanged from the benchmark and is depicted in Fig. 4. A channel of height H = 0.41 and length 2.2 contains a cylinder of diameter D = 0.1, centred at (0 .2, 0.2) slightly below the centreline. The flow enters with a parabolic profile, defined by its peak velocity Umax and scaled in time by the ramp, 
+
+ux(y, t) = 4 s(t) Umax 
+
+y (H − y)
+
+H2 . (5) Instead of the benchmark’s prescribed inflow history, we vary 
+
+Umax from 0 .5 to 5 .0 in steps of 0 .1. Every level is crossed with 20 ramp schedules between 0 and 1 s, resulting in 920 available simulations for modelling. Each case comprises 201 snapshots of u, v, and p on the 237 ,351 second-order velocity nodes of the FEM mesh, covering t ∈ [0 , 4] s. The ramp ends at t = 1 s, so the shedding is fully developed over most of the horizon. The control parameters θ are Umax and the knot times of the ramp. For training, the grid-based models operate on an internal 83 × 442 rasterisation of the channel, with the cylinder interior filled by nearest-neighbour extrapolation. The KVS flow requires the full Navier–Stokes equations (1) .With ν = 10 −3 m2/s, the Reynolds number Re = ¯UD 
+
+ν , ¯U = 23 Umax , (6) with mean inflow velocity ¯U, spans [33 , 333] across the dataset. Above the critical value Re c ≈ 47, the convective term desta-bilises the steady flow and leads to self-sustained periodic vortex shedding, characterised by the Strouhal number St = fs D
+
+¯U , (7) with shedding frequency fs.The equations are solved fully transiently with an incre-mental pressure-correction scheme. One case takes 0 .77 h of wall-clock time (Table 4). 
+
+3.3. Splits 
+
+For both datasets, we consider interpolation and extrapola-tion. For interpolation, the cases are split randomly with a fixed seed, in a 70 /15 /15 ratio of training, validation, and test cases. This leaves 15 test cases for CMP and 138 for KVS. In the KVS case grid, a test case shares its ramp schedule, at di ff erent inflow levels, with training cases. For extrapolation, CMP holds out the 15 cases with the highest wafer rotation rates, and KVS the 200 cases with Umax > 4.0 ( Re ≥ 273), far above the shedding onset. 
+
+4. Surrogate Models 
+
+We compare a range of prediction models on both datasets. They di ff er in two respects: the architecture used for prediction, and the scheme by which it is deployed in space and time. This section describes the architectures, then the schemes, and locates every model in Table 1. 
+
+4.1. Model architectures Linear baseline (DMDc). Dynamic mode decomposition with control (DMDc) fits a single linear map of the latent state by least squares over all training trajectories jointly [54], 
+
+z(t+1) = K z(t) + L c (t), c(t) = [ s(t), ˙s(t) ] . (8) The fit does not constrain the spectrum of K. If eigenvalues fall outside the unit circle, the rollout diverges, so the fitted operator is projected onto the stable set (spectral radius ≤ 1). This linear map is the control-aware case of a Koopman linearisation of nonlinear dynamics [ 55 , 56 ]. Parametric variants interpolate such maps across Reynolds number on the cylinder wake [57]. 
+
+Neural baseline (MLP). A multilayer perceptron (MLP) [ 58 ]reads the latent state, the control parameters θ, the time, and the local ramp value and slope. It is nonlinear but does not learn an operator. 
+
+Operator network (DeepONet). A deep operator network (Deep-ONet) learns the operator directly by factorising the map be-tween the input and output functions [ 22 ]. A branch network reads the case inputs, the control parameters θ and the ramp signal s(t), and returns p coe ffi cients. A trunk network reads a query point ξ in the output domain, such as a point in space and time, and returns p basis values there. Their inner product, plus a bias, is the output at that point, 
+
+G(θ, s)( ξ) ≈ branch( θ, s), trunk( ξ) + b. (9) 5The trunk is a fixed multilayer perceptron over the query point. We vary only the branch, the part that processes the case-specific inputs. He et al. introduced the sequential DeepONet, which replaces the naive MLP branch with a recurrent neural network to enhance the model’s ability to cope with time-dependent input [59 ]. We follow this idea and compare three recurrent branches that di ff er mainly in the form of the recurrence. 
+
+GRU branch. A recurrent network reads its input sequence step by step. Its hidden state ht is a vector that summarises what the network has seen so far. A gated recurrent unit (GRU) [ 60 ] reads the case inputs and updates this state at each step as 
+
+ht = zt ⊙ ht−1 + (1 − zt) ⊙ ˜ht, (10) where the update gate zt and the candidate state ˜ht are learned nonlinear functions of ht−1 and the input. The gate interpolates between keeping the previous state and overwriting it. A linear layer maps the final hidden state to the branch coe ffi cients. 
+
+State-space branches (S4D and Mamba). The two remaining branches replace the gated recurrence with state-space layers. A state-space layer advances a hidden state along its input sequence 
+
+η with the linear recurrence 
+
+hk = ¯A h k−1 + ¯B ηk, yk = C h k. (11) This is the discretised form of a continuous-time linear system, with A, B, C, and the step size learned. The state recurrence pro-vides a linear alternative for a long memory of the ramp, without passing information through a gate. The structured state-space sequence model S4 stacks such layers into a deep network [ 61 ]. S4D further simplifies the complicated state matrix carrying the long memory by making it diagonal and complex-valued, while retaining comparable performance [ 62 ]. Mamba instead makes the state-space matrices functions of the current input [63], 
+
+hk = ¯A(ηk) hk−1 + ¯B(ηk) ηk. (12) It can therefore emphasise or suppress parts of the ramp by their content, while S4D applies one fixed recurrence to every ramp. In both cases, the time-averaged output of the last layer, concatenated with the projected control parameters θ, forms the branch coe ffi cients. We refer the reader to [ 64 ] for the foundations of the model family. 
+
+4.2. Operating schemes 
+
+The models vary in how they represent the state and how they traverse time. Those two dimensions span Table 1. 
+
+Representation (direct and latent). The models operate either directly on the flow field or on a latent representation of it. A direct model predicts the field end-to-end. A latent model reduces the field to a low-dimensional state, predicts in that space, and decodes back to the field. This keeps the temporal models small. Encoder and decoder come first, trained once for the wake and computed once in closed form for the film, and stay frozen. All models of a regime share one encoder per split, 1 2 4 8 16 32 64 139             
+
+> POD modes k
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> cumulative energy (EVR)
+> 95%
+> 99%
+> k= 8 (98.8%)
+> 99% @ k= 10
+> 99% @ k= 31
+> CMP (Stokes film)
+> KVS (vortex street)
+> Figure 5: Cumulative POD energy of the two regimes (train split). CMP concen-trates 99% of the variance in ten modes, and the k=8 encoder captures 98.8%. KVS reaches 99% only at k=31, with the leading mode at 55%, representing a phase-paired limit-cycle structure.
+
+so a di ff erence in performance reflects the architecture, not a co-adapted encoder. A proper orthogonal decomposition (POD) of the training fields gives an idea of how many modes a problem spans (Fig. 5). The quasi-static CMP film concentrates 99% of its variance in ten modes. We truncate its POD basis at k = 8, holding 98 .8% of the energy, following standard energy-based truncation [ 12 ]. Beyond the leading modes the coe ffi cients are noise-dominated and destabilise the rollout. The oscillatory KVS wake spreads its energy across the coupled mode pairs of a limit cycle and reaches 99% only at k = 31. We therefore compress it nonlinearly, with a convolutional autoencoder [ 14 ] of latent dimension 32 reading a single rasterised snapshot with u, v, and p as its three input channels. Using a di ff erent encoder per regime confounds encoder with regime by design, so cross-regime statements stay at the level of model families, as discussed in Sec. 8. 
+
+Time (autoregressive and one-shot). A model either predicts the whole transient in a single pass or advances autoregressively, feeding its own output back. The autoregressive models start from the encoded initial state and add a predicted increment to the current state, 
+
+z(t+1) = z(t) + ∆ z(t),
+
+except DMDc, which advances by the linear map of Eq. (8) . This output feedback is a separate loop from the branch recurrence, which reads the known ramp. An autoregressive model is trained on its own output, so a small per-step error accumulates along the rollout. We counter this during training in two ways. The rollout horizon is grown from a single step to as many as 100 steps, so the model learns to recover from its own drift. At evaluation the rollout spans the full transient, beyond the training horizon. A variance penalty keeps it from settling on the temporal mean, the trivial solution that minimises the one-step error while erasing the dynamics. 6Table 1: The model set as the design matrix of its two axes, the representation against the treatment of time. DON abbreviates DeepONet. All models run on both regimes, and the direct autoregressive cell is left open.         
+
+> one shot autoregressive direct (full field) field DeepONet —latent (frozen encoder) S4D one-shot S4D-DON, Mamba-DON GRU one-shot GRU-DON —AR-MLP —DMDc
+
+Table 1 leaves one combination unfilled, a direct model that advances autoregressively. We leave this cell open and give the reasons in Sec. 8. 
+
+4.3. Training and fairness 
+
+Every model minimises a mean squared error on its own rep-resentation, the field for the direct models and the latent state for the latent ones, with the variance penalty of the rollout training as the only addition. No evaluation metric enters any loss, so a lead on a process target reflects the architecture rather than a directly optimised metric. Every model trains under a fixed epoch budget, and the best validation checkpoint is reported. Each budget was set heuristically before the benchmark runs, raised until further epochs no longer improved the best check-point, and then held fixed. For the regime champions, some seeds still peaked late in the budget, so their reported accuracy is a conservative estimate. The learned models are reported as the mean over three seeds with the standard deviation on the fixed splits of Sec. 3. The deterministic DMDc baseline is exact at a single run. Compute is not equalised across models, but the remaining di ff erences run against our conclusions. On the wake, the direct field DeepONet trained with the same epoch budget as the latent operators, at a multiple of their cost per epoch, so its failure to sustain the oscillation is not an artefact of under-training. Where tuning e ff ort remained unequal, it went to the models that were behind. The latent one-shot controls received their own search in each regime and still trail the respective regime champion. One asymmetry remains. Each champion was developed on its home regime, the direct operator on the film and the latent pipeline on the wake, and the settings were transferred to the other regime rather than tuned per cell. The asymmetry therefore runs both ways. It can shift margins, but it cannot create the regime flip. The within-wake ablation of Sec. 7 adds a controlled check, where the branch family and the frozen encoder are held fixed and only the time treatment changes. All configurations, seeds, and split definitions are part of the accompanying code. 
+
+5. Evaluation Metrics 
+
+5.1. Shared aspects 
+
+The simplest summary of a surrogate’s accuracy is a single RMSE against the reference. For the wake this is the pointwise rollout error over the 4 s trajectory, with N evaluation nodes x,
+
+T frames t, the velocity components i, and the C test cases c,RMSE =
+
+q 12NTC 
+
+Pc,x,t,i
+
+ ˆui(x, t) − ui(x, t)2, (13) in raw velocity units, since the two wake components share a common scale. The three film components do not, the in-plane flow is far larger than the through-gap component, so the film aggregate, over the full three-dimensional field, normalises each component by its global standard deviation σi,nRMSE 3 =
+
+q 13NTC 
+
+Pc,x,t,i
+
+ (ˆ ui(x, t) − ui(x, t)) /σ i
+
+2. (14) For a transient flow the aggregate misleads, both as a training objective and as a score. As an objective it rewards damping, because a smooth, low-amplitude guess is rarely far from the truth [ 36 ]. As a score it rates a wrong structure, a phase lag, a damped amplitude, and invented motion all as the same mild deviation [ 45 ]. It can even rank predictions in the opposite order to their physical fidelity when several outcomes are admissi-ble [65]. Fig. 6 shows four such wake failure modes on example cases. The first three, damping, hallucination, and onset latency, are scored below. The fourth, a phase shift (d), displaces the oscillation in time while leaving frequency, amplitude, and onset unchanged. It is not scored as a failure. The phase-aligned RMSE removes it, and its extreme case, the half-period inversion between the wake’s two shedding branches, is taken up in Sec. 7. We evaluate each surrogate model against a small, fixed set of metrics, each isolating a named physical failure mode of its regime. Five core aspects of a prediction organise the suite. The first three are posed in both regimes, as the same physical question answered with a regime-appropriate instrument, and the last two exist only in the wake: 1. the field as a whole, its overall accuracy, 2. the spatial structure , whether the pattern is correct, 3. any invented motion the reference does not contain, 4. the fluctuation amplitude , whether the model damps the dynamics, and 5. the timing of events. These aspects were identified from early experiments and visual inspection of the predicted fields, before the model comparison. Deriving the metrics from the physics rather than from the results keeps them from being chosen, even unintentionally, to favour a particular model [ 66 ]. We report seven metrics for the wake and five for the film. Throughout, μx[·], σx[·], and σ2
+
+> x
+
+[·] denote the mean, standard deviation, and variance over the subscripted variable. For the wake, the field-level measures, like the rollout RMSE and the hallucination fraction, are evaluated mesh-natively on a fixed subset of 8 ,192 velocity nodes frozen across all models. The subset was drawn once, uniformly over the mesh nodes, so its density follows the mesh grading. The oscillatory metrics, frequency, phase, and amplitude, read the prediction ˆv against the truth v at twelve fixed probes spanning the wake. 7truth                                          
+
+> (a) Damping
+> prediction
+> 4
+> 2
+> 0
+> 2
+> 4
+> v [m/s]
+> truth
+> (b) Hallucination
+> prediction
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> v [m/s]
+> 0.0 0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0
+> time t[s]
+> 2
+> 1
+> 0
+> 1
+> 2
+> 3
+> wake probe  v(t)
+> onset latency
+> t1.4 s
+> truth 1.10 s pred 2.46 s
+> (c) Onset latency
+> truth
+> prediction
+> 0.0 0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0
+> time t[s]
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> wake probe  v(t)
+> Hopf onset t*
+> (d) Phase shift (schematic)
+> truth
+> prediction Figure 6: The four KVS failure modes that an aggregate RMSE conflates. (a) Damping. The prediction washes the developed wake out toward zero. (b) Hallucination. The rollout invents a full vortex street at t=0.48 s, well before the true onset at 0 .72 s. (c) Onset latency. The prediction stays smooth while the truth already sheds, a∆t≈1.4 s delay here. The marks are the detector onsets, the times shedding is established. (d) Phase shift (schematic). The prediction oscillates at the correct frequency, amplitude, and onset, displaced by a constant phase ∆φ. Top row (amplitude) shows v-field stills, truth over prediction. Bottom row (timing) shows wake-probe v(t) traces. Panels (a) to (c) are single-seed example predictions from the benchmarked model set, chosen to isolate each mode.
+
+For the film, the remaining metrics are evaluated on the inner wafer, the central region r/R ≤ 0.9 (subscript in ). The rim is excluded for a numerical reason. Past the wafer edge the domain continues as a traction-free annulus, but the prescribed rotation ends abruptly at the edge, and the steep gradient there is the least certain part of the reference. Metrics reading the rim would score a surrogate against reference artefacts rather than against the flow. 
+
+Spatial structure. For the wake a pure phase lag must not count as a structural error, so the phase-aligned RMSE aligns predic-tion and truth in time by dynamic time warping (DTW) before scoring, RMSE w = μc,p
+
+h min 
+
+> γ∈DTW
+
+q 1
+
+> |γ|
+
+P(i, j)∈γ
+
+ ˆvc,p(ti) − vc,p(t j)2i, (15) with γ a warp path, a set of index pairs ( i, j) that matches pre-dicted to true time samples, and |γ| its length. The path is monotone and anchored at both ends, which removes a phase lag without aligning away genuinely distinct structures. Each trace is aligned by its own warp path. For the film, where nothing oscillates, the structural question is whether the predicted cum-WSS accumulates in the right places on the wafer. The Pearson correlation corr ( ˆS, S) over the inner-wafer nodes scores this. A high correlation means the high- and low-shear zones sit where the reference puts them. It is blind to magnitude. 
+
+Invented motion. For the wake the true flow carries no shedding before onset (Fig. 6b), so any predicted motion there is classified as hallucination, quantified by two measures. The first, H, mea-sures the amount of invented motion. Deciding when a velocity value counts as motion takes a threshold. We set it to a tenth of the peak steady velocity of the true flow over all test cases c,
+
+τ = 0.1 · max c, t≥2.5 s , x, i |ui(x, t)|, (16) one value shared across the test set, so that H is comparable across cases and models. For each case c we then collect every velocity value in the fixed early window t < 0.5 s, one sample per frame, evaluation node, and component, into the set Pc. A sample is hallucinated when the truth rests below the thresh-old while the prediction moves above it. H is the fraction of hallucinated samples, averaged over the test cases, 
+
+H = μc
+
+h 1
+
+> |P c|
+
+P(t,x,i)∈P c 1 |ui(x, t)| < τ ∧ | ˆui(x, t)| > τ i . (17) The second is whether that motion resembles a Kármán street or is unstructured noise. αrms projects the pre-onset residual onto the developed-wake template Φ = u(tend ) − μt≥2.5 s [u(t)], 
+
+α(t) = ˆu(t) − μt′∈pre [u(t′)] , Φ
+
+∥Φ∥2 , αrms =
+
+q
+
+μt<0.5 s 
+
+α(t)2,
+
+(18) 8with ⟨· , ·⟩ the inner product over both velocity components on an 83 × 442 rasterisation of the evaluation subset, so α = k means k
+
+times the settled vortex pattern is already present. Read together they separate the cases. High H with low αrms is incoherent noise. Low H with high αrms is a faint but coherent pseudo-wake. For the film the same failure is a single metric. Once the ramp saturates, the Stokes field stops evolving in time. Any tem-poral variation a model predicts in the developed phase therefore has no counterpart in the true flow. Because the true developed-phase variance is near zero, an absolute ratio is ill-conditioned. The spurious unsteadiness is instead measured as the excess over truth on the two-plane shear speed w(x, t) = |utop (x, t)−ubot (x, t)|,
+
+D = μx∈in 
+
+σt≥1.5 s [ ˆ w(x, t)] 
+
+μx∈in 
+
+μt≥1.5 s [ ˆ w(x, t)]  − μx∈in 
+
+σt≥1.5 s [w(x, t)] 
+
+μx∈in 
+
+μt≥1.5 s [w(x, t)]  . (19) Even the settled true field retains a small residual variation, so the truth term is subtracted and D reports only the excess a model adds over the true flow. 
+
+5.2. Regime-exclusive aspects Process target. The film’s exclusive aspect is its process target, the cum-WSS, the time-integrated wall shear stress. It is scored per case by its relative error over the inner wafer, cwL 2 = ∥ ˆS − S∥ 2
+
+∥S∥ 2
+
+. (20) It also carries the magnitude that corr ( ˆS, S) deliberately ignores. A model can reconstruct the bulk velocity field well and still get the cum-WSS wrong, a contrast we develop in Sec. 6.1. 
+
+Fluctuation amplitude. A model may relax the wake toward its time-mean (Fig. 6a). The shedding power P measures how much of the true fluctuation energy the prediction retains. This energy is captured by the temporal variance of a probe trace, so 
+
+P =
+
+Pc,p σ2
+
+> t≥2 s
+
+[ˆ vc,p(t)] 
+
+Pc,p σ2
+
+> t≥2 s
+
+[vc,p(t)] , (21) pooled over the test cases c and the twelve probes p, which weights each probe by its true signal. It falls below one when the wake is damped. 
+
+Onset timing. Onset is the event in which the wake breaks its top-bottom symmetry (Fig. 6c). Over three stripe pairs straddling the cylinder axis, we average v over the node sets top k above and bot k below the axis. While the wake is symmetric, the two means cancel ( vtop = −vbot ), so the stripe signal 
+
+sk(t) = μx∈top k [v(x, t)] + μx∈bot k [v(x, t)] (22) rests at zero until symmetry breaks. Shedding makes sk oscillate, so the detector reads its frame-to-frame fluctuation, summarised by a rolling median over about one shedding period. Onset t∗
+
+is the first time this fluctuation persistently exceeds a tenth of its developed level on the truth, the same bar for prediction and truth. The onset latency ∆t∗ = |t∗ 
+
+> ˆv
+
+−t∗ 
+
+> v
+
+| is the timing error between prediction and truth. The detector parameters shift the absolute onset times but a ff ect the model comparison only marginally. The interval from first visible motion to established shedding is itself short and nearly model-independent, so ∆t∗ measures a start o ff set of the instability rather than a build-up penalty. ∆t∗ is defined only where shedding occurs. For a collapsed model that never sheds there is no onset to hit or miss, and it is reported as undefined. 
+
+∆t∗ also resolves the ambiguity the structural score αrms 
+
+leaves open. A high αrms on its own cannot di ff erentiate an early-but-real shedder from a hallucinator. A small ∆t∗ means the model sheds correctly, only a little early, while structure with no matching onset is genuine hallucination. Sec. 6.2 develops this. 
+
+5.3. Domain indicators 
+
+Each regime has its own domain indicator, with no cross-regime counterpart. For the wake it is the Strouhal error, 
+
+ESt = μc,p
+
+h | ˆfp− fp|
+
+> fp
+
+i, (23) with fp the dominant shedding frequency of v at probe p over the developed phase t ≥ 2 s, taken over the case-probe pairs where the truth sheds. A wrong frequency cannot be repaired by any amplitude or phase correction. For the film it is the within-wafer non-uniformity (WIWNU), the spatial coe ffi cient of variation of the cum-WSS, reported as the di ff erence between prediction and truth, 
+
+∆WIWNU = σx∈in [ ˆS(x)] 
+
+μx∈in [ ˆS(x)] − σx∈in [S(x)] 
+
+μx∈in [S(x)] . (24) The rollout RMSE, nRMSE 3, the warped RMSE, the Strouhal error, and P pool all cases before aggregation. For the Strouhal error and P the pooling is also what keeps them well defined when sub-critical test cases do not shed and per-case frequencies or ratios are ill-posed. All remaining metrics are means over test cases. Every metric is reported as the mean over three seeds with its standard deviation, on the fixed splits of Sec. 3. 
+
+5.4. Computational cost and amortisation 
+
+The motivation for a surrogate is speed, so we report cost alongside accuracy. The raw per-query speedup is the ratio of solver to surrogate wall-clock, 
+
+S = tFEM 
+
+tinfer 
+
+, (25) where tFEM is the finite-element wall-clock for one case and tinfer 
+
+is the warm per-case inference latency, both measured to the same usable field output. This ratio alone overstates the practical gain. A data-driven surrogate first pays an o ffl ine cost, the Ntrain reference simula-tions that form the training set together with the training itself. For a latent pipeline the training term ttrain covers both stages of Sec. 4.3, the encoder fit and the dynamics fit. The search that selected each configuration is not charged. The o ffl ine cost 9therefore prices the reproduction of the final pipeline, not its development. For a campaign of Q queries the two totals are 
+
+CFEM = Q t FEM ,
+
+Csurr = Ntrain tFEM + ttrain 
+
+| {z }
+
+> offl ine
+
++Q t infer , (26) which cross at the break-even query count 
+
+Q∗ = Ntrain tFEM + ttrain 
+
+tFEM − tinfer 
+
+. (27) In the limit tinfer ≪ tFEM , the break-even count reduces to Q∗ ≈
+
+Ntrain +ttrain /tFEM . We report Q∗ next to S , following the reporting recommendation of McGreivy and Hakim [ 44 ], since the break-even count, not the raw ratio, decides whether a surrogate pays off for a given workload. The two wall-clocks come from di ff erent hardware, the solver on CPU and the surrogate on GPU, so S compares deploy-ments rather than devices. We report both wall-clocks alongside the ratio, and take the solver at its production core count rather than a single core, so the reference is not artificially slow. 
+
+6. Results 
+
+Every model of Sec. 4 is scored through the common evalu-ation pipeline of Sec. 5, on the interpolation and extrapolation splits of Sec. 3. Rows in the tables are grouped by their design-matrix cell of Sec. 4, representation against time treatment. We present the two regimes in turn and discuss them together in Sec. 7. 
+
+6.1. CMP (film) 
+
+Table 2 summarises the five-metric suite for CMP, and Fig. 7 compares the models on the process target. On interpolation the bulk error ranks the recurrent latent-AR models and the direct operator close together, nRMSE 3 = 0.316 for the GRU-DON against 0 .362 for the direct operator, and separates the MLP and linear baselines at 1 .5 and 1 .9. The spatial correlation is high for the same leading group, 0 .995 for the direct operator and 0 .90 to 0 .93 for the recurrent models. The excess unsteadiness D stays near zero for the direct and recurrent models and rises to 0 .097 for the MLP and 0 .568 for the linear baseline. On the process target the direct operator leads at cwL 2 = 0.032, the GRU one-shot follows at 0 .095, the recurrent latent-AR models sit at 0 .14 to 0 .16, and the two baselines fall o ff at 0 .62 and 0 .80. ∆WIWNU stays below 0 .06 in magnitude for every model except the S4D one-shot and the linear baseline. Two rankings deserve attention. The bulk error and the process target sort the leading models in opposite directions, the GRU-DON ahead on nRMSE 3 and the direct operator ahead by more than a factor of four on cwL 2. And the GRU one-shot, which drops the autoregressive feedback, beats every latent-AR variant on the process target. Extrapolation preserves both readings. The direct operator holds the process target at 0 .066, the GRU one-shot follows at field DeepONet    
+
+> S4D-DON
+> Mamba-DON
+> GRU-DON
+> AR-MLP
+> DMDc
+> GRU one-shot
+> S4D one-shot
+> 10 1
+> 10 0
+> cum-WSS error cwL 2
+> direct × one-shot
+> latent × AR
+> latent × one-shot
+> Figure 7: CMP model comparison on the interpolation split, on the process target cwL 2(log scale, lower is better). The direct one-shot operator leads the closest latent variant by about a factor of three. Error bars show the standard deviation over three seeds where the model is stochastic.
+
+0.098, and the recurrent models sit at 0 .13 to 0 .15, while on nRMSE 3 the direct operator falls behind the functioning latent-AR variants in the seed mean, 0 .64 against 0 .36 to 0 .45, though its seed spread of ±0.25 implies that any separation is small. The spatial correlation stays at 0 .94 or above for the direct and recurrent models. The MLP baseline breaks down, with cwL 2
+
+rising to 1 .57 and nRMSE 3 to 25 .1 in the seed mean. Fig. 8 shows the cum-WSS field of the direct operator against truth on its best and worst interpolation case. 
+
+6.2. KVS (wake) 
+
+Table 3 summarises the seven-metric suite for KVS, and Fig. 9 compares the models on the held shedding power, the frequency error, and the phase-aligned structure. On interpolation the rollout RMSE favours the field Deep-ONet and the latent one-shots, 0 .66 and 0 .70 to 0 .71, over the trained latent-AR models at 0 .91 to 1 .10 and the linear baseline at 1 .25. The phase-aligned RMSE w inverts this, 0 .33 to 0 .43 for the trained latent-AR models against 0 .70 to 0 .75 for the rest. Pre-onset hallucination stays at or below H = 0.003 for the recurrent-branch DeepONets while the MLP moves most among the trained latent-AR models at 0 .019. The pseudo-wake ampli-tude stays at or below αrms = 0.031 for every trained model. The shedding power separates the suite most sharply. The latent-AR models hold the oscillation, S4D at P = 0.96 and the Mamba, MLP, and GRU variants at 0 .81 to 0 .87, while the direct, linear, and one-shot models fall to 0 .04 and below. The field DeepONet and the GRU one-shot start nearly on time ( ∆t∗ = 0.12 and 0.16 s) although neither ever holds the oscillation. Among the shedders the latency ranges from 0 .16 to 0 .42 s. The Strouhal error follows the shedding split, 0 .06 to 0 .13 for the latent-AR models against 0 .57 to 0 .89 for the rest. Two rankings deserve attention. The rollout RMSE and the shedding power sort the models in opposite directions, the damped field DeepONet ahead on the aggregate, 0 .66 against 10 Table 2: CMP (film) results, the mean over three seeds with the seed standard deviation as a subscript. Columns are the bulk field error nRMSE 3, the spatial correlation corr ( ˆS, S), the excess unsteadiness D, the process target cwL 2 (relative cum-WSS error, Eq. (20) ), and the within-wafer non-uniformity error ∆WIWNU . Lower is better except the correlation (higher) and ∆WIWNU (closer to zero). Bold marks the best cum-WSS. Rows are grouped by design-matrix cell, not by rank. †DMDc is deterministic, reported once. Model nRMSE 3 corr( ˆS, S) D cwL 2 ∆WIWNU 
+
+Interpolation 
+
+direct × one-shot field DeepONet 0.362 ±0.004 0.995 ±0.000 0.001 ±0.001 0.032 ±0.001 0.000 ±0.001 
+
+latent × AR S4D-DON 0.320 ±0.052 0.925 ±0.011 0.017 ±0.011 0.144 ±0.017 0.051 ±0.007 
+
+Mamba-DON 0.637 ±0.290 0.898 ±0.020 0.018 ±0.006 0.164 ±0.018 0.042 ±0.010 
+
+GRU-DON 0.316 ±0.022 0.932 ±0.017 0.004 ±0.001 0.157 ±0.013 −0.006 ±0.001 
+
+AR-MLP 1.531 ±0.827 0.651 ±0.035 0.097 ±0.058 0.616 ±0.266 −0.015 ±0.019 
+
+DMDc † 1.896 −0.100 0.568 0.795 −0.118 latent × one-shot GRU one-shot 0.273 ±0.021 0.963 ±0.006 0.002 ±0.000 0.095 ±0.015 0.017 ±0.004 
+
+S4D one-shot 0.419 ±0.007 0.534 ±0.023 0.030 ±0.003 0.376 ±0.005 −0.102 ±0.006 
+
+Extrapolation 
+
+direct × one-shot field DeepONet 0.644 ±0.252 0.982 ±0.001 0.035 ±0.036 0.066 ±0.003 −0.003 ±0.003 
+
+latent × AR S4D-DON 0.381 ±0.029 0.957 ±0.003 0.005 ±0.003 0.131 ±0.003 0.018 ±0.000 
+
+Mamba-DON 0.448 ±0.046 0.957 ±0.005 0.002 ±0.001 0.135 ±0.003 0.019 ±0.008 
+
+GRU-DON 0.365 ±0.021 0.937 ±0.017 0.004 ±0.000 0.146 ±0.013 0.001 ±0.001 
+
+AR-MLP 25 .1±34 .4 0.774 ±0.067 0.094 ±0.041 1.569 ±1.805 −0.015 ±0.012 
+
+DMDc † 2.729 0.315 0.509 0.848 −0.084 latent × one-shot GRU one-shot 0.353 ±0.002 0.974 ±0.002 0.001 ±0.000 0.098 ±0.003 0.002 ±0.001 
+
+S4D one-shot 0.582 ±0.014 0.764 ±0.009 0.014 ±0.009 0.355 ±0.009 −0.081 ±0.002 
+
+1.10, while holding none of the oscillation, P = 0.004 against 0.96. And the latent one-shot control, which drops the autore-gressive feedback, loses the oscillation entirely, P = 0.04 for the GRU branch and 0 .00 for the S4D branch. Extrapolation lowers the held power to P = 0.71 for S4D and 0 .75 for Mamba and raises RMSE w for every model. The Strouhal error stays low on this split even as amplitude and structure degrade, so it is not on its own a quality verdict. 
+
+6.3. Computational cost 
+
+We apply the cost model of Sec. 5.4 to the regime cham-pions. Solver wall-clock is measured on a dual-socket AMD EPYC 9534 node (16 MPI ranks for the film, 4 for the wake), training and inference on a single NVIDIA RTX PRO 6000 GPU, the two platforms stated separately. Table 4 reports the per-case times, the training compute, the speedup S of Eq. (25) ,and the break-even query count Q∗ of Eq. (27). The per-query speedup is ∼ 4.4 × 10 4 for the film and ∼ 4.2 to 4.7 × 10 3 for the wake. The break-even query count is Q∗ ≈ 70 for the film and ≈ 647 for the wake, in each case close to the 
+
+Ntrain of the regime. The training compute stays marginal. For each wake champion the shared convolutional-autoencoder fit is charged in full, alongside its own dynamics fit, together 2 .3 to 2.4 h or about three solver queries. The film champion is a direct operator with no encoder stage, and its 0 .43 h amount to 0 .04 queries. The surrogate therefore enters at its o ffl ine cost, 789 h for the film and 499 h for the wake, and undercuts the solver only beyond Q∗ queries. The implication for the many-query setting is taken up in Sec. 7. 
+
+7. Discussion 
+
+A surrogate validated on the simple regime does not stay reliable on the richer one, and the winning architecture reverses between the regimes. The direct one-shot operator reconstructs the film’s process target at a relative cum-WSS error of 0 .032, yet damps the wake oscillation it should sustain to a shedding power of P = 0.004. The latent autoregressive models hold the wake, with their structured state-space members at P = 0.96 and 0.87, while on the film even the best of them trails the direct operator by more than a factor of four on cum-WSS, at 0 .144 against 0 .032. The axis that decides this reversal is the treatment of time. Within each regime the latent models share one frozen encoder, so between their one-shot and autoregressive variants the time traversal changes while the representation and the branch family stay fixed. The GRU branch occupies both of these cells in both regimes and carries the simplest recurrence in the model set, so this pair isolates the time traversal without the structured state-space machinery. On the wake the autoregressive GRU holds the oscillation at P = 0.81 and the one-shot GRU damps it to P = 0.04, and the S4D pair repeats the pattern at 0 .96 against 0.00. On the film the order flips, and the one-shot GRU reaches a cum-WSS error of 0 .095 ahead of the autoregressive GRU at 0.157. Each regime rewards the time treatment that its dynamics demand. The wake is a self-sustained limit cycle whose phase must be carried coherently across the full rollout. The autore-gressive feedback provides that memory, and a one-shot map does not. The film follows the prescribed control ramp and devel-ops no dynamics of its own, so a direct map from the boundary condition to the field is su ffi cient and accumulates no rollout error. That a plain recurrent GRU already holds the wake places the e ff ect on the autoregressive feedback itself rather than on the structured state-space parametrisation. Within the latent-AR family the state-space branches stay ahead on the phase-sensitive measures, with a warped RMSE of 0 .33 for both against 0 .40 for the GRU, and the S4D branch holds the highest shedding power 11 Best case (cwL 2 = 0.011)      
+
+> Truth Prediction |Error|
+> Worst case (cwL 2 = 0.139)
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> 120
+> 140
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> 120
+> 140
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> 0
+> 10
+> 20
+> 30
+> 40 Figure 8: CMP cum-WSS field of the direct operator (field DeepONet) against truth on its best and worst interpolation case by cwL 2. Maps show the inner wafer (r/R≤0.9, Sec. 3), and the truth and prediction columns share one scale per row. The error column carries its own scale per row. On the best case the operator reproduces the footprint almost exactly. On the worst case it recovers the large-scale footprint but does not reproduce the fine-grained structure of the reference, whose reference-side origin is examined in Sec. 8.
+
+at P = 0.96, though its gap to the Mamba and the gap between the Mamba and the GRU both lie within the seed spread. The representation matters too, but it does not decide the winner. On the film the direct field operator leads the best latent one-shot variant by about a factor of three on cum-WSS, at 0 .032 against 0 .095, so mapping to the field directly adds accuracy beyond the choice of time axis. On the wake no representation rescues the one-shot map, and the direct and latent variants damp the shedding alike. Which architecture wins a regime is set by the treatment of time. The representation changes the size of the margin, a comparison the model set o ff ers only within the one-shot pair, since the direct autoregressive cell never trained stably, as Sec. 8 reports. The failure modes behind the reversal of the winning archi-tecture are invisible to a single aggregate error. On the wake the damped direct operator records a lower rollout RMSE than the model that sustains the shedding, 0 .66 against 1 .10. A field relaxed toward its time mean stays pointwise close to a wake that oscillates symmetrically about it, so the aggregate ranks the model that removes the shedding above the model that keeps it. On the film the bulk field error even ranks the GRU-DON ahead of the direct operator, 0 .316 against 0 .362, while the process target separates the same two models by more than a factor of four in the opposite direction. In both regimes the aggregate inverts the ranking that the physically relevant quantity sets. A selection by the aggregate alone would therefore deploy the damped operator on the wake and, on the film, a model more than a factor of four worse on the process target. Two further failure modes, pre-onset hallucination and onset latency, cut across the architecture split rather than along it. On the interpolation split the recurrent-branch DeepONets stay near rest before onset at H ≤ 0.003 while the MLP baseline, which holds the shedding, moves most at H = 0.019. Under extrap-olation the pattern does not persist, the state-space branches rise to H ≈ 0.024 to 0 .026, level with or above the MLP at 0.016, and a single seed was observed to invent a full vortex street well before onset (Fig. 6b). The onset latency repeats the pattern. The field DeepONet and the GRU one-shot start nearly on time ( ∆t∗ = 0.12 and 0 .16 s) although neither ever holds the oscillation, while among the shedders the latency spans 0 .16 to 0.42 s. Holding the oscillation therefore guarantees neither a quiet pre-onset window nor a punctual onset, and the aggregate collapses these independent axes into one number that rates each as a mild deviation. On the wake’s mirror symmetry the aggregate errs in the opposite direction. The wake admits two mirror-image limit cycles, related by a reflection across the centreline and a half-period shift, and nothing in the trained models pins which branch 12 Table 3: KVS (wake) results, the mean over three seeds with the seed standard deviation as a subscript. Columns are the rollout RMSE, the phase-aligned RMSE w,the pre-onset hallucination fraction H, the pseudo-wake amplitude αrms , the shedding power P, the onset latency ∆t∗ in seconds, and the Strouhal error ESt . Lower is better except P (closer to one). Bold marks the leading shedding power. Rows are grouped by design-matrix cell, not by rank. †DMDc is deterministic, reported once. A dash marks an onset undefined for a model that sheds on fewer than half of the test cases. Model RMSE RMSE w H αrms P ∆t∗ ESt 
+
+Interpolation 
+
+direct × one-shot field DeepONet 0.664 ±0.003 0.717 ±0.002 0.003 ±0.001 0.009 ±0.002 0.004 ±0.002 0.116 ±0.024 0.565 ±0.032 
+
+latent × AR S4D-DON 1.097 ±0.014 0.325 ±0.001 0.003 ±0.001 0.025 ±0.002 0.960 ±0.008 0.163 ±0.011 0.070 ±0.005 
+
+Mamba-DON 0.912 ±0.053 0.329 ±0.014 0.002 ±0.001 0.027 ±0.001 0.871 ±0.092 0.180 ±0.014 0.062 ±0.004 
+
+GRU-DON 0.927 ±0.020 0.395 ±0.026 0.001 ±0.000 0.031 ±0.001 0.815 ±0.092 0.419 ±0.041 0.122 ±0.019 
+
+AR-MLP 0.910 ±0.011 0.426 ±0.014 0.019 ±0.010 0.019 ±0.002 0.860 ±0.062 0.309 ±0.062 0.125 ±0.034 
+
+DMDc † 1.252 0.754 0.075 0.041 0.001 — 0.883 latent × one-shot GRU one-shot 0.699 ±0.013 0.697 ±0.010 0.018 ±0.002 0.020 ±0.001 0.040 ±0.016 0.160 ±0.025 0.580 ±0.064 
+
+S4D one-shot 0.710 ±0.000 0.739 ±0.000 0.011 ±0.002 0.018 ±0.001 0.000 ±0.000 — 0.891 ±0.004 
+
+Extrapolation 
+
+direct × one-shot field DeepONet 1.097 ±0.005 1.379 ±0.001 0.007 ±0.002 0.002 ±0.000 0.002 ±0.000 0.066 ±0.004 0.311 ±0.105 
+
+latent × AR S4D-DON 1.542 ±0.057 0.824 ±0.019 0.024 ±0.009 0.065 ±0.025 0.710 ±0.029 0.284 ±0.080 0.030 ±0.015 
+
+Mamba-DON 1.459 ±0.041 0.811 ±0.040 0.026 ±0.008 0.067 ±0.016 0.747 ±0.017 0.337 ±0.044 0.013 ±0.007 
+
+GRU-DON 1.419 ±0.032 0.844 ±0.025 0.009 ±0.001 0.036 ±0.007 0.597 ±0.075 0.250 ±0.027 0.023 ±0.013 
+
+AR-MLP 1.388 ±0.031 0.844 ±0.047 0.016 ±0.002 0.015 ±0.004 0.676 ±0.031 0.355 ±0.171 0.042 ±0.032 
+
+DMDc † 2.122 1.454 0.002 0.004 0.000 — 0.959 latent × one-shot GRU one-shot 1.224 ±0.011 1.414 ±0.016 0.025 ±0.010 0.011 ±0.004 0.171 ±0.006 0.301 ±0.099 0.717 ±0.014 
+
+S4D one-shot 1.142 ±0.001 1.414 ±0.001 0.023 ±0.003 0.005 ±0.001 0.000 ±0.000 — 0.965 ±0.003 
+
+Table 4: Per-case cost of the regime champions. tFEM on CPU, ttrain and tinfer 
+
+on GPU, stated separately. Q∗ from Eq. (27) . ∗The CMP solver time is the measured as-run wall-clock at the 16-core production point, which includes field output. The compute-only time at 16 cores is 9 .2 h. The solver strong-scales further (3 .1 h compute-only at 128 cores, which would lower S to about 1.2 × 10 4). We report the configuration the dataset was produced with, which sits near the throughput optimum of the scaling curve. The wake solver does not converge beyond 4 ranks, so its production point is also its fastest. †For the latent champions ttrain is the convolutional-autoencoder fit (1 .73 h) plus the dynamics fit (0 .54 and 0 .64 h). The encoder is shared by the latent wake models but charged in full to each champion. Regime Champion tFEM ttrain tinfer S Q∗
+
+CMP ∗ field DeepONet 11 .3 h 0.43 h 0.91 s 4.4 × 10 4 ≈ 70 KVS S4D-DON † 0.77 h 2.27 h 0.66 s 4.2 × 10 3 ≈ 647 KVS Mamba-DON † 0.77 h 2.37 h 0.60 s 4.7 × 10 3 ≈ 647 
+
+a prediction settles on. A prediction that develops the correct dynamics on the mirror branch keeps the frequency, the shedding power, and the onset unchanged, yet its pointwise rollout RMSE rises, since to a pointwise norm the mirror branch reads as a phase shift of half a period, the largest possible on the limit cycle. The aggregate that was too lenient with the damped wake is therefore too harsh here, penalising an arbitrary branch choice as if it were a field error. Most of the S4D deficit above is this branch choice. As a diagnostic, scoring each case against the better of the identity and the mirrored prediction lowers its rollout RMSE from 1 .10 to 0 .68 ± 0.02 and closes essentially the whole gap to the damped operator. The unpinned branch is also a deployment risk, which we record in Sec. 8. The practical rule for a CMP surrogate programme follows from the mechanism. A self-sustained oscillation calls for au-toregressive feedback, and a boundary-driven flow calls for a direct map, so the choice of surrogate should follow the dynam-ical character of the target flow rather than a validation score from a simpler regime. Because neither that score nor a single aggregate signals the mismatch, the failure-mode-resolved met-rics of Sec. 5 are needed to expose it. Extrapolation sharpens this caution. Under the extrapolation shift the ranking pattern of both regimes persists while the champions’ headline accu-racy degrades, with the held shedding power falling to 0 .71 to 0.75 and the direct operator’s cum-WSS error doubling to 0 .066. Several latent-AR film metrics improve at the same time, so the direct operator’s cum-WSS lead narrows from more than a factor of four to about two. 
+
+The price of the speedup. The speedup is the premise of a surrogate programme, not its result. Once trained, the regime champions answer a query 4 .4 × 10 4 times faster than the solver on the film and 4 .2 to 4 .7×10 3 times faster on the wake (Sec. 6.3). The gain materialises only beyond a break-even query count that the training set dominates, Q∗ ≈ 70 for the film and ≈ 647 for the wake, because the o ffl ine cost is carried by the Ntrain reference simulations rather than by the training compute. The speedup therefore pays o ff only in many-query settings, such as parameter studies, inverse problems, and uncertainty quantification, and a single prediction gains nothing. Reporting the raw speedup without the break-even count would overstate the practical gain, a reporting pattern that a recent survey identifies as a source of overoptimism in machine learning for PDEs [44]. 
+
+8. Limitations and Outlook 
+
+Several limitations bound these conclusions, and each closes with the outlook it motivates. The first limitation is the comparison design. The two regimes di ff er in encoder, dimensionality, dynamics, and the instantiation of the ramp family (Sec. 3) at once, so encoder and regime are confounded. Apart from the within-wake time-treatment ablation (Sec. 7), the reading that the regime dictates the architecture is a consistent observation across two regimes, 13 field DeepONet        
+
+> S4D-DON
+> Mamba-DON
+> GRU-DON
+> AR-MLP
+> DMDc
+> GRU one-shot
+> S4D one-shot
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> shedding power  P
+> (a) held oscillation
+> field DeepONet
+> S4D-DON
+> Mamba-DON
+> GRU-DON
+> AR-MLP
+> DMDc
+> GRU one-shot
+> S4D one-shot
+> 10 1
+> 10 0
+> Strouhal error  ESt
+> (b) frequency error (log)
+> field DeepONet
+> S4D-DON
+> Mamba-DON
+> GRU-DON
+> AR-MLP
+> DMDc
+> GRU one-shot
+> S4D one-shot
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> phase-aligned RMSE w
+> (c) phase-aligned structure
+> direct × one-shot latent × AR latent × one-shot Figure 9: KVS model comparison on the interpolation split. (a) Shedding power P, closer to one is better. (b) Strouhal frequency error ESt (log scale). (c) Phase-aligned warped RMSE RMSE w. The trained latent-AR models separate from the damping models on all three axes. Error bars show the standard deviation over three seeds where the model is stochastic.
+
+not a controlled result [ 33 ]. A named best model is the strongest entry in this comparison, not a certified optimum. The second is the physical scope. The wake data are a two-dimensional direct numerical simulation, an idealisation that ignores the three-dimensional e ff ects a real wake develops at higher Reynolds numbers. This a ff ects the upper end of our range, including the whole extrapolation split. The film covers the hydrodynamic sub-problem on a fixed geometry, with the headline cum-WSS a removal-relevant but partial target (Sec. 3). A more detailed process simulation is the application-facing next step, for example a particle-transport model of material removal. The third concerns the reference itself. The surrogate error is measured against a finite-element solution whose discretisation error we have not assessed, so the reported numbers quantify agreement with the reference rather than with the physics. The reference also carries artefacts of its own. In the hardest film cases its cum-WSS shows a mesh-fixed node-scale pattern along the swept high-shear ridge, at roughly 2 .5% of the field energy there (Fig. 8). The smooth surrogate does not reproduce this pattern, so part of the worst-case error scores the reference rather than the surrogate. A mesh and time-step convergence study could bound the discretisation error of the reference. The generalisation we establish is bounded to the trained input family. The controls vary only within the multi-stage piecewise-linear ramp family, so what we validate is an in-distribution emulator over this family, not an operator over an arbitrary space of controls. Within the family the transient re-mains the hardest part, and conditioning the rollout on the onset is the natural follow-up. The encoders are frozen and optimised for reconstruction rather than for predictability, so the representation itself may set the error floor of the latent pipelines. Encoders trained jointly with the dynamics [ 56 ], or parameter-adaptive bases [ 67 ], could lower it. The configurations were found by exploration under the tuning asymmetry stated in Sec. 4.3, not by a cross-validated search over every cell. A pre-registered, budget-matched search is the rigorous follow-up. The surrogate also yields point pre-dictions without error certificates, which certified reduced-order modelling provides [ 13 ] and operator learning still seeks [ 68 ]. The screen-then-verify workflow is therefore motivated rather than guaranteed. A decision rule could come from a physics-residual indicator on the predicted field, provided the residual tracks the true error, or from an eigenvalue analysis of the learned autoregressive step map [45]. The model set leaves the direct autoregressive cell of Table 1 unfilled. We trained the field DeepONet autoregressively, with a grown rollout horizon and noise injection, but the rollout never stabilised. We also tested an autoregressive Fourier neural operator [ 24 ] on the rasterised wake, but did not get it to work at practical training cost. On the thin three-dimensional CMP film it would additionally require a geometry-adapted variant [ 69 , 70 ]. The cell remains open for future attempts. The statistical claims are bounded by the sampling. Each stochastic model is the mean over three seeds, and we do not read a di ff erence as a ranking where it falls within the seed spread. The wake extrapolation split is underpowered, its 200 cases sharing only ten distinct Umax levels, so several di ff erences among its leading models fall within the seed spread. The film splits hold 15 test cases each. Cross-validation over repeated splits would add the split variance to these bounds, at the cost of retraining the full model matrix per fold. The training-set size is itself a design variable. Because the break-even query count of Sec. 6.3 is set by Ntrain , the accuracy attainable at smaller training sets determines how far it can drop. A first sweep over reduced training sets, on a single subset draw, points to saturation well below the full training-set sizes in both regimes, a direction rather than a result. Characterising the curve with disjoint draws and confidence intervals is the next measurement on this axis, where acquisition strategies such as active learning could lower the training-set size that sets the break-even [71]. A final note concerns the wake’s unpinned mirror branch 14 (Sec. 7). This is an observation rather than a limitation of the study, but it leaves a deployed model free to settle on the mir-rored limit cycle. Symmetry-aware modelling, for example an equivariant parametrisation of the latent dynamics, could pin the branch and has improved rollout stability in related set-tings [72]. 
+
+9. Conclusion 
+
+Motivated by the cost of physical CMP experimentation, we asked whether a flow surrogate validated on a simple regime stays reliable once the physics becomes richer. A two-regime contrast, a linear Stokes film against an oscillatory KVS wake, answers it on one shared evaluation pipeline. The answer is a no-free-lunch result for the architectures tested. A one-shot direct operator wins the boundary-driven film, latent autoregressive models win the self-sustained wake, and the deciding axis is the treatment of time. The wake requires the phase memory that autoregressive feedback provides, while the film rewards the direct map that accumulates no rollout error. Two measurement findings frame this result. A single ag-gregate error inverts the model ranking in both regimes, rating damped or mirrored dynamics above correct ones, so failure modes must be read from the suite of five physical questions, ac-curacy, structure, invented motion, amplitude, and timing. And the per-query speedup of three to four orders of magnitude pays off only beyond a break-even query count set almost entirely by the size of the training set, so the surrogate is a many-query instrument. The practical implication for CMP surrogate programmes is that cheap validation on a simplified regime is not evidence of reliability on a richer one. The choice of surrogate should follow the dynamical character of the target flow, and its verification a failure-mode-resolved suite. Neither the contrast design nor the evaluation methodology is tied to the architectures compared here. 
+
+CRediT authorship contribution statement Georg Winkler: Conceptualization, Methodology, Soft-ware, Formal analysis, Investigation, Data curation, Validation, Visualization, Writing – original draft, Writing – review & edit-ing. Martin Stoll: Conceptualization, Resources, Supervision, Writing – review & editing, Funding acquisition. 
+
+Declaration of competing interest 
+
+The authors declare that they have no known competing financial interests or personal relationships that could have ap-peared to influence the work reported in this paper. 
+
+Data availability 
+
+The configuration files, evaluation harness, and metric def-initions are versioned and will be made available. The raw simulation datasets and trained checkpoints are archived on in-stitutional scratch storage and available from the authors on reasonable request. 
+
+Acknowledgment 
+
+We sincerely thank the European Social Fund (ESF) and the Free State of Saxony of the Federal Republic of Germany for funding this work under grant number 100693458 (project WiProFlex). 
+
+Declaration of generative AI and AI-assisted technologies in the writing process 
+
+While preparing this work, the authors used Anthropic’s large language model Claude to assist in drafting and revising the text and in writing and reviewing the research software and data-analysis scripts. The authors designed the study, carefully reviewed and verified all content and results, and take full re-sponsibility for the final version of the manuscript. 
+
+References 
+
+[1] P. B. Zantye, A. Kumar, A. K. Sikder, Chemical mechani-cal planarization for microelectronics applications, Materi-als Science and Engineering: R: Reports 45 (3-6) (2004) 89–220. doi:10.1016/j.mser.2004.06.002 .[2] G. Winkler, T. Rothe, M. A. Sayyed, L. Jäckel, J. Langer, H. Kuhn, M. Stoll, Machine learning in chemical– mechanical planarization: A comprehensive review of trends, applications, and challenges, Advanced Engineer-ing Informatics 68 (2025) 103663. doi:10.1016/j.aei. 2025.103663 .[3] M. Krishnan, J. W. Nalaskowski, L. M. Cook, Chemical mechanical planarization: Slurry chemistry, materials, and mechanisms, Chemical Reviews 110 (1) (2010) 178–204. 
+
+doi:10.1021/cr900170z .[4] S. Kim, J. Jang, C. O. Kim, A run-to-run controller for a chemical mechanical planarization process using least squares generative adversarial networks, Journal of In-telligent Manufacturing 32 (8) (2021) 2267–2280. doi: 10.1007/s10845-020-01639-1 .[5] C. Cheng, A. Sa-Ngasoongsong, O. Beyca, T. Le, H. Yang, Z. Kong, S. T. Bukkapatnam, Time series forecasting for nonlinear and non-stationary processes: a review and com-parative study, IIE Transactions 47 (10) (2015) 1053–1071. 
+
+doi:10.1080/0740817X.2014.999180 .15 [6] T. Pan, J. Yang, W. Wu, Z. Dong, B. O. Ayinde, Arti-ficial intelligent matching for scratches of semiconduc-tor wafers based on a k-NN algorithm, Surface Topog-raphy: Metrology and Properties 7 (2) (2019) 025012. 
+
+doi:10.1088/2051-672X/ab1ca3 .[7] M. A. Jebri, G. Graton, E. M. El Adel, M. Ouladsine, J. Pinaton, Virtual metrology on chemical mechanical planarization process based on just-in-time learning, in: 2016 5th International Conference on Systems and Control (ICSC), 2016, pp. 169–174. doi:10.1109/ICoSC.2016. 7507082 .[8] Q. Xu, L. Chen, H. Cao, J. Liu, A neural network-based approach to material removal rate prediction for copper chemical mechanical planarization, ECS Journal of Solid State Science and Technology 10 (5) (2021) 054003. doi: 10.1149/2162-8777/abfc20 .[9] J. Deng, Q. Zhang, J. Lu, Q. Yan, J. Pan, R. Chen, Predic-tion of the surface roughness and material removal rate in chemical mechanical polishing of single-crystal SiC via a back-propagation neural network, Precision Engineering 72 (2021) 102–110. doi:10.1016/j.precisioneng. 2021.04.012 .[10] J. Cai, C. Yan, Y. Ma, B. Yu, D. Zhou, X. Zeng, NeurFill: Migrating full-chip CMP simulators to neural networks for model-based dummy filling synthesis, in: 2021 58th ACM /IEEE Design Automation Conference (DAC), 2021, pp. 187–192. doi:10.1109/DAC18074.2021.9586325 .[11] J. H. Ferziger, M. Peri´ c, R. L. Street, Computational Meth-ods for Fluid Dynamics, 4th Edition, Springer, Cham, 2020. 
+
+doi:10.1007/978-3-319-99693-6 .[12] G. Berkooz, P. Holmes, J. L. Lumley, The proper or-thogonal decomposition in the analysis of turbulent flows, Annual Review of Fluid Mechanics 25 (1993) 539–575. 
+
+doi:10.1146/annurev.fl.25.010193.002543 .[13] P. Benner, S. Gugercin, K. Willcox, A survey of projection-based model reduction methods for parametric dynamical systems, SIAM Review 57 (4) (2015) 483–531. doi:10. 1137/130932715 .[14] K. Lee, K. T. Carlberg, Model reduction of dynamical sys-tems on nonlinear manifolds using deep convolutional au-toencoders, Journal of Computational Physics 404 (2020) 108973. doi:10.1016/j.jcp.2019.108973 .[15] J. H. Seidman, G. Kissas, G. J. Pappas, P. Perdikaris, Vari-ational autoencoding neural operators, in: International Conference on Machine Learning (ICML), Vol. 202 of PMLR, 2023, pp. 30491–30522, arXiv:2302.10351. [16] N. Farenga, S. Fresca, S. Brivio, A. Manzoni, On latent dynamics learning in nonlinear reduced order modeling, Neural Networks 185 (2025) 107146. doi:10.1016/j. neunet.2025.107146 .[17] V. Oommen, K. Shukla, S. Goswami, R. Dingreville, G. E. Karniadakis, Learning two-phase microstructure evolution using neural operators and autoencoder architectures, npj Computational Materials 8 (2022) 190. doi:10.1038/ s41524-022-00876-7 .[18] L. Serrano, T. X. Wang, E. Le Naour, J.-N. Vittaut, P. Galli-nari, AROMA: Preserving spatial structure for latent PDE modeling with local neural fields, in: Advances in Neural Information Processing Systems (NeurIPS), Vol. 37, 2024, pp. 13489–13521, arXiv:2406.02176. [19] T. Chen, H. Chen, Universal approximation to nonlin-ear operators by neural networks with arbitrary activation functions and its application to dynamical systems, IEEE Transactions on Neural Networks 6 (4) (1995) 911–917. 
+
+doi:10.1109/72.392253 .[20] N. B. Kovachki, S. Lanthaler, A. M. Stuart, Operator learn-ing: Algorithms and analysis, in: S. Mishra, A. Townsend (Eds.), Numerical Analysis Meets Machine Learning, Vol. 25 of Handbook of Numerical Analysis, Elsevier, 2024, pp. 419–467. doi:10.1016/bs.hna.2024.05. 009 .[21] K. Bhattacharya, B. Hosseini, N. B. Kovachki, A. M. Stu-art, Model reduction and neural networks for parametric PDEs, SMAI Journal of Computational Mathematics 7 (2021) 121–157. doi:10.5802/smai-jcm.74 .[22] L. Lu, P. Jin, G. Pang, Z. Zhang, G. E. Karniadakis, Learning nonlinear operators via DeepONet based on the universal approximation theorem of operators, Na-ture Machine Intelligence 3 (3) (2021) 218–229. doi: 10.1038/s42256-021-00302-5 .[23] S. Lanthaler, S. Mishra, G. E. Karniadakis, Error estimates for DeepONets: A deep learning framework in infinite dimensions, Transactions of Mathematics and Its Appli-cations 6 (1) (2022) tnac001. doi:10.1093/imatrm/ tnac001 .[24] Z. Li, N. Kovachki, K. Azizzadenesheli, B. Liu, K. Bhat-tacharya, A. Stuart, A. Anandkumar, Fourier neural opera-tor for parametric partial di ff erential equations, in: Inter-national Conference on Learning Representations (ICLR), 2021, arXiv:2010.08895. [25] T. Tripura, S. Chakraborty, Wavelet neural operator for solving parametric partial di ff erential equations in com-putational mechanics problems, Computer Methods in Applied Mechanics and Engineering 404 (2023) 115783. 
+
+doi:10.1016/j.cma.2022.115783 .[26] S. Cao, Choose a transformer: Fourier or galerkin, in: Advances in Neural Information Processing Sys-tems (NeurIPS), Vol. 34, 2021, pp. 24924–24940, arXiv:2105.14995. 16 [27] Z. Hao, Z. Wang, H. Su, C. Ying, Y. Dong, S. Liu, Z. Cheng, J. Song, J. Zhu, GNOT: A general neural op-erator transformer for operator learning, in: International Conference on Machine Learning (ICML), Vol. 202 of PMLR, 2023, pp. 12556–12569, arXiv:2302.14376. [28] M. A. Rahman, Z. E. Ross, K. Azizzadenesheli, U-NO: U-shaped neural operators, Transactions on Machine Learn-ing Research (TMLR), arXiv:2204.11127 (2023). [29] K. Kontolati, S. Goswami, G. E. Karniadakis, M. D. Shields, Learning nonlinear operators in latent spaces for real-time predictions of complex dynamics in phys-ical systems, Nature Communications 15 (2024) 5101. 
+
+doi:10.1038/s41467-024-49411-w .[30] L. Mandl, D. Nayak, T. Ricken, S. Goswami, Physics-informed time-integrated DeepONet: Temporal tangent space operator learning for high-accuracy inference, Com-puter Methods in Applied Mechanics and Engineering 455 (2026) 118917. doi:10.1016/j.cma.2026.118917 .[31] R. Buitrago Ruiz, T. Marwah, A. Gu, A. Risteski, On the benefits of memory for modeling time-dependent PDEs, in: International Conference on Learning Representations (ICLR), 2025, arXiv:2409.02313. [32] S. Wang, H. Wang, P. Perdikaris, Improved architectures and training algorithms for deep operator networks, Journal of Scientific Computing 92 (2) (2022) 35. doi:10.1007/ s10915-022-01881-0 .[33] L. Lu, X. Meng, S. Cai, Z. Mao, S. Goswami, Z. Zhang, G. E. Karniadakis, A comprehensive and fair comparison of two neural operators (with practical extensions) based on FAIR data, Computer Methods in Applied Mechanics and Engineering 393 (2022) 114778. doi:10.1016/j. cma.2022.114778 .[34] Z. Ye, C.-S. Zhang, W. Wang, Recurrent neural opera-tors: Stable long-term PDE prediction, arXiv preprint arXiv:2505.20721 (2025). [35] J. Brandstetter, D. E. Worrall, M. Welling, Message passing neural PDE solvers, in: International Conference on Learn-ing Representations (ICLR), 2022, arXiv:2202.03376. [36] P. Lippe, B. S. Veeling, P. Perdikaris, R. E. Turner, J. Brand-stetter, PDE-Refiner: Achieving accurate long rollouts with neural PDE solvers, in: Advances in Neural Information Processing Systems (NeurIPS), Vol. 36, 2023, pp. 67398– 67433, arXiv:2308.05732. [37] D. Floryan, On instabilities in neural network-based physics simulators, arXiv preprint arXiv:2406.13101 (2024). [38] K. Um, R. Brand, Y. R. Fei, P. Holl, N. Thuerey, Solver-in-the-loop: Learning from di ff erentiable physics to interact with iterative PDE-solvers, in: Advances in Neural Infor-mation Processing Systems (NeurIPS), Vol. 33, 2020, pp. 6111–6122, arXiv:2007.00016. [39] S. W. Cho, J. Y. Lee, H. J. Hwang, Learning time-dependent PDE via graph neural networks and deep op-erator network for robust accuracy on irregular grids, Journal of Computational Physics 544 (2026) 114430. 
+
+doi:10.1016/j.jcp.2025.114430 .[40] P. Clark Di Leoni, L. Lu, C. Meneveau, G. E. Karni-adakis, T. A. Zaki, Neural operator prediction of linear instability waves in high-speed boundary layers, Jour-nal of Computational Physics 474 (2023) 111793. doi: 10.1016/j.jcp.2022.111793 .[41] S. Wang, P. Perdikaris, Long-time integration of parametric evolution equations with physics-informed DeepONets, Journal of Computational Physics 475 (2023) 111855. doi: 10.1016/j.jcp.2022.111855 .[42] D. Nayak, S. Goswami, TI-DeepONet: Learnable time inte-gration for stable long-term extrapolation, Computer Meth-ods in Applied Mechanics and Engineering 456 (2026) 118960. doi:10.1016/j.cma.2026.118960 .[43] D. W. Abueidda, M. Nonna, P. Pantidis, M. E. Mobasher, Time resolution independent operator learning, Computer Methods in Applied Mechanics and Engineering 450 (2026) 118586. doi:10.1016/j.cma.2025.118586 .[44] N. McGreivy, A. Hakim, Weak baselines and report-ing biases lead to overoptimism in machine learning for fluid-related partial di ff erential equations, Nature Machine Intelligence 6 (10) (2024) 1256–1269. doi:10.1038/ s42256-024-00897-5 .[45] A. T. Mohan, A. Chattopadhyay, J. Miller, What you see is not what you get: Neural partial di ff erential equations and the illusion of learning, arXiv preprint arXiv:2411.15101 (2024). [46] F. Koehler, N. Thuerey, Neural emulator superiority: When machine learning for PDEs surpasses its training data, in: Advances in Neural Information Processing Systems (NeurIPS), Vol. 38, 2025, pp. 165660–165702, arXiv:2510.23111. [47] X. Zou, Z. Li, Y. Wang, H. Yang, J. Wang, Uncertainty quantification and stability of neural operators for predic-tion of three-dimensional turbulence, Journal of Computa-tional Physics 549 (2026) 114640. doi:10.1016/j.jcp. 2025.114640 .[48] J. Westermann, B. Huber, T. O’Leary-Roseberry, J. Zech, Performance of neural and polynomial operator surrogates, arXiv preprint arXiv:2604.00689 (2026). [49] I. A. Baratta, J. P. Dean, J. S. Dokken, M. Habera, J. S. Hale, C. N. Richardson, M. E. Rognes, M. W. Scroggs, N. Sime, G. N. Wells, DOLFINx: The next generation FEniCS problem solving environment, zenodo (2023). 
+
+doi:10.5281/zenodo.10447666 .17 [50] F. W. Preston, The theory and design of plate glass polish-ing machines, Journal of the Society of Glass Technology 11 (1927) 214–256. [51] L. Borucki, Y. Sampurno, A. Philipossian, The shear force law: A guide to modeling CMP removal rates, ECS Jour-nal of Solid State Science and Technology 12 (4) (2023) 044003. doi:10.1149/2162-8777/accaa6 .[52] C. H. K. Williamson, Vortex dynamics in the cylinder wake, Annual Review of Fluid Mechanics 28 (1996) 477–539. 
+
+doi:10.1146/annurev.fl.28.010196.002401 .[53] M. Schäfer, S. Turek, F. Durst, E. Krause, R. Rannacher, Benchmark computations of laminar flow around a cylin-der, in: E. H. Hirschel (Ed.), Flow Simulation with High-Performance Computers II, Vol. 48 of Notes on Numerical Fluid Mechanics, Vieweg +Teubner Verlag, 1996, pp. 547– 566. doi:10.1007/978-3-322-89849-4_39 .[54] J. L. Proctor, S. L. Brunton, J. N. Kutz, Dynamic mode decomposition with control, SIAM Journal on Applied Dy-namical Systems 15 (1) (2016) 142–161. doi:10.1137/ 15M1013857 .[55] S. L. Brunton, B. W. Brunton, J. L. Proctor, J. N. Kutz, Koopman invariant subspaces and finite linear representa-tions of nonlinear dynamical systems for control, PLOS ONE 11 (2) (2016) e0150171. doi:10.1371/journal. pone.0150171 .[56] B. Lusch, J. N. Kutz, S. L. Brunton, Deep learning for universal linear embeddings of nonlinear dynamics, Na-ture Communications 9 (2018) 4950. doi:10.1038/ s41467-018-07210-0 .[57] L. Du, S. Zhang, R. Zhang, S. Zhang, Interpolation-based parametric reduced-order models with dynamic mode de-composition, Journal of Computational Physics 544 (2026) 114436. doi:10.1016/j.jcp.2025.114436 .[58] D. E. Rumelhart, G. E. Hinton, R. J. Williams, Learn-ing representations by back-propagating errors, Nature 323 (6088) (1986) 533–536. doi:10.1038/323533a0 .[59] J. He, S. Kushwaha, J. Park, S. Koric, D. Abueidda, I. Ja-siuk, Sequential deep operator networks (S-DeepONet) for predicting full-field solutions under time-dependent loads, Engineering Applications of Artificial Intelligence 127 (2024) 107258. doi:10.1016/j.engappai.2023. 107258 .[60] K. Cho, B. van Merriënboer, C. Gulcehre, D. Bahdanau, F. Bougares, H. Schwenk, Y. Bengio, Learning phrase representations using RNN encoder–decoder for statistical machine translation, in: Conference on Empirical Methods in Natural Language Processing (EMNLP), 2014, pp. 1724– 1734. doi:10.3115/v1/D14-1179 .[61] A. Gu, K. Goel, C. Ré, E ffi ciently modeling long se-quences with structured state spaces, in: International Conference on Learning Representations (ICLR), 2022, arXiv:2111.00396. [62] A. Gu, K. Goel, A. Gupta, C. Ré, On the parameter-ization and initialization of diagonal state space mod-els, in: Advances in Neural Information Processing Systems (NeurIPS), Vol. 35, 2022, pp. 35971–35983, arXiv:2206.11893. [63] A. Gu, T. Dao, Mamba: Linear-time sequence modeling with selective state spaces, in: First Conference on Lan-guage Modeling (COLM), 2024, arXiv:2312.00752. [64] A. Gu, Modeling sequences with structured state spaces, Ph.D. thesis, Stanford University, https: // purl.stanford.edu /mb976vf9362 (2023). [65] M. H. Baattrup, J. Bach, L. Jeppe, F. Labe, A. Grohsjean, C. Schwanenberger, P. Stelldinger, Pointwise metrics mis-lead: An evaluation protocol for multimodal inverse prob-lems, arXiv preprint arXiv:2605.22891 (2026). [66] A. Gelman, E. Loken, The statistical crisis in science, American Scientist 102 (6) (2014) 460–465. doi:10. 1511/2014.111.460 .[67] N. R. Franco, A. Manzoni, P. Zunino, J. S. Hesthaven, Deep orthogonal decomposition: A continuously adap-tive neural network approach to model order reduction of parametrized partial di ff erential equations, Advances in Computational Mathematics 52 (3) (2026) 31. doi: 10.1007/s10444-026-10295-7 .[68] Y. Qiu, W. Dahmen, P. Chen, Variationally correct operator learning: Reduced basis neural operator with a posteriori error estimation, Computer Methods in Applied Mechanics and Engineering 461 (2026) 119228. doi:10.1016/j. cma.2026.119228 .[69] Z. Li, N. B. Kovachki, C. Choy, B. Li, J. Kossaifi, S. P. Otta, M. A. Nabian, M. Stadler, C. Hundt, K. Azizzadenesheli, A. Anandkumar, Geometry-informed neural operator for large-scale 3D PDEs, in: Advances in Neural Information Processing Systems (NeurIPS), Vol. 36, 2023, pp. 35836– 35854, arXiv:2309.00583. [70] A. Peyvan, V. Kumar, G. E. Karniadakis, Fusion-DeepONet: A data-e ffi cient neural operator for geometry-dependent hypersonic and supersonic flows, Journal of Computational Physics 544 (2026) 114432. doi:10. 1016/j.jcp.2025.114432 .[71] D. Musekamp, M. Kalimuthu, D. Holzmüller, M. Takamoto, M. Niepert, Active learning for neu-ral PDE solvers, in: International Conference on Learning Representations (ICLR), 2025, arXiv:2408.01536. 18 [72] Y. Huang, D. S. Greenberg, Geometric and physical con-straints synergistically enhance neural PDE surrogates, in: Proceedings of the 42nd International Conference on Ma-chine Learning (ICML), 2025, arXiv:2506.05513. 19

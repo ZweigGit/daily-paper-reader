@@ -1,0 +1,1418 @@
+Title: Score-Based Stabilization for Time-Dependent Problems
+
+URL Source: https://arxiv.org/pdf/2607.25119v1
+
+Published Time: Wed, 29 Jul 2026 00:18:49 GMT
+
+Number of Pages: 20
+
+Markdown Content:
+# Score-Based Stabilization for Time-Dependent Problems 
+
+## Eshed Gal, Eldad Haber, Uri Ascher 
+
+University of British Columbia Vancouver, British Columbia, Canada eshedg@cs.ubc.ca, ehaber@eoas.ubc.ca, ascher@cs.ubc.ca 
+
+Abstract 
+
+We propose a score-based stabilization framework for numer-ical simulation of partial differential equations, in which a learned score model defines a stabilization operator applied to provisional numerical updates. This operator augments stan-dard time-stepping schemes by enforcing structure and phys-ical consistency through a correction that drives iterates to-ward the manifold of admissible states. We show that the stabilization operator acts as a contraction toward this mani-fold, yielding a correction mechanism with basin-conditional stability. Numerical experiments on Advection, Korteweg–de Vries (KdV), Nonlinear Schrödinger (NLS), and Burgers’ equations demonstrate improved robustness, suppression of nonphysical instabilities, and preservation of qualitative dy-namics. 
+
+## 1 Introduction 
+
+The numerical solution of nonlinear time-dependent par-tial differential equations proves challenging, particularly in regimes where nonlinear effects are strong and fine reso-lution is costly. Time-stepping methods face a fundamental trade-off between stability, accuracy, and computational effi-ciency. Moreover, for many long-time simulations of physical systems, maintaining numerical stability and preserving the structural properties of the solution are often more important than minimizing the local truncation error. In particular, pre-serving physical invariants such as mass, momentum, energy, or Hamiltonian structure is frequently essential for obtain-ing physically meaningful simulations over long time hori-zons (Lax 1973; LeVeque 2002; Hairer, Lubich, and Wanner 2002). Explicit high-order schemes often require very small timesteps, while implicit methods are more computationally expensive per step. Many numerical methods for for time-stepping can be viewed as a two-stage procedure. First, the solution is up-dated, and may become unstable when large timesteps are used. Second, a stabilization step is applied to reduce non-physical effects, but might come at the cost of losing impor-tant solution properties (Boris and Book 1973). The challenge is especially significant for time dependent PDEs. In equations such as the Korteweg-de Vries (KdV) equation (Ascher and McLachlan 2004, 2005), conservative non-damping discretization methods coupled with insuffi-cient resolution high-order derivatives restrict the allowable 3 2 1 0 1 2 3        
+
+> x1
+> 3
+> 2
+> 1
+> 0
+> 1
+> 2
+> 3
+> x2
+> 1.0 0.5 0.0 0.5 1.0
+> x1
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> x2
+> 0.6 0.8 1.0 1.2 1.4
+> x1
+> 0.2
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> x2
+
+Figure 1: Score-based correction on a unit-circle model problem. Left: explicit forward Euler scheme which spirals steadily outward and drifts off the manifold. Center: score-corrected scheme for the same step size. Right: a single step illustrating the mechanism. The gray arrows show the score field s(x), and the dashed curve represents the exact solution. timestep for explicit methods, and insufficient resolution of nonlinear interactions can lead to instability over long-time behavior. Recent advances in machine learning, particularly score-based generative modeling, provide new tools for repre-senting complex high-dimensional probability distributions. Central to these methods is the score function (Song et al. 2021), defined as the gradient of the log-density of a tar-get distribution. Score-based corrections are widely used in denoising and sampling (Luo and Hu 2021). This suggests an alternative to standard stabilization meth-ods in an attempt to avoid artificial damping of the computed solution. If the set of physically meaningful states can be described or approximated by a probability density function, then, a numerical update can be adjusted using a probabilis-tic correction. Instead of introducing heuristic stabilization terms, the correction is informed by the learned manifold of physically admissible solution states. Unlike previous ma-chine learning approaches that primarily seek to improve point-wise prediction accuracy (Kochkov et al. 2021; Bar-Sinai et al. 2019), the objective of the score model here is stabilization without losing important solution character-istics. Rather than correcting individual numerical errors, it acts to preserve the qualitative character of the solution, steer-ing unstable numerical trajectories back toward physically meaningful states and ensuring that the numerical evolution remains faithful to the underlying physical dynamics. While learning the score function requires an offline train-arXiv:2607.25119v1 [cs.LG] 27 Jul 2026 ing stage, this cost is amortized across many simulations. Many scientific computing applications such as weather pre-diction, repeatedly solve the same governing PDE under dif-ferent initial conditions. Since the learned score captures the manifold of admissible states rather than a single trajectory, the same model can be reused across an entire family of simulations. This enables inexpensive numerical schemes to operate stably in regimes where they would otherwise fail, avoiding the need for more costly integrators. In this work, we therefore explore the score-based stabi-lization idea by augmenting standard time-stepping schemes with a learned score-based correction applied at each step. An illustration of an example for our proposed method is presented in Figure 1, with a detailed description in Sec-tion 4.3. The objective is not to replace the underlying nu-merical solver altogether, but to stabilize it in a principled manner that permits larger timesteps while preserving the structural character of the solution and the exact conserva-tion of some critical physical invariants. 
+
+Contributions. The contributions of this work are: 
+
+• We propose a novel two-stage stabilization framework 
+
+that augments standard time-stepping numerical schemes with a learned, probabilistic score-based correction. 
+
+• We demonstrate that this score correction acts as a versa-tile stabilization layer, successfully mitigating the non-physical behaviors and/or numerical instabilities that cause classical integrators to fail or blow up in unstable regimes. 
+
+• We show that the score-corrected scheme achieves con-ditional manifold stability with respect to the solution manifold, if there is one. Specifically, we demonstrate that the stability bound is independent of the number of time steps and circumvents traditional strict timestep re-strictions, provided the provisional update remains within the valid basin of attraction of the score correction. 
+
+• We validate our approach across a diverse set of initial-boundary value PDEs , including Advection, Korteweg– de Vries (KdV), Nonlinear Schrödinger (NLS), and Burg-ers’ equations. 
+
+## 2 Related Work 
+
+Numerical Stabilization and Two-Stage Methods. The challenge of suppressing numerical artifacts and avoiding numerical blow-up in the integration of nonlinear partial differential equations has a long history. Classical stabiliza-tion techniques often rely on injecting artificial viscosity or using damping numerical discretizations to dampen high-frequency oscillations that arise near shocks or steep gra-dients (VonNeumann and Richtmyer 1950). Modern exten-sions of this idea evolved into Total Variation Diminish-ing (TVD) schemes (Harten 1997) and Weighted Essen-tially Non-Oscillatory (WENO) methods (Jiang and Shu 1996), which adaptively manage local numerical diffusion. Other classical approaches rely on spectral filtering (Gottlieb and Hesthaven 2001) to selectively damp or truncate high-frequency modes in pseudo-spectral environments. Such schemes frequently adopt a two-stage architecture. In the first stage, a provisional baseline update is computed, which may introduce numerical dispersion or push the state off a governing manifold. In the second stage, a stabilization op-erator—such as a flux limiter, spatial filter, or structural pro-jection—is applied to enforce physical constraints or smooth nonphysical ripples (MacCormack 2003). While effective, these hand-crafted fixes inherently trade off accuracy for sta-bility, often resulting in the loss of important, physically meaningful solution properties, such as excessive dissipa-tion of fine-scale features or physical invariants (Godunov 1959; LeVeque 2002). 
+
+Score Models and Score Functions. Recent advance-ments in generative modeling have established score-based frameworks as state-of-the-art for representing high-dimensional data distributions (Ho, Jain, and Abbeel 2020). Central to these frameworks is the score function, which describes the gradient of the log-density of the data (Song et al. 2021). By training neural networks via score matching to estimate this vector field, corrupted states can be itera-tively denoised and guided back toward the target distribu-tion. This process is inherently tied to the noise-level relation: score models are typically conditioned on varying levels of Gaussian noise, which dictate the magnitude and structure of the correction. High noise levels pull severely corrupted states from broad domains toward the general manifold, while lower noise levels refine the local, high-frequency structure (Meng et al. 2021). In our context, we leverage this learned vector field not to generate images, but to push an unstable numerical state back onto the manifold of physically valid PDE solutions. This mirrors recent efforts to adapt diffusion models for Riemannian manifolds and constrained physical systems, ensuring trajectories remain physically consistent without relying on hand-crafted heuristics (De Bortoli et al. 2022). 
+
+Machine Learning for Numerical Stability. Beyond gen-erative corrections, there is a growing body of work lever-aging machine learning to tackle numerical instability and quantify solver errors. Previous work on data-driven dis-cretizations (Bar-Sinai et al. 2019) and hybrid machine-learning solvers (Kochkov et al. 2021) has demonstrated that neural networks can actively correct coarse or unsta-ble numerical steps. Similarly, Physics-Informed Neural Net-works (PINNs) integrate governing equations directly into the learning process to ensure physical consistency (Raissi, Perdikaris, and Karniadakis 2019). Parallel to these deter-ministic correctors, probabilistic frameworks have emerged to model the uncertainties introduced by standard numerical discretizations. Work by Matsuda and Miyatake (2021) treats discretization errors as random variables, allowing their vari-ances to be updated concurrently with system parameters. Building on this, Miyatake, Irie, and Matsuda (2025) im-posed a monotonicity constraint on discretization error vari-ances using Bayesian isotonic regression. Further advance-ments address these inaccuracies through joint parameter evaluation (Toyota and Miyatake 2025), demonstrating how probabilistic techniques can dynamically estimate and cor-rect the error trajectories induced by numerical solvers. 3 Preliminaries 
+
+This section presents the framework for the two-stage stabi-lization viewpoint and the associated score-based correction. 
+
+3.1 Stabilization as a Two-Stage Numerical Process 
+
+Consider a nonlinear equation of the form 
+
+dx dt = N (x), (1) where the vector function x(t) denotes the state of the system at a time t and N is a nonlinear operator arising, for example, from spatial discretization of a PDE. Considering a time step of length h from tk to tk+1 = tk +
+
+h, many numerical schemes for Equation 1 can be abstractly written as a two-stage method, 
+
+ˆxk+1 = G(xk), (2) 
+
+xk+1 = F (ˆ xk+1 ), (3) where G is a time integration operator, and F is a stabiliza-tion operator. The update ˆxk+1 is typically stable only when timestep restrictions are respected. When these restrictions are violated, ˆxk+1 may exhibit nonphysical behavior such as blowup, oscillations or violation of invariant constraints. The role of F is to mitigate such effects. 
+
+3.2 Score-Based Methods 
+
+Score-based modeling introduces the score , which character-izes local changes of the log-density in state space (Hyväri-nen 2005). Let p(x) denote a probability density over admis-sible states x ∈ Rd. The score is defined as 
+
+s(x) = ∇x log p(x). (4) 
+
+Score points toward higher probability. Define the neg-ative log-density 
+
+E(x) = − log p(x), (5) where p(x) > 0, so that higher probability corresponds to smaller E(x). Since 
+
+∇E(x) = −∇ log p(x) = −s(x), (6) a standard gradient descent step to decrease E is 
+
+xnew = x − η∇E(x) = x + η s (x), η > 0. (7) Thus, the score s(x) provides a local direction that moves the state toward regions where p(x) is larger, for stepsize η
+
+sufficiently small. 
+
+Gaussian perturbations and the score correction. In many applications of score-based methods, it is possible to model a perturbed state as 
+
+ˆx = x + ε, ε ∼ N (0 , σ 2I), (8) where x is an (unknown) admissible state and ˆx is an ob-served or computed perturbation. A Gaussian model provides a simple local approximation to aggregated small errors. Under Equation 8, the posterior mean satisfies the identity (Tweedie’s formula (Efron 2011)) 
+
+E[x | ˆx] = ˆx + σ2∇ˆx log p(ˆ x) = ˆx + σ2s(ˆ x), (9) where p(ˆ x) denotes the density of the perturbed variable induced by p(x) and Gaussian noise. Thus, σ2s(ˆ x) gives a principled correction direction, and the factor σ2 sets the correction magnitude: larger perturbations (larger σ) imply a stronger shift. 
+
+ODE viewpoint. The update in Equation 7 can be viewed as taking one step in the direction of the vector field s(x). A convenient way to formalize this is to introduce the ODE 
+
+dx dτ = s(x) = ∇x log p(x), (10) whose solutions move in the score direction. Discretizing Equation 10 using forward Euler gives 
+
+x(τ + η) ≈ x(τ ) + η s (x(τ )) , (11) which has exactly the same form as Equation 7. This well-known ODE interpretation is useful for describing the cor-rection as a short score-driven evolution applied after each numerical time step. 
+
+## 4 Method 
+
+We describe the stabilization strategy for time-dependent nonlinear equations that augments a standard time integrator with a score-based correction. The aim is to improve stability and permit larger timesteps while preserving the structure of the base solver. 
+
+4.1 Algorithmic Formulation 
+
+Let G∆t denote a chosen baseline time-stepping operator with timestep ∆t. Given the current state xk, the proposed method consists of two stages: 
+
+1. Provisional update. Compute a standard numerical step 
+
+ˆxk+1 = G∆t(xk). (12) 
+
+2. Stabilization layer. Apply a stabilization operator 
+
+xk+1 = S(ˆ xk+1 ), (13) where S is built around a learned score function. In its simplest form, the stabilization layer consists of a single score correction, 
+
+S(x) = x + σ2s(x), (14) where s(x) = ∇ log p(x) and σ > 0 represents the effec-tive magnitude of the perturbations introduced by the provi-sional update. The parameter σ controls the strength of the stabilization. More generally, S may incorporate additional structure-preserving operations whenever they are available. For example, if the underlying PDE possesses known invari-ants such as mass, momentum, or Hamiltonian, the stabi-lization layer may combine the learned score correction with exact projections that enforce these conservation laws. The underlying numerical solver G∆t remains unchanged, and the stabilization operator S is applied as a post-processing map acting on the provisional state. In practice, the score function s(x) is approximated by a neural network trained offline using samples of physically admissible states. At inference time, no additional optimization or sampling procedure is required, and stabilization consists solely of evaluating the learned score field and applying the resulting correction within S.
+
+4.2 Score Model and Training Objective 
+
+To implement the stabilization operator, we train a neural network sθ (x) to approximate the score function of a noise-smoothed version of the target distribution p(x) over the manifold of admissible states. Under this setup, the model learns a noise-smoothed/denoising score function. Let x represent a physically admissible state drawn from the target distribution pdata (x), and let ˜x = x + ε repre-sent a perturbed state, where ε ∼ N (0 , σ 2I). The denoising score matching (DSM) objective function used to train the parameters θ of our neural network sθ is defined as: 
+
+LDSM (θ) = Eσ∼p(σ)Ex∼pdata (x)Eε∼N (0 ,σ 2I)
+
+h
+
+λ(σ) ∥sθ (x + ε, σ ) − ∇ ˜x log p(˜ x | x)∥22
+
+i
+
+,
+
+(15) where λ(σ) = σ2 is a weight function that balances the loss across scales, and the conditional score can be computed analytically as: 
+
+∇˜x log p(˜ x | x) = −(˜ x − x)σ−2 = −εσ −2. (16) Substituting Equation 16 into Equation 15 yields the explicit training objective: 
+
+LDSM (θ) = Eσ∼p(σ)Ex∼pdata (x)Eε∼N (0 ,σ 2I)
+
+h
+
+σs θ (x + ε, σ ) + εσ −1 22
+
+i
+
+. (17) By minimizing this objective, the network sθ (˜ x, σ ) learns to predict the noise-smoothed score ∇˜x log pσ (˜ x). At infer-ence time, the learned score model acts as a vector field pointing from perturbed or unstable states back toward the high-density manifold of valid physical solutions. 
+
+4.3 A Simple Example 
+
+To visually illustrate our method, consider a simple state x =(x1, x 2) ∈ R2 evolving under the linear harmonic oscillator 
+
+dx dt = A x, A =
+
+0 −11 0
+
+
+
+. (18) Taking ∥x(0) ∥ = 1 , the exact solution lives on the unit-circle manifold: 
+
+M =  x ∈ R2 : ∥x∥2 = 1 . (19) We associate with M the potential energy U (x) =
+
+> 14
+
+ ∥x∥2 − 12, defining a score field that points toward the manifold: 
+
+s(x) = −∇ U (x) = −x  ∥x∥2 − 1. (20) Discretizing Equation 18 via the forward Euler scheme gives xk+1 = ( I + hA ) xk. Since the discrete radius grows as ∥(I + hA ) x∥ = √1 + h2 ∥x∥ for any step size h > 0, the uncorrected numerical solution inevitably spirals outward. Our scheme augments this unstable predictor with a score correction step to guide the state back to M. Figure 1 con-trasts the two approaches: the plain forward Euler trajectory drifts rapidly off the manifold ( left ), while the score-corrected scheme remains stable on the unit circle ( center ). This stabil-ity of the score correction neutralizes the tangential overshoot introduced by the baseline predictor ( right ). 
+
+4.4 Training Data 
+
+The score model requires only samples from the target distri-bution p of physically admissible states and does not require a closed-form solution or paired coarse/fine trajectories. This distribution is a property of the governing equation and the physical regime rather than any particular initial condition, allowing a single trained model to characterize the admissi-ble state manifold for an entire family of simulations. In many practical settings, suitable training data already exist in the form of high-resolution simulations generated for parameter studies or uncertainty quantification. When such data is unavailable, training samples can be generated offline using a trusted high-fidelity solver over a representative en-semble of initial conditions. Once trained, the score model can be reused for different initial guesses. During deploy-ment, stabilization requires only a single evaluation of the learned score field at each correction step, making the online computational overhead small. 
+
+4.5 Mathematical Analysis 
+
+We analyze the stability properties of the proposed stabiliza-tion framework. Let X be a Hilbert space and let M ⊂ X
+
+denote the manifold of physically admissible states. We aim to show that the two-stage scheme maintains the state close to M without sacrificing the accuracy of the baseline solver. To establish this result, we first prove three lemmas. First, we establish that applying the score-based correction does not degrade the underlying order of accuracy of the base numerical integrator. Second, we bound the geometric devi-ation introduced by the uncorrected provisional step, char-acterizing how far the baseline solver pulls the state away from the manifold in a single step. Finally, we guarantee that a gradient-based correction acts as a strong contraction, actively pulling the provisional state back toward the valid distribution. Using these lemmas, we then analyze the global behavior of the stabilized scheme. We demonstrate that if the numer-ical step remains within the correction’s basin of attraction, the two-stage method achieves bounded manifold distance uniformly over time. 
+
+Theorem 1 (Conditional Manifold Stability) . Let 
+
+rj := dist X (uj , M)
+
+denote the constraint residual, and let ε > 0. Let ρK be the contraction factor from Lemma 3. Assume that whenever 0.00 0.25 0.50 0.75 1.00                             
+
+> x
+> 0.0
+> 0.5
+> 1.0
+> t= 0.00
+> 0.00 0.25 0.50 0.75 1.00
+> x
+> 0.0
+> 0.5
+> 1.0
+> t= 0.40
+> 0.00 0.25 0.50 0.75 1.00
+> x
+> 0.0
+> 0.5
+> 1.0
+> t= 0.80
+> 0.00 0.25 0.50 0.75 1.00
+> x
+> 0.0
+> 0.5
+> 1.0
+> t= 1.20
+> 0.00 0.25 0.50 0.75 1.00
+> x
+> 0.0
+> 0.5
+> 1.0
+> t= 1.60
+> 0.00 0.25 0.50 0.75 1.00
+> x
+> 0.0
+> 0.5
+> 1.0
+> t= 2.00
+> Exact Upwind Score Correction
+
+Figure 2: Box-pulse advection. The score-corrected method (red) maintains the plateau. 
+
+rj ≤ ε, the predictor stays in the valid basin of attraction of the score correction and satisfies 
+
+r[j+1 ≤ Lhε + Ch q , r[j+1 := dist X (buj+1 , M).
+
+Assume further that ρK
+
+ Lhε + Ch q  ≤ ε and r0 ≤ ε. Then the corrected scheme satisfies 
+
+rj ≤ ε for all j ≥ 0.
+
+In particular, the bound is independent of the number of time steps. 
+
+Classical timestep restrictions such as the CFL condition are not imposed directly here. However, the timestep h re-mains implicitly restricted by the requirement that the pre-dictor state buj+1 lie within the valid basin of attraction of the score correction. Full details and proofs are provided in Appendix A. 
+
+## 5 Experiments 
+
+We test our method over several well-known PDE instances, specifically 1D Advection (LeVeque 1990), Korteweg–de Vries (KdV) (Ascher and McLachlan 2005), Nonlinear Schrödinger (NLS) (Sulem and Sulem 2007), and Burgers’ equations (Burgers 1948), where for the latter we use the setting provided by PDEBench (Takamoto et al. 2022). The core objective of these experiments is to demonstrate that in settings where standard numerical methods fail or diverge, applying our score-based correction successfully stabilizes the dynamics and enables accurate long-time integration. We evaluate our approach against uncorrected baselines and standard stabilization schemes: TVD (Harten 1997), WENO-5 (Jiang and Shu 1996), and Spectral Filtering (Got-tlieb and Hesthaven 2001). While these classical methods effectively prevent catastrophic instabilities, they frequently introduce significant numerical diffusion that over-smooths sharp profiles or remain highly specialized to specific physi-cal regimes. We note that some classical stabilization meth-ods are not universally applicable in all problem settings. Across all experiments, the learned score model sθ is pa-rameterized as a convolutional U-Net (Ronneberger, Fischer, and Brox 2015). During the offline phase, the model is trained across several various noise levels. Technical details, addi-tional implementation details of the baseline methods, and ablation study are provided in the appendices. 0.0 0.5 1.0 1.5 2.0         
+
+> x
+> 0
+> 2
+> 4
+> 6
+> 8
+> 10
+> t
+> Reference
+> 0.0 0.5 1.0 1.5 2.0
+> x
+> LF (baseline)
+> 0.0 0.5 1.0 1.5 2.0
+> x
+> Score Correction
+> 3
+> 2
+> 1
+> 0
+> 1
+> 2
+> 3
+> u
+
+Figure 3: KdV results using ∆t = 5 × 10 −4. Left to right: 
+
+reference; leap-frog baseline (blows up at t ≈ 2.34 ); Score Correction. The Score Correction reproduces the diagonal soliton trajectories of the reference. 
+
+5.1 1D Advection 
+
+We consider the 1D advection equation 
+
+ut + au x = 0 , x ∈ [0 , L ], t ∈ [0 , T ], (21) with constant advection speed a > 0 and periodic boundary conditions. We discretize on a uniform grid with N = 256 
+
+cells over [0 , 1] and choose the first-order upwind scheme as the baseline method G∆t. The provisional update reads 
+
+ˆu n+1  
+
+> j
+
+= unj −ν unj −unj−1
+
+, ν = a ∆t·(∆ x)−1. (22) The upwind scheme is stable for small values of ν ≤ 1, but numerical instability is introduced for ν > 1.Consider the following box pulse initial condition over the domain [0 , 1] at final time T = 2 (two full domain traversals): 
+
+u0(x) = 1[x1, x 1+w](x). (23) This discontinuous profile tests whether the correction sharp-ens diffused fronts without generating spurious oscillations. Results are reported in Figure 2, where we applied the score correction using step size magnitude of 0.03 . The score-based correction effectively mitigates the numerical errors of the baseline upwind scheme. For the smooth Gaussian profile, the corrected method preserves the peak amplitude throughout the integration. In the box scenarios, the correc-tion maintains the flat plateaus of the single box pulse and preserves both the amplitude and the gap separation in the two-box configuration. 
+
+5.2 Korteweg–de Vries (KdV) 
+
+Consider the nonlinear PDE: 
+
+ut = β (u2)x + ν u xxx , x ∈ [0 , L ], t ∈ [0 , T ], (24) with periodic boundary conditions and coefficients β =
+
+−0.5, ν = −(0 .022) 2. We fix L = 2 , T = 10 , and ini-tial condition 
+
+u0(x) = cos( πx ). (25) The equation admits three quantities that are invariant in time. It preserves the mass and the L2 norm, and the Hamiltonian: 
+
+H(u) = − 16
+
+Z L
+
+> 0
+
+u3 dx + −ν
+
+> 2
+
+Z L
+
+> 0
+
+u2 
+
+> x
+
+dx. (26) Table 1: Performance of score-based corrections for the KdV equation. The baseline LF scheme becomes unstable and blows up at t = 2 .34 . Classical stabilizers avoid blow-up but sacrifice structure: WENO-5 over-diffuses the solitons, while spectral filtering badly violates the Hamiltonian. Only the score correction stabilizes the integration up to t = 10 while conserving the invariants. 
+
+method blew up at t = 2 at t = 10 err I2 err H err pt err I2 err H err pt 
+
+LF (baseline) 2.34 4.30 × 10 −2 7.85 × 10 −1 0.43 div. 
+
+WENO-5 – 2.12 × 10 −1 6.12 0.78 5.03 × 10 −1 8.22 0.91 Spectral Filtering – 1.28 × 10 −6 2.54 0.10 5.95 × 10 −6 2.74 0.09 Score Correction – 0 1.42 ×10 −8 0.42 0 4.52 ×10 −8 0.70 
+
+Table 2: NLS results using ∆x = 0 .1. The uncorrected baseline suffers from severe amplitude distortion and unbounded Hamiltonian error growth. Spectral filtering keeps the energy error bounded by leaving a residual drift, and collapse the wave amplitude at ∆t = 0 .5. Only the score-corrected scheme preserves the wave’s structural integrity while restricting energy drift at both timesteps. 
+
+∆t method t = 100 t = 200 t = 400 max x |ψ| err( H) max x |ψ| err( H) max x |ψ| err( H)0.20 Baseline 1.061 4.899 ×10 −1 1.104 5.518 1.049 1.788 ×10 1
+
+Spectral Filtering 1.061 1.068 ×10 −1 1.105 1.842 ×10 −1 1.040 1.983 
+
+Score Correction 0.979 6.174 ×10 −2 0.983 2.199 ×10 −2 0.985 1.618 ×10 −1
+
+0.50 Baseline 0.850 4.596 ×10 2 0.651 3.909 ×10 2 0.641 4.899 ×10 2
+
+Spectral Filtering 0.362 1.077 ×10 2 0.378 9.244 ×10 1 0.375 8.708 ×10 1
+
+Score Correction 0.971 3.07 ×10 −2 0.965 9.428 ×10 −2 0.967 1.984 ×10 −2
+
+On the inference grid with N = 200 cells over [0 , L ]
+
+(∆x = L/N = 0 .01 ) and time-step ∆t, we utilize the con-servative three-level method by Zabusky and Kruskal (1965) 
+
+un+1  
+
+> j
+
+= un−1 
+
+> j
+
++ 2β ∆t
+
+> 3 ∆ x
+
+ unj−1 + unj + unj+1 
+
+  unj+1 − unj−1
+
+
+
++ ν ∆t
+
+> ∆x3
+
+ unj+2 − 2unj+1 + 2 unj−1 − unj−2
+
+.
+
+(27) For ˆu n+1 , we denote the leap-frog provisional up-date Equation 27 and sθ (u) the learned score of Section 3.2. For the KdV equation, the stabilization operator S is in-stantiated to incorporate both score-based correction and the enforcement of the conserved quantities. The resulting up-date combines a learned score correction with projections that enforce the invariants of the system. Training samples are produced by integrating Equation 27 on a finer spatial grid Nfine = 400 (∆xfine = 0 .005 ) at 
+
+∆tfine = 6 ×10 −5 from several initial conditions, then spa-tially downsampled to the inference grid. We report the norm and Hamiltonian errors, along with the point-wise error, ob-tained using a correction step size of 3×10 −4.The primary objective of the score-based correction is to maintain stability and structure where classical methods fail. As detailed in Table 1, the baseline leap-frog (LF) scheme exhibits numerical blow-up. To avoid phase drifting, we ad-ditionally feed the model the previous state during training. Applying the score correction successfully stabilizes the integration up to t = 10 , driving the I2 error to machine pre-cision and the Hamiltonian error ( err H ) to roughly 10 −9. As shown in Table 1, it keeps pointwise errors low by ensuring the solitons do not drift from their true trajectories. Visually, the spacetime plot in Figure 3 confirms this, with the diag-onal soliton trajectories of the corrected scheme accurately tracking the slopes of the reference. To understand this behavior, consider the stability condi-tion obtained by freezing the coefficients in Equation 24, 
+
+∆t < ∆x(ν/ ∆x2 + 2 |βu max |)−1. (28) For the exact soliton solution, |umax | is constant, so the con-dition remains satisfied if it holds initially. In contrast, the uncorrected numerical solution exhibits growth in |umax |,eventually violating the stability bound and leading to blowup even if for a very small time-step size. The score correction prevents this growth and maintains an approximately con-stant solution amplitude, thereby preserving stability over long-time integration. 
+
+5.3 Nonlinear Schrödinger 
+
+Next, consider the cubic nonlinear Schrödinger (NLS) equa-tion in one space variable 
+
+ψt = i ψxx + |ψ|2ψ, x ∈ [−20 , 80] , t ∈ [0 , T ],
+
+(29) with periodic boundary conditions and the initial condition 
+
+ψ0(x) = eix/ 2 sech 
+
+ x√2
+
+
+
++ ei(x−25) /20 sech 
+
+ x−25 √2
+
+
+
+.
+
+(30) The continuum dynamics conserves the norm and the inte-grated Hamiltonian, 
+
+H(ψ, ¯ψ) = ψx ¯ψx − 12 ψ2 ¯ψ2. (31) We use a popular splitting method for Equation 29. Given the state ψn−1 
+
+> j
+
+at the previous step, one timestep advances in two stages. Table 3: 1D Burgers on PDEBench. Mean absolute ( err L1 ), relative root-mean-square ( err L2 ), and maximum pointwise ( err L∞ )errors across the held-out test ensemble at t = 0 .05 and t = 0 .5. The uncorrected baseline, and the compared methods diverge (div. ), while only the score correction stabilizes the integration across all timesteps. The blew up column reports the mean divergence time, and N is the number of steps to t = 0 .5.                                                              
+
+> ∆tNmethod blew up at t= 0 .05 at t= 0 .5err L1err L2err L∞err L1err L2err L∞
+> 3.33 ×10 −3150 baseline 0.066 0.205 1.231 7.115 div.
+> TVD (Superbee) 0.018 div. div.
+> WENO-5 0.021 div. div.
+> Spectral Filtering 0.151 0.049 0.117 0.974 div.
+> Score Correction –0.016 0.037 0.114 0.041 0.162 0.211
+> 4.00 ×10 −3125 baseline 0.056 0.319 2.688 18.55 div.
+> TVD (Superbee) 0.019 div. div.
+> WENO-5 0.019 div. div.
+> Spectral Filtering 0.101 0.106 0.237 1.859 div.
+> Score Correction –0.024 0.071 0.435 0.028 0.174 0.157
+
+(1) Linear PDE step. For the constant-coefficient PDE 
+
+ψt = i ψ xx , apply standard 3-point centered spatial dis-cretization and implicit midpoint in time: setting vn−1 
+
+> j
+
+:= 
+
+ψn−1 
+
+> j
+
+, solve for vnj
+
+vnj − vn−1
+
+> j
+
+∆t = i
+
+2 ∆ x2
+
+h vnj+1 − 2 vnj + vnj−1
+
+
+
++  vn−1 
+
+> j+1
+
+− 2 vn−1 
+
+> j
+
++ vn−1
+
+> j−1
+
+i
+
+.
+
+(32) 
+
+(2) Nonlinear ODE step. For the other half of the PDE, 
+
+ψt = i |ψ|2 ψ, the exact pointwise solution is the phase rota-tion 
+
+ψnj = vnj exp  i ∆t |vnj |2. (33) To ensure stability of this symplectic splitting scheme, the time step must be appropriately limited, even though the implicit midpoint method is unconditionally stable in time (Faou 2012; Weideman and Herbst 1986; Lubich 2008). We show next that our score-based scheme allows usage of larger time steps with clean results. Training samples are produced by integrating the split-ting scheme using Equation 32 and Equation 33 on a fine grid (∆ tfine , ∆xfine ) = (10 −3, 0.01) from the initial condi-tion Equation 30, then block-averaged to the inference grid, and a correction step size η = 1 ×10 −3. Table 2 reports the relative errors for the baseline and the score-corrected scheme, and we additionally provide a visualization of out method in the Appendix. 
+
+5.4 Burgers’ Equation 
+
+Consider the following PDE: 
+
+ut + u u x = ν u xx , x ∈ [0 , L ], t ∈ [0 , T ], (34) with periodic boundary conditions, L = 1 , T = 2 , and viscosity ν > 0. We follow PDEBench (Takamoto et al. 2022) formulation of this problem, and employ a correction step size of 0.01 , and use as baseline integrator G∆t the well known forward-time centered-space (FTCS) scheme on 
+
+N = 256 cells. The training samples are PDEBench fine-grid Burgers snapshots on a N = 1024 points grid, spatially downsampled by uniform striding to the inference resolution N = 256 . We report the mean L1, relative L2, and L∞ errors against the reference, evaluated at two times: an early time t = 0 .05 ,before baseline blow-up, and the active-window end t = 0 .5.Table 3 reports the score correction results and in the Ap-pendix we present the corresponding space-time evolution. We observe that using score correction enables the stabiliza-tion of the baseline numerical method. 
+
+## 6 Conclusion 
+
+We have presented a score-based stabilization framework that addresses the fundamental trade-off between stability and computational efficiency in time-stepping schemes for PDEs. By reformulating stabilization as a two-stage proce-dure and applying a learned score correction after provisional numerical updates, we mitigate nonphysical behaviors and numerical instabilities that can arise in standard integrators. We further show that the resulting scheme is stable, enabling robust long-time integration without restrictive timestep con-straints. This stability property is a direct consequence of the contraction behavior of the proposed stabilization operator toward the set of physically admissible states. We evaluated our method on a range of benchmark PDEs, including the 1D advection equation, the Korteweg-de Vries (KdV) equation, the nonlinear Schrödinger (NLS) equation, and Burgers’ equation. Across our experiments, the proposed stabilization consistently improves robustness and preserves the qualitative structure of the underlying dynamics, avoiding the consistent solution-smoothing artifacts such as artificial diffusion that typically compromise classical stabilization schemes. This work opens the door to using score-based corrections as a general stabilization layer for marginally stable numerical simulation. 
+
+## References 
+
+Ascher, U. M.; and McLachlan, R. I. 2004. Multisymplectic box schemes and the Korteweg–de Vries equation. Applied Numerical Mathematics , 48(3–4): 255–269. Ascher, U. M.; and McLachlan, R. I. 2005. On symplectic and multisymplectic schemes for the KdV equation. Journal of Scientific Computing , 25(1–2): 83–104. Bar-Sinai, Y.; Hoyer, S.; Hickey, J.; and Brenner, M. P. 2019. Learning data-driven discretizations for partial differential equations. Proceedings of the National Academy of Sciences ,116(31): 15344–15349. Boris, J. P.; and Book, D. L. 1973. Flux-corrected transport. I. SHASTA, a fluid transport algorithm that works. Journal of computational physics , 11(1): 38–69. Burgers, J. M. 1948. A mathematical model illustrating the theory of turbulence. Advances in applied mechanics , 1: 171–199. De Bortoli, V.; Mathieu, E.; Hutchinson, M.; Thornton, J.; Teh, Y. W.; and Doucet, A. 2022. Riemannian score-based generative modelling. Advances in neural information pro-cessing systems , 35: 2406–2422. Efron, B. 2011. Tweedie’s Formula and Selection Bias. Jour-nal of the American Statistical Association , 106(496): 1602– 1614. Faou, E. 2012. Geometric Numerical Integration and Schrödinger Equations . European Mathematical Society. Zurich Lectures in Advanced Mathematics. Godunov, S. K. 1959. A difference scheme for numerical so-lution of discontinuous solution of hydrodynamic equations. 
+
+Math. Sbornik , 47: 271–306. Gottlieb, D.; and Hesthaven, J. S. 2001. Spectral methods for hyperbolic problems. Journal of Computational and Applied Mathematics , 128(1-2): 83–131. Hairer, E.; Lubich, C.; and Wanner, G. 2002. Geometric Numerical Integration . Springer. Harten, A. 1997. High resolution schemes for hyperbolic conservation laws. Journal of computational physics , 135(2): 260–278. Ho, J.; Jain, A.; and Abbeel, P. 2020. Denoising diffusion probabilistic models. Advances in neural information pro-cessing systems , 33: 6840–6851. Hyvärinen, A. 2005. Estimation of Non-Normalized Statisti-cal Models by Score Matching. Journal of Machine Learning Research , 6: 695–709. Jiang, G.-S.; and Shu, C.-W. 1996. Efficient implementa-tion of weighted ENO schemes. Journal of computational physics , 126(1): 202–228. Kingma, D. P.; and Ba, J. 2014. Adam: A method for stochas-tic optimization. arXiv preprint arXiv:1412.6980 .Kochkov, D.; Smith, J. A.; Alieva, A.; Wang, Q.; Brenner, M. P.; and Hoyer, S. 2021. Machine learning–accelerated computational fluid dynamics. Proceedings of the National Academy of Sciences , 118(21): e2101784118. Lax, P. D. 1973. Hyperbolic systems of conservation laws and the mathematical theory of shock waves . SIAM. LeVeque, R. 1990. Numerical Methods for Conservation Laws . Birkhauser. LeVeque, R. J. 2002. Finite volume methods for hyperbolic problems , volume 31. Cambridge university press. Lubich, C. 2008. On splitting methods for Schrödinger-Poisson and cubic nonlinear Schrödinger equations. Math. Comp. , 77: 2141–2153. Luo, S.; and Hu, W. 2021. Score-based point cloud denoising. In Proceedings of the IEEE/CVF international conference on computer vision , 4583–4592. MacCormack, R. W. 2003. The effect of viscosity in hyper-velocity impact cratering. Journal of spacecraft and rockets ,40(5): 757–763. Matsuda, T.; and Miyatake, Y. 2021. Estimation of ordinary differential equation models with discretization error quan-tification. SIAM/ASA Journal on Uncertainty Quantification ,9(1): 302–331. Meng, C.; He, Y.; Song, Y.; Song, J.; Wu, J.; Zhu, J.-Y.; and Ermon, S. 2021. Sdedit: Guided image synthesis and editing with stochastic differential equations. arXiv preprint arXiv:2108.01073 .Miyatake, Y.; Irie, K.; and Matsuda, T. 2025. Quantifying uncertainty in the numerical integration of evolution equa-tions based on Bayesian isotonic regression. Japan Journal of Industrial and Applied Mathematics , 42(3): 983–1001. Raissi, M.; Perdikaris, P.; and Karniadakis, G. E. 2019. Physics-informed neural networks: A deep learning frame-work for solving forward and inverse problems involving nonlinear partial differential equations. Journal of Compu-tational physics , 378: 686–707. Ronneberger, O.; Fischer, P.; and Brox, T. 2015. U-net: Convolutional networks for biomedical image segmentation. In International Conference on Medical image computing and computer-assisted intervention , 234–241. Springer. Song, Y.; Sohl-Dickstein, J.; Kingma, D. P.; Kumar, A.; Er-mon, S.; and Poole, B. 2021. Score-Based Generative Mod-eling through Stochastic Differential Equations. In Interna-tional Conference on Learning Representations .Sulem, C.; and Sulem, P.-L. 2007. The nonlinear Schrödinger equation: self-focusing and wave collapse , volume 139. Springer Science & Business Media. Takamoto, M.; Praditia, T.; Leiteritz, R.; MacKinlay, D.; Alesiani, F.; Pflüger, D.; and Niepert, M. 2022. PDEBench: An Extensive Benchmark for Scientific Machine Learning. In 
+
+36th Conference on Neural Information Processing Systems (NeurIPS 2022) Track on Datasets and Benchmarks .Toyota, S.; and Miyatake, Y. 2025. Joint Bayesian Inference of Parameter and Discretization Error Uncertainties in ODE Models. arXiv preprint arXiv:2511.23010 .VonNeumann, J.; and Richtmyer, R. D. 1950. A method for the numerical calculation of hydrodynamic shocks. Journal of applied physics , 21(3): 232–237. Weideman, J.; and Herbst, B. 1986. Split-step methods for the solution of the nonlinear Schrödinger equation. SIAM J. Numer. Anal. , 23: 485–507. Zabusky, N. J.; and Kruskal, M. D. 1965. Interaction of ’solitons’ in a collisionless plasma and the recurrence of initial states. Physical review letters , 15: 240–243. A Proofs of Theoretical Results 
+
+We provide the complete proofs for the results presented in Section 4.5. Let X be a Hilbert space and let M ⊂ X denote the manifold of physically admissible states. 
+
+Lemma A.1 (Score correction preserves order of accuracy) . Let u(tj+1 ) ∈ M be the exact solution and assume the provisional update satisfies 
+
+∥buj+1 − u(tj+1 )∥X ≤ Ch p.
+
+Let the correction operator be 
+
+R(u) = u + ηs (u),
+
+or more generally a finite composition of such maps. Assume that R is Lipschitz-continuous on a neighborhood of M, with Lipschitz constant LR independent of h, and satisfies 
+
+R(u) = u for all u ∈ M .
+
+Define uj+1 = R(buj+1 ). Then, for sufficiently small h,
+
+∥uj+1 − u(tj+1 )∥X ≤ LRCh p.
+
+Thus, the correction does not reduce the order of accuracy. Proof. Since R(u(tj+1 )) = u(tj+1 ), we have 
+
+∥uj+1 − u(tj+1 )∥X = ∥R(buj+1 ) − R(u(tj+1 )) ∥X
+
+≤ LR∥buj+1 − u(tj+1 )∥X
+
+≤ LRCh p.
+
+(35) 
+
+Lemma A.2 (One-step distance bound under the numerical step) . Let Gh be a one-step numerical method satisfying 
+
+∥Gh(u) − Φh(u)∥X ≤ Ch q , u ∈ M ,
+
+where Φh is the exact flow. Further, assume that Gh is Lipschitz-continuous on a neighborhood of M:
+
+∥Gh(x) − Gh(y)∥X ≤ Lh∥x − y∥X .
+
+Assume also that Φh leaves M invariant, that is, 
+
+Φh(M) ⊆ M .
+
+Then, for any x ∈ X with dist X (x, M) ≤ ε, where the ε-neighborhood of M lies in the neighborhood on which the Lipschitz estimate holds, 
+
+dist X (Gh(x), M) ≤ Lhε + Ch q .
+
+Proof. For any δ > 0, choose u ∈ M such that 
+
+∥x − u∥X ≤ dist X (x, M) + δ ≤ ε + δ. 
+
+Since Φh(u) ∈ M , we have 
+
+dist X (Gh(x), M) ≤ ∥ Gh(x) − Φh(u)∥X .
+
+Furthermore, 
+
+∥Gh(x) − Φh(u)∥X ≤ ∥ Gh(x) − Gh(u)∥X + ∥Gh(u) − Φh(u)∥X
+
+≤ Lh∥x − u∥X + Ch q
+
+≤ Lh(ε + δ) + Ch q .
+
+(36) Letting δ → 0 completes the proof. 
+
+Lemma A.3 (Score-based stabilization contracts toward a manifold) . Assume there exists an energy functional E : X → R≥0
+
+such that 
+
+E(u) = 0 ⇐⇒ u ∈ M , ∇E(u) = 0 for all u ∈ M .
+
+Assume further that, on the sublevel set 
+
+N = {u ∈ X : E(u) ≤ Emax },
+
+there exist constants c−, c + > 0 such that 
+
+c− dist X (u, M)2 ≤ E(u) ≤ c+ dist X (u, M)2.Assume the stabilization operator is gradient-based: 
+
+R = (Id −η∇E)◦K ,
+
+with 0 < η ≤ 1/L , where E has an L-Lipschitz-continuous gradient and satisfies the PL inequality 
+
+∥∇ E(u)∥2 
+
+> X
+
+≥ 2μE (u)
+
+on N . Then, for all u ∈ N ,
+
+E(R(u)) ≤ (1 − μη )K E(u).
+
+Consequently, 
+
+dist X (R(u), M) ≤
+
+r c+
+
+c−
+
+(1 − μη )K/ 2 dist X (u, M).
+
+Proof. Let 
+
+uk+1 = uk − η∇E(uk), u0 = u. 
+
+The standard descent lemma for L-smooth functions gives 
+
+E(uk+1 ) ≤ E(uk) − η
+
+
+
+1 − Lη 
+
+> 2
+
+
+
+∥∇ E(uk)∥2 
+
+> X
+
+.
+
+For η ≤ 1/L ,
+
+E(uk+1 ) ≤ E(uk) − η 
+
+> 2
+
+∥∇ E(uk)∥2 
+
+> X
+
+.
+
+Applying the PL inequality yields 
+
+E(uk+1 ) ≤ (1 − μη )E(uk).
+
+Since E is nonincreasing along the iteration, every iterate remains in N , so the descent and PL bounds apply at each step. Iterating K times gives 
+
+E(R(u)) ≤ (1 − μη )K E(u).
+
+Finally, using the lower and upper bounds relating E to the distance from M,
+
+dist X (R(u), M)2 ≤ 1
+
+c−
+
+E(R(u)) 
+
+≤ 1
+
+c−
+
+(1 − μη )K E(u)
+
+≤ c+
+
+c−
+
+(1 − μη )K dist X (u, M)2.
+
+Taking square roots completes the proof. 
+
+Theorem A.1 (Conditional Manifold Stability) . Let 
+
+rj := dist X (uj , M)
+
+denote the constraint residual, and let ε > 0. Let ρK be the contraction factor from Lemma 3. Assume that whenever rj ≤ ε,the predictor stays in the valid basin of attraction of the score correction and satisfies 
+
+r[j+1 ≤ Lhε + Ch q , r[j+1 := dist X (buj+1 , M).
+
+Assume further that 
+
+ρK
+
+ Lhε + Ch q  ≤ ε
+
+and that r0 ≤ ε. Then the corrected scheme satisfies 
+
+rj ≤ ε for all j ≥ 0.
+
+In particular, the bound is independent of the number of time steps. Proof. We argue by induction on j. The base case is the hypothesis r0 ≤ ε. Assume that rj ≤ ε. By the predictor estimate, 
+
+r[j+1 ≤ Lhε + Ch q ,
+
+and the provisional state lies in the valid basin of attraction. By Lemma 3, the correction satisfies 
+
+rj+1 ≤ ρK r[j+1 .
+
+Therefore, 
+
+rj+1 ≤ ρK
+
+ Lhε + Ch q  ≤ ε. 
+
+Thus rj ≤ ε implies rj+1 ≤ ε, and the claim follows by induction. Remark on Trajectory Accuracy vs. Manifold Distance. While Theorem 1 guarantees that the corrected numerical state remains close to the admissible manifold M (bounding the distance rj over arbitrary time horizons), this does not automatically guarantee pointwise trajectory accuracy over long time-spans. Pointwise trajectory accuracy is fundamentally dependent on the local truncation error of the combined predictor-corrector steps. An unstable integrator that is stabilized by a score model will remain on the physical manifold, but could still suffer from phase drift or diverge from the true trajectory of the exact initial state if the underlying time step is too large. Thus, the proposed framework focuses on structural and qualitative stability rather than guaranteeing exact pointwise tracking over long times. 
+
+## B Additional Reaults 
+
+B.1 Additional Advection Results 
+
+We provide extended results for the 1D advection experiments. We examine the evolution of two initial conditions: a smooth Gaussian pulse and a discontinuous two-box profile, to further demonstrate the structure-preserving capabilities of the score-corrected scheme. 
+
+Gaussian Pulse The smooth Gaussian pulse initial condition is defined as: 
+
+u0(x) = exp 
+
+
+
+− (x − x0)2
+
+2β2
+
+
+
+. (37) This smooth profile serves as a standard sanity check where peak and shape preservation can be tracked over time. As shown in Figure 4, the score-based correction successfully maintains the pulse’s peak amplitude without introducing the numerical decay. 0.00 0.25 0.50 0.75 1.00                             
+
+> x
+> 0.0
+> 0.5
+> 1.0
+> t= 0.00
+> 0.00 0.25 0.50 0.75 1.00
+> x
+> 0.0
+> 0.5
+> 1.0
+> t= 0.25
+> 0.00 0.25 0.50 0.75 1.00
+> x
+> 0.0
+> 0.5
+> 1.0
+> t= 0.75
+> 0.00 0.25 0.50 0.75 1.00
+> x
+> 0.0
+> 0.5
+> 1.0
+> t= 1.25
+> 0.00 0.25 0.50 0.75 1.00
+> x
+> 0.0
+> 0.5
+> 1.0
+> t= 1.75
+> 0.00 0.25 0.50 0.75 1.00
+> x
+> 0.0
+> 0.5
+> 1.0
+> t= 2.00
+> Exact Upwind Score Correction
+
+Figure 4: Gaussian pulse advection. The score-corrected method (red) does not exhibit decay, while the upwind method (blue, dashed) loses roughly 35% of the peak by t = 2 .
+
+Two-Box Pulse To test the method on multiple discontinuities, we utilize a two-box pulse defined by: 
+
+u0(x) = 1[x1, x 1+w+](x) − 1[x2, x 2+w−](x),x2 > x 1 + w+. (38) A positive box ( +1 ) and a negative box ( −1) separated by a gap provide a stricter test of the numerical scheme. The score model must simultaneously maintain four sharp fronts, the correct plateau heights, and the proper gap between the pulses without generating spurious oscillations. Snapshots of this evolution are shown in Figure 5. 
+
+Advection using PDEBench We use to the advection problem introduced in Section 5.1, using the version of this problem supplied by PDEBench (Takamoto et al. 2022). For the evaluation, we fix the domain length L = 1 , the advection speed a = 1 ,and integrate to a final time T = 2 , corresponding to two complete domain traversals. Initial conditions u0(x) are drawn from the PDEBench 1D-advection ensemble. We reuse the first-order upwind discretization defined in Section 5.1 as our baseline integrator G∆t, operating here on an inference grid of N = 256 cells. Training samples are drawn directly from the PDEBench ensemble, and a held-out ensemble of trajectories supplies the test samples. To quantitatively evaluate performance, we compute the mean absolute error ( L1), the relative root-mean-square error (relative L2), and the maximum pointwise error ( L∞) across the spatial grid. The score-based correction successfully stabilizes the numerical integration particularly in regimes where the baseline method fails. As detailed in Table 4, in the stable sub-critical regime, the corrected upwind scheme reduces numerical diffusion compared 0.00 0.25 0.50 0.75 1.00                             
+
+> x
+> 1
+> 0
+> 1
+> t= 0.00
+> 0.00 0.25 0.50 0.75 1.00
+> x
+> 1
+> 0
+> 1
+> t= 0.40
+> 0.00 0.25 0.50 0.75 1.00
+> x
+> 1
+> 0
+> 1
+> t= 0.80
+> 0.00 0.25 0.50 0.75 1.00
+> x
+> 1
+> 0
+> 1
+> t= 1.20
+> 0.00 0.25 0.50 0.75 1.00
+> x
+> 1
+> 0
+> 1
+> t= 1.60
+> 0.00 0.25 0.50 0.75 1.00
+> x
+> 1
+> 0
+> 1
+> t= 2.00
+> Exact Upwind Score Correction
+
+Figure 5: Two-box advection. The score-corrected method (red) preserves the amplitude and separation of both pulses. to the baseline. In the supercritical regime where the baseline method diverges, the score correction successfully maintains long-term structural stability. Results are visualized in Figure 6, which demonstrates that the corrected scheme accurately tracks the analytical reference profile. 0.00 0.25 0.50 0.75 1.00 
+
+x
+
+0.0 
+
+0.5 
+
+1.0 
+
+1.5 
+
+> u(x, t)
+
+t = 0.0 
+
+0.00 0.25 0.50 0.75 1.00 
+
+x
+
+0.0 
+
+0.5 
+
+1.0 
+
+1.5 
+
+t = 2.0 
+
+Reference Score Correction 
+
+Figure 6: 1D advection in a supercritical regime ( ν = 1 .50 ). The corrected scheme remains stable and tracks the analytical profile. 
+
+B.2 NLS Visualization 
+
+We provide visual results demonstrating the efficacy of our score-based correction method applied to the nonlinear Schrödinger (NLS) equation. As illustrated in Figure 7, the correction successfully eliminates the nonphysical grid-scale ripples that accumulate in the baseline numerical method, maintaining a clean soliton profile over the integration window. 
+
+B.3 Burgers Visualization 
+
+We provide space-time visualizations of the Burgers’ equation to further illustrate the stabilizing effects of our method. As shown in Figure 8, while the uncorrected forward-time centered-space (FTCS) baseline struggles to maintain stability and diverges, the score-corrected scheme tracks the underlying dynamics of the reference trajectory over the full integration window. 
+
+## C Classical Stabilization Baselines 
+
+This appendix describes the classical stabilization baselines used for comparison with the proposed score-based correction method. Each baseline is implemented at the same spatial resolution and timestep as the corresponding experiment. Table 4: 1D advection errors across the PDEBench test ensemble. In the stable sub-critical regime, the score-corrected upwind scheme reduces numerical errors. In the supercritical regime, the baseline upwind method diverges ( div. ), whereas the score correction successfully maintains long-term structural stability. 
+
+method err L1 err L2 err L∞
+
+ν = 0 .20 ; ∆t = 7 .81 ×10 −4
+
+Upwind 2.45 ×10 −1 4.18 ×10 −1 4.98 ×10 −1
+
+Score Correction 1.10 ×10 −1 2.08 ×10 −1 2.84 ×10 −1
+
+ν = 0 .50 ; ∆t = 1 .95 ×10 −3
+
+Upwind 1.98 ×10 −1 3.42 ×10 −1 4.06 ×10 −1
+
+Score Correction 7.11 ×10 −2 1.36 ×10 −1 1.95 ×10 −1
+
+ν = 0 .80 ; ∆t = 3 .13 ×10 −3
+
+Upwind 1.13 ×10 −1 2.01 ×10 −1 2.44 ×10 −1
+
+Score Correction 3.40 ×10 −2 7.21 ×10 −2 1.10 ×10 −1
+
+ν = 1 .10 ; ∆t = 4 .30 ×10 −3
+
+Upwind div. div. div. 
+
+Score Correction 5.15 ×10 −2 1.19 ×10 −1 1.75 ×10 −1
+
+ν = 1 .50 ; ∆t = 5 .86 ×10 −3
+
+Upwind div. div. div. 
+
+Score Correction 1.31 ×10 −1 2.73 ×10 −1 3.77 ×10 −1
+
+C.1 WENO-5 (Weighted Essentially Non-Oscillatory) 
+
+We implement the fifth-order finite-difference WENO scheme of Jiang and Shu (1996) with global Lax–Friedrichs flux splitting. For a conservation law written in the form 
+
+ut + f (u)x = ( additional diffusive/dispersive terms ),
+
+the convective flux is split as 
+
+f ±(u) = 12 (f (u) ± au ) , a = max  
+
+> x
+
+|f ′(u)|.
+
+The positive flux component is reconstructed using a left-biased stencil, while the negative component is obtained by symmetry. The interface flux is given by 
+
+Fj+1 /2 =
+
+> 2
+
+X
+
+> k=0
+
+ωk ˆf (k),
+
+where the candidate reconstructions are 
+
+ˆf (0) = 16 (2 fj−2 − 7fj−1 + 11 fj ),
+
+ˆf (1) = 16 (−fj−1 + 5 fj + 2 fj+1 ),
+
+ˆf (2) = 16 (2 fj + 5 fj+1 − fj+2 ).
+
+The nonlinear weights are computed as 
+
+ωk = αk
+
+P 
+
+> l
+
+αl
+
+, αk = dk
+
+(ε + βk)2 ,
+
+with linear weights 
+
+(d0, d 1, d 2) = 
+
+ 110 , 610 , 310 
+
+
+
+, ε = 10 −6.
+
+The Jiang–Shu smoothness indicators are 
+
+β0 = 13 12 (fj−2 − 2fj−1 + fj )2 + 14 (fj−2 − 4fj−1 + 3 fj )2,β1 = 13 12 (fj−1 − 2fj + fj+1 )2 + 14 (fj−1 − fj+1 )2,β2 = 13 12 (fj − 2fj+1 + fj+2 )2 + 14 (3 fj − 4fj+1 + fj+2 )2.
+
+The resulting semi-discrete operator, including the remaining physical terms, is advanced using the third-order strong-stability-preserving Runge–Kutta scheme (SSP-RK3). 0.0 
+
+> 0.5
+> 1.0
+
+t = 0 t = 100 t = 200 t = 400    
+
+> 0.0
+> 0.5
+> 1.0
+> 025 50 75
+
+x   
+
+> 0.0
+> 0.5
+> 1.0
+> 025 50 75
+
+x   
+
+> 025 50 75
+
+x   
+
+> 025 50 75
+
+xFigure 7: NLS results for ∆t = 0 .2, ∆x = 0 .1. Each panel plots |ψ(x)| at the labeled time. Top: fine-grid reference; middle: 
+
+baseline numerical method; bottom: score correction. The baseline develops grid-scale ripples that the score correction removes while preserving the soliton profile. 
+
+KdV. The convective flux is 
+
+f (u) = −βu 2 = 12 u2,
+
+with β = −1/2 and a = max x |u|. The dispersive contribution is discretized using the centered finite-difference approximation 
+
+uxxx (xj ) ≈ uj+2 − 2uj+1 + 2 uj−1 − uj−2
+
+2∆ x3 ,
+
+and treated explicitly. The discretization uses N = 200 grid points and ∆t = 5 × 10 −4.
+
+Burgers. We use 
+
+f (u) = 12 u2,
+
+with the viscous contribution discretized using the standard centered second difference, 
+
+uxx (xj ) ≈ uj+1 − 2uj + uj−1
+
+∆x2 .
+
+The viscous term is treated explicitly and the experiments are performed on N = 256 grid points. 
+
+C.2 TVD (Total Variation Diminishing), Superbee Limiter 
+
+Burgers. We use a MUSCL reconstruction with a Superbee slope limiter and a local Lax–Friedrichs numerical flux, advanced in time by the second-order strong-stability-preserving Runge–Kutta scheme (SSP-RK2). Defining the backward and forward differences 
+
+a = uj − uj−1, b = uj+1 − uj ,
+
+the limited slope is 
+
+dj = maxmod (minmod( a, 2b), minmod(2 a, b )) ,
+
+where minmod and maxmod select the argument with smaller and larger magnitude, respectively, when all arguments have the same sign, and return zero otherwise. The reconstructed interface states are 
+
+uLj = uj + 12 dj , uRj = uj+1 − 12 dj+1 ,
+
+and the numerical flux is 
+
+Fj+1 /2 = 12
+
+ f (uLj ) + f (uRj ) − 12 α (uRj − uLj ),
+
+where α = max x |u| is the (global) maximum wave speed. The viscous contribution is discretized using the centered second difference and incorporated explicitly. 0.00 0.25 0.50 0.75 1.00 
+
+x
+
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> t
+
+Reference     
+
+> 0.00 0.25 0.50 0.75 1.00
+
+x
+
+Baseline     
+
+> 0.00 0.25 0.50 0.75 1.00
+
+x
+
+Score Correction 
+
+> 0.00
+> 0.25
+> 0.50
+> 0.75
+> 1.00
+> 1.25
+> 1.50
+> u(x, t)
+
+Figure 8: 1D Burgers results, for a representative PDEBench trajectory. Left: PDEBench reference. Center: baseline FTCS. 
+
+Right: the score-corrected scheme, which tracks the reference. 
+
+C.3 Spectral Filtering 
+
+KdV. We use a pseudo-spectral discretization in space. Spatial derivatives are evaluated in Fourier space, while the linear dispersive operator is integrated using an integrating factor. Denoting the Fourier transform of u by ˆu, the evolution equation is written as 
+
+ˆut = β(ik )cu2 + ν(ik )3 ˆu. 
+
+The linear operator is therefore 
+
+L(k) = −iνk 3,
+
+and we define the integrating factor 
+
+E(k) = exp( L(k)∆ t).
+
+The nonlinear contribution is advanced using a fourth-order integrating-factor Runge–Kutta method (IF-RK4). After each time step, a spectral low-pass filter is applied by setting the highest-frequency modes to zero: 
+
+ˆu(k) = 0 , |k| > 0.9 kmax .
+
+The discretization uses N = 200 grid points and ∆t = 5 × 10 −4.
+
+NLS. The spectral filter is applied on top of the split-step baseline. We use a smooth exponential filter rather than a sharp truncation: 
+
+ˆu(k) ← ˆu(k)σ(k),
+
+where 
+
+σ(k) = exp 
+
+
+
+−α
+
+ |k|
+
+kmax 
+
+p
+
+,
+
+with parameters 
+
+α = 36 , p = 16 .
+
+This filter preserves the low-frequency components while damping the highest spectral modes. 
+
+Burgers. The spectral filter is applied as a stabilization step to the FTCS baseline. After each FTCS update, the solution is transformed to Fourier space, a two-thirds dealiasing filter is applied, and the solution is transformed back to physical space. The FTCS instability in this regime occupies a broad high-frequency band that extends below the filter’s cutoff; consequently, the filter delays divergence at the larger timesteps but only stabilizes the integration at the smallest one. 
+
+## D Ablation Study 
+
+To quantify the contribution of each component of the proposed corrector and to compare it with alternative learned correction strategies, we perform an ablation study on the KdV equation. All configurations use the same conservative leap-frog (Zabusky– Kruskal) discretization on an N = 200 grid with ∆t = 5 × 10 −4, and are integrated until t = 10 . Accuracy is measured using the relative pointwise error and the relative drift in the L2 norm. We first consider the uncorrected leap-frog scheme, which serves as the baseline without any additional stabilization. We then evaluate an invariant projection method, where each leap-frog update is followed by an exact projection onto the mass, L2-norm, and Hamiltonian invariant manifolds. This projection approach does not include any learned correction. We also evaluate the score correction alone, where the score update is performed without invariant projection. As alternative learned correction strategies, we consider a denoising autoencoder (DAE) and a supervised residual correction model. The DAE fθ is trained to reconstruct clean states from Gaussian-corrupted inputs by minimizing 
+
+min  
+
+> θ
+
+E
+
+h
+
+∥fθ (u + ε) − u∥2i
+
+, ε ∼ N (0 , σ 2I).
+
+Unlike the score model, which estimates the gradient of the log-density of the perturbed data distribution, the DAE directly predicts a point estimate of the clean state. During inference, the provisional leap-frog update ˆun+1 is replaced by 
+
+un+1 = fθ (ˆ un+1 ).
+
+The residual correction model gθ is trained using supervised regression to predict the one-step discrepancy between a coarse leap-frog update and the corresponding fine-grid solution. Given the current state and the provisional update, the correction is applied as 
+
+un+1 = ˆ un+1 + gθ (ˆ un+1 , u n).
+
+Unlike the score-based correction, this approach performs deterministic residual regression and does not explicitly incorporate a learned representation of the admissible solution distribution. Finally, we evaluate the complete proposed method, which combines the score correction with invariant enforcement. The results are summarized in Table 5. The uncorrected leap-frog scheme becomes unstable before the final integration time, and the learned residual correction exhibits a similar failure due to the accumulation of autoregressive errors outside the training distribution. The remaining methods remain stable, but exhibit different trade-offs between accuracy and invariant preservation. Invariant projection enforces the conservation laws but does not sufficiently reduce trajectory error, whereas the score correction substan-tially improves accuracy while introducing a small invariant drift. The DAE correction performs less effectively, indicating that direct state reconstruction is less suitable for long-time stabilization than score-based correction. Combining score correction with invariant projection achieves the best overall performance, preserving the invariants while attaining a low pointwise error. This demonstrates the complementary roles of the two components: the score correction provides an accurate learned stabilization mechanism, and the projection step enforces the physical constraints of the dynamics. Table 5: Ablation study on the KdV equation. Relative norm drift ( err I2 ) and relative pointwise error ( err pt ) at t = 10 with 
+
+∆t = 5 × 10 −4 for different corrector configurations. div. denotes divergence before the final integration time. 
+
+Configuration err I2 err pt 
+
+Leap-frog baseline div. div. 
+
+Invariant projection 0 1.41 
+
+Score step only 1.6 × 10 −3 0.71 
+
+Denoising autoencoder 1.2 × 10 −1 1.35 
+
+Learned residual correction div. div. 
+
+Full score correction 0 0.70 
+
+## E KdV Timestep Refinement 
+
+We examine whether the instability of the KdV leap-frog baseline scheme can be mitigated through timestep refinement. Table 6 reports the blow-up time as ∆t is progressively reduced. Although smaller timesteps delay the onset of instability, the scheme remains unstable and does not reach the target integration time t = 10 . Even after a 50 × reduction in timestep, the blow-up time increases only from approximately t = 2 .34 to t = 3 .37 . These results indicate that timestep refinement alone does not provide a practical stabilization mechanism for this discretization, and thus enphisize the advantege of using the score correction scheme. Table 6: Stability of the KdV leap-frog baseline for various timesteps sizes. Smaller timesteps delay instability but do not prevent divergence. 
+
+∆t 5×10 −4 2×10 −4 1×10 −4 5×10 −5 2×10 −5 1×10 −5
+
+Steps to t = 10 20k 50k 100k 200k 500k 1M Blow-up time 2.34 2.38 2.75 2.97 3.10 3.37 F Execution Time 
+
+To assess the computational overhead of the proposed method, we compare the per-step execution time of the score-based stabilization against the classical WENO-5 (Jiang and Shu 1996) baseline. All timing evaluations were performed on standard hardware (NVIDIA GeForce RTX 4090 GPUs) using a batch size of 128 trajectories to leverage parallel processing. The WENO-5 scheme is computationally demanding per integration step. It requires multiple candidate stencil reconstructions and the evaluation of nonlinear smoothness indicators. Furthermore, because it is typically advanced in time using a multi-stage Runge-Kutta method (such as SSP-RK3), the heavy spatial operator must be evaluated multiple times for a single step forward in time. In contrast, the score-corrected scheme is highly parallelizable and consists of an inexpensive provisional update followed by a single forward pass through the learned U-Net stabilization operator. As shown in Table 7, the score-based method executes faster per step than the WENO-5 scheme. Table 7: Per-step execution time, reported as the average time per trajectory per integration step for the two stabilization approaches. The score correction includes the cost of the baseline time-stepping update and the learned correction network evaluation. Equation WENO-5 (ms) Score Correction (ms) KdV 15.05 9.01 Burgers 14.78 12.64 
+
+## G Model Generalization 
+
+To evaluate the transferability of the learned stabilization mechanism, we test the trained score model on initial conditions that are not included during training. In all experiments, the trained model is kept fixed and inference is performed without retraining or fine-tuning. The baseline integrator G∆t, timestep, spatial discretization, and invariant projection parameters (when applicable) remain unchanged. For each unseen initial condition, an independent high-accuracy spectral reference solution is generated for evaluation. 
+
+G.1 Korteweg–de Vries 
+
+The score model is trained using the initial condition u(x, 0) = cos( πx ). We evaluate the resulting method on two initial conditions outside the training distribution. 
+
+Higher-frequency cosine. We consider the unseen initial condition 
+
+u(x, 0) = cos(2 πx ). (39) This is a higher-frequency cosine mode compared with the training initial condition. The uncorrected leap-frog scheme becomes unstable at approximately t = 2 .19 , whereas the score-corrected method remains stable over the full integration interval. As shown in Figure 9a, the corrected solution reproduces the qualitative dispersive dynamics of the reference solution throughout the evolution. 
+
+Two-soliton state. We next consider a superposition of two solitons with different amplitudes, 
+
+u(x, 0) = 2 sech 2 x − x1
+
+w(2) 
+
+
+
++ sech 2 x − x2
+
+w(1) 
+
+
+
+, w(A) = 2 
+
+r 3δ2
+
+A , (40) with centers x1 = 0 .5 and x2 = 1 .3. The score-corrected method remains stable and captures the soliton interaction dynamics. The corresponding evolution is shown in Figure 9b, where the corrected solution follows the reference soliton collision dynamics. 
+
+G.2 Burgers’ Equation 
+
+The Burgers score model is trained on the PDEBench initial-condition distribution, where each sample is generated as a superposition of sinusoidal modes, 
+
+u(x, 0) = s W (x)
+
+> 8
+
+X
+
+> n=1
+
+an sin  knx + ϕn
+
+, kn = 2 πn. (41) The active wavenumbers are sampled uniformly from {1, . . . , 8}, with amplitudes an ∼ U (0 , 1) and phases ϕn ∼ U (0 , 2π). The distribution additionally includes a random constant offset, random sign s ∈ {− 1, +1 }, and, with low probability, a pointwise absolute value and smooth localization window W (x). To evaluate generalization beyond the training distribution, we consider two qualitatively different initial conditions. 0.0 0.5 1.0 1.5    
+
+> x
+> 0
+> 2
+> 4
+> 6
+> 8
+> 10
+> t
+> Reference
+> 0.0 0.5 1.0 1.5
+> x
+> Score Correction
+> 2
+> 1
+> 0
+> 1
+> 2
+
+(a) Higher-frequency cosine. 0.0 0.5 1.0 1.5     
+
+> x
+> 0
+> 2
+> 4
+> 6
+> 8
+> 10
+> t
+> Reference
+> 0.0 0.5 1.0 1.5
+> x
+> Score Correction
+> 2.0
+> 1.5
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+
+(b) Two-soliton. 
+
+Figure 9: Generalization of the KdV score correction to unseen initial conditions. Left: u(x, 0) = cos(2 πx ). Right: two-soliton initial condition. In both cases, the corrected evolution preserves the relevant dynamics. 
+
+Localized Gaussian pulse. We first evaluate the model on a smooth localized profile, 
+
+u(x, 0) = exp 
+
+
+
+− (x − 12 )2
+
+2σ2
+
+
+
+, σ = 0 .08 . (42) Where the uncorrected FTCS discretization becomes unstable at approximately t = 0 .11 , while the score-corrected scheme remains stable throughout the integration interval. The corrected trajectory captures the nonlinear steepening and propagation of the pulse, closely matching the reference solution as shown in Figure 10a. 
+
+High-frequency mode. We further test an oscillatory initial condition, 
+
+u(x, 0) = sin(4 πx ). (43) Despite the higher-frequency content, the score correction prevents the instability observed in the FTCS solution. The corrected evolution remains stable and reproduces the reference shock formation, as presented in Figure 10b. 0.0 0.2 0.4 0.6 0.8     
+
+> x
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> t
+> Reference
+> 0.0 0.2 0.4 0.6 0.8
+> x
+> Score Correction
+> 1.00
+> 0.75
+> 0.50
+> 0.25
+> 0.00
+> 0.25
+> 0.50
+> 0.75
+> 1.00
+
+(a) Localized Gaussian pulse. 0.0 0.2 0.4 0.6 0.8      
+
+> x
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> t
+> Reference
+> 0.0 0.2 0.4 0.6 0.8
+> x
+> Score Correction
+> 1.00
+> 0.75
+> 0.50
+> 0.25
+> 0.00
+> 0.25
+> 0.50
+> 0.75
+> 1.00
+
+(b) Higher-frequency mode. 
+
+Figure 10: Generalization of the Burgers score correction to unseen initial conditions. Left: localized Gaussian pulse. Right: 
+
+higher-frequency mode u(x, 0) = sin(4 πx ). In both cases, the corrected evolution remains stable and preserves the reference dynamics. 
+
+## H Experimental Details 
+
+We provide the experimental details of the results presented in this paper in Table 8 and Table 9. All experiments were conducted using NVIDIA GeForce RTX 4090 GPUs. For hyperparameter selection, the noise level σ, the step size η, and the correction interval K were chosen by grid search over σ ∈ {0.02 , 0.05 , 0.1, 0.2, 0.3, 0.5, 0.8}, η ∈{10 −5, 10 −4, 3×10 −4, 10 −3, 3×10 −3, 10 −2, 3×10 −2}, and K ∈ { 1, 5, 10 , 20 }. The configuration minimizing the relative 
+
+L2 error on the held-out trajectories. All stochastic components use fixed seeds. Network initialization, the score noise, and minibatch shuffling are seeded at the start of training. The PDEBench samples are generated with a fixed key. For the PDEBench Table 8: Experimental details for Advection. Gaussian Box Two-Box PDEBench 
+
+Problem setup 
+
+Domain (periodic) [0 , 1] [0 , 1] [0 , 1] [0 , 1] 
+
+Grid N (∆x) 256 (1 /256) 256 (1 /256) 256 (1 /256) 256 (1 /256) 
+
+Base scheme Upwind Upwind Upwind Upwind Timestep ∆t 1.95 ×10 −3 1.95 ×10 −3 1.95 ×10 −3 5×10 −3
+
+Reference resolution 2048 2048 2048 1024 
+
+Score network 
+
+Architecture U-Net (Ronneberger, Fischer, and Brox 2015) Levels 3 3 3 5
+
+Channels (16 , 32 , 64) (32 , 64 , 128) (32 , 64 , 128) (32 , 64 , 128 , 256 , 512) 
+
+Parameters 0.18 M 0.62 M 0.62 M 2.91 M
+
+Training 
+
+Optimizer Adam (Kingma and Ba 2014) Learning rate 2×10 −4 2×10 −4 2×10 −4 2×10 −4
+
+LR schedule Cosine Cosine Cosine Cosine Batch size 512 512 512 512 
+
+Epochs 500 500 500 500 
+
+Training-data resolution 2048 2048 2048 1024 
+
+Training-data ∆t Exact Exact Exact Exact 
+
+Correction (inference) 
+
+σ 0.1 0.05 0.2 0.05 
+
+Step η 0.003 0.03 0.05 0.003 
+
+Interval K 5 10 20 10 
+
+Enforced invariants None Clamp [0 , 1] Clamp + Mass Mass + L2
+
+Initial conditions (training) 
+
+Training samples 10 4 3×10 4 3×10 4 9.9×10 3
+
+Amplitude 1 1 ±1 —Width 0.05 [0 .2, 0.3] [0 .1, 0.2] —Random shift [0 , 1] [0 , 1] [0 , 1] —advection and Burgers experiments, all reported errors are averaged over a held-out ensemble of 100 unseen trajectories. The KdV and NLS errors are computed against high-accuracy spectral reference solutions. We report ensemble-mean errors. Table 9: Experimental details for KdV, NLS, and Burgers equations. 
+
+KdV NLS Burgers 
+
+Problem setup 
+
+Domain (periodic) [0 , 2] [−20 , 80] [0 , 1] 
+
+Grid N (∆x) 200 (0 .01) 1000 (0 .1) 256 (1 /256) 
+
+Base scheme ZK leap-frog Splitting FTCS Timestep ∆t 5×10 −4 0.5 4×10 −3
+
+Reference resolution 1000 2×10 4 1024 
+
+Reference ∆t 2×10 −6 10 −4 0.01 
+
+Score network 
+
+Architecture U-Net (Ronneberger, Fischer, and Brox 2015) Levels 3 3 4
+
+Channels (64 , 128 , 256) (64 , 128 , 256) (32 , 64 , 128 , 256) 
+
+Parameters 1.03 M 1.03 M 2.91 M
+
+Training 
+
+Optimizer Adam (Kingma and Ba 2014) Learning rate 2×10 −4 2×10 −4 2×10 −4
+
+LR schedule Constant Constant Cosine Batch size 256 64 512 
+
+Epochs 200 1000 300 
+
+Training-data resolution 400 10 4 1024 
+
+Training-data ∆t 5×10 −5 10 −3 0.01 
+
+Correction (inference) 
+
+σ 0.05 0.05 0.1
+
+Step η 3×10 −4 0.001 0.01 
+
+Interval K 1 1 5
+
+Enforced invariants Mass, L2, H None None 
+
+Initial conditions (training) 
+
+Training samples 3.0×10 4 2.5×10 3 2.0×10 6
+
+Amplitude [0 .85 , 1.05] 1 [−3, 3] 
+
+Width — √2 —Random shift [0 , 2] [−20 , 80] —
