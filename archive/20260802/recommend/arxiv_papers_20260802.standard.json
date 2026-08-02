@@ -1,0 +1,134 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-02T20:36:10.474475+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.23946v1",
+      "source": "arxiv",
+      "title": "Joint Flow Matching for Generator-Consistent Classification",
+      "abstract": "We introduce Joint Flow Matching (JFM), a training framework for continuous normalising flows over multiple variables. Standard flow matching transports variables from noise to data simultaneously, offering no natural mechanism for forward and reverse conditional inference from a shared joint model. JFM resolves this by assigning opposite roles to each variable at the temporal endpoints. We prove that JFM produces a consistent joint distribution where that forward or reverse integration are conditionals of the same joint. We explore this consistency in the context of joint classification and generation as the basis for interpretability in discriminative-generative models. We validate JFM on conditional datasets producing competitive accuracy with inherently well-calibrated confidence scores without post-hoc calibration, and classifier-consistent image generation.",
+      "authors": [
+        "Hayden McAlister",
+        "Lech Szymanski"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-07-27T02:45:39+00:00",
+      "link": "https://arxiv.org/pdf/2607.23946v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Proposes a flow matching training framework for joint modeling, transferable to generative fluid simulation",
+      "llm_evidence_cn": "提出联合流匹配训练框架用于联合建模，可迁移至生成式流体模拟",
+      "llm_evidence": "提出联合流匹配训练框架用于联合建模，可迁移至生成式流体模拟",
+      "canonical_evidence": "提出联合流匹配训练框架用于联合建模，可迁移至生成式流体模拟",
+      "llm_tldr_en": "Introduces Joint Flow Matching for normalizing flows over multiple variables, enabling consistent forward/reverse conditional inference from a shared joint, validated on classification-generation datasets.",
+      "llm_tldr_cn": "现有连续归一化流在多个变量上同时从噪声向数据运输，难以从共享联合模型进行一致的前向和反向条件推断。该文提出联合流匹配（JFM），通过为时间端点处的变量分配相反角色，保证前向与反向积分是同一联合分布的条件分布。在条件数据集上的分类与生成实验显示其具有竞争性精度。JFM为判别-生成联合建模与可解释性提供了新框架。",
+      "llm_tldr": "现有连续归一化流在多个变量上同时从噪声向数据运输，难以从共享联合模型进行一致的前向和反向条件推断。该文提出联合流匹配（JFM），通过为时间端点处的变量分配相反角色，保证前向与反向积分是同一联合分布的条件分布。在条件数据集上的分类与生成实验显示其具有竞争性精度。JFM为判别-生成联合建模与可解释性提供了新框架。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.24665v1",
+      "source": "arxiv",
+      "title": "MMOE: Modernizing Diffusion Transformers with Efficient Expert Design",
+      "abstract": "Modern large language models scale successfully by pairing capacity growth with efficiency, keeping per-token and deployment costs under control as capacity grows. AIGC Foundation Models (AFMs), especially diffusion-transformer backbones, have begun to adopt sparse experts, but recent efforts mostly enlarge total parameter counts and sparsity ratios without importing the efficiency mechanisms that made LLM scaling practical, so generation quality is seldom balanced against training and deployment cost. This raises a natural question: can the architectural principles behind efficient LLM scaling be adapted to AFMs in a more balanced way? We introduce ModernMOE (MMOE), a modernization of SiT-style diffusion transformers that systematically adapts routed experts, shared and lightweight experts, gate-residual routing, and attention-residual information reuse to AIGC generation. Rather than treating MoE as a single plug-in replacement, MMOE studies how different modern expert components affect convergence, efficiency, and generation quality when composed inside a diffusion transformer. Every experiment in this paper is trained on a single eight-GPU H100 node with batch size 256 for 400k steps, an accessible single-machine budget. Under matched training and sampling protocols and at this budget, MMOE reaches lower FID at every recorded checkpoint, that is, it converges faster per training step, than dense and intermediate sparse-expert baselines, and among the sparse variants it attains the best quality-cost balance. Routing analysis further shows stable expert specialization across depth, substantial use of lightweight routes, and modest step-to-step routing changes during denoising. These results suggest that AFMs can follow the balanced scaling path of LLMs by importing proven efficiency designs, rather than by simply increasing total parameters and sparsity ratios.",
+      "authors": [
+        "Yanhao Jia",
+        "Jiepeng Wang",
+        "Haibin Huang",
+        "Chi Zhang",
+        "Erik Cambria",
+        "Xuelong Li"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.GR",
+        "cs.LG"
+      ],
+      "published": "2026-07-27T17:05:04+00:00",
+      "link": "https://arxiv.org/pdf/2607.24665v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Introduces MMOE, an efficient expert design for diffusion transformers, advancing diffusion model architecture that can be leveraged for fluid flow generation tasks.",
+      "llm_evidence_cn": "提出MMOE，为扩散Transformer带来高效专家设计，可用于流体流生成的扩散模型架构改进。",
+      "llm_evidence": "提出MMOE，为扩散Transformer带来高效专家设计，可用于流体流生成的扩散模型架构改进。",
+      "canonical_evidence": "提出MMOE，为扩散Transformer带来高效专家设计，可用于流体流生成的扩散模型架构改进。",
+      "llm_tldr_en": "Diffusion transformers increasingly adopt sparse experts but ignore efficiency mechanisms. MMOE systematically adapts routed experts to balance generation quality and cost, improving diffusion backbone efficiency; relevant as architecture support for diffusion-based fluid flow simulation.",
+      "llm_tldr_cn": "现代扩散Transformer采用稀疏专家但往往只增大参数而忽视训练/推理成本。本文提出MMOE，系统化适配路由专家机制，使生成质量与训练、部署成本更平衡。实验表明MMOE在SiT风格扩散骨干上提升效率与性能。该架构改进可为流体动力学中的扩散模型应用提供更强的基础设施。",
+      "llm_tldr": "现代扩散Transformer采用稀疏专家但往往只增大参数而忽视训练/推理成本。本文提出MMOE，系统化适配路由专家机制，使生成质量与训练、部署成本更平衡。实验表明MMOE在SiT风格扩散骨干上提升效率与性能。该架构改进可为流体动力学中的扩散模型应用提供更强的基础设施。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.26004v1",
+      "source": "arxiv",
+      "title": "Parallel Decoding Distillation for Fast Image and Video Generation",
+      "abstract": "Generation in video diffusion or flow models is computationally expensive due to the slow and iterative sampling process. Current state-of-the-art (SOTA) acceleration methods heavily rely on variational score distillation (VSD) and adversarial losses to distill diffusion models into few-step generators. Albeit achieving high-quality video generation, these training losses are notoriously hard to optimize and suffer from mode collapse, leading to loss of video diversity and lack of motion. In this paper, we introduce Parallel Decoding Distillation (PDD), a simplified and scalable trajectory-based distillation method for fast inference of diffusion and flow matching models. Our architecture and training procedure are compatible with any pre-trained model and support sampling with a varying number of function evaluations (NFE). PDD accelerates generation by predicting multiple denoising steps per network evaluation. Conceptually, it learns a representation of the mean velocity without regressing its derivative using JVPs or finite-difference approximations. Our method achieves SOTA performance with 4-8 NFE on LTX-2.3 Text-to-Video/Audio, Wan 14B Text-to-Video, and Qwen-Image Text-to-Image. Moreover, PDD presents a significant improvement in generated video diversity.",
+      "authors": [
+        "Neta Shaul",
+        "Chao Liu",
+        "Arash Vahdat",
+        "Julius Berner"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.LG"
+      ],
+      "published": "2026-07-28T17:20:00+00:00",
+      "link": "https://arxiv.org/pdf/2607.26004v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "accelerates flow matching and diffusion models via parallel decoding distillation, transferable to fluid flow simulation",
+      "llm_evidence_cn": "通过并行解码蒸馏加速流匹配与扩散模型，可迁移至流体流动模拟",
+      "llm_evidence": "通过并行解码蒸馏加速流匹配与扩散模型，可迁移至流体流动模拟",
+      "canonical_evidence": "通过并行解码蒸馏加速流匹配与扩散模型，可迁移至流体流动模拟",
+      "llm_tldr_en": "A trajectory-based distillation method for fast inference of diffusion and flow matching models, compatible with any pretrained model, achieving few-step generation without adversarial losses and avoiding mode collapse on image/video tasks.",
+      "llm_tldr_cn": "针对视频扩散/流模型采样缓慢且蒸馏训练不稳定的问题，本文提出并行解码蒸馏（PDD）。该方法基于轨迹蒸馏，与任意预训练模型兼容，无需对抗损失即可实现少步生成。在图像和视频任务中，PDD在加速同时保持质量并避免模式崩溃。作为一种通用加速手段，它有望应用于流体模拟等领域的扩散模型，降低采样成本。",
+      "llm_tldr": "针对视频扩散/流模型采样缓慢且蒸馏训练不稳定的问题，本文提出并行解码蒸馏（PDD）。该方法基于轨迹蒸馏，与任意预训练模型兼容，无需对抗损失即可实现少步生成。在图像和视频任务中，PDD在加速同时保持质量并避免模式崩溃。作为一种通用加速手段，它有望应用于流体模拟等领域的扩散模型，降低采样成本。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

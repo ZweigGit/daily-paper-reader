@@ -1,0 +1,54 @@
+{
+  "label": "2026-08-02",
+  "date": "2026-08-02",
+  "generated_at": "2026-08-02T20:38:39",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202608/02/2607.23946v1-joint-flow-matching-for-generator-consistent-classification",
+      "section": "quick",
+      "title_en": "Joint Flow Matching for Generator-Consistent Classification",
+      "authors": "Hayden McAlister, Lech Szymanski",
+      "date": "2026-07-27",
+      "pdf": "https://arxiv.org/pdf/2607.23946v1",
+      "score": "6.0",
+      "evidence": "提出联合流匹配训练框架用于联合建模，可迁移至生成式流体模拟",
+      "tldr": "标准流匹配同时将所有变量从噪声运输到数据，缺乏从共享联合模型进行前向与反向条件推断的机制。联合流匹配（JFM）让每个变量在时间端点承担相反角色，从而保证前向或反向积分都是同一联合分布的条件。在条件数据集上，JFM获得有竞争力的分类精度、无需后处理的良好校准置信度，并生成与分类器一致的图像。该工作为判别-生成模型的联合建模与可解释性提供了统一框架。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We introduce Joint Flow Matching (JFM), a training framework for continuous normalising flows over multiple variables. Standard flow matching transports variables from noise to data simultaneously, offering no natural mechanism for forward and reverse conditional inference from a shared joint model. JFM resolves this by assigning opposite roles to each variable at the temporal endpoints. We prove that JFM produces a consistent joint distribution where that forward or reverse integration are conditionals of the same joint. We explore this consistency in the context of joint classification and generation as the basis for interpretability in discriminative-generative models. We validate JFM on conditional datasets producing competitive accuracy with inherently well-calibrated confidence scores without post-hoc calibration, and classifier-consistent image generation.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/02/2607.24665v1-mmoe-modernizing-diffusion-transformers-with-efficient-expert-design",
+      "section": "quick",
+      "title_en": "MMOE: Modernizing Diffusion Transformers with Efficient Expert Design",
+      "authors": "Yanhao Jia, Jiepeng Wang, Haibin Huang, Chi Zhang, Erik Cambria, Xuelong Li",
+      "date": "2026-07-27",
+      "pdf": "https://arxiv.org/pdf/2607.24665v1",
+      "score": "6.0",
+      "evidence": "提出MMOE，为扩散Transformer带来高效专家设计，可用于流体流生成的扩散模型架构改进。",
+      "tldr": "现代扩散Transformer采用稀疏专家但往往只增大参数而忽视训练/推理成本。本文提出MMOE，系统化适配路由专家机制，使生成质量与训练、部署成本更平衡。实验表明MMOE在SiT风格扩散骨干上提升效率与性能。该架构改进可为流体动力学中的扩散模型应用提供更强的基础设施。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Modern large language models scale successfully by pairing capacity growth with efficiency, keeping per-token and deployment costs under control as capacity grows. AIGC Foundation Models (AFMs), especially diffusion-transformer backbones, have begun to adopt sparse experts, but recent efforts mostly enlarge total parameter counts and sparsity ratios without importing the efficiency mechanisms that made LLM scaling practical, so generation quality is seldom balanced against training and deployment cost. This raises a natural question: can the architectural principles behind efficient LLM scaling be adapted to AFMs in a more balanced way? We introduce ModernMOE (MMOE), a modernization of SiT-style diffusion transformers that systematically adapts routed experts, shared and lightweight experts, gate-residual routing, and attention-residual information reuse to AIGC generation. Rather than treating MoE as a single plug-in replacement, MMOE studies how different modern expert components affect convergence, efficiency, and generation quality when composed inside a diffusion transformer. Every experiment in this paper is trained on a single eight-GPU H100 node with batch size 256 for 400k steps, an accessible single-machine budget. Under matched training and sampling protocols and at this budget, MMOE reaches lower FID at every recorded checkpoint, that is, it converges faster per training step, than dense and intermediate sparse-expert baselines, and among the sparse variants it attains the best quality-cost balance. Routing analysis further shows stable expert specialization across depth, substantial use of lightweight routes, and modest step-to-step routing changes during denoising. These results suggest that AFMs can follow the balanced scaling path of LLMs by importing proven efficiency designs, rather than by simply increasing total parameters and sparsity ratios.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/02/2607.26004v1-parallel-decoding-distillation-for-fast-image-and-video-generation",
+      "section": "quick",
+      "title_en": "Parallel Decoding Distillation for Fast Image and Video Generation",
+      "authors": "Neta Shaul, Chao Liu, Arash Vahdat, Julius Berner",
+      "date": "2026-07-28",
+      "pdf": "https://arxiv.org/pdf/2607.26004v1",
+      "score": "6.0",
+      "evidence": "通过并行解码蒸馏加速流匹配与扩散模型，可迁移至流体流动模拟",
+      "tldr": "视频扩散模型生成需多次迭代采样，速度慢。现有基于VSD和对抗损失的蒸馏方法难以优化且易模式崩溃，导致多样性降低。本文提出并行解码蒸馏PDD，通过一次网络评估预测多个去噪步，学习平均速度表示，无需导数近似。在LTX-2.3、Wan 14B和Qwen-Image上以4-8 NFE达到SOTA，并显著提升生成多样性。方法简化训练、兼容任意预训练模型，支持可变计算量。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Generation in video diffusion or flow models is computationally expensive due to the slow and iterative sampling process. Current state-of-the-art (SOTA) acceleration methods heavily rely on variational score distillation (VSD) and adversarial losses to distill diffusion models into few-step generators. Albeit achieving high-quality video generation, these training losses are notoriously hard to optimize and suffer from mode collapse, leading to loss of video diversity and lack of motion. In this paper, we introduce Parallel Decoding Distillation (PDD), a simplified and scalable trajectory-based distillation method for fast inference of diffusion and flow matching models. Our architecture and training procedure are compatible with any pre-trained model and support sampling with a varying number of function evaluations (NFE). PDD accelerates generation by predicting multiple denoising steps per network evaluation. Conceptually, it learns a representation of the mean velocity without regressing its derivative using JVPs or finite-difference approximations. Our method achieves SOTA performance with 4-8 NFE on LTX-2.3 Text-to-Video/Audio, Wan 14B Text-to-Video, and Qwen-Image Text-to-Image. Moreover, PDD presents a significant improvement in generated video diversity.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
