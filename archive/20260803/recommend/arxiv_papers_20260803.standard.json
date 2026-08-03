@@ -1,0 +1,94 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-03T20:43:14.259245+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.27036v1",
+      "source": "arxiv",
+      "title": "Mitigating Compounding Error via Video Representation Regularization",
+      "abstract": "Video diffusion-based world models enable long autoregressive video generation for robotics, autonomous driving and simulation tasks, yet sliding-window autoregressive inference suffers from severe error accumulation that degrades frame quality over time. Although this phenomenon has been widely observed, the underlying mechanism of compounding error and how to achieve stable long-horizon generation remain largely unresolved. In this paper, we investigate the internal representation dynamics of video world models and discover that compounding error is tightly coupled with dimensional collapse of hidden representations. Specifically, the effective rank of model representations sharply decreases at the onset of generation drift, revealing a strong connection between representational degradation and long-term rollout instability. Furthermore, we find that pure training data scaling fails to boost model resistance to error drift, contradicting mainstream scaling paradigms. To address this problem, we propose video representation regularization, a lightweight training constraint that stabilizes latent representations and suppresses iterative error accumulation. Compared with Diffusion Forcing, our method achieves improvements from 38.65 to 55.56 and from 44.37 to 72.08 on the Aesthetic Quality and Imaging Quality metrics of VBench. Our work establishes the first connection between autoregressive video drifting and model internal representations, adopts erank as a quantitative metric for error accumulation, reveals counterintuitive scaling limitations for video world models, and presents a simple yet effective regularization strategy to improve long video generation robustness.",
+      "authors": [
+        "Taiye Chen",
+        "Qi Zhang",
+        "Yisen Wang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.LG"
+      ],
+      "published": "2026-07-29T15:29:39+00:00",
+      "link": "https://arxiv.org/pdf/2607.27036v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "video diffusion world models; mitigating compounding error via representation regularization, transferable to simulation",
+      "llm_evidence_cn": "视频扩散世界模型通过表征正则化缓解累积误差，可迁移至仿真任务",
+      "llm_evidence": "视频扩散世界模型通过表征正则化缓解累积误差，可迁移至仿真任务",
+      "canonical_evidence": "视频扩散世界模型通过表征正则化缓解累积误差，可迁移至仿真任务",
+      "llm_tldr_en": "Video diffusion world models suffer from compounding error. This paper discovers dimensional collapse of hidden representations at drift onset and proposes representation regularization to stabilize long-horizon video generation, benefiting simulation tasks.",
+      "llm_tldr_cn": "针对视频扩散世界模型滑动窗口自回归推理中的累积误差问题，本文发现误差爆发与隐藏表征的维度塌缩密切相关。作者提出视频表征正则化方法，抑制表征有效秩的下降，从而提升长时间生成稳定性。实验表明该方法可缓解生成漂移，适用于机器人、自动驾驶以及通用仿真任务，对流体流动等视频仿真具有潜在迁移价值。",
+      "llm_tldr": "针对视频扩散世界模型滑动窗口自回归推理中的累积误差问题，本文发现误差爆发与隐藏表征的维度塌缩密切相关。作者提出视频表征正则化方法，抑制表征有效秩的下降，从而提升长时间生成稳定性。实验表明该方法可缓解生成漂移，适用于机器人、自动驾驶以及通用仿真任务，对流体流动等视频仿真具有潜在迁移价值。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.29389v1",
+      "source": "arxiv",
+      "title": "Simulation Code Generation for Fluid Systems using Large Language Models: Benchmarking Models and Prompting Strategies",
+      "abstract": "Large language models (LLMs) have demonstrated a strong ability to generate syntactically correct code from natural-language specifications. In this study, we explore how LLMs can be harnessed to automatically translate a neutral graph representation of fluid system models into executable code for two widely adopted simulation environments: the Python library WNTR and the Modelica Standard Library. We conduct a systematic comparison of ten state-of-the-art LLMs and six prompting strategies that differ in the contextual information supplied (e.g., code or documentation). For each configuration we assess the generated code using a suite of software-quality metrics and we validate the functional fidelity of the resulting simulation models by reproducing benchmark fluid system scenarios. Our findings offer concrete guidance for researchers and engineers seeking to integrate LLM-driven code synthesis into model-based design pipelines. While the best-performing configurations achieve acceptable syntactic quality, we observe substantial gaps remain in simulation fidelity.",
+      "authors": [
+        "Jan Marius Stürmer",
+        "Jascha Knack",
+        "Tobias Koch",
+        "Andreas Weinmann"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.SE"
+      ],
+      "published": "2026-07-31T13:09:00+00:00",
+      "link": "https://arxiv.org/pdf/2607.29389v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "LLM-based generative AI for generating simulation code for fluid systems",
+      "llm_evidence_cn": "基于大语言模型的生成式AI用于流体系统仿真代码生成",
+      "llm_evidence": "基于大语言模型的生成式AI用于流体系统仿真代码生成",
+      "canonical_evidence": "基于大语言模型的生成式AI用于流体系统仿真代码生成",
+      "llm_tldr_en": "This paper benchmarks ten LLMs and six prompting strategies for translating fluid system graphs into executable WNTR/Modelica simulation code, evaluating software quality and functional fidelity.",
+      "llm_tldr_cn": "该研究探索用大语言模型将流体系统图表示自动转换为可执行仿真代码（WNTR与Modelica），系统比较十种模型和六种提示策略。评测涵盖软件质量指标与功能保真度，验证了LLM在流体系统建模工具链中的可行性与差异，为生成式AI辅助流体仿真提供了实证基准。",
+      "llm_tldr": "该研究探索用大语言模型将流体系统图表示自动转换为可执行仿真代码（WNTR与Modelica），系统比较十种模型和六种提示策略。评测涵盖软件质量指标与功能保真度，验证了LLM在流体系统建模工具链中的可行性与差异，为生成式AI辅助流体仿真提供了实证基准。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative artificial intelligence in fluid mechanics",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

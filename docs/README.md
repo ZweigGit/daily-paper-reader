@@ -6,30 +6,27 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-02
-- 运行时间：2026-08-02 20:38:33 UTC
+- 最新运行日期：2026-08-03
+- 运行时间：2026-08-03 20:44:11 UTC
 - 运行状态：成功
-- 本次总论文数：3
+- 本次总论文数：2
 - 精读区：0
-- 速读区：3
+- 速读区：2
 
 ### 今日简报（AI）
-今日速读3篇生成模型论文，聚焦分类一致性、扩散模型专家设计与并行解码蒸馏，均获6.0分。值得关注生成模型效率优化（MMOE、并行解码蒸馏）与生成-分类一致性（Joint Flow Matching）两个方向。建议普通读者优先了解扩散模型加速与压缩技术，可提升实际生成效率。
-- 详情：[/202608/02/README](/202608/02/README)
+今日速读2篇论文，暂无精读；主题涉及视频表征正则化缓解复合误差，以及大语言模型生成流体系统仿真代码的基准与提示策略。两篇均获6.0分，值得关注“视频表征正则化”与“LLM仿真代码生成”两个方向。建议普通读者优先浏览这两篇的摘要与结论，后续可精读其中更贴合自身研究兴趣的一篇。
+- 详情：[/202608/03/README](/202608/03/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Joint Flow Matching for Generator-Consistent Classification](/202608/02/2607.23946v1-joint-flow-matching-for-generator-consistent-classification)  
+1. [Mitigating Compounding Error via Video Representation Regularization](/202608/03/2607.27036v1-mitigating-compounding-error-via-video-representation-regularization)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：提出联合流匹配训练框架用于联合建模，可迁移至生成式流体模拟
-2. [MMOE: Modernizing Diffusion Transformers with Efficient Expert Design](/202608/02/2607.24665v1-mmoe-modernizing-diffusion-transformers-with-efficient-expert-design)  
+   evidence：视频扩散世界模型通过表征正则化缓解累积误差，可迁移至仿真任务
+2. [Simulation Code Generation for Fluid Systems using Large Language Models: Benchmarking Models and Prompting Strategies](/202608/03/2607.29389v1-simulation-code-generation-for-fluid-systems-using-large-language-models-benchmarking-models-and-prompting-strategies)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：提出MMOE，为扩散Transformer带来高效专家设计，可用于流体流生成的扩散模型架构改进。
-3. [Parallel Decoding Distillation for Fast Image and Video Generation](/202608/02/2607.26004v1-parallel-decoding-distillation-for-fast-image-and-video-generation)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：通过并行解码蒸馏加速流匹配与扩散模型，可迁移至流体流动模拟
+   evidence：基于大语言模型的生成式AI用于流体系统仿真代码生成
 
 
 <div class="dpr-home-promo-card">

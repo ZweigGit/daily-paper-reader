@@ -1,0 +1,39 @@
+{
+  "label": "2026-08-03",
+  "date": "2026-08-03",
+  "generated_at": "2026-08-03T20:44:16",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202608/03/2607.27036v1-mitigating-compounding-error-via-video-representation-regularization",
+      "section": "quick",
+      "title_en": "Mitigating Compounding Error via Video Representation Regularization",
+      "authors": "Taiye Chen, Qi Zhang, Yisen Wang",
+      "date": "2026-07-29",
+      "pdf": "https://arxiv.org/pdf/2607.27036v1",
+      "score": "6.0",
+      "evidence": "视频扩散世界模型通过表征正则化缓解累积误差，可迁移至仿真任务",
+      "tldr": "视频扩散世界模型在滑动窗口自回归推理中面临严重误差累积，导致帧质量随时间下降。研究发现该现象与隐藏表征的维度坍塌紧密相关：生成漂移起始时，模型表征的有效秩急剧下降。单纯扩大训练数据无法增强模型抗漂移能力，与主流扩展范式相悖。为此提出视频表征正则化，通过稳定潜在表征抑制迭代误差累积，在VBench上显著提升生成质量。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Video diffusion-based world models enable long autoregressive video generation for robotics, autonomous driving and simulation tasks, yet sliding-window autoregressive inference suffers from severe error accumulation that degrades frame quality over time. Although this phenomenon has been widely observed, the underlying mechanism of compounding error and how to achieve stable long-horizon generation remain largely unresolved. In this paper, we investigate the internal representation dynamics of video world models and discover that compounding error is tightly coupled with dimensional collapse of hidden representations. Specifically, the effective rank of model representations sharply decreases at the onset of generation drift, revealing a strong connection between representational degradation and long-term rollout instability. Furthermore, we find that pure training data scaling fails to boost model resistance to error drift, contradicting mainstream scaling paradigms. To address this problem, we propose video representation regularization, a lightweight training constraint that stabilizes latent representations and suppresses iterative error accumulation. Compared with Diffusion Forcing, our method achieves improvements from 38.65 to 55.56 and from 44.37 to 72.08 on the Aesthetic Quality and Imaging Quality metrics of VBench. Our work establishes the first connection between autoregressive video drifting and model internal representations, adopts erank as a quantitative metric for error accumulation, reveals counterintuitive scaling limitations for video world models, and presents a simple yet effective regularization strategy to improve long video generation robustness.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/03/2607.29389v1-simulation-code-generation-for-fluid-systems-using-large-language-models-benchmarking-models-and-prompting-strategies",
+      "section": "quick",
+      "title_en": "Simulation Code Generation for Fluid Systems using Large Language Models: Benchmarking Models and Prompting Strategies",
+      "authors": "Jan Marius Stürmer, Jascha Knack, Tobias Koch, Andreas Weinmann",
+      "date": "2026-07-31",
+      "pdf": "https://arxiv.org/pdf/2607.29389v1",
+      "score": "6.0",
+      "evidence": "基于大语言模型的生成式AI用于流体系统仿真代码生成",
+      "tldr": "大型语言模型（LLM）能生成语法正确的代码，本研究探索将其用于将流体系统的中立图表示自动转换为WNTR和Modelica两种仿真环境的可执行代码。作者系统比较了十个最新LLM和六种提示策略，用软件质量度量及基准场景复现验证功能保真度。结果发现最佳配置的语法质量尚可，但仿真保真度仍有明显差距，为将LLM代码合成集成到模型设计流程提供了具体指引。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Large language models (LLMs) have demonstrated a strong ability to generate syntactically correct code from natural-language specifications. In this study, we explore how LLMs can be harnessed to automatically translate a neutral graph representation of fluid system models into executable code for two widely adopted simulation environments: the Python library WNTR and the Modelica Standard Library. We conduct a systematic comparison of ten state-of-the-art LLMs and six prompting strategies that differ in the contextual information supplied (e.g., code or documentation). For each configuration we assess the generated code using a suite of software-quality metrics and we validate the functional fidelity of the resulting simulation models by reproducing benchmark fluid system scenarios. Our findings offer concrete guidance for researchers and engineers seeking to integrate LLM-driven code synthesis into model-based design pipelines. While the best-performing configurations achieve acceptable syntactic quality, we observe substantial gaps remain in simulation fidelity.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

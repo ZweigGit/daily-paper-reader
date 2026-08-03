@@ -1,0 +1,523 @@
+Title: Simulation Code Generation for Fluid Systems using Large Language Models: Benchmarking Models and Prompting Strategies
+
+URL Source: https://arxiv.org/pdf/2607.29389v1
+
+Published Time: Mon, 03 Aug 2026 01:03:58 GMT
+
+Number of Pages: 19
+
+Markdown Content:
+# Simulation Code Generation for Fluid Systems using Large Language Models: Benchmarking Models and Prompting Strategies 
+
+J. Marius Stürmer a,b, ∗, Jascha Knack a, Tobias Koch a, Andreas Weinmann b
+
+> aGerman Aerospace Centre (DLR), Institute for the Protection of Terrestrial Infrastructures, Rathausallee 12, 53757, Sankt Augustin, Germany
+> bAlgorithms for Computer Vision, Imaging and Data Analysis, Technische Hochschule Würzburg-Schweinfurt, Ignaz-Schön-Straße 11, Schweinfurt, 97421, Germany
+
+Abstract 
+
+Large language models (LLMs) have demonstrated a strong ability to generate syntactically correct code from natural-language specifications. In this study, we explore how LLMs can be harnessed to automatically translate a neutral graph representation of fluid -system models into executable code for two widely adopted simulation environments: the Python library WNTR and the Modelica Standard Library. We conduct a systematic comparison of ten state -of -the -art LLMs and six prompting strategies that differ in the contextual information supplied (e.g., code or documentation). For each configuration we assess the generated code using a suite of software -quality metrics and we validate the functional fidelity of the resulting simulation models by reproducing benchmark fluid -system scenarios. Our findings offer concrete guidance for researchers and engineers seeking to integrate LLM -driven code synthesis into model -based design pipelines. While the best -performing configurations achieve acceptable syntactic quality, we observe substantial gaps remain in simulation fidelity. 
+
+Keywords: LLM Code Generation, Simulation Code Generation, ASMG, Automated Simulation Model Generation, Modelica, WNTR, Graph-to-Code 
+
+1. Introduction 
+
+Engineering disciplines that deal with hydraulics and fluid-system design depend heavily on simula-tions. As highlighted by Banks et al. [1] , simulation offers a powerful approach to modeling complex sys-tems, enabling experimentation with policies and designs and gaining insight into the system behav-ior. The challenge of effectively integrating domain knowledge into such systems has long been recog-nized [ 2]. In domains such as fluid systems and energy infrastructure, simulations are indispensable for enabling cost-effective prototyping and robust analysis under real-world conditions [ 3]. In combi-nation with Digital Twins, simulations can even be leveraged to raise critical infrastructure resilience [4] in, e.g., residential water demand [5].   
+
+> ∗Corresponding author
+> Email address: jan.stuermer@dlr.de (J. Marius Stürmer)
+
+Constructing these simulation models, how-ever, remains a manual, expertise-driven activity. The implementation of simulation models is time-consuming and requires domain expertise [ 6], while it is also prone to human error [ 7] and must of-ten be repeated for each new system configuration or variant. Recent studies have shown that engi-neering schematics, particularly Piping and Instru-mentation Diagrams (P&IDs), can be automatically transformed into neutral graph representations [ 8 ]. This capability opens the door to a range of down-stream automation opportunities, most notably the generation of simulation models directly from the extracted graph. Early approaches to automated simulation generation relied on template-based code generation, such as translating SysML specifications into Simulink models [ 9] or creating Modelica-based building energy simulations [ 10 ]. Other examples of automated simulation generation from graphs include methods proposed by Martínez et al. [11] and Stürmer et al. [12] . Despite these advances, arXiv:2607.29389v1 [cs.LG] 31 Jul 2026 a bottleneck remains: each engineering-simulation framework (e.g., Modelica, WNTR, Simulink) de-fines its own set of domain-specific abstractions, modeling primitives, and code conventions. Con-sequently, existing automated pipelines are usually bound to a single environment and depend on hand-crafted translation rules. This limits generalizability and slows the integration of new simulation tools or domain libraries. Large Language Models (LLMs) offer a promising alternative. Recent applications of techniques like RAG in domains such as aviation model design [ 13 ]demonstrate the potential of AI-driven approaches. LLMs show strong performance in generating code from natural language and understanding domain knowledge [ 14 ], and thus have the potential to re-place rule-based translators with a more flexible approach. Recent work by Jin and Chen [15] high-lights that LLMs often struggle to reliably align generated code with natural language specifications, frequently misclassifying correct implementations as non-compliant. This underscores the need for careful prompt design and validation mechanisms when applying LLMs to domain-specific tasks. Prior work on LLM-generated simulation code has also shown mixed results [16, 17]. In this work, we refer to the automatically gen-erated, framework-specific code modules as simu-lation interface layers containing multiple wrapper functions, one for each component. These layers translate a neutral, graph-based representation of a fluid system into executable code for a particular simulation environment. 
+
+Contributions. This paper makes three key contri-butions: 1. Systematic evaluation of LLMs for simula-tion code generation. We compare state-of-the-art models and prompting strategies across two distinct simulation frameworks (WNTR [ 18 ] and Modelica [ 19 ]), revealing domain-specific performance patterns and limitations. 2. Analysis of knowledge integration strate-gies. Through controlled experiments with varying contextual information (documenta-tion, full code, stubs, curated examples), we demonstrate that relevance outweighs volume in prompt engineering. 3. Assessment of agent-based refinement. 
+
+We evaluate OpenCode with validation feed-back, showing that while agentic approaches improve syntactic correctness, they cannot re-solve deeper semantic issues affecting simulation fidelity. The remainder of the paper is organized as fol-lows. Section 2 describes related work on LLM-based code generation and prior attempts at automating simulation model creation. Section 3 details the methodology for knowledge integration, prompt con-struction, synthesis of simulation interface layers, the benchmark dataset, experimental design, and evaluation metrics. Section 4 presents the results across LLMs and knowledge integration strategies. Finally, Section 6 discusses the implications of our findings, outlines current limitations, and suggests directions for future research. 
+
+2. Related Work 
+
+Large Language Models (LLMs) have recently become a commonly used tool for general-purpose code synthesis [ 20 ], yet their use for automatically producing simulation-specific code, which demands precision, domain-specific APIs, and adherence to physical constraints remains underexplored. Ac-cordingly, this section reviews LLM-based code-generation techniques as well as existing methods that translate structured engineering representations into simulation models and for augmenting LLMs with retrieval or graph-based knowledge of existing code bases and APIs [21]. 
+
+LLMs for Code Generation. LLMs as the de-facto standard for general-purpose code synthesis are em-bedded in many coding assistants [ 22 , 23 ]. While straight forward “text-to-code” prompting works well for isolated snippets, it often fails when the generated code must respect a project’s type sys-tem, naming conventions, or a complex API surface. This limitation has motivated a line of research on repository-level or project-aware generation. Such systems first retrieve relevant files, parse abstract syntax trees (ASTs) or call graphs, and then condi-tion the LLM on this multi-file context. Examples of such systems are RepoCoder [ 24 ] or RepoMinCoder [25 ]. These repository-aware frameworks reduce API misuse and improve generation consistency by ex-plicitly incorporating multi-file context into retrieval and prompt construction. While effective for their target domains, these approach-es lack the flexibility to generalize across 2Figure 1: Pipeline for automatic generation of simulation-interface layers. A neutral graph of a hydraulic system is combined with contextual material (API docs, stubs, or curated code) and fed to an LLM, which synthesizes a framework-specific wrapper (WNTR Python module or Modelica file). The generated code is then compiled/executed and validated against the ground-truth model. 
+
+simulation frameworks or arbitrary network topolo-gies. Retrieval-Augmented Generation (RAG) couples an LLM with an external knowledge store, allowing the model to retrieve relevant context at inference time. In the software-engineering context, the re-trieved artefacts are typically functions, docstrings, or examples drawn from the target repository and in-jected into the prompt [ 26 ]. Recent work augments this idea with explicit graph structures (GraphRAG) which exploit relational information such as call-graphs, dependency graphs, or requirement graphs to retrieve context that is structurally aligned with the generation task [27]. Agentic frameworks even extend retrieval-augmented generation by introducing tool use, iter-ative refinement, and automated testing. An LLM (or a hierarchy of LLMs) orchestrates sub-agents that explore a repository, retrieve relevant code, ex-ecute tests, and iteratively repair errors, enabling reasoning over entire code bases rather than isolated snippets [ 28 , 29 ]. Another popular Open Source Tool that provides these functionalities is OpenCode [30]. 
+
+Automated Graph to Simulation Pipelines. Long before LLMs, there are approaches to automate the process of simulation model creation by deriving executable models from high-level representations, such as P&IDs, GIS data, or standardized graph formats (CAEX, DEXPI, EPANET) [31, 32, 33]. Classical approaches [ 12 , 34 , 35 ] parse a domain-specific language or graph and apply deterministic, template-based code generators to emit Modelica, Simulink, or Python code. Mans et al. [36] present a framework that builds district-heating and cooling network models from geographic and graph data and automatically exports them as Modelica models for downstream simulation. Bahamdan et al. [37] use multi-agent LLMs to convert process diagrams into Aspen HYSYSs, thus handling the diagram to graph and then graph to simulation process implicitly. For fluid systems, several standardized graph-based representations exist, such as CAEX (Au-tomationML) [ 31 ], DEXPI [ 32 ], or the input formats for water networks like EPANET [ 33 ]. Furthermore, modeling languages like SysML and ModelicaML have been proposed to bridge the gap between sys-tem requirements and executable simulation models [9]. 
+
+LLM-Based Generation of Simulation Code. Agrowing number of recent work targets the direct generation of simulation code (Modelica, Simulink, or domain-specific Python libraries) from textual or diagrammatic specifications. SimuGen translates engineering diagrams into Simulink models by chaining specialized agents (parser, generator, tester, executor) and a block-library database, achieving high fidelity on a curated Simulink benchmark [ 17 ]. The authors report high reproduction accuracy on their Simulink dataset, 3demonstrating the benefit of multimodal input and agentic verification. Another work by Xia et al. [38] similarly uses multi-agent systems for parametriza-tion of simulations. Text2Model fine-tunes an LLM to produce dy-namic chemical-reactor models in Modelica from natural-language descriptions; the study reports fre-quent unit-conversion and structural-equation errors, but demonstrates that domain-specific fine-tuning of an small LLM markedly improves compilation and simulation success [39]. ModiGen combines supervised fine-tuning, GraphRAG, and reinforcement-learning-based feedback to boost Modelica generation quality, again highlighting the importance of external knowledge integration [ 16 ]. Similarly, recent work on computational fluid dynamics demonstrates the potential of domain-adapted LLMs by fine-tuning a small LLM and highlight the critical role of domain-specific adaptation to handle complex engineering workflows [40]. Collectively, these papers indicate that naïve prompting of general-purpose LLMs is insufficient for high-quality simulation code. As will be explored in this work, the challenge is not just code genera-tion, but bridging the gap between high-level system descriptions and executable, physically accurate sim-ulations. 
+
+Positioning our Work. Existing LLM based research on simulation code generation typically focuses on creating self-contained Modelica components from textual descriptions, rather than developing adapter modules that are required to integrate with large existing codebases while following established API patterns. Our work addresses this gap by system-atically comparing different knowledge integration strategies, particularly examining how documenta-tion can provide essential context for accurate code generation. While general code generation has been exten-sively studied, simulation code presents unique chal-lenges where small implementation details critically impact functionality. Our study contributes to this underexplored area by evaluating both smaller mod-els and large models across multiple prompting strategies, providing insights into the current ca-pabilities and limitations of LLM-based simulation code synthesis. 
+
+3. Methodology 
+
+The objective of this study is to generate a “simulation-interface layer” that converts a neutral, graph-based description of a fluid system into exe-cutable code for two widely used simulation envi-ronments, the Python library WNTR , which focuses on simulating water networks, and the Modelica Standard Library (MSL), which is mostly used for modeling fluid systems. Both environments expose an API that must be used by the generated wrapper to generate correct code. The paper concept is dis-played in Figure 1 and each part will be described in the following steps. 
+
+3.1. Problem Definition 
+
+We represent a fluid system as a labeled, directed multigraph G = ( V, E, τ ) (see Figure 2), where 
+
+• V is the set of component vertices (e.g., pumps, pipes, valves, tanks); 
+
+• E ⊆ V × V encodes the directed flow connec-tions between components; 
+
+• τ : V ∪ E → A is a labeling function that assigns to each vertex or edge a dictionary of parameters A including a type tag. As an illustration, a pump vertex vpump may be annotated as 
+
+τ (vpump ) = type = Pump ,
+
+efficiency = 0 .85 ,
+
+speed = 1500 rpm 
+
+... 
+
+For each target simulation environment we posit an a priori unknown mapping wrapper from the graph to simulation-environment specific code, either 
+
+W : G −→ WNTR_code, 
+
+or 
+
+M : G −→ Modelica_code .In the first case, W is required to emit a Python WNTR network object after (i) importing WNTR, (ii) instantiating the appropriate network objects with connections according to the edges E, and (iii) assigning all required parameters from τ , per-forming appropriate unit conversions. In the second case, M is required to produce a Modelica text file 4Figure 2: (a) Example WNTR water network topology illustrating basic graph terminology. (b) JSON schema snippet. (c) JSON instance snippet corresponding to the network in (a). 
+
+that (i) imports the relevant MSL packages, (ii) de-clares component instances, (iii) connects them us-ing connect equations according to the edges E,and (iv) sets the corresponding parameter values from τ , performing appropriate unit conversions. A generated wrapper W or M is deemed accept-able if (i) the code parses without errors, (ii) every call to a framework respects the signature (names, ordering, and expected units) and (iii) when the generated model is simulated under a predefined set of inlet/outlet boundary conditions, the observed timeseries (pressures, flows, heads) equal those of a reference ground-truth up to a tolerance of ε.
+
+3.2. Graph Specification 
+
+To enable a framework-agnostic creation of code, we require a neutral representation of the systems that serves as the data model for the networks and as input for the LLM. It is neutral in the sense that it is required to describe the topology of the network, the specific component types, and their associated physical parameters, while remaining independent of the target simulators. In Figure 1, this refers to the Graph and its Data Model and in Figure 2, the JSON schema and the JSON instance. As described in Section 2, several powerful stan-dards to describe such graphs exist, but they are often tightly coupled to specific tool chains or con-tain extensive metadata unnecessary for the spe-cific task of code generation. For this study, we designed a custom JSON-based schema that prior-itizes the intersection of requirements for our two target environments: WNTR and MSL. The schema is constructed based on the following principles: 1. Intersectionality: Only parameters required by both target frameworks are mandatory fields. Parameters specific to one framework (e.g., spe-cific initialization options) are treated as op-tional or omitted. 2. Explicit Typing: Every node carries an ex-plicit class tag (e.g., Pump , Valve , Junction ). 3. Unit Awareness: Numerical values are accom-panied by unit definitions (e.g., “unit”: “m” ). 4. Structural Clarity: The graph is serialized as a list of objects (nodes) with implicit con-nectivity defined via named references. The serialization follows a JSON structure con-taining a System object (defining global ambient conditions) and an array of Objects defining the components. The schema supports a wide variety of components, including standard elements (such as Pipes, Junctions, Reservoirs) as well as control logic elements (such as Sensors, Hysteresis blocks, Gain blocks). 
+
+3.3. Context & Prompts 
+
+While the graph representation provides aframework-agnostic input format, the quality of generated simulation code depends on how domain knowledge is encoded in the prompt. We evaluate different prompting configurations that progressively increase the contextual information available to the LLM. All prompts share a common core that con-veys the task and the data model to the language model existing of a task description, a schema block, 5I am an engineer and I want to create simulation code easily with the python library ’WNTR’. I need you to write code that transforms a graph structured system into python code to have a runnable WNTR simulation. It should not depend on the specific example but provide generic wrapper functionality. Each component type mapped from the data_model to WNTR should have a specific "wrapper" function called "wrap_xxx(wn, obj:dict, start:str (optional), end:str (optional))". Do not write wrapper functions as class functions. No blabbering. Data model schema: ... Example Network: ... Context: ... 
+
+> Figure 3: The instruction asks the model to produce generic functions that translate a graph-structured system descrip-tion (provided via a JSON schema and an example network) into executable Python code using the WNTR library. The prompt explicitly forbids class-based wrappers and requests a reusable implementation.
+
+an example network block, an instruction and a con-text block. An example of the prompt can be seen in Figure 3. For the context block, we explore five configura-tions of increasing complexity. This results in five different prompt configurations. Note that for MSL, we only include files that are either relevant for math, fluids or control blocks. If multiple files are used, all are concatenated in a single block, preceded by their file names. To optimize token usage, we com-press the files by removing redundant whitespace and excluding non-essential elements such as test functions. The prompt is then sent to the LLM in a single request. 
+
+Prompt Configuration 1, Zero-Shot (no context). 
+
+Only the core elements are provided, no additional documentation, stubs, or code examples are in-cluded. 
+
+Prompt Configuration 2, Documentation. For WNTR, we use a set of RST-files from the its repos-itory. For Modelica, the HTML-annotated class signatures from the MSL are used. 
+
+Prompt Configuration 3, Stubs. A minimal, syn-tactically valid skeleton of the target wrapper is provided, containing only function signatures and return type declarations. All implementation logic is omitted. For Modelica, e.g., connection statements and equation blocks are specifically excluded. 
+
+Prompt Configuration 4, Curated / selected code. 
+
+To isolate the most informative pieces of the library, we manually extract a compact subset of the source that include the necessary API calls. This curated snippet is the smallest amount of code that still conveys the logic required for correct wrapper gen-eration. 
+
+Prompt Configuration 5, Full Code. We attach the complete set of source files that constitute the target library. For WNTR these are all non-trivial Python files and for Modelica, every .mo file required for the fluid, math, and logical components is included. 
+
+Coding Agent. As described in Section 2, earlier work (e.g., [ 37 , 38 ]) has successfully used coding agents on related tasks. To mimic these multi-agent approaches, we implement OpenCode [ 30 ] with ac-cess to the WNTR source code and the Modelica Standard Library source. The setup includes run-ning the experiment in two variants. First, we run OpenCode with the standard prompt (prompt con-figuration 1). Secondly, to use the self-validation capabilities, OpenCode was instructed to iterate un-til a validation loop passes successfully. We define a validation function that can be passed only if the simulation interface layer generates usable output. The validation function only checks if the code runs, and not wether it is correct or not. This way, the coding agent can re-iterate until the code runs. 
+
+3.4. Evaluation Metrics 
+
+Assessing the quality of LLM-generated simula-tion code requires an approach that captures both syntactic correctness and functional fidelity. Prior work on code generation has leveraged code clone detection [ 41 , 42 ] to assess the similarity between generated and ground-truth implementations, typi-cally relying on static syntactic or semantic compar-isons. However, simulation code introduces unique challenges: small errors in parameter mappings or API misuse can lead to semantically invalid models that compile but produce incorrect simulations. To address this, we combine static analysis (syntactic validity, API conformity) with dynamic validation 6Table 1: Size of the contextual material supplied to the models for each prompting strategy. 
+
+Context WNTR Modelica Word Count Character Count Word Count Character Count Full Code 84 829 948 230 55 973 755 303 
+
+Stubs 36 668 320 016 50 142 562 306 
+
+Documentation 32 195 275 170 86 542 618 762 
+
+Curated Code 6242 60 256 5477 78 752 
+
+None (Zero-Shot) - - - -
+
+> Figure 4: Overview of the evaluation pipeline. The generated wrapper is first parsed (syntactic check), then token-wise compared to the ground-truth (argument check), and finally executed. Its output trajectories are compared to the reference simulation (semantic check).
+
+(simulation fidelity), drawing inspiration from recent LLM-based code generation studies [ 16 , 43 ]. Our evaluation pipeline, depicted in Figure 4, integrates these metrics to systematically validate both the syntactic structure and functional behavior of the generated wrappers. All wrapper-level metrics are computed per-wrapper and then averaged over the 
+
+N wrappers in the benchmark. 
+
+3.4.1. Wrapper Correctness 
+
+The most fundamental requirement for a gener-ated wrapper is executability: it must import and run without raising exceptions. To quantify this, we adopt the pass@k metric from code generation literature [ 14 ], which measures the probability that at least one of k generated solutions is executable. Given computational constraints imposed by the large number of model configurations and bench-mark cases, we limit our evaluation to 3 runs per configuration. The pass@1 metric captures the base-line success rate of single-generation attempts and equals the average over the three runs, while pass@3 reflects the best-case performance when selecting from the three runs. pass@1 = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+Ei
+
+pass@3 = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+max (Ei, 1, E i, 2, E i, 3)
+
+where Ei is defined as 1 if wrapper i executes successfully with a dummy input and 0 otherwise. Analogously, we define Ei, 1, Ei, 2 and Ei, 3, where the second index corresponds to the respective run. 
+
+3.4.2. Argument Correctness 
+
+We evaluate the semantic correctness of generated wrappers through two complementary metrics: call-level F1 score and argument-level F1 score. The F1 score is the harmonic mean between precision and recall and is calculated using true positives (TP), false positives (FP), and false negatives (FN): F1 = 2 × Precision × Recall Precision + Recall with Precision = T P T P +F P and Recall = T P T P +F N .For each wrapper we extract the set of ground-truth calls and generated calls. Each call is represented as a dictionary containing the function name and its arguments. Both call-level F1 and argument-level F1 are computed at both micro (per-wrapper) 7and macro (global) levels to provide information into model performance. For macro F1 scores, we compute the F1 score for each wrapper individually and then average across all wrappers. For micro F1 scores, we aggregate all true positives, false posi-tives, and false negatives across all wrappers before computing the F1 score. 
+
+• Call-level : A true positive occurs when a func-tion call appears in both ground truth and generated code; 
+
+• Argument-level : A true positive occurs when both the argument name and value match be-tween ground truth and generated code Because macro uses an average over all scores, we refer to macro F1 scores as Avg. F1 and to micro F1 scores simply as F1 scores. Figure 5 illustrates a visual comparison between ground-truth and gener-ated functions, highlighting correct calls/arguments in green and mismatches in red. 
+
+3.4.3. Simulation Fidelity 
+
+Validation of the recreated simulation models is performed by simulating both the reference and the generated model under identical boundary condi-tions. For network k (k = 1 , . . . , M ) and component 
+
+i (i = 1 , . . . , n k) we denote the reference and pre-dicted time series by yk,i (t) and ˆyk,i (t), respectively, with t = 1 , . . . , T . The Normalized Mean Absolute Error (NMAE) for a component is NMAE k,i =
+
+> 1
+> T
+
+PTt=1 yk,i (t) − ˆyk,i (t)
+
+max t yk,i (t) − min t yk,i (t)
+
+A component is counted as correct if NMAE k,i ≤ ε
+
+with ε = 0 .05 (5 %). The per-network correctness is given by 
+
+Ck =
+
+Pnk 
+
+> i=1
+
+ck,i 
+
+nk
+
+where ck,i = 1 if NMAE k,i ≤ 0.05 , and ck,i = 0 else. 
+
+3.4.4. CodeBERT Similarity 
+
+To complement the static argument comparison, we measure the semantic similarity between gen-erated and ground-truth wrapper implementations using the pretrained transformer model CodeBERT [ 44 ], capable of producing embeddings of code snip-pets. This follows the idea of [ 42 ] where CodeBERT is used for clone code detection. Given a wrapper implementation as source code string c, the CodeBERT encoder f (·) maps the code into a continuous embedding vector z = f (c) ∈ Rd
+
+where d is the embedding dimension of the model, in our case d = 768 .For each wrapper i, we compute embeddings for the ground-truth implementation cgt i and the gener-ated implementation cgen i :
+
+zgt i = f (cgt i ), zgen i = f (cgen i )
+
+The similarity between both implementations is measured using cosine similarity: 
+
+Si = zgt i · zgen i
+
+∥zgt i ∥ ∥ zgen i ∥
+
+Higher values indicate greater semantic similarity between the generated wrapper and the reference implementation. For a set of N evaluated wrap-pers, the overall similarity score is computed as the average cosine similarity: 
+
+Savg = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+Si
+
+This metric provides a semantic comparison of wrap-per implementations that is robust to superficial differences such as formatting, variable names, or minor structural variations. 
+
+3.5. Benchmark Suite & Groundtruth Wrappers 
+
+To assess the ability of large language models to generate correct simulation-interface layers we constructed a compact benchmark that covers the two target environments (WNTR and Modelica). 
+
+WNTR benchmark networks. We used three water-distribu-tion examples that are shipped with the WNTR package. For the purpose of this study we removed all control statements. The resulting EPANAT inp -Files were then translated into our JSON schema. 
+
+Modelica benchmark modules. For Modelica, we em-ployed the four modules created by the HAI-CPPS benchmark [ 45 ]. Each module originally contains components to simulate faults (e.g., valve leakages or a noisy pump controls) which were removed to simplify the problem. State-graphs for controlling the components were replaced by minimal control structure built from standard Modelica blocks. The network structure was then converted to the JSON schema. 8Figure 5: Token-level comparison between ground-truth (left) and LLM-generated (right) functions. Correct calls and arguments are highlighted in green, while missing or mismatched elements appear in red. Table 2: Large-language models evaluated in this study. The models were chosen for their recency and relevance to code generation. Listed are quantization format, parameter count and maximum context window. Commercial APIs (ChatGPT-5, Gemini-3, Claude) do not expose quantization or context-window information. Model names link to the exact Hugging Face checkpoints used. 
+
+Model Quantization BPW Parameters Activated Parameters Context Window 
+
+Qwen3-Coder-Next UD-Q8_K_XL 8.61 80B 3B 256k 
+
+gpt-oss-120b MXFP4 4.25 117B 5.1B 131k 
+
+Devstral-2-123B-Instruct-2512 UD-Q8_K_XL 9.35 123B N/A 256k 
+
+MiniMax-M2.5 IQ5_K 5.93 229B 10B 196k 
+
+DeepSeek-V3.2 Q4_K_M 4.83 685B 37B 128k 
+
+GLM-5.1 IQ4_K 4.62 754B 40B 202k 
+
+Kimi-K2.5 Q4_X 4.55 1.1T 32B 256k ChatGPT-5 N/A N/A N/A N/A N/A Gemini-3 N/A N/A N/A N/A N/A Claude Sonnet 4.6 N/A N/A N/A N/A N/A 
+
+Ground-truth wrappers. For each relevant compo-nent type in the neutral graph, we manually created a ground-truth simulation-interface layer that in-stantiates the corresponding object in the target framework and sets all of its parameters. A sec-ond routine assembles these component functions, constructing a complete simulation model. Conse-quently the two scripts realize the Ground-Truth (GT) mappings W and M as defined in Section 3. The wrappers were deliberately kept minimal. 
+
+3.6. Experiments 
+
+The generation task that we pose to the language models can be broken down into three implicit sub-tasks: 1. Unit conversion. Numerical values in the neutral JSON graph (see Section 3.2) are ex-pressed in generic SI units, whereas the target APIs (WNTR or the Modelica Standard Li-brary) expect their own canonical units. The model must therefore recognize the required conversion and emit the correctly scaled liter-als. 2. Simulation Interface Layer synthesis. Acomplete, runnable module has to be produced, that creates the appropriate objects, connects them according to the graph topology and re-spects the idioms of the target language (nam-ing, imports, formatting). 93. Component-to-class mapping. Each vertex type (pump, valve, tank, . . . ) must be mapped to the corresponding class or block in the target library and all mandatory arguments have to be supplied. The WNTR benchmarks feature larger-scale water distribution networks (9–92 junctions) with time-varying demand patterns, but employ simpler com-ponent types (pipes, pumps, tanks). In contrast, the Modelica benchmarks represent smaller industrial systems with more complex behaviors, including level control logic. We evaluate a representative set of state-of-the-art large language models that differ in size, training focus (code-oriented vs. general-purpose) and maxi-mum context length. The models used are Qwen3-Coder-Next [ 46 ], gpt-oss-120b [ 47 ], Devstral 2 [ 48 ], Minimax M2.5 [ 49 ], DeepSeek V3.2 [ 50 ], GLM 5.1 [51 ], Kimi K2.5 [ 52 ], ChatGPT-5 [ 53 ], Gemini-3 [ 54 ]and Claude Sonnet 4.6 [55]. They were chosen due to being up-to-date and widely used. Additional details are listed in Table 2. Furthermore, the larger models (Qwen3-Coder-Next, Devstral-2, Kimi-K2.5) are able to accommodate the full-source prompt (i.e., the complete code base). For each model we run the generation pipeline with the five knowledge-integration strategies (Prompts 1-5) described in Section 3.3, discarding a configuration if the model’s context window is insufficient to hold the prompt. Due to computa-tional restraints, we evaluate OpenCode with two models only, the higher performing model Kimi-K2.5 and the lighter, but lower performing model Qwen3-Coder-Next. Small errors like missing paren-thesis are corrected manually. Further, a single entry point 
+
+> def main(network_dict: dict) -> Union[wntr.network.WaterNetworkModel, str]: ...
+
+is added manually, which receives the neutral graph (as a Python dictionary) and returns either a WNTR network object or a Modelica file string. The re-sulting code artifacts are assessed with the suite of metrics defined in Section 3.4. To address the stochastic variability inherent in LLMs, each experi-mental configuration was executed three times. 
+
+3.7. Experimental LLM Inference Setup 
+
+To ensure full control over experimental param-eters, all open-source models were hosted and exe-cuted on local hardware. This constraint introduces the significant challenge of fitting large models into the memory capacity of available hardware. Modern LLMs are typically distributed in 16-bit floating-point precision (FP16) or 16 bits per weight (BPW), though exceptions exist. For in-stance, Kimi-K2.5 is natively quantized to INT4 (4 BPW). The baseline memory requirement for a model is roughly the product of its parameter count and BPW, excluding the additional memory required for the Key-Value cache and inference over-head. For example, a 754-billion-parameter model like GLM-5.1 requires approximately 1.5 TB of mem-ory in FP16 ( 754 B × 16 BPW ), while a 1-trillion-parameter model at 4 BPW requires 512 GB. These demands exceed the available VRAM. Quantization addresses this memory limitation by reducing the precision of the model weights, typ-ically from 16 BPW to 8 or 4 BPW. This reduction decreases both the memory footprint and memory bandwidth requirements, enabling the deployment of models on hardware that would otherwise be incapable of loading them [56]. The advanced quantization formats utilized in our experiments, namely Q4_K_M and Q8_K_XL , employ mixed-precision strategies. In these schemes, critical network layers are preserved at higher bit-widths, while less sensitive tensors are more aggressively quantized. To execute the quantized models efficiently across this heterogeneous architecture, we utilized llama.cpp [ 57 ], a highly optimized C/C++ inference engine. llama.cpp allows for dynamic distribution of the model workload. Specifically, for Mixture-of-Experts (MoE) architectures, the engine enables offloading the expert layers into the system’s main memory (RAM), while keeping the active attention and dense layers on the GPU VRAM. This hybrid offloading approach is critical for facilitating the execution of massive MoE models that exceed the VRAM ceiling, bridging the gap between computa-tional speed and memory capacity. 
+
+4. Experimental Results 
+
+In this section, we present the experimental re-sults following the methodology outlined in Section 3. We begin by analyzing the correlation between our 10 pass@3                                                         
+
+> Avg. pass@1
+> Avg. Call F1
+> Call F1
+> Avg. Argument F1
+> Argument F1
+> Avg. CodeBERT Similarity
+> Avg. Simulation Fideltity
+> pass@3
+> Avg. pass@1
+> Avg. Call F1
+> Call F1
+> Avg. Argument F1
+> Argument F1
+> Avg. CodeBERT Similarity
+> Avg. Simulation Fideltity
+> 1.00 0.88 0.54 0.55 0.72 0.64 0.43 0.27
+> 0.88 1.00 0.54 0.54 0.74 0.68 0.44 0.37
+> 0.54 0.54 1.00 0.99 0.79 0.85 0.59 0.21
+> 0.55 0.54 0.99 1.00 0.78 0.83 0.58 0.21
+> 0.72 0.74 0.79 0.78 1.00 0.96 0.64 0.27
+> 0.64 0.68 0.85 0.83 0.96 1.00 0.64 0.30
+> 0.43 0.44 0.59 0.58 0.64 0.64 1.00 0.11
+> 0.27 0.37 0.21 0.21 0.27 0.30 0.11 1.00
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+
+Figure 6: Pearson correlation matrix (absolute values) of evaluation metrics. Darker cells indicate weaker absolute (linear) correlation. 
+
+evaluation metrics . Next, we compare the perfor-mance of the models listed in Table 2 across the five prompting configurations (1–5) in Sections 4.2 to 4.4. Finally, we evaluate the use of coding agents in Section 4.5. 
+
+4.1. Correlation of Quality Metrics 
+
+To identify redundant or complementary metrics, we computed Pearson correlation coefficients across all evaluation dimensions and display the results in Figure 6, as done by, e.g., Pereira et al. [58] . The analysis reveals that global (averaged) and local vari-ants of Call F1 and Argument F1 scores are nearly identical, indicating that per-wrapper and aggregate metrics capture mostly the same underlying trends. CodeBERT similarity shows negligible correlation with other metrics, suggesting it measures orthog-onal aspects of code quality (e.g., stylistic rather than functional correctness). Simulation fidelity is not strongly correlated with any other metrics and therefore an important metric assessing the whole code generation quality. Given these observations, we focus on pass@1, pass@3, Call F1, Argument F1, and Avg. Simula-tion Fidelity, which together cover complementary aspects of code generation and simulation perfor-mance while avoiding unnecessary duplication in the evaluation. 
+
+4.2. Model Performance 
+
+When comparing models across the prompting strategies 1-5 and target environments WNTR and Modelica (Figure 7 and Figure 8), Kimi-K2.5 stands out with high scores. For the Modelica environment, it achieves pass@1 up to 0.87, pass@3 up to 1, with high F1 scores reaching around 0.86. On WNTR, it frequently reaches perfect pass@1 and pass@3 scores of 1.0, with very high F1 scores between 0.85-0.89. This model shows consistency across different prompt types and is least sensitive to prompt varia-tion, excelling in both syntactic correctness and API conformity. Kimi-K2.5 stands out as the only model that achieves near-ceiling performance on WNTR while maintaining strong, though not perfect, results on Modelica. GLM-5.1 ranks as the second strongest model, showing particular robustness across both frame-works. In Modelica, it reaches pass@1 up to 0.72 and pass@3 up to 0.92, with strong F1 scores peak-ing at approximately 0.89. For WNTR, it achieves perfect pass@1 scores and maintains very stable high performance across different prompts. While less extreme than Kimi-K2.5, GLM-5.1 demonstrates sta-bility across prompt types and strong generalization capabilities. Among the weaker performers, Qwen3-Coder-Next shows significant domain sensitivity. It struggles with Modelica, achieving low pass@1 scores between 0.07-0.25, though its pass@3 can reach ap-proximately 0.69, indicating some search ability de-spite weak precision. On WNTR, it performs much better with pass@1 up to 0.89, though still below the top models. This pattern suggests Qwen3-Coder-Next has particular difficulty with Modelica’s con-strained syntax while performing better in WNTR’s Python environment. gpt-oss-120b demonstrates moderate performance across both domains. For Modelica, it achieves pass@1 around 0.3 and pass@3 up to 0.61, with weak all-pass rates and consistency. Additionally, weaker models like Qwen3-Coder-Next, MiniMax-M2.5, and Devstral-2-123B show large gaps between pass@1 and pass@3, suggest-ing they find correct code only through multiple attempts. In contrast, top models like Kimi-K2.5 and GLM-5.1 show much smaller gaps, indicating they get the code right with higher consistency. Despite conducting only three runs per configura-tion, the observed standard deviations reveal signifi-cant variability in model performance across repeti-tions. The standard deviations in our results reveal notable variability in model performance across mul-tiple runs, particularly for less capable models. For 11 0.00  
+
+> 0.20
+> 0.40
+> 0.60
+> 0.80
+> 1.00
+> Score
+> pass@3 Avg. pass@1
+> Full Code
+> Curated Code
+> Documentation
+> Stubs
+> Zero-Shot
+> 0.00
+> 0.20
+> 0.40
+> 0.60
+> 0.80
+> 1.00
+> Score
+> Call F1
+> Full Code
+> Curated Code
+> Documentation
+> Stubs
+> Zero-Shot
+> Argument F1
+> Model
+> Kimi-K2.5
+> GLM-5.1
+> DeepSeek-V3.2
+> MiniMax-M2.5
+> Devstral-2-123B-Instruct-2512
+> gpt-oss-120b
+> Qwen3-Coder-Next
+> ChatGPT 5
+> Gemini 3
+> Claude Sonnet 4.6
+
+Figure 7: Performance of LLMs on WNTR wrapper generation. Each model is run for prompt configurations 1 (zero-shot) to 5 (code base). Missing values indicate configurations exceeding context limits or producing non-executable code. 
+
+Modelica, we observe high STDs (e.g., up to 0.326 for pass@1 in DeepSeek-V3.2 with code context), indicating inconsistency in generating valid simula-tion code. In contrast, top-performing models like Kimi-K2.5 exhibit lower STDs (often <0.1), demon-strating more stable performance. For WNTR, the variability is generally lower, suggesting that Python-based code generation is more deterministic for most models. This pattern underscores that while leading models achieve consistent results, others struggle with reliability, especially in complex domains like Modelica. 
+
+4.3. Domain Comparison: Impact on the target do-main 
+
+We compare the impact w.r.t. target environ-ments using the models of Table 2 using prompting strategies 1 to 5. The empirical evaluation in Sec-tion 4.2 reveals a heterogeneous performance land-scape: the same language model can excel on the Python-based WNTR benchmark while collapsing to zero on the Modelica DSL, and vice-versa. The most affected metric is simulation fidelity, which is un-available for the majority of Modelica runs because the generated files do not compile or the wrapper crashes before the simulation can be launched. Pass rates are consistently higher for WNTR as seen in Figure 7, with pass@1 means exceed-ing Modelica (Figure 8 by up to 20%, and pass@3 and pass@all showing even larger differences. F1 scores for both call and argument correctness are also consistently higher on WNTR, while variance is often lower or comparable. Notably, weaker mod-els like Devstral-2-123B-Instruct-2512 that struggle with Modelica (achieving pass@1 below 0.3-0.5) of-ten reach 0.7-1.0 pass@1 on WNTR with stronger prompts. While no Modelica configuration produced directly simulatable models, some WNTR configura-tions achieved partial simulation success. However, the results were inconsistent because the same mod-12 0.00 
+
+> 0.20
+> 0.40
+> 0.60
+> 0.80
+> 1.00
+> Score
+
+pass@3 Avg. pass@1 
+
+> Full Code
+> Curated Code
+> Documentation
+> Stubs
+> Zero-Shot
+> 0.00
+> 0.20
+> 0.40
+> 0.60
+> 0.80
+> 1.00
+> Score
+
+Call F1 
+
+> Full Code
+> Curated Code
+> Documentation
+> Stubs
+> Zero-Shot
+
+Argument F1 
+
+Model 
+
+> Kimi-K2.5
+> GLM-5.1
+> DeepSeek-V3.2
+> MiniMax-M2.5
+> Devstral-2-123B-Instruct-2512
+> gpt-oss-120b
+> Qwen3-Coder-Next
+> ChatGPT 5
+> Gemini 3
+> Claude Sonnet 4.6
+
+Figure 8: Performance of LLMs on Modelica wrapper generation. Each model is run for prompt configurations 1 (zero-shot) to 5 (code base). The frequent generation failures highlight the challenges of synthesizing code for strongly-typed, equation-based modeling languages that differ fundamentally from more common programming languages like Python. 
+
+els sometimes failed completely, ending in high vari-ance across runs. The results clearly show WNTR is systematically easier for LLMs than Modelica across all metrics. 
+
+4.4. Context: Impact of the prompting strategies 1-5 
+
+Evaluating the influence of the prompting strate-gies shows that when given the exact functions to use as context (curated prompt), all models have the highest pass@1 scores and best F1 metrics across both domains. This advantage is particularly evi-dent in Modelica, where GLM-5.1 achieves pass@1 of approximately 0.49 with curated prompts com-pared to 0.36 with documentation and even lower with other context approaches. The effect is even more pronounced for WNTR, where stronger mod-els like GLM-5.1 and Kimi-K2.5 reach near-optimal performance under curated prompts. Full code con-text does not improve upon stub-based approaches, suggesting that providing complete codebases may introduce noise rather than information. Zero-shot performance shows variation across models, with many collapsing to a 0.1-0.3 range while Claude Sonnet 4.6 achieves surprisingly high values. 
+
+4.5. OpenCode 
+
+We conducted experiences using Coding Agents as described in Section 3.3. We compare the code created with OpenCode with and without valida-tion function with the results from prompt config-uration 5 (full code). The results can be seen in Table 3 for Modelica and in Table 4 for WNTR. While OpenCode alone does not outperform direct LLM generation with codebase context, the addi-tion of the validation function yields consistently superior results. OpenCode with validation achieves perfect pass@3 rates (1.0 and 0.923) and substan-tially improves pass@1 scores, reaching 0.923 for 13 Full Code 
+
+> Curated Code
+> Documentation
+> Stubs
+> Zero-Shot
+> 0.00
+> 0.20
+> 0.40
+> 0.60
+> 0.80
+> 1.00
+> Score
+> Avg. Simulation Fidelity
+> Full Code
+> Curated Code
+> Documentation
+> Stubs
+> Zero-Shot
+> Best Run Simulation Fidelity
+> Model
+> Kimi-K2.5
+> GLM-5.1
+> DeepSeek-V3.2
+> MiniMax-M2.5
+> Devstral-2-123B-Instruct-2512
+> gpt-oss-120b
+> Claude Sonnet 4.6 Figure 9: WNTR simulation fidelity results: (left) average across three runs, (right) best of three runs. The consistently low fidelity indicates LLMs struggle to generate physically accurate simulation models.
+
+Kimi-K2.5 and 0.846 for Qwen3-Coder-Next. This configuration produces both compilable and simu-latable Modelica code, though simulation fidelity remains at zero across all attempts. The validation function appears crucial for success, enabling the agent to correct syntactic and API-related errors through iterative refinement. However, the persistent zero simulation fidelity indicates that while the agent can fix surface-level code issues, it cannot resolve deeper semantic problems related to physical parameter mappings or equation-based logic. 
+
+4.6. Ablation 
+
+To assess the models’ ability to handle end-to-end simulation code generation, we conducted an abla-tion experiment where we tasked the LLMs with directly producing complete Modelica files for the first benchmark network, rather than generating modular wrapper functions. Despite this simpli-fied task formulation, none of the evaluated models succeeded in producing syntactically valid or trans-latable Modelica code. Such an experiment was not conducted with WNTR, as it is implemented in Python and thus does not require an additional translation step. 
+
+5. Discussion 
+
+The results suggest that domain familiarity out-weighs raw model size. The 80B-parameter, code-specialized model Qwen3-Coder-Next outperforms big models on the Python-based WNTR benchmark, yet it fails almost completely on Modelica. Con-versely, big models such as Kimi-K2.5 achieve good scores on both benchmarks. This suggests that expo-sure to the target language during training (Python vs. Modelica) is the dominant factor, not the num-ber of parameters. Another observation is that the size of the con-text window (128k-262k tokens for all models) does not correlate with generation quality. Within the window, relevance is far more important than vol-ume. Curated prompts that contain a minimal set of API snippets needed for the task consistently outperform prompts that use the entire code base or documentation. The finding follows other work, where LLMs struggle to extract useful information from very long contexts [ 59 ]. This could also ex-plain why zero-shot prompting sometimes matches or even exceeds prompting the documentation. The model relies on its internal knowledge rather than on (noise or irrelevant) external material. The low Call F1 scores observed for Modelica could be attributed to the ambiguity of graph-to-simulation mapping. The graph only labels a com-ponent as valve or pump but the Modelica Standard 14 Table 3: Comparison of Modelica code generation performance between direct LLM generation, OpenCode agent, and OpenCode with validation function. While validation improves syntactic correctness and API conformity, simulation fidelity remains zero across all configurations. 
+
+pass@3 pass@1 Call F1 Arg. F1 Avg. Simulation Fidelity Kimi-K2.5 0.923 0.872 ± 0.036 0.641 ± 0.072 0.610 ± 0.047 0.0 ± 0.0
+
+OpenCode Kimi-K2.5 0.846 0.692 ± 0.063 0.528 ± 0.091 0.587 ± 0.032 0.0 ± 0.0
+
+OpenCode Kimi-K2.5 (with validation function) 1.000 0.923 ± 0.063 0.606 ± 0.045 0.639 ± 0.016 0.0 ± 0.0
+
+Qwen3-Coder-Next 0.692 0.462 ± 0.218 0.568 ± 0.011 0.488 ± 0.040 0.0 ± 0.0
+
+OpenCode Qwen3-Coder-Next 0.308 0.256 ± 0.036 0.269 ± 0.039 0.329 ± 0.049 0.0 ± 0.0
+
+OpenCode Qwen3-Coder-Next (with validation function) 0.923 0.846 ± 0.063 0.615 ± 0.0 0.588 ± 0.029 0.0 ± 0.0
+
+> Table 4: Comparison of WNTR code generation performance showing similar trends, where OpenCode with validation achieves the highest syntactic correctness but still struggles with simulation fidelity.
+
+pass@3 pass@1 Call F1 Arg. F1 Avg. Simulation Fidelity Kimi-K2.5 1.000 0.833 ± 0.236 0.808 ± 0.065 0.700 ± 0.091 0.125 ± 0.125 
+
+OpenCode Kimi-K2.5 1.000 0.889 ± 0.157 0.834 ± 0.069 0.755 ± 0.036 0.131 ± 0.131 
+
+OpenCode Kimi-K2.5 (with validation function) 1.000 0.944 ± 0.079 0.835 ± 0.076 0.815 ± 0.026 0.375 ± 0.375 
+
+Qwen3-Coder-Next 1.000 0.889 ± 0.079 0.862 ± 0.028 0.773 ± 0.028 0.000 ± 0.000 
+
+OpenCode Qwen3-Coder-Next 1.000 0.889 ± 0.157 0.856 ± 0.087 0.754 ± 0.062 0.015 ± 0.015 
+
+OpenCode Qwen3-Coder-Next (with validation function) 1.000 0.944 ± 0.079 0.900 ± 0.058 0.805 ± 0.016 0.063 ± 0.063 
+
+Library contains multiple classes for each of these components. When the language model selects the wrong class or function the generated call is counted as a miss, which drags the Call F1 down. Argument F1 follows the same pattern because arguments are only evaluated when the surrounding call is present. A missing or incorrect call automatically also penal-izes the argument score. Using agents (OpenCode) together with a vali-dation function that attempts to compile the gen-erated Modelica file improves syntactic correctness and raises pass@1/3, Call F1 and Argument F1 scores. The agent can repair missing parentheses, wrong imports, or mismatched argument names, but it does not resolve deeper semantic errors such as incorrect component selection or unit conversion. Consequently simulation fidelity remains at zero for all configurations. While our evaluation framework provides system-atic measurements of LLM-generated simulation code, several methodological limitations warrant discussion. The automatic evaluation pipeline intro-duces problems and therefore noise in the results. For example, despite an explicit instruction in the prompt to avoid class-based wrappers, many models still emit methods inside a class. Our parser does not recognize these as valid calls, so they are not counted and thus the metrics are lowered. Addi-tionally, not all evaluation metrics proved equally informative. The CodeBERT-based similarity mea-surement, intended to assess semantic alignment between synthesized and reference implementations, yielded limited discriminative value. The observed difficulties in generating physically accurate simulation models highlight a fundamental limitation of LLMs, which is their inability to in-herently understand or reason about physical laws and algorithmic constraints. While LLMs excel at 15 pattern recognition and syntactic code generation, they lack the capacity to internalize domain-specific knowledge such as fluid dynamics principles or con-trol system algorithms. This aligns with findings from Jin and Chen [15] , which demonstrate that LLMs frequently misclassify correct implementa-tions when faced with domain-specific requirements. 
+
+Practical Advice for Simulation Experts. From the results, we can make the following recommendations when trying to build model-based systems using LLMs: 
+
+• Use Kimi-K2.5, as it demonstrated the most consistent performance across both WNTR and Modelica benchmarks. 
+
+• Carefully narrow down the context by manually selecting only the most relevant components and functions to avoid overwhelming the model with irrelevant information. 
+
+• Preselecting relevant functions and code snip-pets yields better outcomes than providing full codebases or extensive documentation. 
+
+• Always expect to perform manual validation of generated code, particularly for complex do-mains like Modelica where semantic correctness is critical. 
+
+• When possible, employ coding agents with vali-dation functions to iteratively refine and verify the generated code. 
+
+6. Conclusion 
+
+This study shows both the promise and current limitations of LLM-driven simulation code genera-tion for model-based systems engineering. While state-of-the-art models can reliably produce syntac-tically correct wrappers for the Python-based tool WNTR, generating executable Modelica code re-mains challenging due to the domain-specific nature of equation-based modeling languages. Our findings reveal that performance depends more on domain familiarity than model size, with code-specialized models outperforming larger general-purpose models in their trained domains. While fully automated simulation code generation remains an aspirational goal, our results show that LLMs can already significantly accelerate model-based engineering workflows when used with cau-tion. Even though simulations are runnable, they are not necessarily correct. Currently, the key to practical adoption lies in understanding the cur-rent limitations and implementing appropriate safe-guards, rather than expecting perfect end-to-end automation. 
+
+Acknowledgments 
+
+We thank Jan Kels for valuable discussions on LLM-based code generation techniques and code generation metrics. 
+
+Declaration of generative AI and AI-assisted technologies in the manuscript preparation process 
+
+During the preparation of this work the author(s) used gpt-oss-120B and Mistral Large 3 for assistance with language refinement and technical formulation. After using this tool/service, the authors reviewed and edited the content as needed and takes full responsibility for the content of the published article. 
+
+References                           
+
+> [1] J. Banks, J. Carson, B. Nelson, D. Nicol, Discrete-event system simulation, 5. ed. ed., Pearson, Pren-tice Hall, Upper Saddle River, NJ u.a., 2010. URL:
+> https://permalink.obvsg.at/AC08313798 .[2] P. Novák, E. Serral, R. Mordinyi, R. Šindelář, In-tegrating heterogeneous engineering knowledge and tools for efficient industrial simulation model sup-port, Advanced Engineering Informatics 29 (2015) 575– 590. URL: https://www.sciencedirect.com/science/ article/pii/S1474034615000555 .doi: 10.1016/j.aei. 2015.05.001 .[3] F. Makahleh, A. Nassar, Modeling and simulation of fluid flow and energy systems, in: A. Abou Jaoudé (Ed.), Simulation modeling, IntechOpen, London, 2024. doi: 10.5772/intechopen.1002220 .[4] G. Lampropoulos, X. Larrucea, R. Colomo-Palacios, Digital twins in critical infrastructure, Information 15 (2024) 454. URL: https://www.mdpi.com/2078-2489/ 15/8/454 . doi: 10.3390/info15080454 .[5] B. J. Sattler, J. Friesen, A. Tundis, P. F. Pelz, Modeling and validation of residential water demand in agent-based models: A systematic literature review, Water 15 (2023) 579. doi: 10.3390/w15030579 .[6] F. E. Cellier, E. Kofman, Continuous System Simulation, SpringerLink Bücher, Springer Science+Business Media Inc, Boston, MA, 2006. doi: 10.1007/0-387-30260-3 .
+
+16 [7] W. L. Oberkampf, S. M. DeLand, B. M. Ruther-ford, K. V. Diegert, K. F. Alvin, Error and uncertainty in modeling and simulation, Reli-ability Engineering & System Safety 75 (2002) 333–357. URL: https://www.sciencedirect. com/science/article/pii/S095183200100120X .doi: 10.1016/S0951-8320(01)00120-X .[8] J. M. Stürmer, M. Graumann, T. Koch, From engineer-ing diagrams to graphs: Digitizing p&ids with transform-ers, in: 2025 IEEE 12th International Conference on Data Science and Advanced Analytics (DSAA), IEEE, Piscataway, NJ, 2025, pp. 1–11. doi: 10.1109/DSAA65442. 2025.11248012 .[9] U. Pohlmann, M. Tichy, Modelica code generation from modelicaml state machines extended by asynchronous communication, Proceedings of the 4th International Workshop on Equation-Based Object-Oriented Modeling Languages and Tools (2011). URL: https://ep.liu.se/ konferensartikel.aspx?issue=56&Article_No=9 .[10] C. Nytsch-Geusen, A. Inderfurth, W. Kaul, K. Mucha, J. Rädler, M. Thorade, C. Ribas Tugores, Template based code generation of modelica building energy simu-lation models, in: Proceedings of the 12th International Modelica Conference, Prague, Czech Republic, May 15-17, 2017, Linköping Electronic Conference Proceedings, Linköping University Electronic Press, 2017, pp. 199– 207. doi: 10.3384/ecp17132199 .[11] G. S. Martínez, S. A. Sierla, T. A. Karhela, J. Lap-palainen, Viatkin Valeriy, Automatic generation of a high-fidelity dynamic thermal-hydraulic process simula-tion model from a 3d plant model, IEEE Access 6 (2018) 45217–45232. doi: 10.1109/ACCESS.2018.2865206 .[12] J. M. Stürmer, M. Graumann, T. Koch, Demon-strating automated generation of simulation models from engineering diagrams, in: 2023 International Conference on Machine Learning and Applications (ICMLA), IEEE, 12/15/2023 - 12/17/2023, pp. 1156– 1162. doi: 10.1109/ICMLA58977.2023.00173 .[13] X. Xiong, H. Cai, H. Yu, B. Shen, P. Hu, Dr-rag: Domain-rule-based retrieval-augmented generation for aviation digital model design, Advanced Engineering Informatics 68 (2025) 103688. URL: https://www.sciencedirect. com/science/article/pii/S1474034625005816 .doi: 10.1016/j.aei.2025.103688 .[14] M. Chen, J. Tworek, H. Jun, Q. Yuan, Pinto, Henrique Ponde de Oliveira, J. Kaplan, H. Edwards, Y. Burda, N. Joseph, G. Brockman, A. Ray, R. Puri, G. Krueger, M. Petrov, H. Khlaaf, G. Sastry, P. Mishkin, B. Chan, S. Gray, N. Ryder, M. Pavlov, A. Power, L. Kaiser, M. Bavarian, C. Winter, P. Tillet, F. P. Such, D. Cum-mings, M. Plappert, F. Chantzis, E. Barnes, A. Herbert-Voss, W. H. Guss, A. Nichol, A. Paino, N. Tezak, J. Tang, I. Babuschkin, S. Balaji, S. Jain, W. Saunders, C. Hesse, A. N. Carr, J. Leike, J. Achiam, V. Misra, E. Morikawa, A. Radford, M. Knight, M. Brundage, M. Murati, K. Mayer, P. Welinder, B. McGrew, D. Amodei, S. McCandlish, I. Sutskever, W. Zaremba, Evaluating large language models trained on code, arXiv.org (2021). URL: https://arxiv.org/pdf/2107. 03374 . doi: 10.48550/arXiv.2107.03374 .[15] H. Jin, H. Chen, Are llms reliable code review-ers? systematic overcorrection in requirement con-formance judgement, Automated Software Engineer-ing 33 (2026) 90. URL: https://link.springer.com/ article/10.1007/s10515-026-00638-5 . doi: 10.1007/ s10515-026-00638-5 .[16] J. Xiang, T. Ye, P. Liu, Y. Zhang, W. Wang, Modigen: A large language model-based workflow for multi-task mod-elica code generation, arXiv.org (2025). URL: https:// arxiv.org/pdf/2503.18460 . doi: 10.48550/arXiv.2503. 18460 .[17] X. Ren, Q. Zang, Z. Guo, Simugen: Multi-modal agentic framework for constructing block diagram-based simu-lation models, arXiv.org (2025). URL: https://arxiv. org/pdf/2506.15695 . doi: 10.48550/arXiv.2506.15695 .[18] K. Klise, D. Hart, M. Bynum, J. Hogge, T. Hax-ton, R. Murray, J. Burkhardt, Water network tool for resilience (wntr) user manual: Version 0.2.3, 2020. URL: https://cfpub.epa.gov/si/si_public_record_ Report.cfm?dirEntryId=349798&Lab=CESER .[19] Modelica Association, Modelica, 24.11.2025. URL: 
+
+https://modelica.org/ .[20] J. Jiang, F. Wang, J. Shen, S. Kim, S. Kim, A survey on large language models for code generation, ACM Transactions on Software Engineering and Methodology (2025). doi: 10.1145/3747588 .[21] J. Chen, S. Chen, J. Cao, J. Shen, S.-C. Cheung, When retrieval augmentation meets api documentation: Can llms code with less-common libraries?, ACM Transac-tions on Software Engineering and Methodology (2026). doi: 10.1145/3821424 .[22] N. Huynh, B. Lin, Large language models for code generation: A comprehensive survey of chal-lenges, techniques, evaluation, and applications, arXiv.org (2025). URL: https://arxiv.org/pdf/2503. 01245 . doi: 10.48550/arXiv.2503.01245 .[23] S. Bistarelli, M. Fiore, I. Mercanti, M. Mongiello, Usage of large language model for code genera-tion tasks: A review, SN Computer Science 6 (2025) 673. URL: https://link.springer.com/ article/10.1007/s42979-025-04241-5 . doi: 10.1007/ s42979-025-04241-5 .[24] F. Zhang, B. Chen, Y. Zhang, J. Keung, J. Liu, D. Zan, Y. Mao, J.-G. Lou, W. Chen, Repocoder: Repository-level code completion through iterative retrieval and generation, arXiv.org (2023). URL: https://arxiv.org/ pdf/2303.12570 . doi: 10.48550/arXiv.2303.12570 .[25] Y. Li, E. Shi, D. Zheng, K. Duan, J. Chen, Y. Wang, Re-pomincoder: Improving repository-level code generation based on information loss screening, in: H. Mei, J. Lv, A. Helal, X. Ma, S.-C. Cheung, J. Zhang, T. Zhang (Eds.), Proceedings of the 15th Asia-Pacific Symposium on Internetware, ACM Digital Library, Association for Computing Machinery, Erscheinungsort nicht ermittel-bar, 2024, pp. 229–238. doi: 10.1145/3671016.3674819 .
+
+17 [26] Y. Gao, Y. Xiong, X. Gao, K. Jia, J. Pan, Y. Bi, Y. Dai, J. Sun, M. Wang, H. Wang, Retrieval-augmented generation for large language models: Asurvey, arXiv.org (2023). URL: https://arxiv.org/ pdf/2312.10997 . doi: 10.48550/arXiv.2312.10997 .[27] H. Han, Y. Wang, H. Shomer, K. Guo, J. Ding, Y. Lei, M. Halappanavar, R. A. Rossi, S. Mukherjee, X. Tang, Q. He, Z. Hua, B. Long, T. Zhao, N. Shah, A. Javari, Y. Xia, J. Tang, Retrieval-augmented generation with graphs (graphrag), arXiv.org (2024). URL: https:// arxiv.org/pdf/2501.00309 . doi: 10.48550/arXiv.2501. 00309 .[28] J. Li, X. Shi, K. Zhang, G. Li, Z. Jin, L. Li, H. Zhang, F. Liu, Y. Zhang, Z. Tao, Y. Dong, Y. Zhu, C. Tao, Graphcodeagent: Dual graph-guided llm agent for retrieval-augmented repo-level code genera-tion, arXiv.org (2025). URL: https://arxiv.org/pdf/ 2504.10046 . doi: 10.48550/arXiv.2504.10046 .[29] K. Zhang, J. Li, G. Li, X. Shi, Z. Jin, Codeagent: Enhancing code generation with tool-integrated agent systems for real-world repo-level coding challenges, Pro-ceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) (2024) 13643–13658. URL: https://aclanthology.org/ 2024.acl-long.737/ . doi: 10.18653/v1/2024.acl-long. 737 .[30] anomalyco, Opencode ai coding agent, 2026. URL: 
+
+https://opencode.ai/ .[31] R. Drath (Ed.), AutomationML: Das Lehrbuch Für Studium und Praxis, De Gruyter Studium Series, 1st ed. ed., Walter de Gruyter GmbH, Basel/Berlin/Boston, 2022. [32] G. Tolksdorf, D. B. Cameron, M. Theißen, Dexpi 2.0: Synergistic integration of pfd and p&id in a unified digital model, Chemie Ingenieur Technik 97 (2025) 1065– 1069. doi: 10.1002/cite.70009 .[33] L. A. Rossman, An Overview of EPANET Version 3.0, American Society of Civil Engineers, 2012. doi: 10.1061/ 41203(425)3 .[34] B. Kaiser, A. Reichle, A. Verl, Model-based automatic generation of digital twin models for the simulation of reconfigurable manufacturing sys-tems for timber construction, Procedia CIRP 107 (2022) 387–392. URL: https://www.sciencedirect. com/science/article/pii/S2212827122002797 . doi: 10. 1016/j.procir.2022.04.063 .[35] J. Bjørnskov, M. Jradi, M. Wetter, Auto-mated model generation and parameter estima-tion of building energy models using an ontology-based framework, Energy and Buildings 329 (2025) 115228. URL: https://www.sciencedirect. com/science/article/pii/S0378778824013446 . doi: 10. 1016/j.enbuild.2024.115228 .[36] M. Mans, T. Blacha, T. Schreiber, D. Müller, De-velopment and application of an open-source frame-work for automated thermal network generation and simulations in modelica, Energies 15 (2022) 4372. doi: 10.3390/en15124372 .[37] A. Bahamdan, E. Pajak, J. D. Hedengren, A. R. Del Chanona, Sketch2simulation: Automating flow-sheet generation via multi agent large language mod-els (2026). URL: https://arxiv.org/pdf/2603.24629 .doi: 10.48550/arXiv.2603.24629 .[38] Y. Xia, D. Dittler, N. Jazdi, H. Chen, M. Weyrich, Llm experiments with simulation: Large language model multi-agent system for simulation model parametriza-tion in digital twins, in: 2024 IEEE 29th Interna-tional Conference on Emerging Technologies and Fac-tory Automation, IEEE, Piscataway, NJ, 2024, pp. 1–4. doi: 10.1109/ETFA61755.2024.10710900 .[39] S. Rupprecht, Y. Hounat, M. Kumar, G. Lastrucci, A. M. Schweidtmann, Text2model: Generating dynamic chemical reactor models using large language models (llms), in: J. van Impe, G. Lonard, S. S. Bhonsale, M. Polanska, F. Logist (Eds.), Proceedings of the 35th European Symposium on Computer Aided Process En-gineering (ESCAPE 35), Systems and Control Transac-tions, PSE PressHamilton, Canada, 2025, pp. 1706–1711. doi: 10.69997/sct.165009 .[40] Z. Dong, Z. Lu, Y. Yang, Fine-tuning a large language model for automating computational fluid dynamics simulations, Theoretical and Applied Mechanics Letters 15 (2025) 100594. URL: https://www.sciencedirect. com/science/article/pii/S2095034925000261 . doi: 10. 1016/j.taml.2025.100594 .[41] J. Svajlenko, C. K. Roy, A survey on the evalua-tion of clone detection performance and benchmarking, arXiv.org (2020). URL: https://arxiv.org/pdf/2006. 15682 . doi: 10.48550/arXiv.2006.15682 .[42] J. Martinez-Gil, Source code clone detection using unsupervised similarity measures, in: P. Bludau, R. Ramler, D. Winkler, J. Bergsmann (Eds.), Soft-ware Quality as a Foundation for Security, Lecture Notes in Business Information Processing, Springer Nature Switzerland and Imprint Springer, Cham, 2024, pp. 21–37. URL: https://link.springer.com/ chapter/10.1007/978-3-031-56281-5_2 . doi: 10.1007/ 978-3-031-56281-5{\textunderscore}2 .[43] T. Möltner, P. Manzl, M. Pieber, J. Gerstmayr, Cre-ation, evaluation and self-validation of simulation mod-els with large language models, Neurocomputing 663 (2026) 132030. URL: https://www.sciencedirect. com/science/article/pii/S092523122502702X . doi: 10. 1016/j.neucom.2025.132030 .[44] Z. Feng, D. Guo, D. Tang, N. Duan, X. Feng, M. Gong, L. Shou, B. Qin, T. Liu, D. Jiang, M. Zhou, Codebert: A pre-trained model for programming and natural languages, Findings of the Association for Computational Linguistics: EMNLP 2020 (2020) 1536–1547. URL: https:// aclanthology.org/2020.findings-emnlp.139/ . doi: 10. 18653/v1/2020.findings-emnlp.139 .[45] L. Moddemann, J. Ehrhardt, A. Diedrich, O. Nigge-mann, The hai-cpps benchmark: Evaluating ai capa-bilities across hybrid data spaces, 2025 IEEE 30th International Conference on Emerging Technologies and Factory Automation (ETFA) (2025) 1–8. doi: 10.1109/ ETFA65518.2025.11205680 .
+
+18 [46] R. Cao, M. Chen, J. Chen, Z. Cui, Y. Feng, B. Hui, Y. Jing, K. Li, M. Li, J. Lin, Z. Ma, K. Shum, X. Wang, J. Wei, J. Yang, J. Zhang, L. Zhang, Z. Zhang, W. Zhao, F. Zhou, Qwen3-coder-next technical report, 2026. URL: 
+
+https://arxiv.org/pdf/2603.00729 .[47] OpenAI, S. Agarwal, L. Ahmad, J. Ai, et. al, gpt-oss-120b & gpt-oss-20b model card, 2025. URL: https:// arxiv.org/pdf/2508.10925 .[48] A. Rastogi, A. Yang, A. Q. Jiang, et. al, Devstral: Fine-tuning language models for coding agent applications, 2025. URL: https://arxiv.org/pdf/2509.25193 .[49] MiniMax, Minimax m2.5: Built for real-world produc-tivity, MiniMax (2026). URL: https://www.minimax. io/news/minimax-m25 .[50] DeepSeekAI, Deepseek-v3.2: Pushing the frontier of open large language models, 2025. URL: https://arxiv. org/pdf/2512.02556 .[51] GLM-5 Team:, A. Zeng, X. Lv, Z. e. Hou, Glm-5: from vibe coding to agentic engineering, 2026. URL: https: //arxiv.org/pdf/2602.15763 .[52] Kimi Team, T. Bai, Y. Bai, Y. Bao, et. al, Kimi k2.5: Visual agentic intelligence, 2026. URL: https://arxiv. org/pdf/2602.02276 .[53] OpenAI, Gpt-5, 24.11.2025. URL: https://openai.com/ de-DE/index/introducing-gpt-5/ .[54] S. Pichai, D. Hasabis, K. Kavukcuoglu, A new era of intelligence with gemini 3, Google (2025). URL: 
+
+https://blog.google/products-and-platforms/ products/gemini/gemini-3/ .[55] Anthropic, Claude sonnet 4.6 system card (2026). URL: https://www-cdn.anthropic.com/ bbd8ef16d70b7a1665f14f306ee88b53f686aa75/Claude% 20Sonnet%204.6%20System%20Card.pdf .[56] S. Ashkboos, I. Markov, E. Frantar, T. Zhong, X. Wang, J. Ren, T. Hoefler, D. Alistarh, Quik: Towards end-to-end 4-bit inference on generative large language mod-els, Proceedings of the 2024 Conference on Empiri-cal Methods in Natural Language Processing (2024) 3355–3371. URL: https://aclanthology.org/2024. emnlp-main.197/ . doi: 10.18653/v1/2024.emnlp-main. 197 .[57] ggml org, llama.cpp: Llm inference in c/c++, 2026. URL: https://github.com/ggml-org/llama.cpp .[58] R. B. Pereira, A. Plastino, B. Zadrozny, L. H. Merschmann, Correlation analysis of performance measures for multi-label classification, Informa-tion Processing & Management 54 (2018) 359– 369. URL: https://www.sciencedirect.com/science/ article/pii/S0306457318300165 . doi: 10.1016/j.ipm. 2018.01.002 .[59] N. F. Liu, K. Lin, J. Hewitt, A. Paranjape, M. Bevilacqua, F. Petroni, P. Liang, Lost in the middle: How language models use long contexts, Transactions of the Association for Computa-tional Linguistics 12 (2024) 157–173. URL: https: //aclanthology.org/2024.tacl-1.9/ . doi: 10.1162/ tacl{\textunderscore}a{\textunderscore}00638 .
+
+19
