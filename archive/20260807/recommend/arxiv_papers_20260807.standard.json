@@ -1,0 +1,563 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-07T01:20:17.969721+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 11,
+    "quick_skim_target": 11,
+    "quick_selected": 11
+  },
+  "deep_dive": [
+    {
+      "id": "2608.03822v1",
+      "source": "arxiv",
+      "title": "FlowForm: Synergizing Fluid Physics with Topological Consistency for Satellite Flood Synthesis",
+      "abstract": "Developing robust flood assessment models requires high-quality paired satellite imagery, yet such data remain scarce for flood-specific image generation. Although generative models provide a promising means of data augmentation, existing methods often yield implausible spatial layouts of flooded regions and distort scene structures. We propose FlowForm, a framework for satellite flood synthesis that integrates SWE-inspired latent regularization with structure-aware conditioning. The Flood Descriptor Module (FDM) imposes differentiable penalties on residuals of the steady-state Shallow Water Equation in auxiliary latent fields at the diffusion bottleneck. The Terrain Anchor Adapter (TAA) injects depth, semantic, and edge features at four encoder scales of the U-Net. We further curate FloodScape, a large-scale, high-resolution dataset comprising paired satellite images acquired before and after disasters. In addition to standard image-generation metrics, we evaluate the consistency of flooded regions, zero-shot generalization to a geographically held-out flood event, and sensitivity to individual components. Across all reported comparisons, FlowForm achieves higher visual fidelity, greater similarity between paired images, and stronger consistency of flooded regions.",
+      "authors": [
+        "Zhang Weihui",
+        "Wang Ruizhi",
+        "Xu Hongye",
+        "Wang Huiqiong",
+        "Sun Li",
+        "Song Mingli"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-08-04T15:30:35+00:00",
+      "link": "https://arxiv.org/pdf/2608.03822v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Diffusion-based generative model with shallow water equation regularization for satellite flood synthesis",
+      "llm_evidence_cn": "基于扩散的生成模型，利用浅水方程正则化合成卫星洪水影像",
+      "llm_evidence": "基于扩散的生成模型，利用浅水方程正则化合成卫星洪水影像",
+      "canonical_evidence": "基于扩散的生成模型，利用浅水方程正则化合成卫星洪水影像",
+      "llm_tldr_en": "Proposes FlowForm, a diffusion framework for satellite flood synthesis that integrates shallow water equation physical penalties and terrain-aware structure conditioning, producing plausible flood spatial layouts and preserving scene structures.",
+      "llm_tldr_cn": "针对洪水评估所需的配对卫星影像稀缺、现有生成模型易产生不合理的洪水空间布局和场景结构失真问题，该论文提出FlowForm框架。它融合浅水方程启发的潜在正则化和结构感知的扩散瓶颈条件，通过洪水描述模块施加物理可微惩罚，用地形锚定适配器注入深度、语义与边缘特征。实验表明该方法能合成更符合流体物理规律的洪水影像，提升空间布局合理性与结构保持能力，为洪水监测与评估提供高质量数据增强工具。",
+      "llm_tldr": "针对洪水评估所需的配对卫星影像稀缺、现有生成模型易产生不合理的洪水空间布局和场景结构失真问题，该论文提出FlowForm框架。它融合浅水方程启发的潜在正则化和结构感知的扩散瓶颈条件，通过洪水描述模块施加物理可微惩罚，用地形锚定适配器注入深度、语义与边缘特征。实验表明该方法能合成更符合流体物理规律的洪水影像，提升空间布局合理性与结构保持能力，为洪水监测与评估提供高质量数据增强工具。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.04728v1",
+      "source": "arxiv",
+      "title": "A hybrid proper orthogonal decomposition and diffusion framework for reduced-order forecasting of turbulent flow dynamics",
+      "abstract": "Forecasting turbulent flow dynamics requires a balance between predictive fidelity and computational efficiency. Diffusion-based generative models can represent complex spatiotemporal dynamics, but their application to high-dimensional turbulent flows remains computationally expensive. In contrast, proper orthogonal decomposition (POD) provides compact, physically interpretable reduced-order representations, although aggressive modal truncation can remove relevant flow structures. This work introduces a hybrid reduced-order generative forecasting framework that combines POD with Generative Learning of Effective Dynamics (G-LED). The method performs temporal prediction in a physics-based modal space and uses diffusion-based reconstruction to recover physically meaningful flow-field representations. It is assessed using experimental measurements of the turbulent wake behind a circular cylinder. Three configurations are compared: full-field G-LED, global POD-G-LED, and localized POD-G-LED. Full-field G-LED provides the highest fidelity, preserving richer vorticity fluctuations and more consistent turbulent kinetic energy distributions, but requires approximately 17 h for diffusion-model training, 7 h for Transformer training, and 3 min to predict 100 future snapshots. By transferring prediction to a reduced POD space, global POD-G-LED reduces these costs to approximately 8 h, 2 h, and 50 s, respectively, while retaining dominant wake organization and coherent energetic structures. A localized POD-G-LED formulation assigns different modal resolutions to distinct wake regions and improves vorticity statistics and energetic distributions relative to the global reduced-order configuration. These results show that coupling physics-based modal representations with diffusion-based generative reconstruction offers an effective route to efficient turbulent-flow forecasting.",
+      "authors": [
+        "Rodrigo Abadia-Heredia",
+        "Xiangrui Zou",
+        "Manuel Lopez-Martin",
+        "Petros Koumoutsakos",
+        "Soledad Le Clainche"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn"
+      ],
+      "published": "2026-08-05T11:49:12+00:00",
+      "link": "https://arxiv.org/pdf/2608.04728v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Explicitly uses diffusion-based generative model for turbulent flow forecasting; direct application to fluid dynamics.",
+      "llm_evidence_cn": "显式将扩散生成模型用于湍流预测与降阶建模，直接对应流体动力学中的扩散模型应用。",
+      "llm_evidence": "显式将扩散生成模型用于湍流预测与降阶建模，直接对应流体动力学中的扩散模型应用。",
+      "canonical_evidence": "显式将扩散生成模型用于湍流预测与降阶建模，直接对应流体动力学中的扩散模型应用。",
+      "llm_tldr_en": "Proposes a hybrid reduced-order forecasting framework combining POD with generative diffusion (G-LED), balancing fidelity and efficiency for turbulent flow prediction.",
+      "llm_tldr_cn": "针对扩散生成模型直接用于高维湍流预报计算代价过高、单纯POD截断又会丢失流动结构的问题，提出将POD与生成式有效动力学（G-LED）相结合的混合降阶预报框架。该方法在物理模态空间进行时间预测，并通过扩散模型在样本上重建复杂湍流细节。实验表明该框架在保持预测精度的同时显著降低计算开销。为扩散模型在计算流体力学中的实用化提供了可行路径。",
+      "llm_tldr": "针对扩散生成模型直接用于高维湍流预报计算代价过高、单纯POD截断又会丢失流动结构的问题，提出将POD与生成式有效动力学（G-LED）相结合的混合降阶预报框架。该方法在物理模态空间进行时间预测，并通过扩散模型在样本上重建复杂湍流细节。实验表明该框架在保持预测精度的同时显著降低计算开销。为扩散模型在计算流体力学中的实用化提供了可行路径。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.05103v1",
+      "source": "arxiv",
+      "title": "Multimodal Spatiotemporal Atmospheric Data Assimilation with Latent Flow-matching",
+      "abstract": "Data assimilation (DA) uses Bayesian inference to update the state of a numerical forecast model with observed data. In this study, we propose a fundamentally different, unified approach to atmospheric data assimilation. We use latent video flow-matching to sample temporally consistent trajectories from a prior trained using ERA5 reanalysis (69 variables over an 8-day window). We also use posterior sampling to assimilate real observation sources, such as those from the NOAA Integrated Global Radiosonde Archive and the Integrated Surface Database. Because the prior generates a continuous trajectory, it naturally propagates information between observed and unobserved frames. Therefore, we can perform various DA tasks, such as filtering and smoothing, simply by changing the observed frames. Moreover, we generate full-state ensemble forecasts directly from sparse observations, achieving performance competitive with state-of-the-art observation-to-forecast models.",
+      "authors": [
+        "Dibyajyoti Chakraborty",
+        "Romit Maulik"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math-ph",
+        "physics.ao-ph",
+        "physics.flu-dyn"
+      ],
+      "published": "2026-08-05T17:42:29+00:00",
+      "link": "https://arxiv.org/pdf/2608.05103v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Uses latent flow-matching for atmospheric data assimilation, applying flow-matching methods to a fluid dynamics problem",
+      "llm_evidence_cn": "利用隐空间流匹配进行大气数据同化，将流匹配方法应用于流体动力学问题",
+      "llm_evidence": "利用隐空间流匹配进行大气数据同化，将流匹配方法应用于流体动力学问题",
+      "canonical_evidence": "利用隐空间流匹配进行大气数据同化，将流匹配方法应用于流体动力学问题",
+      "llm_tldr_en": "Proposes latent video flow-matching for atmospheric data assimilation, learning a trajectory prior from ERA5 and using posterior sampling to fuse observations, enabling filtering and smoothing without a numerical forecast model.",
+      "llm_tldr_cn": "现有资料同化通常依赖数值预报模型与贝叶斯更新，计算成本高且框架松散。本文提出基于隐空间视频流匹配的统一大气资料同化方法，利用ERA5训练的先验生成时间上一致的连续轨迹，并通过后验采样融合多种真实观测。该方法能够在无预报模型的情况下完成滤波与平滑等多种同化任务。这展示了生成式流匹配在大气流体系统建模中的潜力。",
+      "llm_tldr": "现有资料同化通常依赖数值预报模型与贝叶斯更新，计算成本高且框架松散。本文提出基于隐空间视频流匹配的统一大气资料同化方法，利用ERA5训练的先验生成时间上一致的连续轨迹，并通过后验采样融合多种真实观测。该方法能够在无预报模型的情况下完成滤波与平滑等多种同化任务。这展示了生成式流匹配在大气流体系统建模中的潜力。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.00978v1",
+      "source": "arxiv",
+      "title": "One-Sided Quantile Coupling for Flow Matching",
+      "abstract": "Flow Matching trains continuous-time generative models by regressing the velocity field of a probability path between a simple source distribution and a target data distribution. The coupling that pairs source and target samples strongly affects optimization and sample quality, but structured couplings typically rely on mini-batch transport or assignment procedures whose cost grows at least quadratically in batch size. We propose Quantile Coupling Flow Matching (QC-FM), a lightweight one-sided coupling: rather than matching two pre-sampled batches, it samples only the data batch and constructs each paired source directly. Data ranks projected along a small number of random orthogonal directions are mapped to Gaussian quantiles, and the latent code is completed in the orthogonal complement by conditional Gaussian sampling. The construction is one-dimensional per slice, so the coupling requires no pairwise cost matrix and no assignment to solve. We show that, for each drawn frame, this coupling eliminates the irreducible regression variance along every selected slice and makes the ideal flow exactly straight there, while leaving the sampling prior unchanged: generation still starts from the standard Gaussian, and the training source deviates from it only through the copula of the slice codes, whose transport cost we bound. For training, we apply QC to an anchor subset and complete the remaining source slots with exact Gaussian samples, retaining the QC bias while preserving an explicit signal from the Baseline coupling. Across CIFAR-10, CelebA, FFHQ, and ImageNet-64, QC-FM improves over the Baseline under matched training budgets, reducing FID by up to 12.9%, and outperforms OT-CFM on all four datasets. These results suggest that preserving projected rank structure is a simple and scalable way to inject useful geometric bias into FM couplings without solving a mini-batch transport problem.",
+      "authors": [
+        "Jin-Young Kim",
+        "So-Yoon Cho",
+        "Hyun-Gyoon Kim"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-08-02T04:03:59+00:00",
+      "link": "https://arxiv.org/pdf/2608.00978v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "General flow matching coupling method applicable to fluid flow generation",
+      "llm_evidence_cn": "通用的流匹配耦合方法，可应用于流体流动生成",
+      "llm_evidence": "通用的流匹配耦合方法，可应用于流体流动生成",
+      "canonical_evidence": "通用的流匹配耦合方法，可应用于流体流动生成",
+      "llm_tldr_en": "Introduces quantile coupling flow matching, a lightweight one-sided coupling that maps data ranks to Gaussian quantiles to improve flow matching training and sample quality, applicable to generative modeling of fluid flows.",
+      "llm_tldr_cn": "该论文针对流匹配中结构化配对成本高的问题，提出了一种轻量级单侧分位数耦合方法（QC-FM），仅从数据批次构造配对源，利用少量随机方向的秩信息映射到高斯分位数，避免了二次方复杂度的批次分配。实验表明该方法能改善优化过程和生成质量，降低计算开销。作为一种通用的流匹配改进，它可迁移到流体流动模拟与流体力学生成式建模场景中，具有较强的方法支撑价值。",
+      "llm_tldr": "该论文针对流匹配中结构化配对成本高的问题，提出了一种轻量级单侧分位数耦合方法（QC-FM），仅从数据批次构造配对源，利用少量随机方向的秩信息映射到高斯分位数，避免了二次方复杂度的批次分配。实验表明该方法能改善优化过程和生成质量，降低计算开销。作为一种通用的流匹配改进，它可迁移到流体流动模拟与流体力学生成式建模场景中，具有较强的方法支撑价值。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.26428v1",
+      "source": "arxiv",
+      "title": "Existence-Field Diffusion Model for Spatial Point Processes with Variable Cardinality",
+      "abstract": "We study generative modeling of spatial point processes (SPP), where both the number of points and their spatial configuration are governed by a joint distribution. While diffusion models have achieved strong performance in modeling complex distributions, extending them to variable-cardinality SPP remains challenging. Existing approaches either decouple the modeling of cardinality and spatial structure, or rely on discrete trans-dimensional operations to modify the number of points, resulting in inflexible and asymmetric generative dynamics. We propose the existence-field diffusion model (EFDM) for spatial point processes modeling, where each potential point is associated with an existence variable representing its degree of presence. This enables a unified diffusion process that jointly models both spatial locations and cardinality without requiring explicit discrete transitions. We demonstrate that our approach provides a flexible and general framework for generative modeling of spatial point processes, achieving improved modeling capability on datasets with varying cardinality.",
+      "authors": [
+        "Xiaoyin Pan",
+        "Christian R. Shelton",
+        "Rakshith Mahishi",
+        "Chengkuan Hong"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "stat.ML"
+      ],
+      "published": "2026-07-29T03:15:32+00:00",
+      "link": "https://arxiv.org/pdf/2607.26428v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Existence-field diffusion model for variable-cardinality point processes, transferable to particle-based fluid simulation",
+      "llm_evidence_cn": "面向可变基数点过程的存在场扩散模型，可迁移至基于粒子的流体模拟",
+      "llm_evidence": "面向可变基数点过程的存在场扩散模型，可迁移至基于粒子的流体模拟",
+      "canonical_evidence": "面向可变基数点过程的存在场扩散模型，可迁移至基于粒子的流体模拟",
+      "llm_tldr_en": "Proposes an existence-field diffusion model that jointly learns cardinality and spatial structure of point processes, offering a flexible generative framework transferable to particle-based fluid simulations.",
+      "llm_tldr_cn": "针对可变基数空间点过程，现有扩散模型要么解耦基数与空间结构，要么依赖离散跨维度操作，导致生成动力学不灵活。论文提出存在场扩散模型，为每个潜在点赋予存在变量，以统一建模基数与空间配置，实现了对称且连续的扩散过程。实验表明该方法能有效生成可变基数的点过程分布，并可直接迁移至基于粒子的流体模拟等物理应用，是连接扩散生成模型与流体模拟的方法学桥梁。",
+      "llm_tldr": "针对可变基数空间点过程，现有扩散模型要么解耦基数与空间结构，要么依赖离散跨维度操作，导致生成动力学不灵活。论文提出存在场扩散模型，为每个潜在点赋予存在变量，以统一建模基数与空间配置，实现了对称且连续的扩散过程。实验表明该方法能有效生成可变基数的点过程分布，并可直接迁移至基于粒子的流体模拟等物理应用，是连接扩散生成模型与流体模拟的方法学桥梁。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.02406v1",
+      "source": "arxiv",
+      "title": "A Unified Kullback--Leibler Divergence Analysis of Generative Diffusion Models via Entropy Production Rate",
+      "abstract": "We introduce a unified framework for the error analysis of generative models based on the entropy production rate of the forward-reverse diffusion process pair. For a pair of continuity equation flows, the rate admits a closed velocity form identity whose time integral decomposes the terminal Kullback--Leibler (KL) divergence into the sum of an initialization error, a score approximation error, and a time-discretization error. By analyzing the entropy production at the level of marginal distributions, rather than in path space, our framework yields a sharp convergence rate of $\\mathcal{O}(h^2)$   for the Euler-Maruyama sampler, where $h$   is the step size. This improves upon the $\\mathcal{O}(h)$ rates typically obtained from Girsanov's path-space analyses. Furthermore, our framework unifies the analysis of score-based SDEs, probability-flow ODEs, and stochastic interpolants by varying diffusion coefficients within a single inequality, revealing the trade-off between deterministic and stochastic sampling. Numerical experiments confirm the predicted scaling with step size and terminal time.",
+      "authors": [
+        "Han Wu",
+        "Zhiwen Zhang"
+      ],
+      "primary_category": "math.NA",
+      "categories": [
+        "math.NA",
+        "stat.ML"
+      ],
+      "published": "2026-08-03T15:49:08+00:00",
+      "link": "https://arxiv.org/pdf/2608.02406v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Unified error analysis for generative diffusion models, improving score approximation and discretization",
+      "llm_evidence_cn": "生成扩散模型的统一误差分析，改进分数近似与离散化",
+      "llm_evidence": "生成扩散模型的统一误差分析，改进分数近似与离散化",
+      "canonical_evidence": "生成扩散模型的统一误差分析，改进分数近似与离散化",
+      "llm_tldr_en": "Introduces an entropy-production-rate framework that decomposes diffusion model KL error into initialization, score-approximation, and discretization errors, yielding O(h^2) sampling convergence; useful for robust diffusion-based fluid simulation.",
+      "llm_tldr_cn": "该论文提出基于熵产生率的统一框架，用于分析生成扩散模型的前向-反向过程对。通过连续性方程流的闭合速度恒等式，将终端KL散度分解为初始化误差、分数近似误差和时间离散误差。该方法在边缘分布层面分析熵产生，得到Euler-Maruyama采样的O(h^2)收敛率，优于常见的O(h)结果，为扩散模型在流体流仿真等应用中的误差控制提供了理论基础。",
+      "llm_tldr": "该论文提出基于熵产生率的统一框架，用于分析生成扩散模型的前向-反向过程对。通过连续性方程流的闭合速度恒等式，将终端KL散度分解为初始化误差、分数近似误差和时间离散误差。该方法在边缘分布层面分析熵产生，得到Euler-Maruyama采样的O(h^2)收敛率，优于常见的O(h)结果，为扩散模型在流体流仿真等应用中的误差控制提供了理论基础。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.28698v1",
+      "source": "arxiv",
+      "title": "Flow Matching with Missing Data",
+      "abstract": "Flow matching assumes fully observed training data, which many real-world applications rarely provide. We propose Missing-Data Flow Matching, which treats the missing coordinates of training samples as latent variables and averages the flow matching loss over the values they could take. We first prove the correction is exact rather than approximate. Under missing completely at random with true completions, the incomplete-data objective equals the complete-data objective, so missingness changes nothing about what flow matching learns and the entire difficulty relocates to the completion model. Our finite-sample analysis then answers design questions that the algorithm leaves open, and the answers are not the ones intuition suggests. Missingness transfers estimator variance rather than adding it, one completion per example already matches complete-data variance exactly, and under a fixed evaluation budget one completion is optimal. A learned completion model contributes a single irreducible bias, which we bound by its expected conditional Wasserstein distance to the true completion law. Experiments numerically validate the theoretical predictions, show that deterministic rather than frozen imputation is what collapses the generated distribution, and place our method alongside strong classical and deep imputation baselines on real tabular data.",
+      "authors": [
+        "Fairoz Nower Khan",
+        "Nabuat Zaman Nahim",
+        "Peizhong Ju"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-07-30T10:37:01+00:00",
+      "link": "https://arxiv.org/pdf/2607.28698v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Flow matching method extended to missing data, relevant for fluid datasets with incomplete observations",
+      "llm_evidence_cn": "将流匹配推广至缺失数据场景，适用于流体数据不完整的情况",
+      "llm_evidence": "将流匹配推广至缺失数据场景，适用于流体数据不完整的情况",
+      "canonical_evidence": "将流匹配推广至缺失数据场景，适用于流体数据不完整的情况",
+      "llm_tldr_en": "Proposes Missing-Data Flow Matching, treating missing coordinates as latent variables and proving exactness under missing-completely-at-random, with finite-sample analysis guiding design choices.",
+      "llm_tldr_cn": "实际流体等应用常面临训练数据缺失，而传统流匹配要求完全观测。该研究提出缺失数据流匹配，将缺失坐标视为隐变量并对补全值取平均。理论证明在完全随机缺失下该目标与完整数据目标精确等价，并将困难转移至补全模型。有限样本分析揭示了缺失度对估计器方差的影响，为算法设计提供指导。",
+      "llm_tldr": "实际流体等应用常面临训练数据缺失，而传统流匹配要求完全观测。该研究提出缺失数据流匹配，将缺失坐标视为隐变量并对补全值取平均。理论证明在完全随机缺失下该目标与完整数据目标精确等价，并将困难转移至补全模型。有限样本分析揭示了缺失度对估计器方差的影响，为算法设计提供指导。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.03469v1",
+      "source": "arxiv",
+      "title": "Should the Boundary Term Be Learned in Reflected Diffusion? Conormal Trace and Reflection Masking",
+      "abstract": "We study score learning for reflected diffusion on bounded domains. Reflection keeps trajectories feasible but does not ensure that the learned score satisfies the boundary behavior implied by the forward process. With implicit score matching, integration by parts leaves a boundary term, and we show that it depends on one scalar at each boundary point: the diffusion- weighted normal component of the score, or conormal trace. The no-flux condition fixes this value while leaving the re- maining boundary components unrestricted; under anisotropic diffusion it generally differs from the ordinary normal score component. On hyperrectangles, our parametrization enforces the required trace without additional trainable parameters or a stochastic boundary estimator and, under regularity assump- tions, can represent the true score, whereas fixing an incorrect value creates an error that more data cannot remove. We ex- tend the construction to simplices and polygonal domains and identify reflection masking: hard reflection can keep samples feasible even when the learned trace is wrong, so post-reflection metrics may hide the error. Experiments show the clearest separation with less frequent reflection, anisotropic diffusion, and mass near intersections of constraints; under full reflection, final sample placement improves inconsistently, illustrating how hard repair can mask boundary-score errors and decouple score accuracy from downstream generation quality.",
+      "authors": [
+        "Ziyue Wang",
+        "Takafumi Kanamori"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.LG"
+      ],
+      "published": "2026-08-04T11:05:02+00:00",
+      "link": "https://arxiv.org/pdf/2608.03469v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Score learning for reflected diffusion on bounded domains, directly applicable to score-based generative models with boundary constraints",
+      "llm_evidence_cn": "有界域反射扩散的分数学习，对带边界约束的基于分数的生成模型直接可用",
+      "llm_evidence": "有界域反射扩散的分数学习，对带边界约束的基于分数的生成模型直接可用",
+      "canonical_evidence": "有界域反射扩散的分数学习，对带边界约束的基于分数的生成模型直接可用",
+      "llm_tldr_en": "Analyzes the boundary term in reflected diffusion score learning, showing it is fixed by the conormal trace under no-flux; enables correct score-based generation in bounded domains, directly applicable to confined fluid flows.",
+      "llm_tldr_cn": "在反射扩散的隐式分数匹配中，边界项由每个边界点的共法向迹决定。论文证明无通量条件可固定该值，而其余边界分量不受限制；在各向异性扩散下该迹通常不同于普通法向分数分量。通过参数化在超矩形上无需额外参数即可强制满足所需边界迹，为有界流体域中的基于分数的生成模型提供了关键理论支撑和实现技巧。这为扩散模型在带边界约束的流体模拟中的应用扫清了关键障碍。",
+      "llm_tldr": "在反射扩散的隐式分数匹配中，边界项由每个边界点的共法向迹决定。论文证明无通量条件可固定该值，而其余边界分量不受限制；在各向异性扩散下该迹通常不同于普通法向分数分量。通过参数化在超矩形上无需额外参数即可强制满足所需边界迹，为有界流体域中的基于分数的生成模型提供了关键理论支撑和实现技巧。这为扩散模型在带边界约束的流体模拟中的应用扫清了关键障碍。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "score-based generative models for fluid flow",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.28760v1",
+      "source": "arxiv",
+      "title": "WaiT for the Signal: Simple Frequency-Aware Flow-Matching",
+      "abstract": "As image generation models scale to ever higher resolutions, global coherence, local detail, and texture fidelity become critical axes for generation quality. However, standard flow matching treats all spatial frequencies uniformly, ignoring the natural frequency hierarchy where high-frequency bands become indistinguishable from pure noise far earlier than coarse structures. We introduce WaiT, a Wavelet-aware image Transformer that decomposes generation into coarse and fine bands via lossless wavelets. True to its name, the high-frequency bands wait for the signal: staying pure noise until coarse structure has emerged, then joining the flow for joint refinement. Since standard FID discards fine-grained detail through aggressive downsampling, we introduce a more stringent three-axis evaluation protocol to assess quality at native resolution. On ImageNet 512x512, WaiT achieves a pixel-space FID of 1.43 and is Pareto-optimal across all three axes, reducing sampling compute by up to 50%. With our largest 2B model, we set a new state-of-the-art FID of 1.3 for pixel-space models on ImageNet 512 resolution. Our formulation outperforms even the strongest latent-space models on texture fidelity, and scales seamlessly to high-resolution OpenImages and to video generation, achieving a state-of-the-art FVD of 0.84 on Kinetics-600 with no algorithmic modifications.",
+      "authors": [
+        "Krunoslav Lehman Pavasovic",
+        "Théophane Vallaeys",
+        "Stéphane Mallat",
+        "Giulio Biroli",
+        "Luke Zettlemoyer",
+        "Brian Karrer",
+        "Jakob Verbeek"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.LG",
+        "stat.ML"
+      ],
+      "published": "2026-07-30T18:26:19+00:00",
+      "link": "https://arxiv.org/pdf/2607.28760v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Flow matching generative method with frequency-aware wavelet decomposition; applicable to multiscale flow synthesis.",
+      "llm_evidence_cn": "提出频率感知的流匹配生成方法，可应用于多尺度流动合成。",
+      "llm_evidence": "提出频率感知的流匹配生成方法，可应用于多尺度流动合成。",
+      "canonical_evidence": "提出频率感知的流匹配生成方法，可应用于多尺度流动合成。",
+      "llm_tldr_en": "WaiT presents a wavelet-aware flow matching model that separates coarse and fine image generation, improving detail fidelity; the frequency-aware idea transfers to multiscale fluid flow modeling.",
+      "llm_tldr_cn": "该文针对标准流匹配忽略空间频率层级、高分辨率图像细节不保真的问题，提出小波感知的流匹配模型WaiT。模型用无损小波分离粗、细频带，让高频带等待粗结构出现后再参与联合细化，从而兼顾全局一致性与局部纹理。作者还引入比FID更敏感的评估指标，实验显示生成质量提升。该频率分解策略对具有多尺度特性的流体流动生成建模具有参考意义。",
+      "llm_tldr": "该文针对标准流匹配忽略空间频率层级、高分辨率图像细节不保真的问题，提出小波感知的流匹配模型WaiT。模型用无损小波分离粗、细频带，让高频带等待粗结构出现后再参与联合细化，从而兼顾全局一致性与局部纹理。作者还引入比FID更敏感的评估指标，实验显示生成质量提升。该频率分解策略对具有多尺度特性的流体流动生成建模具有参考意义。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2607.29569v1",
+      "source": "arxiv",
+      "title": "Safe Vision Language Action Models via Barrier Enhanced Flow Matching",
+      "abstract": "This article presents a modular inference framework that integrates Flow Matching generative models with formal Control Barrier Function (CBF) safety guarantees. Unlike existing methods that apply external safety filters to a model's final output, our approach modifies the Flow Matching denoising process within the model to inherently generate safe trajectories. By employing a smooth Log-Sum-Exponential aggregate barrier, we enforce safety over entire action chunks. This aggregate barrier ensures a minimal increase in computational overhead and does not alter the semantic intent of the model. We show that, within the proposed framework, the 2-Wasserstein distance between the generated distribution and the target distribution remains bounded. Our method eliminates the need for safety-specific datasets or costly model retraining, providing a versatile solution for safe inference. We validate the approach on two robotic manipulation platforms and a 2D navigation benchmark, verifying that our framework achieves reliable safety without degrading the success rate of the model.",
+      "authors": [
+        "Kasra Sinaei",
+        "Hung-Chieh Wu",
+        "Donald Ebeigbe"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "eess.SY"
+      ],
+      "published": "2026-07-31T15:56:19+00:00",
+      "link": "https://arxiv.org/pdf/2607.29569v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Barrier-enhanced flow matching provides safety-guaranteed generation, transferable to constraint-aware fluid flow generation",
+      "llm_evidence_cn": "势垒增强的流匹配提供安全保证的生成，可迁移到约束感知的流体流动生成中",
+      "llm_evidence": "势垒增强的流匹配提供安全保证的生成，可迁移到约束感知的流体流动生成中",
+      "canonical_evidence": "势垒增强的流匹配提供安全保证的生成，可迁移到约束感知的流体流动生成中",
+      "llm_tldr_en": "Introduces a modular framework that integrates flow matching with control barrier functions to enforce safety during denoising, generating safe action chunks without external filtering, with bounded distribution distance, applicable to safe generative modeling in other domains such as fluid dynamics.",
+      "llm_tldr_cn": "该论文提出一种将流匹配生成模型与形式化控制屏障函数（CBF）相结合的模块化推理框架，通过平滑的Log-Sum-Exponential聚合势垒在去噪过程中直接保证轨迹安全。与在最终输出上施加外部安全过滤器的方法不同，该方法从生成过程内部约束样本，并通过分析证明生成分布与目标分布的2-Wasserstein距离有界。该框架可用于需要满足安全或物理约束的生成任务，为流体动力学中带约束的流动生成提供了借鉴。",
+      "llm_tldr": "该论文提出一种将流匹配生成模型与形式化控制屏障函数（CBF）相结合的模块化推理框架，通过平滑的Log-Sum-Exponential聚合势垒在去噪过程中直接保证轨迹安全。与在最终输出上施加外部安全过滤器的方法不同，该方法从生成过程内部约束样本，并通过分析证明生成分布与目标分布的2-Wasserstein距离有界。该框架可用于需要满足安全或物理约束的生成任务，为流体动力学中带约束的流动生成提供了借鉴。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.01990v1",
+      "source": "arxiv",
+      "title": "SPARE: Structural Parameter-Free Affinity Regularization for Flow Matching",
+      "abstract": "Denoising diffusion transformers achieve strong generation quality but converge slowly during training. Regularizing their internal representations has emerged as an effective accelerator, yet existing methods split into two families with complementary costs. Target-based methods strengthen representations by aligning them to external features, which requires an external encoder and a learnable projection head to bridge feature spaces. Target-free methods hold no reference at all, and can only repel the model's own features across samples or layers, discarding whatever structure the data contains. Prior work suggests that spatial structure, rather than global semantics, drives the gains of alignment. We therefore ask whether such structure can serve as a target directly, and whether it exists not only within an image but across images. Our key insight is that the clean data latent already carries this structure in the relations among its tokens, where a relation is the similarity between two tokens, a single scalar comparable across feature spaces without a projection head. We propose Structural Parameter-free Affinity Regularization (SPARE), a regularizer that matches the pairwise affinities of intermediate tokens to those of the clean latents. To exploit this structure fully, SPARE extends the matching to token pairs across images, precisely the pairs that prior target-free methods repel by default, and calibrates both relation types with a single learning objective. On ImageNet $256 \\times 256$ with SiT backbones under matched 400K-iteration budgets, SPARE adds no encoder, head, or parameters and only 0.08 GB of training memory, yet attains the lowest FID among parameter-free regularizers in every tested setting, recovers 37 to 54\\% of REPA's FID reduction, and improves over REPA when combined with it, reaching FID 1.90 under classifier-free guidance at 1M iterations.",
+      "authors": [
+        "Zong-Wei Hong",
+        "Jinglun Li",
+        "Shen Zhang",
+        "Yuhan Liu",
+        "Linze Li",
+        "Yao Tang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-08-03T09:50:51+00:00",
+      "link": "https://arxiv.org/pdf/2608.01990v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Parameter-free structural regularization accelerates flow matching training, useful for fluid flow generative models",
+      "llm_evidence_cn": "无参数的结构正则化加速流匹配训练，对流体流动生成模型有用",
+      "llm_evidence": "无参数的结构正则化加速流匹配训练，对流体流动生成模型有用",
+      "canonical_evidence": "无参数的结构正则化加速流匹配训练，对流体流动生成模型有用",
+      "llm_tldr_en": "Proposes SPARE, a target-free structural parameter-free affinity regularization for flow matching that leverages spatial structure to accelerate training of denoising diffusion transformers, potentially improving fluid flow generative model training.",
+      "llm_tldr_cn": "针对去噪扩散Transformer训练收敛慢的问题，该论文提出SPARE正则化方法。与依赖外部特征或只能相互排斥的目标无关方法不同，SPARE直接利用数据中的空间结构来正则化内部表示，不需要额外编码器或投影头。实验表明它可以加速流匹配模型的训练并保持生成质量，为流体流动等复杂数据上的生成模型训练提供了高效方案。",
+      "llm_tldr": "针对去噪扩散Transformer训练收敛慢的问题，该论文提出SPARE正则化方法。与依赖外部特征或只能相互排斥的目标无关方法不同，SPARE直接利用数据中的空间结构来正则化内部表示，不需要额外编码器或投影头。实验表明它可以加速流匹配模型的训练并保持生成质量，为流体流动等复杂数据上的生成模型训练提供了高效方案。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.02487v1",
+      "source": "arxiv",
+      "title": "Computational and Statistical Guarantees of the \\textit{c}-Rectified flow",
+      "abstract": "Recently, rectified flow has emerged as a fundamental framework for large-scale image generation, powering state-of-the-art systems such as FLUX.1 and Stable Diffusion 3. Despite its remarkable empirical success, the computational and statistical guarantees of iterative rectified flow have remained largely unexplored. We address this problem by studying \\textit{c}-rectified flow, a cost-aware class of rectified flow that projects velocity fields onto a gradient class while preserving endpoint marginals. The ordinary rectified flow can fail to recover the optimal transport coupling: in a Gaussian case study, the iteration converges to the optimal coupling if and only if the source and target covariance matrices commute. In contrast, under suitable compactness and uniform-integrability assumptions, iterative \\textit{c}-rectified flow always converges to the optimal transport coupling. We further establish quantitative one-step contraction and exponential convergence guarantees under projection-stability assumptions for both quadratic and strongly convex displacement costs. Finally, under a Hölder ball assumption, we develop new minimax-optimal score estimation rates and show that, when combined with iterative \\textit{c}-rectified flow, they yield a rate-optimal estimator of the optimal transport for the dimension \\(d \\ge 3\\) and a nearly parametric rate for \\(d=1,2\\).",
+      "authors": [
+        "Leda Wang",
+        "Zhehao Xu",
+        "Qiang Liu",
+        "Harrison H. Zhou"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.LG",
+        "math.OC",
+        "math.PR",
+        "math.ST"
+      ],
+      "published": "2026-08-03T16:53:29+00:00",
+      "link": "https://arxiv.org/pdf/2608.02487v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Theoretical guarantees for rectified flow, a flow matching class; strengthens foundations for flow matching in fluid simulation.",
+      "llm_evidence_cn": "为整流流（一种流匹配方法）提供计算与统计保证，强化了流匹配用于流体模拟的理论基础。",
+      "llm_evidence": "为整流流（一种流匹配方法）提供计算与统计保证，强化了流匹配用于流体模拟的理论基础。",
+      "canonical_evidence": "为整流流（一种流匹配方法）提供计算与统计保证，强化了流匹配用于流体模拟的理论基础。",
+      "llm_tldr_en": "This paper gives computational and statistical guarantees for c-rectified flow, showing it recovers optimal transport in more cases than ordinary rectified flow and clarifying conditions for convergence.",
+      "llm_tldr_cn": "该文研究迭代整流流的计算与统计保证，关注一类成本感知的c-整流流，其将速度场投影到梯度类并保持端点边缘分布。作者在高斯案例中证明普通整流流仅在源协方差与目标协方差可交换时才收敛到最优传输耦合，而c-整流流在更广条件下成立。该理论为流匹配（整流流）在实际生成任务包括流体模拟中的可靠性提供了重要支撑。",
+      "llm_tldr": "该文研究迭代整流流的计算与统计保证，关注一类成本感知的c-整流流，其将速度场投影到梯度类并保持端点边缘分布。作者在高斯案例中证明普通整流流仅在源协方差与目标协方差可交换时才收敛到最优传输耦合，而c-整流流在更广条件下成立。该理论为流匹配（整流流）在实际生成任务包括流体模拟中的可靠性提供了重要支撑。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.04531v1",
+      "source": "arxiv",
+      "title": "Discretization and Statistical Consistency of Functional Flow Matching",
+      "abstract": "Functional flow matching is posed on distributions of functions but implemented from finitely many coefficients or point values. Under scattered or adaptive refinement, the resulting conditioning sigma-algebras need not be nested, so martingale convergence does not justify the sensor limit. We prove strong $L^2$ convergence of finite conditional velocity targets for every strongly consistent sequence of finite-rank reconstructions, with quantitative bounds for orthogonal projections and a point-sensor extension through a regularity space. For learned flows, coupling directly to a population superposition path yields an end-to-end Wasserstein bound without assuming uniqueness of the population finite-dimensional ODE. We verify sensor-independent constants for a normalized quadrature neural operator, including globally Lipschitz activations through an explicit magnitude recurrence. A noncommuting trace-class Gaussian example gives boundary multiplier $0$ under projected restriction and $0.72$ under exact conditioning. A spatial regularity--cubature certificate closes the operator-realization term, a Bernstein argument gives a $\\widetilde{O}(n^{-1})$ excess-risk term for fixed model dimension and envelopes, and an exactly realizable clipped Gaussian scaling specialization yields an explicit end-to-end rate.",
+      "authors": [
+        "Lennon J. Shikhman"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.PR",
+        "stat.ML"
+      ],
+      "published": "2026-08-05T07:05:47+00:00",
+      "link": "https://arxiv.org/pdf/2608.04531v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Theoretical analysis of functional flow matching; directly transferable to flow matching for fluid flow generation",
+      "llm_evidence_cn": "关于函数流匹配的理论一致性分析，方法可直接迁移到流体流动生成",
+      "llm_evidence": "关于函数流匹配的理论一致性分析，方法可直接迁移到流体流动生成",
+      "canonical_evidence": "关于函数流匹配的理论一致性分析，方法可直接迁移到流体流动生成",
+      "llm_tldr_en": "This paper proves strong L2 convergence and Wasserstein bounds for functional flow matching under discretization, ensuring statistical consistency for implementations with limited sensors or coefficients.",
+      "llm_tldr_cn": "函数流匹配面向函数分布生成，但实现时只能从有限系数或点值出发，缺少一致性保证。本文证明了对任意强一致有限秩重构，有限条件速度目标都强L2收敛，并给出正交投影和点传感器的定量界。对于学习流，耦合总体叠加路径可直接获得端到端Wasserstein界。该理论使得基于传感器数据的流匹配生成可靠，可支撑流体速度场等函数型数据的生成。",
+      "llm_tldr": "函数流匹配面向函数分布生成，但实现时只能从有限系数或点值出发，缺少一致性保证。本文证明了对任意强一致有限秩重构，有限条件速度目标都强L2收敛，并给出正交投影和点传感器的定量界。对于学习流，耦合总体叠加路径可直接获得端到端Wasserstein界。该理论使得基于传感器数据的流匹配生成可靠，可支撑流体速度场等函数型数据的生成。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.04818v1",
+      "source": "arxiv",
+      "title": "Rethinking Pixel Mean Flows via Interval Denoiser",
+      "abstract": "Modern diffusion and flow-based models are increasingly moving toward few-step, latent-free generation to bypass the computational overhead of multi-step sampling and the reconstruction bottlenecks of external autoencoders. We propose the Interval Denoiser, a theoretically rigorous framework for latent-free generation. Derived directly from the flow matching ODE, it establishes an exact analytical mapping for intermediate trajectory states. Unlike prior formulations, our prediction is shown to reside on a low-dimensional manifold across any time interval, making the regression tractable for a network operating directly on pixels. Furthermore, by avoiding empirical algebraic substitutions, our formulation correctly isolates the pure time derivative to prevent biased gradient evaluations and ensure exact first-order optimization. By analyzing this objective, we equip our framework with residual clipping and a time-sampling curriculum, enabling effective long-interval training and improving few-step performance. Trained from scratch on ImageNet 256x256, our model achieves an FID of 4.55 in one step (1-NFE) and 3.98 in two steps (2-NFE) without perceptual losses.",
+      "authors": [
+        "Alexander Zaytsev",
+        "Dmitry Baranchuk",
+        "Alexander Korotin",
+        "Aibek Alanov"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-05T13:22:43+00:00",
+      "link": "https://arxiv.org/pdf/2608.04818v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "General interval denoiser for flow matching ODEs, can improve latent-free generative modeling of fluid flow images",
+      "llm_evidence_cn": "用于流匹配ODE的通用区间去噪器，可改进流体流动图像的无潜在生成建模",
+      "llm_evidence": "用于流匹配ODE的通用区间去噪器，可改进流体流动图像的无潜在生成建模",
+      "canonical_evidence": "用于流匹配ODE的通用区间去噪器，可改进流体流动图像的无潜在生成建模",
+      "llm_tldr_en": "Rethinks pixel mean flows with an interval denoiser derived from the flow matching ODE, providing exact analytical mapping for intermediate states for few-step latent-free generation, with potential for fluid flow image synthesis.",
+      "llm_tldr_cn": "该论文重新思考了基于像素的均值流生成框架，从流匹配ODE推导出区间去噪器，为中间轨迹状态建立了精确的解析映射。这一框架支持少步、无需外部自编码器的潜在自由生成，理论上保证预测位于低维流形上，从而避免梯度偏差。对于以图像形式呈现的流体动力学数据（如流场可视化），该方法可提供更高效、更稳定的生成建模途径。",
+      "llm_tldr": "该论文重新思考了基于像素的均值流生成框架，从流匹配ODE推导出区间去噪器，为中间轨迹状态建立了精确的解析映射。这一框架支持少步、无需外部自编码器的潜在自由生成，理论上保证预测位于低维流形上，从而避免梯度偏差。对于以图像形式呈现的流体动力学数据（如流场可视化），该方法可提供更高效、更稳定的生成建模途径。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -1,0 +1,339 @@
+Title: FlowForm: Synergizing Fluid Physics with Topological Consistency for Satellite Flood Synthesis
+
+URL Source: https://arxiv.org/pdf/2608.03822v1
+
+Published Time: Wed, 05 Aug 2026 01:15:44 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# FlowForm: Synergizing Fluid Physics with Topological Consistency for Satellite Flood Synthesis 
+
+Weihui Zhang Ruizhi Wang Hongye Xu Huiqiong Wang Li Sun Mingli Song 
+
+Zhejiang University, Zhejiang, China     
+
+> weihuizhang@zju.edu.cn ruizhiwang@zju.edu.cn hongyexu@zju.edu.cn huiqiong_wang@zju.edu.cn lsun@zju.edu.cn brooksong@zju.edu.cn
+
+Abstract 
+
+Developing robust flood assessment models requires high-quality paired satellite imagery, yet such data remain scarce for flood-specific image generation. Although generative models pro-vide a promising means of data augmentation, existing methods often yield implausible spatial layouts of flooded regions and distort scene structures. We propose FlowForm, a framework for satellite flood synthesis that integrates SWE-inspired latent regularization with structure-aware conditioning. The Flood Descriptor Module (FDM) imposes differentiable penalties on residuals of the steady-state Shallow Water Equation in auxiliary latent fields at the diffusion bottle-neck. The Terrain Anchor Adapter (TAA) injects depth, semantic, and edge features at four encoder scales of the U-Net. We further curate FloodScape, a large-scale, high-resolution dataset comprising paired satellite images acquired before and after disasters. In addition to standard image-generation metrics, we evaluate the consistency of flooded regions, zero-shot generaliza-tion to a geographically held-out flood event, and sensitivity to individual components. Across all reported comparisons, FlowForm achieves higher visual fidelity, greater similarity between paired images, and stronger consistency of flooded regions. 
+
+# 1 Introduction 
+
+As rainstorm-induced flood risks increase under warming (Zhang et al. 2022), timely post-disaster assessment from satellite imagery can support humanitarian assistance and disaster recovery (Gupta et al. 2019). Data-driven post-disaster and change-detection models have advanced automated as-sessment (Asad et al. 2023; Zang et al. 2025; Zhang et al. 2023b; Safavi and Rahnemoonfar 2022); however, the reliability of these models depends on representative training data. Unlike ordinary imagery, high-quality observations of disasters remain scarce in remote sensing (Rahnemoonfar et al. 2021; Gupta et al. 2019; Wang et al. 2025). This limitation is particularly acute for change analysis, which must distinguish changes related to the event from persistent scenes using spatially aligned pre-disaster and post-disaster observations. Therefore, a useful training pair requires more than simply obtaining two acquisitions from the same location: the images must be sufficiently co-registered, the flood must be visible, and unrelated changes must be minimal. Cloud cover and the short observation windows of flood events make it difficult to collect such pairs at scale. Generative models offer a scalable approach to data augmentation (Goodfellow et al. 2020; Ho et al. 2020; Song et al. 2020; Rombach et al. 2022; Tang et al. 2025; Toker et al. 2024). Diffusion models are particularly effective in this context, as they synthesize detailed imagery while 1arXiv:2608.03822v1 [cs.CV] 4 Aug 2026 accommodating text, metadata, or image conditioning. Prior studies in remote sensing have synthe-sized post-disaster scenes from pre-disaster inputs, demonstrating the feasibility of this data-centric paradigm (Khanna et al. 2023; Lütjens et al. 2024; Rui et al. 2021). However, a visually plausible satellite image does not necessarily represent a logically valid transformation of the provided pre-event scene. A generative model may produce convincing water textures while placing inundations in incorrect regions, or it may depict a generally credible post-disaster scene while arbitrarily alter-ing buildings, roads, and vegetation that should remain unchanged. The synthesis of flood imagery must therefore explicitly control both event-specific changes and the content expected to remain invariant. The primary challenge lies in the localization of flood regions. Data-driven generators learn the appearance of water through RGB correlations; however, an RGB reconstruction objective fails to explicitly encode the relationship between the extent of inundation and local terrain gradients, land-cover categories, or connected water bodies. Consequently, the generated water texture may appear visually credible even if the predicted region is fragmented or misaligned with the surrounding scene. The green boxes in Fig. 1 illustrate instances of disconnected or misplaced inundation appearances. This limitation highlights the necessity for a spatial training signal that operates directly on flood-state features rather than solely on RGB textures. The second challenge is to preserve persistent scene content. Buildings, roads, vegetation bound-aries, and other non-flood structures serve as stable references for interpreting disaster-induced changes. Generic image translation objectives do not explicitly disentangle these elements from flood-related appearance changes. Consequently, the model may displace boundaries, deform in-frastructure, or alter local semantic classes when synthesizing flooded regions. Such errors are particularly detrimental in paired image generation because they confound actual disaster-induced changes with artifacts introduced by the generator. The blue and red boxes in Fig. 1 illustrate ex-amples of geometric distortion and semantic shift, respectively. Structural conditions derived from the pre-event observation can constrain the geometry and semantics of persistent content while allowing flood-affected regions to be modified. Dataset construction presents a related practical challenge. Public paired flood datasets are limited in scale and fidelity (Khanna et al. 2023; Gupta et al. 2019), and nominal pre/post labels do not inherently guarantee a useful synthesis pair. Temporal misalignment, limited flood visibility, missing observations, and cloud contamination diminish the effective diversity of available data. Furthermore, these factors compromise evaluation reliability because a generated image may be compared against a target whose visual changes are ambiguous. Consequently, a flood-specific benchmark should explicitly verify pair validity while ensuring geographic and event diversity. To address these requirements, FlowForm combines SWE-inspired latent regularization with structure-aware conditioning. Specifically, the Flood Descriptor Module (FDM) predicts a latent depth proxy alongside auxiliary flow fields from the diffusion bottleneck. Finite-difference operators evaluate simplified steady-state SWE residuals over these fields, and add the resulting squared residuals to the training objective. In parallel, the Terrain Anchor Adapter (TAA) adaptively selects among relative-depth, semantic, and edge features based on the diffusion timestep and spatial location, and injects the resulting structural representation into four scales of the U-Net encoder. While the FDM operates on flood-state features, the TAA conveys persistent scene cues through the visual backbone. FloodScape provides the aligned pre-event and post-event imagery and structural conditions required to train and evaluate the proposed formulation. The contributions can be summarized as follows: 
+
+• Flood Descriptor Module (FDM): 
+
+We design an auxiliary branch at the U-Net bottleneck to predict a latent depth proxy and 2Figure 1: Comparison of structural, semantic, and flood-region consistency. Blue, red, and green boxes indicate geometric distortion, semantic shift, and fragmented inundation appearance, respec-tively. FlowForm better retains scene structure while producing more coherent flood regions in the displayed examples. auxiliary flow fields. Steady-state SWE residuals computed from these predictions serve as an additional regularization term during training. 
+
+• Terrain Anchor Adapter (TAA): 
+
+TAA injects relative depth, semantic, and edge features conditioned on the diffusion timestep, providing structure-aware guidance that preserves persistent scene content during flood syn-thesis. 
+
+• FloodScape Dataset: 
+
+FloodScape comprises approximately 10,000 high-resolution pre- and post-disaster satellite image pairs, together with spatially aligned structural conditions for training and evaluating flood synthesis methods. 
+
+# 2 Related Work 
+
+2.1 Remote Sensing Datasets for Flood Disasters 
+
+High-quality datasets underpin robust remote sensing applications, ranging from traditional land cover classification to critical tasks such as disaster management and change detection (Zhu et al. 2025; Bai et al. 2020; Zang et al. 2025). Although general-purpose Earth observation datasets offer large-scale image archives, they often fail to satisfy the specialized requirements of disaster-related tasks. Applications such as change detection, post-disaster assessment, and generative dis-aster simulation inherently require accurately aligned pre- and post-disaster image pairs. Existing disaster-specific datasets, including xBD (Gupta et al. 2019) and EBD (Wang et al. 2025), provide 3multi-temporal imagery but still exhibit notable limitations. Specifically, a substantial portion of the imagery labeled as post-disaster lacks visible evidence of disaster-induced changes. Furthermore, persistent challenges such as dense cloud cover and widespread data gaps substantially reduce the availability of valid image pairs. This scarcity of high-quality, temporally aligned pre- and post-disaster samples hinders the training of generative models for post-disaster scene reconstruction. To address this limitation, we present a rigorously curated flood-specific dataset containing precisely paired pre- and post-disaster satellite images, explicitly designed to support generative modeling in this domain. 
+
+2.2 Diffusion Models in Remote Sensing 
+
+Diffusion Probabilistic Models (DPMs) (Ho et al. 2020) have emerged as a dominant generative paradigm in computer vision, offering greater training stability and sample diversity than Gener-ative Adversarial Networks (GANs) (Goodfellow et al. 2020). In remote sensing, recent methods such as Text2Earth (Liu et al. 2025) and Crs-diff (Tang et al. 2024) have successfully applied dif-fusion models to satellite image synthesis, whereas other studies (Khanna et al. 2023; Lütjens et al. 2024) have begun exploring the generation of flood-affected scenes. However, existing generative approaches to flood scenarios are typically formulated as image-to-image style transfer systems that overlook the topological continuity of water bodies. Moreover, they rely primarily on raw optical imagery without incorporating essential geometric and semantic constraints, such as depth maps and semantic masks. The absence of such constraints often leads to structural artifacts and semantic inconsistencies, including distorted infrastructure and misaligned scene elements. To address these limitations, FlowForm introduces the Terrain Anchor Adapter, which integrates multimodal spatial and structural priors into U-Net features in a diffusion-timestep-dependent manner. By enforcing geometric consistency between the generated content and the underlying terrain, this mechanism improves the physical plausibility and structural fidelity of the generated post-disaster scenes. 
+
+2.3 Physical Consistency in Image Generation 
+
+In disaster simulation, physical plausibility is as critical as visual realism. Physics-informed neural networks (PINNs) (Raissi et al. 2019) have demonstrated that physical laws, such as the shallow water equations (SWE) (Qi et al. 2024) and other partial differential equations (PDEs) (Harandi et al. 2024; Cuomo et al. 2022), can be incorporated into loss functions to enforce the conservation of mass and momentum. However, a significant gap remains between these physics-based formu-lations and the requirements of data-driven visual generation. Diffusion models, such as Stable Diffusion, effectively capture pixel-level statistical distributions, yet they do not explicitly encode physical constraints. Conversely, PINN-based approaches typically regress scalar fields, such as wa-ter depth and velocity, rather than generating photorealistic RGB imagery. Consequently, their optimization objectives are difficult to reconcile: diffusion models prioritize visual fidelity, whereas physics-based methods must satisfy strict governing equations. To bridge this gap, FlowForm intro-duces the Flood Descriptor Module, which integrates fluid dynamics constraints directly into the visual generation pipeline. By enforcing physical consistency during synthesis, FlowForm generates flood scenarios that combine photorealistic quality with adherence to fundamental hydrodynamic principles. 4Figure 2: Overall FlowForm architecture: (a) Terrain Anchor Adapter (TAA) and (b) Flood De-scriptor Module (FDM). 
+
+# 3 Method 
+
+FlowForm adopts Stable Diffusion 2.1 (Rombach et al. 2022) as its backbone and augments it with two core components: a Terrain Anchor Adapter (TAA), which provides static structural anchors to preserve the underlying topology, and a Flood Descriptor Module (FDM), which applies simplified steady-state SWE residuals to auxiliary latent fields. The overall architecture is depicted in Fig. 2. 
+
+3.1 Flood Descriptor Module 
+
+FDM takes U-Net features as input and predicts a latent depth proxy h and auxiliary flow fields 
+
+(hu, hv ). Differentiable finite-difference operators evaluate simplified steady-state SWE residuals, whose squared values enter the training objective. The residuals penalize deviations from the mass and momentum equations, including terms coupled to local terrain gradients. 
+
+Flood Descriptor Module Head 
+
+The FDM Head serves as an auxiliary neural branch designed to decode latent flood-state variables from the high-level semantic features of the backbone. Located immediately after the mid-block of the U-Net, this module processes the bottleneck features through a sequence of residual blocks and upsampling layers that mirror the resolution hierarchy of the U-Net decoder. This branch performs two functions: 
+
+• Residual-Guided Feature Extraction: 
+
+During the upsampling process, intermediate feature maps {F (i)
+
+> f dm
+
+} are extracted at multiple scales. These features are spatially aligned with the U-Net decoder and retained to guide visual synthesis through the fusion module. 5Figure 3: Visualization of the latent depth proxy h. Each row shows the continuous prediction, thresholded h > τ mask, boundary overlay, and linked zoom-in view. 
+
+• State Prediction: 
+
+The final layer reconstructs a nonnegative latent depth proxy h and auxiliary flow fields 
+
+(qx, q y), denoted as (hu, hv ) for consistency with SWE notation. We apply a Softplus activa-tion to the h channel to impose non-negativity. The auxiliary branch is jointly optimized via the diffusion reconstruction objective and the SWE-inspired regularizers defined below. Fig. 3 illustrates the latent depth proxy h, the corresponding thresholded flood mask h > τ ,and the mask boundary overlaid on the generated image. The linked magnified views show how the inferred boundary follows the local inundation structure and make boundary estimation errors readily observable. 
+
+SWE-Inspired Latent Regularization 
+
+The composite regularization loss contains an SWE residual term Lf luid and a semantic guidance term Lmask .
+
+Steady-State SWE Residual ( Lf luid ) We use a simplified steady-state form of the Shallow Water Equations (SWE) as SWE-inspired regularization for the auxiliary flow fields. For static post-disaster image synthesis, we set time derivatives to zero and compute mass-equation ( rm) and momentum-equation ( ru, r v) residuals: The mass-equation residual ( rm) is defined as: 
+
+rm = ∂(hu )
+
+∂x + ∂(hv )
+
+∂y (1) 6The momentum-equation residuals ( ru and rv) are defined as: 
+
+ru = ∂(hu 2 + 12 gh 2)
+
+∂x + ∂(huv )
+
+∂y + gh ∂z ∂x rv = ∂(huv )
+
+∂x + ∂(hv 2 + 12 gh 2)
+
+∂y + gh ∂z ∂y 
+
+(2) where g denotes the gravitational constant used in the surrogate residual, and z is a relative-height proxy derived from monocular depth estimation. The proxy supplies local terrain ordering and gradients to the regularizer. Directly summing the mass and momentum residuals causes training instability due to the substantial differences in their magnitudes. We therefore divide each residual term by its batch-wise mean magnitude (e.g., ¯rm). The resulting SWE residual loss is: 
+
+Lf luid =
+
+> ∥∥∥∥
+
+rm
+
+¯rm
+
+> ∥∥∥∥
+> 2
+
++
+
+> ∥∥∥∥
+
+ru
+
+¯ru
+
+> ∥∥∥∥
+> 2
+
++
+
+> ∥∥∥∥
+
+rv
+
+¯rv
+
+> ∥∥∥∥
+> 2
+
+(3) 
+
+Semantic Initialization via Masking ( Lmask ) During the early stages of training, the FDM may converge to the trivial all-zero solution ( h = 0 , hu = 0 , hv = 0 ), which yields zero residuals but provides no useful spatial signal. A semantic flood-candidate prior supplies non-zero spatial targets to the auxiliary branch. We construct Mprior from semantic segmentation by assigning positive targets to flood-candidate classes (e.g., roads, fields, and water bodies) and negative targets to likely obstacles (e.g., buildings and trees). Binary cross-entropy applies these targets to h:
+
+Lmask = BCE (Sigmoid (h − τ ), M prior ) (4) where τ is a threshold on the latent proxy h. Positive mask targets provide a non-zero training signal for the auxiliary branch. 
+
+Cross-Attention Fusion 
+
+A cross-attention block fuses the residual-regularized features before each U-Net decoder upsam-pling block. At decoder level i, visual features F (i) 
+
+> unet
+
+form the queries ( Q), while FDM features F (i)
+
+> f dm
+
+form the keys ( K) and values ( V ). The fused feature F (i) 
+
+> f used
+
+is: 
+
+F (i) 
+
+> f used
+
+= Wout 
+
+> (
+
+Softmax 
+
+> (
+
+β · QK T )
+
+V
+
+> )
+
+(5) where β denotes a learnable temperature parameter that controls the sharpness of the attention map, and Wout represents an output linear projection matrix to restore the feature dimensions. The attention output mixes latent flood-state features into the visual decoder before upsampling. 
+
+3.2 Terrain Anchor Adapter 
+
+The Terrain Anchor Adapter (TAA) injects structural priors into the U-Net encoder to retain persistent scene features. Although dual-branch architectures such as ControlNet (Zhang et al. 2023a) excel in reference-based conditional generation, their substantial parameter overhead makes them impractical for efficient joint training in this specific setting. Unlike computationally intensive models or autoregressive approaches requiring complex sequential modeling (Pan et al. 2025), the TAA operates as a lightweight, parallelizable module. At each timestep, it selects a structural prior for every spatial location before multi-scale U-Net injection. 7Unified Condition Embedding 
+
+We use the mixture-of-experts strategy from UniControl (Qin et al. 2023) to align heterogeneous conditions (e.g., depth, semantics, Canny, and HED) within a shared feature space. Following PixelPonder (Pan et al. 2025), the aligned features are flattened into patch tokens and combined with rotary positional embeddings (RoPE). 
+
+Time-Aware Feature Selection 
+
+TAA selects among structural signals separately at each diffusion stage and spatial location. The network converts multi-modal conditions into time-conditioned features ˆFk,t and spatial query fea-tures Qt. Their matching logits En,k,t are L2-normalized across the K conditions and passed through a softmax, producing a relevance map Wt ∈ RN ×K :
+
+Wn, ·,t = softmax  
+
+> (
+
+En, ·,t 
+
+∥En, ·,t ∥2
+
+> )
+
+(6) where, En,k,t denotes the pre-computed matching logit for the k-th condition at spatial location 
+
+n and timestep t.At each spatial location, an argmax over Wt selects one feature patch from the original inputs: 
+
+F (n) 
+
+> selected,t
+
+=
+
+> K∑
+> k=1
+
+I
+
+> (
+
+k = arg max 
+
+> m∈{ 1,...,K }
+
+Wn,m,t 
+
+> )
+
+F (n) 
+
+> k
+
+(7) We use the straight-through estimator (STE) to propagate gradients through the discrete selec-tion operation. The scores Wt vary with t, while the selected payload carries the original structural-prior features. 
+
+Adaptive Injection 
+
+Four adapter blocks transform Fselected into conditioned representations {F (i)
+
+> adapter
+
+}4 
+
+> i=1
+
+at four res-olution scales. Side connections inject each representation into the corresponding U-Net encoder level. Before each adapter block, the timestep embedding temb is added to its input. Let x(i−1) 
+
+denote the input to the i-th block, with x(0) = Fselected . The time-modulated features are: 
+
+x(i) = AdapterBlock i
+
+> (
+
+x(i−1) + temb 
+
+> )
+
+, F (i) 
+
+> adapter
+
+= x(i) (8) Thus, each selected structural prior enters all four encoder scales after timestep modulation. 
+
+# 4 FloodScape Dataset 
+
+4.1 Data Acquisition and Preprocessing 
+
+The proposed dataset is mainly derived from the Maxar Open Data Program (Maxar Technologies n.d.), supplemented by samples from the xBD (Gupta et al. 2019) and eBD (Wang et al. 2025) datasets. We apply quality control across all sources and discard samples with severe cloud cover, large invalid regions, or no clearly observable flooding in the post-event imagery. This curation yields FloodScape, a collection of approximately 10,000 high-quality, spatially aligned pre- and post-disaster satellite image pairs. 8Image Quality Flood-region Consistency                                                                                                    
+
+> Method FID ↓SSIM ↑LPIPS ↓CLIP ↑PSNR ↑IoU ↑FVPS ↑
+> GAN-based Methods
+> CycleGAN (Zhu et al. 2017) 81.2357 0.4233 0.6676 0.8346 15.4788 0.2175 0.2629 CUT (Park et al. 2020) 76.6915 0.4293 0.6727 0.8317 15.0707 0.2212 0.2640 StegoGAN (Wu et al. 2024) 90.6001 0.3780 0.6762 0.8224 15.6771 0.1938 0.2425 EnCo (Cai et al. 2024) 87.0716 0.4469 0.6895 0.8244 15.7422 0.1762 0.2248
+> Diffusion-based Methods
+> Pix2Pix-Zero (Parmar et al. 2023) 153.8684 0.4379 0.6924 0.7286 14.6958 0.2192 0.2560 CycleNet (Xu et al. 2023) 99.3221 0.3820 0.6742 0.8260 14.7848 0.2069 0.2531 SDEdit (Meng et al. 2021) 104.9919 0.3484 0.6950 0.7818 14.6450 0.2147 0.2520 CycleDiffusion (Wu and De la Torre 2022) 154.1718 0.4243 0.6494 0.8334 15.6980 0.1932 0.2491 ILVR (Choi et al. 2021) 173.4569 0.2552 0.7078 0.7945 15.3755 0.1113 0.1612 EGSDE (Zhao et al. 2022) 87.6277 0.4405 0.6577 0.8334 15.2813 0.1227 0.1806 DiffusionSat (Khanna et al. 2023) 76.3459 0.4849 0.6062 0.8552 15.6403 0.3818 0.3877
+> FlowForm 71.7999 0.4941 0.5671 0.8691 15.7556 0.4413 0.4371
+
+Table 1: Quantitative comparison on FloodScape. The best results are in bold , and the second-best results are underlined. 
+
+4.2 Multi-Modal Condition Construction 
+
+To provide complementary terrain, semantic, and structural priors, we generate four spatially aligned condition maps from each pre-disaster image. Specifically, Depth-Anything-V2 (Yang et al. 2024) and SkySense-O (Zhu et al. 2025) are used to obtain depth and semantic segmentation maps, while the Canny operator (Canny 1986) and HED model (Xie and Tu 2015) extract local edges and structural boundaries, respectively. 
+
+# 5 Experiments 
+
+5.1 Experimental Settings 
+
+Dataset Preparation. 
+
+We evaluate FlowForm on the FloodScape dataset, which is divided into three subsets: 8,716 image pairs for training, 969 for testing, and 442 for zero-shot generalization. The zero-shot set consists of data from the 2022 South Africa flood event, a geographic region explicitly excluded from training, enabling evaluation on an unseen event. All images are resized to 512 × 512 during both training and evaluation to standardize the input resolution and ensure a fair comparison across different methods. 
+
+Baselines. 
+
+We compare FlowForm with GAN-based baselines, including CycleGAN (Zhu et al. 2017), CUT (Park et al. 2020), StegoGAN (Wu et al. 2024), and EnCo (Cai et al. 2024), and diffusion-based baselines, including Pix2Pix-Zero (Parmar et al. 2023), CycleNet (Xu et al. 2023), CycleDiffusion (Wu and De la Torre 2022), SDEdit (Meng et al. 2021), ILVR (Choi et al. 2021), EGSDE (Zhao et al. 2022), and DiffusionSat (Khanna et al. 2023). All trainable baselines use the same FloodScape training split and resolution, while train-free methods use identical pre-disaster inputs and target 9Figure 4: Qualitative comparison on the FloodScape test set. prompts. DiffusionSat serves as the primary satellite-specific baseline, with the remaining methods providing broader reference comparisons. 
+
+Implementation Details. 
+
+FlowForm adopts an image translation framework similar to InstructPix2Pix (Brooks et al. 2023). During the diffusion process, the noisy latent representation of the post-disaster image and the latent representation of the pre-disaster image are concatenated along the channel dimension to form the joint input for the U-Net. To use domain-specific priors, we initialize the backbone network with pre-trained weights from DiffusionSat (Khanna et al. 2023). FlowForm was trained on two NVIDIA RTX A6000 GPUs. During training, we utilize AdamW as the optimizer with the learning rate of 2.5 × 10 −5.
+
+5.2 Qualitative Evaluation 
+
+We present qualitative comparisons between FlowForm and various baseline models. Fig. 4 compares flood-image generation across several representative baselines. Synthesizing a visually coherent transition from dry to inundated conditions remains challenging. In the displayed examples, I2I models and generic architectures such as CUT, EnCo, and ILVR produce weak or fragmented flood appearance. CycleNet produces layouts resembling flooded regions but introduces visible color shifts that reduce image fidelity. Among the displayed baselines, DiffusionSat produces coherent water appearance and retains much of the underlying scene structure, but its inundation boundaries are less distinct in these examples. FlowForm shows clearer flood-region delineation while retaining permanent structures and background semantics. 10 Method FID ↓ SSIM ↑ LPIPS ↓ CLIP ↑ PSNR ↑ IoU ↑ FVPS ↑
+
+Baseline 85.8043 0.4640 0.5849 0.8584 14.8910 0.3724 0.3926 w/ TAA 77.4323 0.4867 0.5775 0.8611 15.3644 0.4059 0.4140 w/ Lmask 83.6728 0.4782 0.5841 0.8477 15.5326 0.4190 0.4174 w/ Lf luid 82.5228 0.4661 0.5892 0.8545 15.5766 0.4088 0.4098 w/ FDM 81.0326 0.4939 0.5807 0.8594 15.4803 0.3991 0.4090 FlowForm 71.7999 0.4941 0.5671 0.8691 15.7556 0.4413 0.4371 
+
+Table 2: Granular ablation study on the FloodScape test set.                                                                                              
+
+> Image Quality Flood-region Consistency
+> Method FID ↓SSIM ↑LPIPS ↓CLIP ↑PSNR ↑IoU ↑FVPS ↑
+> GAN-based Methods
+> CycleGAN (Zhu et al. 2017) 109.1988 0.2755 0.7066 0.8203 14.6525 0.1836 0.2259 CUT (Park et al. 2020) 116.8511 0.2628 0.7421 0.8273 13.8837 0.1917 0.2199 StegoGAN (Wu et al. 2024) 115.4038 0.2372 0.6796 0.8199 14.5507 0.1813 0.2316 EnCo (Cai et al. 2024) 108.4521 0.2612 0.7214 0.8105 14.5833 0.1720 0.2127
+> Diffusion-based Methods
+> Pix2Pix-Zero (Parmar et al. 2023) 192.4312 0.1984 0.7688 0.7156 13.6214 0.1845 0.2052 CycleNet (Xu et al. 2023) 131.2567 0.2345 0.7105 0.7932 13.9542 0.1985 0.2355 SDEdit (Meng et al. 2021) 147.3154 0.2217 0.7802 0.7776 13.7937 0.1861 0.2016 CycleDiffusion (Wu and De la Torre 2022) 195.8423 0.2514 0.6842 0.8167 14.5211 0.1656 0.2173 ILVR (Choi et al. 2021) 187.6626 0.1851 0.7517 0.7779 14.5588 0.0926 0.1349 EGSDE (Zhao et al. 2022) 119.8169 0.2694 0.6570 0.8374 14.4796 0.1021 0.1574 DiffusionSat (Khanna et al. 2023) 110.5482 0.2838 0.6703 0.8429 13.5489 0.2644 0.2935
+> FlowForm 104.7455 0.2909 0.6543 0.8603 14.7841 0.3785 0.3614
+
+Table 3: Zero-shot quantitative comparison on the 442-sample South Africa flood split. The best results are in bold , and the second-best results are underlined. 
+
+5.3 Quantitative Evaluation 
+
+We evaluate distributional and semantic image quality with FID (Heusel et al. 2017) and CLIP (Radford et al. 2021), and paired-reference similarity with PSNR (Hore and Ziou 2010), SSIM (Wang et al. 2004), and LPIPS (Zhang et al. 2018). Water IoU and FVPS (Lütjens et al. 2024) measure agreement between the generated and reference flood regions. As shown in Table 1, FlowForm achieves the best performance across all reported metrics. Its higher Water IoU indicates stronger agreement between generated and reference flood regions, while the improvements in SSIM and LPIPS show that this gain is accompanied by better paired-image similarity. 
+
+Flood-Region Consistency. Water IoU measures the overlap between generated inundation regions and SkySense-O reference water masks. FVPS (Lütjens et al. 2024), defined as the harmonic mean of IoU and (1 − LPIPS) , jointly evaluates flood-region agreement and perceptual similarity. FlowForm achieves the best results on both metrics, indicating more accurate flood-region synthesis while maintaining visual quality. 11 5.4 Ablation Study 
+
+Table 2 details the contributions of the proposed components. The baseline excludes the proposed structural and fluid constraints and serves as the reference configuration. Adding TAA alone re-stricts the generative space with multimodal structural priors and improves all reported metrics, reducing FID from 85.8043 to 77.4323. FDM regularizes the auxiliary flood states through mask and SWE-inspired constraints; each variant improves Water IoU, while combining both FDM losses raises SSIM from 0.4640 to 0.4939. The complete model combines TAA’s anchoring of persistent scene topology with FDM’s guidance of flood-region generation, yielding the best overall perfor-mance, including an FID of 71.7999 and a Water IoU of 0.4413, and confirming the complementary roles of the two modules. 
+
+5.5 Zero-shot Evaluation on a Held-Out Geographic Event 
+
+We evaluate zero-shot performance on 442 images from the 2022 South Africa flood event, which was excluded from training. As shown in Table 3, FlowForm achieves the best performance across all seven metrics, demonstrating effective generalization to this unseen geographic event. Figure 5 provides qualitative comparisons from the same held-out event. FlowForm produces clear and co-herent inundation regions while retaining recognizable vegetation and terrain layouts, consistent with the quantitative results.These results validate its potential for global-scale disaster simulations and zero-shot hazard assessments. 
+
+Figure 5: Qualitative zero-shot comparisons on the held-out South Africa event. 12 6 Limitations 
+
+FlowForm currently formulates flood synthesis as a static 2D mapping from pre- to post-event imagery, while real floods evolve continuously over time and space. This formulation provides an effective starting point for learning inundation patterns from satellite observations. Building on it, future work could model temporal flood evolution from image sequences or extend the framework to 3D scenes for a richer representation of terrain and water. 
+
+# 7 Conclusion 
+
+We introduced FlowForm, a latent diffusion framework combining fluid-physics-inspired regulariza-tion and structure-aware conditioning for satellite flood-image synthesis. FDM imposes steady-state SWE residuals on auxiliary latent flow fields to guide flood-region generation; TAA injects relative-depth, semantic, and edge cues to preserve pre-event scene layouts. Using our curated FloodScape dataset of ∼10,000 high-resolution, spatially aligned pre- and post-disaster satellite image pairs, FlowForm achieves top results across seven metrics on the test set and a held-out South African event. Ablations confirm FDM and TAA’s complementary contributions in synthesizing satellite flood images with high visual fidelity, structural consistency, and flood-region agreement. 
+
+# References 
+
+Muhammad Haroon Asad, Malik Muhammad Asim, Muhammad Naeem Mumtaz Awan, and Muhammad Haroon Yousaf. Natural disaster damage assessment using semantic segmentation of uav imagery. In 2023 International Conference on Robotics and Automation in Industry (ICRAI) ,pages 1–7. IEEE, 2023. Yanbing Bai, Junjie Hu, Jinhua Su, Xing Liu, Haoyu Liu, Xianwen He, Shengwang Meng, Erick Mas, and Shunichi Koshimura. Pyramid pooling module-based semi-siamese network: A benchmark model for assessing building damage from xbd satellite imagery datasets. Remote Sensing , 12 (24):4055, 2020. Tim Brooks, Aleksander Holynski, and Alexei A Efros. Instructpix2pix: Learning to follow image editing instructions. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 18392–18402, 2023. Xiuding Cai, Yaoyao Zhu, Dong Miao, Linjie Fu, and Yu Yao. Rethinking the paradigm of content constraints in unpaired image-to-image translation. In Proceedings of the AAAI conference on artificial intelligence , volume 38, pages 891–899, 2024. John Canny. A computational approach to edge detection. IEEE Transactions on pattern analysis and machine intelligence , PAMI-8:679–698, 1986. doi: 10.1109/TPAMI.1986.4767851. Jooyoung Choi, Sungwon Kim, Yonghyun Jeong, Youngjune Gwon, and Sungroh Yoon. Ilvr: Con-ditioning method for denoising diffusion probabilistic models. arXiv preprint arXiv:2108.02938 ,2021. Salvatore Cuomo, Vincenzo Schiano Di Cola, Fabio Giampaolo, Gianluigi Rozza, Maziar Raissi, and Francesco Piccialli. Scientific machine learning through physics–informed neural networks: Where we are and what’s next. Journal of Scientific Computing , 92(3):88, 2022. 13 Ian Goodfellow, Jean Pouget-Abadie, Mehdi Mirza, Bing Xu, David Warde-Farley, Sherjil Ozair, Aaron Courville, and Yoshua Bengio. Generative adversarial networks. Communications of the ACM , 63(11):139–144, 2020. Ritwik Gupta, Richard Hosfelt, Sandra Sajeev, Nirav Patel, Bryce Goodman, Jigar Doshi, Eric Heim, Howie Choset, and Matthew Gaston. xbd: A dataset for assessing building damage from satellite imagery. arXiv preprint arXiv:1911.09296 , 2019. Ali Harandi, Ahmad Moeineddin, Michael Kaliske, Stefanie Reese, and Shahed Rezaei. Mixed formulation of physics-informed neural networks for thermo-mechanically coupled systems and heterogeneous domains. International Journal for Numerical Methods in Engineering , 125(4): e7388, 2024. Martin Heusel, Hubert Ramsauer, Thomas Unterthiner, Bernhard Nessler, and Sepp Hochreiter. Gans trained by a two time-scale update rule converge to a local nash equilibrium. Advances in neural information processing systems , 30, 2017. Jonathan Ho, Ajay Jain, and Pieter Abbeel. Denoising diffusion probabilistic models. Advances in neural information processing systems , 33:6840–6851, 2020. Alain Hore and Djemel Ziou. Image quality metrics: Psnr vs. ssim. In 2010 20th international conference on pattern recognition , pages 2366–2369. IEEE, 2010. Samar Khanna, Patrick Liu, Linqi Zhou, Chenlin Meng, Robin Rombach, Marshall Burke, David Lobell, and Stefano Ermon. Diffusionsat: A generative foundation model for satellite imagery. 
+
+arXiv preprint arXiv:2312.03606 , 2023. Chenyang Liu, Keyan Chen, Rui Zhao, Zhengxia Zou, and Zhenwei Shi. Text2earth: Unlocking text-driven remote sensing image generation with a global-scale dataset and a foundation model. 
+
+IEEE Geoscience and Remote Sensing Magazine , 2025. Björn Lütjens, Brandon Leshchinskiy, Oceane Boulais, Farrukh Chishtie, Natalia Diaz-Rodriguez, Margaux Masson-Forsythe, Ana Mata-Payerro, Christian Requena-Mesa, Aruna Sankara-narayanan, Aaron Pina, et al. Generating physically-consistent satellite imagery for climate visualizations. IEEE Transactions on Geoscience and Remote Sensing , 62:1–11, 2024. Maxar Technologies. Maxar open data program. https://registry.opendata.aws/maxar-open-data, n.d. Chenlin Meng, Yutong He, Yang Song, Jiaming Song, Jiajun Wu, Jun-Yan Zhu, and Stefano Ermon. Sdedit: Guided image synthesis and editing with stochastic differential equations. arXiv preprint arXiv:2108.01073 , 2021. Yanjie Pan, Qingdong He, Zhengkai Jiang, Pengcheng Xu, Chaoyi Wang, Jinlong Peng, Haoxuan Wang, Yun Cao, Zhenye Gan, Mingmin Chi, et al. Pixelponder: Dynamic patch adaptation for enhanced multi-conditional text-to-image generation. arXiv preprint arXiv:2503.06684 , 2025. Taesung Park, Alexei A Efros, Richard Zhang, and Jun-Yan Zhu. Contrastive learning for unpaired image-to-image translation. In European conference on computer vision , pages 319–345. Springer, 2020. 14 Gaurav Parmar, Krishna Kumar Singh, Richard Zhang, Yijun Li, Jingwan Lu, and Jun-Yan Zhu. Zero-shot image-to-image translation. In ACM SIGGRAPH 2023 conference proceedings , pages 1–11, 2023. Xin Qi, Gustavo AM de Almeida, and Sergio Maldonado. Physics-informed neural networks for solving flow problems modeled by the 2d shallow water equations without labeled data. Journal of Hydrology , 636:131263, 2024. Can Qin, Shu Zhang, Ning Yu, Yihao Feng, Xinyi Yang, Yingbo Zhou, Huan Wang, Juan Car-los Niebles, Caiming Xiong, Silvio Savarese, et al. Unicontrol: A unified diffusion model for controllable visual generation in the wild. arXiv preprint arXiv:2305.11147 , 2023. Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh, Sandhini Agarwal, Girish Sastry, Amanda Askell, Pamela Mishkin, Jack Clark, et al. Learning transferable visual models from natural language supervision. In International conference on machine learning ,pages 8748–8763. PmLR, 2021. Maryam Rahnemoonfar, Tashnim Chowdhury, Argho Sarkar, Debvrat Varshney, Masoud Yari, and Robin Roberson Murphy. Floodnet: A high resolution aerial imagery dataset for post flood scene understanding. IEEE Access , 9:89644–89654, 2021. doi: 10.1109/ACCESS.2021.3090981. Maziar Raissi, Paris Perdikaris, and George E Karniadakis. Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations. Journal of Computational physics , 378:686–707, 2019. Robin Rombach, Andreas Blattmann, Dominik Lorenz, Patrick Esser, and Björn Ommer. High-resolution image synthesis with latent diffusion models. In Proceedings of the IEEE/CVF con-ference on computer vision and pattern recognition , pages 10684–10695, 2022. Xue Rui, Yang Cao, Xin Yuan, Yu Kang, and Weiguo Song. Disastergan: Generative adversarial networks for remote sensing disaster image generation. Remote Sensing , 13(21):4284, 2021. Farshad Safavi and Maryam Rahnemoonfar. Comparative study of real-time semantic segmentation networks in aerial images during flooding events. IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing , 16:4–20, 2022. Jiaming Song, Chenlin Meng, and Stefano Ermon. Denoising diffusion implicit models. arXiv preprint arXiv:2010.02502 , 2020. Datao Tang, Xiangyong Cao, Xingsong Hou, Zhongyuan Jiang, Junmin Liu, and Deyu Meng. Crs-diff: Controllable remote sensing image generation with diffusion model. IEEE Transactions on Geoscience and Remote Sensing , 62:1–14, 2024. Datao Tang, Xiangyong Cao, Xuan Wu, Jialin Li, Jing Yao, Xueru Bai, Dongsheng Jiang, Yin Li, and Deyu Meng. Aerogen: Enhancing remote sensing object detection with diffusion-driven data generation. In Proceedings of the Computer Vision and Pattern Recognition Conference , pages 3614–3624, 2025. Aysim Toker, Marvin Eisenberger, Daniel Cremers, and Laura Leal-Taixé. Satsynth: Augmenting image-mask pairs through diffusion models for aerial semantic segmentation. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , pages 27695–27705, 2024. 15 Zeyu Wang, Chuyi Wu, Feng Zhang, and Junshi Xia. Constructing an extensible building damage dataset via semi-supervised fine-tuning across 12 natural disasters. Journal of Remote Sensing ,5:0733, 2025. doi: 10.34133/remotesensing.0733. URL https://spj.science.org/doi/abs/10.34133/ remotesensing.0733. Zhou Wang, Alan C Bovik, Hamid R Sheikh, and Eero P Simoncelli. Image quality assessment: from error visibility to structural similarity. IEEE transactions on image processing , 13(4):600–612, 2004. Chen Henry Wu and Fernando De la Torre. Unifying diffusion models’ latent space, with applica-tions to cyclediffusion and guidance. arXiv preprint arXiv:2210.05559 , 2022. Sidi Wu, Yizi Chen, Samuel Mermet, Lorenz Hurni, Konrad Schindler, Nicolas Gonthier, and Loic Landrieu. Stegogan: Leveraging steganography for non-bijective image-to-image translation. In 
+
+Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 7922–7931, 2024. Saining Xie and Zhuowen Tu. Holistically-nested edge detection. In Proceedings of the IEEE international conference on computer vision , pages 1395–1403, 2015. Sihan Xu, Ziqiao Ma, Yidong Huang, Honglak Lee, and Joyce Chai. Cyclenet: Rethinking cycle consistency in text-guided diffusion for image manipulation. Advances in Neural Information Processing Systems , 36:10359–10384, 2023. Lihe Yang, Bingyi Kang, Zilong Huang, Zhen Zhao, Xiaogang Xu, Jiashi Feng, and Hengshuang Zhao. Depth anything v2. Advances in Neural Information Processing Systems , 37:21875–21911, 2024. Qi Zang, Jiayi Yang, Shuang Wang, Dong Zhao, Wenjun Yi, and Zhun Zhong. Changediff: A multi-temporal change detection data generator with flexible text prompts via diffusion model. In Proceedings of the AAAI Conference on Artificial Intelligence , volume 39, pages 9763–9771, 2025. Lvmin Zhang, Anyi Rao, and Maneesh Agrawala. Adding conditional control to text-to-image diffusion models. In Proceedings of the IEEE/CVF international conference on computer vision ,pages 3836–3847, 2023a. Richard Zhang, Phillip Isola, Alexei A Efros, Eli Shechtman, and Oliver Wang. The unreasonable effectiveness of deep features as a perceptual metric. In Proceedings of the IEEE conference on computer vision and pattern recognition , pages 586–595, 2018. Shulei Zhang, Liming Zhou, Lu Zhang, Yuting Yang, Zhongwang Wei, Sha Zhou, Dawen Yang, Xiaofan Yang, Xiuchen Wu, Yongqiang Zhang, et al. Reconciling disagreement on global river flood changes in a warming climate. Nature Climate Change , 12(12):1160–1167, 2022. Yuwei Zhang, Peng Liu, Lajiao Chen, Mengzhen Xu, Xingyan Guo, and Lingjun Zhao. A new multi-source remote sensing image sample dataset with high resolution for flood area extraction: Gf-floodnet. International Journal of Digital Earth , 16(1):2522–2554, 2023b. Min Zhao, Fan Bao, Chongxuan Li, and Jun Zhu. Egsde: Unpaired image-to-image translation via energy-guided stochastic differential equations. Advances in Neural Information Processing Systems , 35:3609–3623, 2022. 16 Jun-Yan Zhu, Taesung Park, Phillip Isola, and Alexei A Efros. Unpaired image-to-image translation using cycle-consistent adversarial networks. In Proceedings of the IEEE international conference on computer vision , pages 2223–2232, 2017. Qi Zhu, Jiangwei Lao, Deyi Ji, Junwei Luo, Kang Wu, Yingying Zhang, Lixiang Ru, Jian Wang, Jingdong Chen, Ming Yang, et al. Skysense-o: Towards open-world remote sensing interpretation with vision-centric visual-language modeling. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , pages 14733–14744, 2025. 17

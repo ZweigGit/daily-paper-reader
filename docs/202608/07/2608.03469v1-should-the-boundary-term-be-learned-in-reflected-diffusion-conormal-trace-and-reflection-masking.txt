@@ -1,0 +1,1410 @@
+Title: Should the Boundary Term Be Learned in Reflected Diffusion? Conormal Trace and Reflection Masking
+
+URL Source: https://arxiv.org/pdf/2608.03469v1
+
+Published Time: Wed, 05 Aug 2026 01:07:03 GMT
+
+Number of Pages: 28
+
+Markdown Content:
+# Should the Boundary Term Be Learned in Reflected Diffusion? Conormal Trace and Reflection Masking 
+
+# Ziyue Wang 1, Takafumi Kanamori 1
+
+> 1
+
+Institute of Science Tokyo 
+
+Abstract 
+
+We study score learning for reflected diffusion on bounded domains. Reflection keeps trajectories feasible but does not ensure that the learned score satisfies the boundary behavior implied by the forward process. With implicit score matching, integration by parts leaves a boundary term, and we show that it depends on one scalar at each boundary point: the diffusion-weighted normal component of the score, or conormal trace. The no-flux condition fixes this value while leaving the re-maining boundary components unrestricted; under anisotropic diffusion it generally differs from the ordinary normal score component. On hyperrectangles, our parametrization enforces the required trace without additional trainable parameters or a stochastic boundary estimator and, under regularity assump-tions, can represent the true score, whereas fixing an incorrect value creates an error that more data cannot remove. We ex-tend the construction to simplices and polygonal domains and identify reflection masking: hard reflection can keep samples feasible even when the learned trace is wrong, so post-reflection metrics may hide the error. Experiments show the clearest separation with less frequent reflection, anisotropic diffusion, and mass near intersections of constraints; under full reflection, final sample placement improves inconsistently, illustrating how hard repair can mask boundary-score errors and decouple score accuracy from downstream generation quality. 
+
+# 1 Introduction 
+
+Many generative tasks impose hard constraints: pixel values stay in a range, compositions remain on a simplex, and physical configurations stay inside a feasible set. Reflected diffusion enforces feasibility by reflecting a stochastic trajectory at the boundary (Lou and Ermon 2023; Fishman et al. 2023a). As in ordinary score-based diffusion, a neural network learns the score, the vector field used by the reverse-time dynamics to transform noise into data (Song et al. 2021; Ho, Jain, and Abbeel 2020). Reflection keeps the numerical trajectory inside the domain, but does not ensure that this learned field obeys the boundary behavior of the forward process. This distinction matters for training. A standard objective, implicit score matching (ISM), removes the unknown data score by integration by parts (Hyvärinen 2005). The boundary contribution is absent on an unbounded space, but remains as a surface term on a bounded domain. Ignoring or misspecifying it can change which score field the objective favors near the boundary. The surface term depends on one scalar at each boundary point: the normal component of the diffusion-weighted score, which we call the conormal trace. The no-flux condition fixes this boundary value. In density estimation and generation, anisotropic diffusion can serve as a preconditioner for hetero-geneous scales or strongly correlated targets, while spatially varying tensors can adapt to local geometry. The conormal trace reduces to the ordinary normal component under identity diffusion but generally differs in these broader settings. Existing treatments make one of three choices: erase the term by pinning the score at the wall, estimate it with a stochas-tic local-time correction (Nordenhög and Sharma 2025), or impose the value required by the forward process. We take the third route. On a hyperrectangle, a known boundary value plus a free neural field times a face-vanishing factor fixes only the required scalar and leaves the other boundary degrees of freedom trainable. Relative to the same backbone, this adds neither trainable parameters nor a stochastic boundary estimator, and makes the surface term independent of the net-work parameters during optimization. Under our assumptions the class still contains the true score. Because the boundary value is fixed by architecture, its residual is determined before training and cannot be corrected by optimization; this distinc-tion drives both our theory and diagnostics. We extend the class face-wise to the simplex and evaluate a signed-distance version on polygonal domains. Figure 1 summarizes the boundary term, our parametriza-tion, and reflection at evaluation. During sampling, an out-of-domain proposal is reflected back into the domain; this changes the point, not the learned score. Full reflection can therefore produce feasible samples despite a wrong boundary value. We call this reflection masking . We separate score accuracy from sample behavior using the conormal-trace residual (CTR), no-reflection leakage, endpoint correction, maximum mean discrepancy (MMD), and sliced Wasserstein distance (SWD) under several repair schedules. Analytic boxes expose the architectural condition and score-error floor directly; simplex and polygon experiments provide scoped ex-tensions. Full-repair placement remains condition-dependent, so the evidence supports score estimation rather than universal generation quality. 
+
+Contributions. We identify the no-flux conormal trace seen by reflected ISM; give an exact hyperrectangle parametriza-arXiv:2608.03469v1 [stat.ML] 4 Aug 2026 Figure 1: The reflected-ISM boundary term sees only n⊤As , and hard reflection masks trace errors. (a) The boundary integral can be erased (zero-boundary), estimated (local-time), or imposed algebraically ( n⊤As = n⊤beff ). (b) On a box, v = beff + (1 − x2 
+
+> i
+
+)h
+
+pins the conormal component while leaving tangential components free. (c) Full repair folds infeasible proposals back into G;trace errors surface as repair weakens (M1, M4; Section 5). tion with representation and misspecification results, plus simplex and polygon extensions; and separate boundary-score accuracy from sample feasibility in theory and experiments. 
+
+Related work. Truncated and generalized score-matching methods handle bounded domains by weighting the loss with functions that vanish at the boundary (Liu, Kanamori, and Williams 2022; Yu, Drton, and Shojaie 2020, 2019; Williams and Liu 2024; Scealy and Wood 2020). Our method instead uses the boundary value supplied by the no-flux condition of the reflected forward process. Work on reflected and constrained diffusion (Lou and Ermon 2023; Fishman et al. 2023a,b), reflected Schrödinger bridges and flow matching (Deng et al. 2024; Xie et al. 2024), mirror and projected diffusion (Liu et al. 2024; Christopher, Baek, and Fioretto 2024), and dual-constrained training (Khalafi, Ding, and Ribeiro 2024) changes the stochastic path, geometry, sampler, or constraint-enforcement mechanism. We address a narrower question: how to train the score for a fixed reflected diffusion when ISM leaves a boundary term. Riemannian and simplex-or Dirichlet-based diffusion models use different geometries or forward processes (Bortoli et al. 2022; Huang et al. 2022; Avdeyev et al. 2023; Stark et al. 2024). In particular, methods whose diffusion vanishes at the simplex boundary are outside the uniformly elliptic reflected setting considered here and are not direct baselines. 
+
+# 2 Preliminaries and Problem Statement 
+
+This section introduces the forward diffusion, reflected proba-bility flow, and estimation task. 
+
+2.1 Score-based diffusion 
+
+Let X0 ∼ pdata . The forward diffusion follows 
+
+dX t = bt(Xt) dt + σt(Xt) dW t, X0 ∼ pdata ,
+
+where Wt is standard Brownian motion, At(x) = 
+
+> 12
+
+σt(x)σt(x)⊤ is the diffusion tensor, and ρt is the den-sity of Xt. We allow state-dependent At and write (∇ · 
+
+At)i = P 
+
+> j
+
+∂j At,ij . The score of the forward marginal is 
+
+s⋆t (x) = ∇x log ρt(x) and is approximated by a neural field 
+
+sθ (t, x ) (Song et al. 2021; Ho, Jain, and Abbeel 2020). The reverse-time drift depends on s⋆t ; in practice it uses sθ and, for reflected diffusion, the boundary repair described below. We sample t ∼ q on [tmin , T ], where tmin > 0 avoids possible nonsmoothness at t = 0 and is the stopping time of the reverse solver. Denoising score matching regresses onto a conditional transition score. Gaussian transitions give a simple closed form (Song and Ermon 2020), while reflected diffusions can use constrained transition kernels or approxi-mations (Lou and Ermon 2023). ISM instead integrates by parts, so that only sθ and its divergence appear (Hyvärinen 2005): 
+
+Et,X t
+
+ ∥sθ ∥2 + 2 ∇· sθ
+
+
+
+(up to a constant; the A-weighted version appears in Section 3). We focus on ISM not because constrained denoising targets are impossible, but because it exposes the boundary integral directly and lets us study general diffusion tensors and domains without constructing a conditional transition score for each geometry. 
+
+2.2 Reflected diffusion and the no-flux condition 
+
+Let G ⊂ Rd be bounded, with closure ¯G, C2 boundary 
+
+∂G , and outward unit normal n. Hyperrectangles are treated face-wise; edges and corners do not contribute to the (d − 1) -dimensional surface integrals. A reflected diffusion adds a boundary local-time term that keeps Xt in ¯G (Lou and Ermon 2023; Fishman et al. 2023a). The local time increases only on ∂G . In the full-dimensional theory, At is symmetric and uniformly elliptic, so its eigenvalues are bounded above and away from zero. The density satisfies ∂tρt = −∇ · Jt, and reflection imposes the no-flux condition: 
+
+Jt = btρt − At∇ρt − ρt∇· At, Jt · n = 0 on ∂G, 
+
+where Jt is the probability flux and Jt · n = 0 states that no net probability mass crosses the boundary; ∇ · At = 0 when 
+
+At is spatially constant. On the sampling side, the reverse SDE is run with repair : a specified reflection map that returns an infeasible proposal to G and changes the proposal, not the learned score. Under anisotropic At, continuous conormal reflection acts along Atn. The coordinate-wise fold used in our simulations agrees with this direction when Atn ∥ n
+
+and is approximate otherwise; the discrepancy is included in the simulation (Sim) term of the excess-risk decomposition (Appendix A.7, Proposition S2). This repair map is distinct from the Euclidean projection used only as an evaluation metric in Section 4. We use classical pointwise boundary values; weak traces are deferred to Section 6. 
+
+2.3 Problem statement 
+
+We estimate the time-dependent score of a specified reflected forward process, rather than sampling from a given unnormal-ized energy. The inputs are samples X0 ∼ pdata supported on 
+
+G, the coefficients bt and At, and the geometry (G, ∂G, n ).The output is a field sθ (t, x ) that approximates ∇ log ρt in the interior and satisfies the boundary value implied by the same forward process. Training pairs (t, X t) are obtained by reflected noising, so ρt need not be evaluated. Analytic densities used in controlled experiments are evaluation ora-cles, not training inputs. Sections 4–5 assess score estimation separately from reverse-time sample behavior. The central issue is that ISM on a bounded domain leaves a surface term; the next section derives the boundary value it requires. 
+
+# 3 Flux-Compatible Score Classes 
+
+We identify the boundary quantity in weighted ISM, derive its target from no flux, and construct score classes that satisfy it by design. We call such fields flux-compatible .
+
+3.1 The weighted ISM boundary term 
+
+For a candidate score field s, the A-weighted Fisher divergence is 
+
+DA(s, s ⋆) = Et∼q, X t∼ρt
+
+(s − s⋆)⊤At(s − s⋆),
+
+with all fields evaluated at (t, X t). It reduces to the usual Fisher divergence when A = I. Expanding the square and integrating the cross term by parts gives 
+
+DA(s, s ⋆) = Et,X t
+
+s⊤Ats + 2 ∇· (Ats)| {z } 
+
+> interior ISM objective L(s)
+
+− 2 Et
+
+Z
+
+> ∂G
+
+ρt n⊤Ats dS + C, 
+
+with C independent of s. On an unbounded domain the surface integral is absent. On a bounded domain it need not vanish. For a vector field w, its normal trace is the scalar boundary function n⊤w. We therefore call n⊤Ats the conormal trace of the score . The surface term depends on s only through this value; when At = I, it is the ordinary normal trace. 
+
+3.2 Standing assumptions 
+
+Assumption 1. For t ∈ [tmin , T ], ρt ∈ C1( ¯G), ρt > 0
+
+on ∂G , At ∈ C1( ¯G; Rd×d) is symmetric uniformly elliptic, and all vector fields used below are regular enough for the divergence theorem. The no-flux condition Jt · n = 0 holds pointwise on ∂G .
+
+These conditions justify pointwise integration by parts and division by ρt on the boundary. On a hyperrectangle they apply on each face, while lower-dimensional intersections are ignored in surface measure. Singular data, vanishing boundary density, and weak reflected solutions require weak-trace variants. 
+
+3.3 No-flux determines the conormal score trace 
+
+Define the effective drift beff  
+
+> t
+
+(x) = bt(x) − ∇ · At(x); when 
+
+At is spatially constant, beff  
+
+> t
+
+= bt.
+
+Proposition 1 (No-flux conormal score trace) . Under As-sumption 1, 
+
+n⊤At∇ log ρt = n⊤beff  
+
+> t
+
+on ∂G. 
+
+For spatially constant At, this becomes n⊤At∇ log ρt =
+
+n⊤bt; for At = I it reduces to the normal-trace condition 
+
+∂n log ρt = bt · n.
+
+(Proof in Appendix A.1.) Thus the forward process fixes one scalar linear condition, not the whole score vector. Under anisotropic or spatially varying At, the conormal trace can differ from the ordinary normal component n⊤s. Section 5.1 makes this concrete: for 
+
+A = diag(1 , 4) , imposing the value appropriate to A = I
+
+produces a fourfold error on the second-coordinate face. 
+
+3.4 Boundary-free weighted ISM 
+
+Let βA(t, x ) = n(x)⊤beff  
+
+> t
+
+(x) and define the conormal-compatible class 
+
+SAβA = s : n⊤Ats(t, x ) = βA(t, x ) on ∂G .
+
+By Proposition 1, the true score s⋆ ∈ S AβA , so restricting optimization to this class does not exclude the population minimizer. 
+
+Proposition 2 (Conormal-compatible weighted ISM) . Let 
+
+sθ ∈ S AβA . Under Assumption 1, 
+
+DA(sθ , s ⋆) = Et,X t
+
+s⊤ 
+
+> θ
+
+Atsθ + 2 ∇ · (Atsθ ) + C, 
+
+where C is independent of θ: on the trace-compatible class the boundary surface integral of Section 3.1 equals R 
+
+> ∂G
+
+ρt βA dS 
+
+and absorbs into the constant. The interior weighted ISM objective and the weighted Fisher divergence therefore share minimizers over SAβA .
+
+(Proof in Appendix A.2.) The boundary integral does not have to be zero: on SAβA it is independent of θ and is absorbed into C. No stochastic boundary estimate is required, although simulation, statistical, optimization, and approximation errors remain (Appendix A.7). In practice we minimize the empirical interior objective over reflected-forward samples and use a Hutchinson probe only for the Jacobian trace in ∇ · (Atsθ ).3.5 Exact hyperrectangle construction 
+
+Let G = [ −1, 1] d and set vθ (t, x ) = At(x)sθ (t, x ). On the relative interior of either face xi = ±1, flux compatibility is equivalent to vθ,i = beff  
+
+> t,i
+
+.
+
+Proposition 3 (Exact hyperrectangle construction) . Let hθ :[0 , T ] × G → Rd be any smooth neural field and define 
+
+vθ,i (t, x ) = beff  
+
+> i
+
+(t, x ) + (1 − x2 
+
+> i
+
+)hθ,i (t, x ),sθ = A−1 
+
+> t
+
+vθ .
+
+Then n⊤Atsθ = βA on each face of G.
+
+(Proof in Appendix A.3.) Because 1 − x2 
+
+> i
+
+= 0 on xi = ±1,the ith component of vθ is fixed there, while its remain-ing components remain trainable. These are tangent to the face; when At = I, they are also the usual tangential score components. At a face intersection, one condition is imposed for each incident face. For reflected OU drift 
+
+b(t, x ) = −λ(t)x and At = I, the construction becomes 
+
+sθ,i = −λ(t)xi + (1 − x2 
+
+> i
+
+)hθ,i . It adds no trainable parame-ters relative to the common backbone, although beff  
+
+> t
+
+and A−1
+
+> t
+
+must be evaluated. Lemma S1 and Proposition S1 show that every sufficiently regular compatible score has this form with a continuous h⋆; approximation by a finite neural network remains separate (Corollary S1). The same backbone is shared across baselines, so differences are not caused by network capacity. 
+
+3.6 Simplex and polygon extensions 
+
+Simplex extension. The construction transfers face-wise to the probability simplex ∆K−1 under constant isotropic tangent diffusion A = aP , where P = I − K−111 ⊤
+
+projects onto the simplex tangent space. The mobility en-velope M∆(x) = diag( x) − xx ⊤ replaces (1 − x2 
+
+> i
+
+) as the face-vanishing factor: on xi = 0 , its ith row is zero, so the network cannot change the required boundary component; in the relative interior, its range is the tangent space. Ap-pendix B.14 gives the construction and representation result. Here A = aP is uniformly elliptic on the tangent subspace, not in ambient RK ; boundary-degenerate Wright–Fisher and Dirichlet-type diffusions use a different forward process and remain out of scope. 
+
+Polygon / signed-distance extension. For a general poly-gon, coordinate-wise factors are unavailable. We instead use the signed distance, a nearest boundary point, a tangent pro-jector, and a depth gate that vanishes on ∂G (Appendix B.13). The construction fixes the conormal component locally while leaving the tangential component trainable. On nonconvex or disconnected domains, the nearest boundary point can be non-unique and the signed distance is nonsmooth on the medial axis. We therefore evaluate this extension empirically rather than claiming a global representation result (Section 5.4, Experiment 4). 
+
+Boundary error determined by the parametrization. For every structured class in our comparisons, the parametriza-tion fixes n⊤Atsθ on the boundary before training. The flux-compatible class fixes it to βA and has zero conormal-trace residual (CTR); a class that pins another value retains a nonzero residual before and after optimization. Appendix A.9 gives the closed forms, including the dependence on the drift and, for spatially varying A, on ∇ · A. Proposition S1 shows that the box construction contains every sufficiently regular compatible score. Under the additional assumptions of Proposition S3, an incorrect fixed trace also yields a positive score-error floor for any amount of training data. A local-time estimator avoids fixed misspecification but in-troduces boundary-gradient variance, which reaches 900 ×
+
+exact quadrature in our controlled estimator experiment. Ap-pendix A.8 states these results, and Sections 5.1–5.2 test them. 
+
+# 4 Diagnostics 
+
+We evaluate two questions separately: whether the learned score satisfies the boundary condition of the forward process, and how samples behave under a specified repair schedule. Repair can enforce feasibility even when the score fails the first criterion. Let m denote the reflection interval in the reverse solver: m = 1 repairs after every numerical step, finite m > 1 repairs every m steps, and m = ∞ disables repair. Table 1 summarizes the core diagnostics and their interpretation. 
+
+Boundary-value error. The conormal-trace residual 
+
+(CTR) = Et
+
+R 
+
+> ∂G
+
+|n⊤Ats − βA|2dν t measures the squared error in the boundary quantity of Proposition 1. For poly-topes, νt is uniform on each face and averaged across faces; Appendix A.9 gives the closed forms. The density-weighted variant CTR ρ, with dν t = ρt dS , controls the boundary-bias functional through Corollary S2. The proposed parametriza-tion has CTR zero pointwise, independently of training. Unlike endpoint metrics, CTR evaluates the learned field itself and is unaffected by the repair schedule; we therefore treat it as the primary boundary diagnostic. 
+
+Behavior under reduced or no repair. No-reflection leak-age (leakNone) is the fraction of final reverse-SDE endpoints outside ¯G in a separate run with m = ∞. Let Xraw be the endpoint before terminal projection and let ΠG be Eu-clidean projection onto ¯G. Projection displacement (Pro-jDisp) = E∥Xraw − ΠG(Xraw )∥ measures the final endpoint correction, not cumulative reflection cost. Under full repair it is zero up to numerical tolerance by construction. 
+
+Placement and score error. The face-mass error aver-ages the absolute generated–target probability difference in prespecified bands near active faces , i.e., constraints assigned nonnegligible target mass in those bands; target probabilities are analytic or estimated with an indepen-dent high-accuracy reference sampler. The boundary-band error is the analogous quantity near the full boundary. Both use generated samples in ¯G and measure repaired-sample placement. When an analytic score is available, 
+
+ShellErr A,δ = E[( s − s⋆)⊤At(s − s⋆) | dist( Xt, ∂G ) ≤ δ]
+
+measures weighted score error in a boundary layer of width 
+
+δ. Tangential boundary error and the simplex unit-normal convention are defined in Appendix A.9. We also report 
+
+MMD 2 and sliced 1-Wasserstein distance (SWD) for the diagnostic definition detects masking-resist. role CTR Et                              
+
+> R
+> ∂G |n⊤Ats−βA|2dν twrong conormal trace on ∂G
+> yes primary (boundary) leakNone no-fold reverse-SDE exit fraction boundary-drift error yes primary (operational) ProjDisp E∥Xraw −ΠG(Xraw )∥,raw endpoint external repair bur-den for m > 1primary (operational) face-mass error |gen. −target |near-face mass (active faces, in-domain) near-face placement no supporting boundary-band error analogous near-∂G dis-crepancy (in-domain) near-boundary placement no supporting
+> MMD 2, SWD hard-reflected distribu-tional distance global distributional fit no secondary (masking contrast)
+
+Table 1: Core diagnostics and their role in the evaluation hierarchy. CTR and leakNone remain informative under full repair; operational and distributional metrics gain trace sensitivity only as repair weakens (Section 5.3). 
+
+Figure 2: Under anisotropic diffusion, the no-flux condition fixes the conormal rather than the normal trace. For A =diag(1 , 4) and b = −3x, the target n⊤As = n⊤b = −3 is identical on the positive x- and y-faces. Enforcing n⊤s = −3
+
+is correct on x = +1 , where a1 = 1 , but yields n⊤As = −12 
+
+on y = +1 , where a2 = 4 . The flux-compatible class matches the target on both faces. Values are analytic and have no seed variance. repaired distribution, but do not treat them as direct tests of boundary-trace correctness under full repair. Experiment 3 also reports an active-sign error , the signed generated–target near-face mass difference on the intended side of each active face. It is distinct from ProjDisp; correlation details are in Appendix B.22. 
+
+# 5 Experiments and Results 
+
+We use the experiments to answer three questions: whether the conormal trace is the boundary quantity that matters, whether a wrong fixed trace creates a statistical floor, and when that fixed error becomes visible in sampler-level metrics. Sections 5.1–5.2 form Experiment 1; Experiments 2–3 (Sec-tion 5.3) study reflection masking on synthetic and real-design boxes; Experiment 4 (Section 5.4) is a scoped signed-distance test on a disconnected polygon. Simplex/HITChip diagnostics remain in Appendix B.17. 
+
+Setup, baselines, and gains. Methods share data, backbone, optimizer, sampler, repair schedule, and seeds within each con-dition. The structured baselines differ only in their boundary composition: flux-compatible pins n⊤As = βA; Fishman-style zero-boundary pins the whole score to zero; normal-zero pins only the Euclidean normal component to zero; wrong-sign flips the required conormal trace; wrong-normal-only im-poses the trace computed as if A = I. For any smaller-is-better metric, define ∆metric = min b∈B nonflux metric b −metric flux ,so positive ProjDisp or face-mass gain favors flux-compatible scores. Experiments 2–3 use A = Q diag(1 , κ )Q⊤, with eigenvalue ratio κ and non-axis-aligned Q giving rotated anisotropy. Experiment 2 is a two-dimensional corner-active GMM with mass near two intersecting faces. Experiment 3 is a three-dimensional real-design posterior: a box-truncated Gaussian whose covariance and rotation come from the dia-betes design matrix and whose mass lies near three faces. 
+
+Reflection-masking hypotheses. M1: under full repair (m = 1 ), post-repair metrics can hide nonzero CTR; ProjDisp is zero up to tolerance by construction and face-mass gains can have either sign. M2: in the A = I control, flux-compatible and wrong-normal-only impose the same trace. M3: in the single-active-face, full-repair control, no operational gain is expected. M4: as repair weakens, fixed trace misspecification should appear in operational metrics, especially under rotated anisotropy and multiple active faces. Experiments 2–3 test M1, M2, and M4; Appendix B.24 tests M2–M3. Supplementary Table S17 gives the full prediction–outcome scorecard. MMD and SWD remain secondary because hard repair can mask score errors; baseline formulas and estimator controls are in Appendices B.12 and B.5. Figure 3: Statistical consequences of boundary parametrization. (a) In the identifiable family sϕ = b + ϕ∇c, c(x, y ) = cos( πx ) cos( πy ), ϕ0 = 0 .5; the flux-compatible estimator follows the 1/n MSE guide, while the Fishman-style family approaches the squared bias of its pseudo-true value ϕ⋆F = 0 .760 . (b) Boundary-shell A-weighted score error decreases with training-set size 
+
+N for flux-compatible scores but plateaus for the three incorrect-trace classes; all use the same Jacobian stabilizer. Error bars show mean ± one standard deviation over five paired seeds. (c) Face-average CTR stays fixed at the architecture-imposed values 
+
+0, 9, 9, 36 for flux-compatible, zero-boundary (Fishman), normal-zero, and wrong-sign. The zero value is drawn at the log-axis floor; dotted lines are closed-form values. 
+
+5.1 Experiment 1a — Conormal, not normal, trace determines the boundary error 
+
+On [−1, 1] 2 with drift b = −λx , we use the ana-lytic density log ρλ,ϵ,A (x, y ) = − λ 
+
+> 2
+
+(x, y )⊤A−1(x, y ) + 
+
+ϵ cos( πx ) cos( πy )−log ZA, whose oscillatory derivative van-ishes on each face, so the no-flux conormal target is βA = n⊤b
+
+(Appendix B.4). At A = diag(1 , 4) and (λ, ϵ ) = (3 , 0.5) ,enforcing the normal trace as if A = I is fourfold off target on the eigenvalue-four face, whereas the flux-compatible construction is exact (Figure 2). The measured CTR equals its closed form with zero seed variance. Flux-compatible scores attain A-weighted score and shell errors 2.79 × 10 −3 and 
+
+3.09 × 10 −3; the best values across the incorrect-trace classes are 2.13 × 10 −1 and 3.959 , respectively (Supplementary Table S2). The A = I controls, score-error fields, and tangential-trace fields are in Appendix B.2. Across the state-dependent-diffusion grid, measured CTR equals its closed-form predic-tion to floating-point precision and is unchanged by training (Appendix B.18); Appendix B.5 gives the boundary-estimator comparison. 
+
+Paired Fishman-style comparison. Appendix B.12 com-pares only the Fishman-style zero-boundary parametrization under the same reflected-ISM pipeline, not the full system of Fishman et al. (2023a). At b = 0 , both flux-compatible and zero-boundary classes impose the correct zero conormal trace, but zero-boundary also erases the tangential boundary score. When b̸ = 0 , zero-boundary additionally imposes the wrong conormal value; anisotropic A can further separate normal-only from conormal constraints. The operational gap appears once repair is removed. 
+
+5.2 Experiment 1b — Sample-size scaling and the misspecification floor 
+
+Figure 3 checks the predictions of Appendix A.8. Panel (a) uses sϕ = b + ϕ∇c, c(x, y ) = cos( πx ) cos( πy ), with truth 
+
+ϕ0 = 0 .5. The flux-compatible family contains the truth; the Fishman-style family does not and converges to the pseudo-true value ϕ⋆F = 0 .760 . Panels (b)–(c) sweep the training-bank size N in the same box setting. All four classes use the same non-capping Jacobian stabilizer λJac E∥∇ s∥2
+
+> F
+
+with λJac = 10 −2 to prevent finite-bank divergence wells (Appendix B.7). The boundary-shell risk drops from 32 .0 to 
+
+0.12 for flux-compatible scores but plateaus at 6.4, 6.0, and 
+
+22 .8 for zero-boundary, normal-zero, and wrong-sign. CTR remains exactly 0/9/9/36 with zero seed variance. 
+
+5.3 Experiments 2–3 — When fixed trace errors become operationally visible 
+
+CTR directly measures trace misspecification and is un-affected by repair. Experiments 2–3 ask when this fixed structural error becomes visible in sampler-level diagnos-tics. Both experiments use κ ∈ { 1, 4, 16 }, repair intervals 
+
+m ∈ { 1, 2, 4, 8, ∞} , and six architecture-matched baselines. Experiment 2 uses the two-face GMM; Experiment 3 uses the three-dimensional real-design posterior with a Gibbs/TMVG Figure 4: Projection-displacement gain, min b∈B nonflux ProjDisp b − ProjDisp flux , versus repair interval m for a corner-active GMM with two active faces (left) and a three-dimensional box-truncated Gaussian with diabetes-design covariance (right). Positive values favor flux-compatible scores. Here A = Q diag(1 , κ )Q⊤; κ = 1 is isotropic and Q is non-axis-aligned in rotated cells. The gain is masked at m = 1 and emerges toward m = ∞; face-mass placement is in Appendices B.21 and B.22. reference sampler. Full target definitions, grids, controls, and seed counts are in Appendices B.21, B.22, and B.24. The fold repairs sample locations rather than the learned score. Thus classes with nonzero CTR can look similar under full repair, while the same misspecification appears through leakage and projection displacement as repair weakens. Fig-ure 4 shows this transition. At rotated κ = 16 , ProjDisp gain increases from approximately zero at m = 1 to 4.32 
+
+on the synthetic target and 2.11 on the real-design target at 
+
+m = ∞. The A = I control shows no flux-vs-wrong-normal distinction (M2), and the separate single-active-face controls are null (M3). We do not claim a one-to-one link between CTR and generation quality: full-repair face-mass placement is condition-dependent, and secondary datasets and extreme-drift behavior are reported in Appendices B.8, B.10, B.11, and B.25. 
+
+5.4 Experiment 4 — Signed-distance extension on a disconnected polygon 
+
+Appendix B.23 evaluates the signed-distance-function con-struction on a disconnected polygon made of a nonconvex L-polygon, a square island, and a narrow rectangle. This extension lacks the box no-misspecification theorem, so it is an empirical scope test; all methods share the same Jacobian stabilizer with λJac = 10 −2. Against an equal-CTR scalar mask at m = ∞, the tangent-preserving construction reduces ProjDisp from 0.407 to 0.224 and boundary-band error from 
+
+0.226 to 0.183 , while component KL worsens from 0.013 
+
+to 0.209 (Supplementary Table S16). Thus the extension improves boundary correction in this test but not component allocation or general generation quality. 
+
+# 6 Discussion and Scope 
+
+Theory. Flux-compatible ISM separates boundary-trace correctness from interior expressivity. Proposition 1 supplies the conormal trace from the forward process, and Proposi-tion 3 gives a box parametrization that meets it while leaving the backbone, hence the tangential score, free. Section 3.6 extends this logic face-wise to simplices and by a signed-distance construction. CTR is architectural, not learned, as Section 5.1 verifies. 
+
+Experimental interpretation. CTR exposes trace misspec-ification that full repair can hide in MMD/SWD and placement metrics. No-reflection leakage is informative when trajecto-ries reach the boundary but can lose power otherwise. The largest boundary-band, face-mass, and ProjDisp gains occur with rotated anisotropy, multiple active faces, and weak repair. Full-repair placement is condition-dependent; we therefore claim boundary correctness, not a universal generation-quality gain. It matters most when invalid outputs are unacceptable or projections between repairs are costly. 
+
+Limitations. The no-misspecification theorem is exact only for hyperrectangles under Assumption 1; weak-trace vari-ants remain open. The simplex result is face-wise, and the polygon test is empirical with a shared Jacobian penalty. Moderate-dimensional simplex/HITChip experiments are structural diagnostics; empirical ISM can overfit the diver-gence. Near-delta and single-face controls are inconclusive or null (Supplementary Table S17). In the box setting, conor-mal compatibility adds no trainable parameters or stochas-tic boundary estimator; its operational benefit is scoped to anisotropy, multiple active constraints, and weak repair. 
+
+Generative AI disclosure. Generative AI tools were used for language refinement, manuscript review, and code/package auditing. All scientific claims, proofs, experiments, code, and submitted artifacts were independently verified and approved by the authors. Supplementary Material A Proofs 
+
+A.1 Proof of Proposition 1 
+
+The no-flux condition gives 0 = Jt·n = ρtbt·n−n⊤At∇ρt−
+
+ρtn⊤(∇ · At). Since ∇ρt = ρt∇ log ρt and ρt > 0 on ∂G ,division by ρt gives n⊤At∇ log ρt = n⊤(bt − ∇ · At) = 
+
+n⊤beff  
+
+> t
+
+. If At is spatially constant, ∇ · At = 0 ; if At = I, the identity becomes ∂n log ρt = bt · n.
+
+A.2 Proof of Proposition 2 
+
+Expand DA(s, s ⋆) = E[s⊤As ]−2E[s⊤As ⋆]+ E[( s⋆)⊤As ⋆].For fixed t, the cross term is Eρt [s⊤As ⋆] = R
+
+> G
+
+(As ) · ∇ ρt dx .By the divergence theorem, 
+
+Z
+
+> G
+
+(As ) · ∇ ρt dx =
+
+Z
+
+> ∂G
+
+ρt n⊤As dS −
+
+Z
+
+> G
+
+ρt ∇ · (As ) dx. 
+
+If s ∈ S AβA , then n⊤As = βA on ∂G , so the boundary integral equals R 
+
+> ∂G
+
+ρt βA dS , independent of trainable parameters. Absorbing this term and the true-score norm E[( s⋆)⊤As ⋆]
+
+into a constant C and averaging over t ∼ q gives DA(s, s ⋆) = 
+
+Et,X t [s⊤As + 2 ∇ · (As )] + C.
+
+A.3 Proof of Proposition 3 
+
+On the face xi = 1 , n = ei and n⊤As = vi; on xi = −1,
+
+n = −ei and n⊤As = −vi. The target trace n⊤beff equals 
+
+beff  
+
+> i
+
+on xi = 1 and −beff  
+
+> i
+
+on xi = −1. The construction 
+
+vθ,i = beff  
+
+> i
+
++ (1 − x2 
+
+> i
+
+)hθ,i satisfies 1 − x2 
+
+> i
+
+= 0 on both faces, giving vi = beff  
+
+> i
+
+on both, which matches both target identities. 
+
+A.4 Face-wise factorization 
+
+Lemma S1 (Face-wise factorization) . Let ui ∈ C1([ −1, 1] d)
+
+satisfy ui(x) = 0 whenever xi = ±1. Then there exists a continuous function hi such that ui(x) = (1 − x2 
+
+> i
+
+)hi(x); for 
+
+|xi| < 1, hi = ui/(1 − x2 
+
+> i
+
+), with continuous face extensions 
+
+hi(±1, x −i) = ∓ 12 ∂iui(±1, x −i).Proof. For |xi| < 1, set hi(x) = ui(x)/(1 − x2 
+
+> i
+
+). Since 
+
+ui(1 , x −i) = 0 and ui ∈ C1, Taylor expansion in the i-th coordinate gives ui(xi, x −i) = ( xi −1) ∂iui(1 , x −i)+ o(xi −
+
+1) as xi → 1. Combined with 1 − x2 
+
+> i
+
+= −(xi − 1)(1 + xi),this gives lim xi→1 ui(x)/(1 − x2 
+
+> i
+
+) = − 12 ∂iui(1 , x −i). The 
+
+xi → − 1 limit is analogous and equals 12 ∂iui(−1, x −i).Continuity follows from ui ∈ C1.
+
+A.5 No boundary misspecification on boxes 
+
+Proposition S1 (No boundary misspecification on boxes) . As-sume G = [ −1, 1] d, and for each fixed t let s⋆ ∈ C1( ¯G; Rd),
+
+A ∈ C1( ¯G) uniformly elliptic, and beff ∈ C1( ¯G; Rd). If 
+
+s⋆ satisfies the no-flux conormal trace, then there exists a continuous h⋆(t, ·) : ¯G → Rd such that 
+
+s⋆(t, x ) = A−1beff + M (x)h⋆(t, x ),M (x) = diag(1 − x21, . . . , 1 − x2
+
+> d
+
+).
+
+Proof. For each fixed t, define v⋆ = As ⋆ and ui = v⋆i −
+
+beff  
+
+> i
+
+. On each face xi = ±1, the conormal trace condition gives v⋆i = beff  
+
+> i
+
+, hence ui = 0 . Lemma S1 yields ui =(1 − x2 
+
+> i
+
+)h⋆i (t, ·) for continuous h⋆i . Stacking coordinates, 
+
+v⋆ = beff + M (x)h⋆, and since A is uniformly elliptic, 
+
+s⋆ = A−1[beff + M (x)h⋆]. The function h⋆ inherits the 
+
+t-dependence of s⋆.
+
+A.6 Approximation transfer (Corollary S1) 
+
+Corollary S1 (Approximation transfer) . If A is uniformly elliptic with λmin (A) ≥ a0 > 0 and a neural class ap-proximates h⋆ with E∥hθ − h⋆∥2 ≤ ε2, then the induced score satisfies DA(sθ , s ⋆) ≤ a−10 ε2 up to the vector-norm convention. Proof. Let sθ = A−1[beff + M h θ ] and s⋆ = A−1[beff +
+
+M h ⋆]. Then sθ −s⋆ = A−1M (hθ −h⋆), so (sθ −s⋆)⊤A(sθ −
+
+s⋆) = ( hθ − h⋆)⊤M A −1M (hθ − h⋆). Since λmin (A) ≥ a0,
+
+∥A−1∥ ≤ a−10 and ∥M ∥ ≤ 1, so DA(sθ , s ⋆) ≤ a−10 E∥hθ −
+
+h⋆∥2 ≤ a−10 ε2. Constants depending on the vector-norm convention are suppressed. 
+
+A.7 Boundary bias and excess-risk decomposition (Proposition S2) 
+
+For a general score field s, define the interior weighted ISM functional L(s) = EP [s⊤As + 2 ∇ · (As )] and the boundary-bias functional 
+
+B(s) = Et
+
+Z
+
+> ∂G
+
+ρt(x)n⊤Ats(t, x ) − βA(t, x )dS. 
+
+The integration-by-parts identity gives DA(s, s ⋆) = L(s) + 
+
+C − 2B(s), and B(s) = 0 when s ∈ S AβA . Let P∆ be the distribution generated by a discretized reflected forward sim-ulator and define L∆ accordingly; let bLN, ∆ be its empirical version. For H ⊂ S AβA , let sH minimize DA over H, and let 
+
+ˆs satisfy bLN, ∆(ˆ s) ≤ inf s∈H bLN, ∆(s) + εopt .
+
+Proposition S2 (Excess-risk decomposition) . For H ⊂ S AβA ,
+
+DA(ˆ s, s ⋆) ≤ D A(sH, s ⋆)
+
+| {z }
+
+> Approx
+
++2 sup 
+
+> s∈H
+
+| bLN, ∆(s) − L ∆(s)|
+
+| {z }
+
+> Stat
+
++ 2 sup 
+
+> s∈H
+
+|L ∆(s) − L (s)|
+
+| {z }
+
+> Sim
+
++εopt .
+
+For a non-trace-compatible class, the same argument in-curs an additional boundary-bias term 2 sup s,s ′∈H |B (s) −B(s′)| ≤ 4 sup s∈H |B (s)|.Proof. For s ∈ H ⊂ S AβA , Proposition 2 gives DA(s, s ⋆) = 
+
+L(s) + C, so DA(ˆ s, s ⋆) − D A(sH, s ⋆) = L(ˆ s) − L (sH).Decomposing this difference by adding and subtracting L∆
+
+and bLN, ∆ at both ˆs and sH, the empirical optimization condition bounds the middle empirical difference by εopt , the two empirical-process terms by 2 sup s∈H | bLN, ∆(s)−L ∆(s)|,and the two simulation terms by 2 sup s∈H |L ∆(s) − L (s)|.Adding DA(sH, s ⋆) gives the stated bound. For non-trace-compatible H, the identity becomes DA(s, s ⋆) = L(s)+ C −
+
+2B(s); comparing two elements introduces −2[ B(s)−B (s′)] ,bounded by 2 sup s,s ′∈H |B (s) − B (s′)| ≤ 4 sup s∈H |B (s)|.This decomposition is deterministic: it separates approxi-mation, statistical, simulation, and optimization errors with-out assuming finite-sample rates. Flux-compatible ISM re-moves boundary misspecification and the trainable boundary-estimator term; it does not eliminate the other three. 
+
+A.8 Statistical role of the boundary parametrization 
+
+This appendix expands the statistical reading of Section 3. The boundary parametrization is not a sampling heuris-tic; it changes the estimation problem itself. For a gen-eral score field s, define the boundary-bias functional 
+
+B(s) = Et
+
+R 
+
+> ∂G
+
+ρt [n⊤Ats − βA] dS , so that the integration by parts of Section 3.1 reads DA(s, s ⋆) = L(s) + C − 2B(s)
+
+with C independent of s: interior ISM estimates the score risk up to B, and the choice of class decides what happens to 
+
+B.The three treatments of Figure 1 then separate statistically. 
+
+Pinned classes (zero-boundary, normal-zero, wrong-sign, wrong-normal-only; Appendix B.12) fix n⊤Ats on ∂G to a θ-independent function, so B is constant on the class and interior ISM shares its minimizer with DA — a faithful within-class criterion. Their cost is representational bias : unless the pinned trace is the no-flux trace, the class excludes s⋆ and a risk floor remains (Proposition S3). An estimated boundary term (local-time) has no representational bias but re-introduces the boundary integral as a trainable stochastic term, whose gradient variance exceeds exact quadrature by ≈ 900 × at 
+
+λ = 1 (Appendix B.5). The imposed flux-compatible class has neither cost: B ≡ 0, the class contains s⋆ (Proposition S1), and the excess risk reduces to the four standard terms of Proposition S2. Pinning any trace makes ISM faithful within its class; only the no-flux trace makes the class contain the truth. For a pinned class the boundary-bias term of Proposi-tion S2 is vacuous — n⊤Ats is θ-independent on ∂G , so 
+
+sup s,s ′∈H |B (s) − B (s′)| = 0 — yet Experiment 1 shows such classes carry large score error. The floor locates that cost where it actually lives: in the approximation term, bounded 
+
+below on any class that pins the wrong trace. 
+
+Proposition S3 (Trace-misspecification floor) . Let G be a hyperrectangle and F one of its faces, with (d − 1) -dimensional measure |F | and inward slab Sδ = {x ∈ G :dist( x, F ) ≤ δ} (vol( Sδ ) = |F | δ). Assume, with constants uniform in t: (i) a0I ⪯ At(x) ⪯ a1I on ¯G; (ii) every 
+
+s ∈ H satisfies n⊤Ats − βA ≡ ∆F on F , with |∆F | > 0
+
+(for the diagonal-A OU families of Appendix A.9, ∆2 
+
+> F
+
+is the listed per-face CTR); (iii) ρt ≥ ρmin > 0 on Sδ0 ;(iv) et := s(t, ·) − s⋆(t, ·) is L-Lipschitz on Sδ0 for every 
+
+s ∈ H (for L = 0 read |∆F |/(2 a1L) = + ∞). Then, with 
+
+δ⋆ := min( δ0, |∆F |/(2 a1L)) , every s ∈ H obeys 
+
+DA(s, s ⋆) ≥ ρmin a0 |F | δ⋆
+
+∆2
+
+> F
+
+4a21
+
+> 0.
+
+In words: a wrongly pinned trace forces a positive risk floor whose driver ∆2 
+
+> F
+
+is the closed-form CTR, computable before any experiment — a wrong boundary class cannot be trained, or fed enough data, out of its bias. 
+
+Proof. It suffices to bound EXt∼ρt [e⊤ 
+
+> t
+
+Atet] for each t
+
+and average over t ∼ q. On the face, Proposition 1 gives 
+
+n⊤Ats⋆ = βA, so n⊤Atet = ∆ F there. For y ∈ F ,
+
+|∆F | = |n⊤At(y) et(y)|≤ ∥ At(y) n∥ ∥ et(y)∥ ≤ a1∥et(y)∥,
+
+since At(y) is symmetric with λmax ≤ a1 and ∥n∥ = 1 ;hence ∥et∥ ≥ | ∆F |/a 1 on F . Any x ∈ Sδ⋆ has an orthogonal foot point y ∈ F with ∥x − y∥ ≤ δ⋆ (hyperrectangle faces are flat), so the Lipschitz bound gives 
+
+∥et(x)∥ ≥ ∥ et(y)∥ − L δ ⋆ ≥ |∆F |
+
+a1
+
+− |∆F |
+
+2a1
+
+= |∆F |
+
+2a1
+
+.
+
+Integrating, 
+
+E[e⊤ 
+
+> t
+
+Atet] ≥ a0
+
+Z
+
+> G
+
+ρt∥et∥2dx ≥ a0ρmin 
+
+Z
+
+> Sδ⋆
+
+∥et∥2dx 
+
+≥ a0ρmin |F | δ⋆
+
+∆2
+
+> F
+
+4a21
+
+.
+
+The bound is per-face: taking the maximum over the pinned faces sharpens it, and the slabs of distinct faces may be summed once δ⋆ is below half their separation. The Lipschitz constant L is finite for any neural class with bounded weights and smooth activations, and enters only through the shell depth: a steeper class can localize its error more sharply near 
+
+F , but cannot remove it. Two corollaries tie the identity to measurement. First, CTR upper-bounds the hidden boundary bias, so it is a statistical quantity, not merely a geometric diagnostic; second, on a compatible identifiable submodel the score-risk bound becomes a parameter-error bound. 
+
+Corollary S2 (CTR controls the boundary bias) . Let dμ ∂ =
+
+q(t) ρt(x) dS (x) dt on [0 , T ] × ∂G , with total mass μ∂ =
+
+Et
+
+R 
+
+> ∂G
+
+ρt dS (finite under Assumption 1), and let CTR ρ(s) = 
+
+R |n⊤Ats − βA|2 dμ ∂ . Then |B (s)| ≤ pμ∂ CTR ρ(s).Proof. B(s) = R (n⊤Ats − βA) dμ ∂ ; apply Cauchy– Schwarz in L2(μ∂ ).
+
+Corollary S3 (Parameter estimation in identifiable submod-els) . Let HΘ = {sϑ : ϑ ∈ Θ} ⊂ S AβA with s⋆ = sϑ0 ∈ H Θ,and suppose the local identifiability bound DA(sϑ, s ϑ0 ) ≥
+
+c ∥ϑ − ϑ0∥2 holds on a neighborhood of ϑ0 containing the estimator ˆϑ. Then, in the notation of Proposition S2, 
+
+∥ ˆϑ − ϑ0∥2 ≤ c−1h
+
+2 sup 
+
+> s∈H Θ
+
+| bLN, ∆(s) − L ∆(s)|
+
++ 2 sup 
+
+> s∈H Θ
+
+|L ∆(s) − L (s)| + εopt 
+
+i
+
+.Proof. Since s⋆ ∈ H Θ, the approximation term of Proposi-tion S2 vanishes; chain c∥ ˆϑ − ϑ0∥2 ≤ D A(s ˆϑ, s ⋆) with the remaining terms. We state Corollary S3 for trace-compatible classes only. For a pinned class with the wrong trace, sϑ0 /∈ H Θ: the estimator concentrates near a pseudo-true parameter instead, and Proposition S3 lower-bounds the score risk at any such parameter, so no consistency statement around ϑ0 is available in that case. 
+
+A.9 Closed-form CTR family across architectural classes 
+
+A direct corollary of Propositions 1 and 3 is that the conormal trace each architectural class enforces on ∂G is a fixed function of the class, the drift, and (where relevant) ∇ · At. For the box [−1, 1] d with diagonal state-dependent diffusion 
+
+Aκ(x) = diag(1 + κx i) (|κ| < 1) and drift b(x) = −λx ,routine computation gives the face-average squared trace residual 
+
+CTR correct = 0 , CTR omit = κ2,
+
+CTR normal zero 
+
+= λ2 + κ2,
+
+CTR wrong sign = 4( λ2 + κ2).
+
+On the simplex ∆K−1 with A = aP and OU drift toward the barycenter, the analogous computation (Appendix B.14) gives 
+
+CTR flux = 0 ,
+
+CTR zero -flux = CTR full -boundary -zero = λ2/K 2,
+
+CTR wrong -sign = 4 λ2/K 2,
+
+in the coordinate-CTR convention defined below. Every alternative class is therefore fixed at its own non-zero deterministic value. Because the face-vanishing factors (1 − x2 
+
+> i
+
+) on the box and M∆(x)
+
+on the simplex (Appendix B.14) algebraically eliminate the trainable backbone hθ from v ∂G , the on-boundary value of v does not depend on θ at all and CTR is architectural by construction, not trainable. Section 5.1 verifies this directly: across the 280 state-dependent-diffusion training runs (140 at d = 2 , 140 at d = 4 ), the post-training measured CTR equals its closed-form predicted value to floating-point precision in every cell, with zero seed variance for every baseline and every κ, regardless of the magnitude the loss reaches during training (the four baselines’ ISM loss trajectories span roughly −8 to +17 across the 280 cells: −4 to +8 at d = 2 
+
+and −8 to +17 at d = 4 ; the absolute scale grows with d because the box ISM objective accumulates contributions from more faces). 
+
+Tangential boundary error and the unit-normal convention. The tangential boundary error TBE A(s) =
+
+Et
+
+R 
+
+> ∂G
+
+∥P AT (s − s⋆)∥2 
+
+> A
+
+dν t, with A-tangent projection P AT z =
+
+z − n (n⊤Az )/(n⊤An ), measures whether a method suppresses the tangential components the no-flux condition leaves free. The CTR formulas above use the coordinate-CTR convention : on the box (axis-aligned faces, ∥n∥ = 1 ) the coordinate-normal trace vi = ( As )i
+
+and the unit-normal trace n⊤As coincide. On the simplex ∆K−1 the intrinsic outward unit normal of the face {xi = 0 } inside the plane 
+
+1⊤x = 1 is νi = −P e i/∥P e i∥ with ∥P e i∥2 = ( K −1) /K , so the unit-normal CTR is a factor K/ (K − 1) larger than the coordinate CTR; we report coordinate CTR throughout, and the unit-normal value follows by multiplying by K/ (K − 1) face-wise. 
+
+Figure S1: Only the flux-compatible construction matches the target normal trace b · n = −3. E1 normal trace sθ · n
+
+along the face x = +1 at (λ, ϵ ) = (3 , 0.5) (target dashed). Boundary-zero and normal-zero pin to 0; wrong-sign pins to 
+
++3 .
+
+# B Experimental details and additional results 
+
+B.1 Experiment-code index 
+
+The main text refers to experiments by number; internally the runs carry the short codes used in the appendix headers and the supplementary code, collected here. E1 = box trace characterization, isotropic and state-dependent (Section 5.1); A1/A2 = isotropic and anisotropic conormal ablations; A3 = boundary-hugging leakage; E3 = estimator-variance comparison; E4 = five-mode GMM; E5a/E5b = simplex K = 3 / moderate-K; E6 = state-dependent-box CTR; T4 = dimension stress; P1 = (κ, m ) phase diagram (Section 5.3); P2 = real-design posterior (Section 5.3); P3 = SDF polygon (Section 5.4); P5 = single-active-face negative controls. There is no P4. 
+
+Computing environment. The reported GPU experiments were run on a local Windows workstation with an NVIDIA GeForce RTX 5060 Ti (16 GB). Per-run environment snapshots in the code-and-data package record Python 3.12.13 and PyTorch 2.11.0+cu128; commands, configurations, and seeds are stored with the correspond-ing run artifacts. 
+
+B.2 E1 full main table 
+
+The primary cell (λ, ϵ ) = (3 , 0.5) , with all 7 method classes including the exact-score oracle and unconstrained-ISM strawman, is reported below. Means ± standard deviations are over 5 seeds. 
+
+B.3 Full (λ, ϵ ) phase grid 
+
+The full (λ, ϵ ) analytic grid (4 reflection strengths λ ∈ { 0, 1, 3, 10 }× 3 anisotropies ϵ ∈ { 0, 0.2, 0.5} × 7 model classes × 5 seeds = 420 runs) underlies Figures S4–S5. In drift-dominated cells 
+
+(λ ≥ 1, ϵ = 0) , the flux-compatible class has the largest advantage (2.0–2.8 orders of magnitude); when ϵ > 0, tangential and oscillatory approximation errors reduce the relative gap to 0.3–0.7 orders. 
+
+B.4 A2 anisotropic conormal full table 
+
+On [−1, 1] 2 with drift b = −λx , the A-compatible oracle is 
+
+log ρλ,ϵ,A (x, y ) = − λ 
+
+> 2
+
+x⊤A−1x + ϵ cos( πx ) cos( πy ) − log ZA.The oscillatory normal derivative vanishes on every face, so 
+
+n⊤A∇ log ρ = n⊤b and the conormal target is βA = −λ; A = I
+
+recovers the isotropic companion. method bulk shell 0.02 normal trace tangential oracle (true score) 0 0 1.89e–14 ± 0 0unconstrained ISM 54.2 ± 2 4650 ± 100 37 900 ± 1000 278 ± 20 unconstr. + bndry quad. 2.49e–03 ± 4e–04 5.29e–02 ± 1e–02 5.19e–02 ± 8e–03 3.38e–02 ± 7e–03 zero-boundary (Fishman) 0.163 ± 0.001 7.17 ± 0.02 9.00 ± 0 1.23 ± 0normal-zero 0.107 ± 0.001 6.31 ± 0.02 9.00 ± 0 0.516 ± 0.01 wrong-sign trace 0.376 ± 0.003 24.1 ± 0.1 36.00 ± 0 1.67 ± 0.07 
+
+flux-compatible (ours) 5.42e–04 ± 5e–05 2.06e–03 ± 7e–04 0 2.39e–03 ± 8e–04 
+
+Table S1: E1 full table at (λ, ϵ ) = (3 , 0.5) , 5 seeds. 
+
+method predicted CTR measured CTR score err (A) shell 0.05 (A) 
+
+correct conormal 0 0 ± 0 2.79e–3 ± 3.9e–4 3.09e–3 ± 6.1e–4 
+
+wrong normal-only 40.5 40.50 ± 0 2.13e–1 ± 9.2e–3 4.195 ± 2.0e–1 zero-boundary 9 9.00 ± 0 2.90e–1 ± 6.5e–3 3.959 ± 3.3e–2 wrong-sign conormal 36 36.00 ± 0 3.92e–1 ± 4.3e–3 7.667 ± 8.2e–2 
+
+Table S2: A2 anisotropic conormal test, A = diag(1 , 4) , λ = 3 , ϵ = 0 .5, mean ± std over 5 seeds. 
+
+B.5 E3 estimator-variance details 
+
+The reported gradient covariance trace is computed with a mini-batch of J = 256 samples and reported as the mean over 5 seeds at λ = 3 , ϵ = 0 .5. The local-time estimator uses one-step reflected-Euler overshoots calibrated against the analytic boundary integral; the exact-quadrature oracle uses an analytic surface integral on [−1, 1] 2.For the unconstrained-architecture groups, the network is initialized from a converged full_quad checkpoint to suppress interior variance and isolate the estimator contribution. A complementary 
+
+λ-sweep shows variance ratios between the local-time estimator and exact quadrature of ≈ 900 × at λ = 1 , falling to 43 × at λ = 10 
+
+(915 ×, 537 ×, 42 .7× at λ = 1 , 3, 10 ). The boundary-gradient ratio 
+
+R∂ for ours plus local time is 0 for every h, confirming that a trace-compatible score nullifies the trainable boundary term as predicted by Proposition 2. 
+
+B.6 Parameter recovery in the identifiable submodel (Figure 3a) 
+
+We use the A=I analytic density log ρφ(x, y ) = − λ 
+
+> 2
+
+∥x∥2 +
+
+φ c (x, y ) − log Zφ with c = cos( πx ) cos( πy ), drift b = −λx 
+
+held fixed and known (making φ the only unknown; letting λ
+
+vary would move the trace target and reintroduce a non-constant boundary term), and truth φ0 = 0 .5, λ = 3 . The true score is 
+
+s⋆ = b + φ0k with k = ∇c; because n⊤k = 0 on every face (as sin( ±π) = 0 ), the compatible family sφ = b + φk lies in 
+
+SAβA for all φ and contains the truth, while the Fishman family 
+
+sF 
+
+> φ
+
+= (1 − x2)(1 − y2)( b + φk ) cannot. Both are affine in φ,so the empirical interior-ISM objective is an exact quadratic and the estimator is closed-form, ˆφ = −bE[w · u + ∇· u]/bE[∥u∥2] with 
+
+s = w + φu . By Gauss–Legendre quadrature the compatible popula-tion minimizer equals φ0 exactly, whereas the Fishman pseudo-true amplitude is φ⋆ 
+
+> F
+
+= 0 .760 (bias +0 .260 ), with A-weighted risk floor min φ DA(sF
+
+> φ
+
+, s ⋆) = 1 .38 . Over n ∈ { 5 × 10 2, . . . , 10 5}
+
+and 20 seeds (paired data), the compatible MSE tracks avar c/n 
+
+(avar c = 4 .92 ) and the Fishman MSE plateaus at bias 2; the run is pure-numpy and deterministic. 
+
+B.7 Sample-size sweep and the finite-N stabilizer (Figure 3b,c) 
+
+At the primary cell (λ, ϵ ) = (3 , 0.5) on [−1, 1] 2 we sweep the training-set size N ∈ { 5×10 2, 10 3, 5×10 3, 2×10 4, 10 5} with a fixed i.i.d. data bank drawn once per (N, seed ); each minibatch resamples from the bank, so N is the statistical sample size (the streaming experiments elsewhere correspond to N = ∞). All four boundary classes share the bank, initialization, and batch sequence per seed (paired), 5 seeds, 2×10 4 steps. On a fixed bank the em-pirical interior-ISM objective is unbounded below — the optimizer digs divergence wells at the bank points, the finite-data form of the moderate-K pathology of Appendix B.19 — so we apply the same 
+
+non-capping Jacobian stabilizer λJac E∥∇ s∥2 
+
+> F
+
+as Experiment 4 (λJac = 10 −2, one Hutchinson probe, identical for every baseline; a dose sweep {0, 10 −3, 10 −2} and the un-stabilized pathology run are in the supplementary material). The boundary-shell risk (Fig-ure 3b) descends from 32 .0 to 0.12 for flux-compatible and plateaus at 6.4/6.0/22 .8 for zero-boundary/normal-zero/wrong-sign (CTR 
+
+9/9/36 ), a 50 –190 × separation at N = 10 5; leakNone and Pro-jDisp separate identically ( 0.16 /0.04 vs. 0.83 –1.00 /0.61 –1.40 ). Throughout, and even in the un-stabilized blow-up, the measured CTR stays exactly 0/9/9/36 with zero seed variance (Figure 3c), isolating the structural boundary guarantee from the interior objec-tive. 
+
+B.8 E4 GMM independent-seed table 
+
+Trace error for the GMM experiment: ours has 0 for every λ; normal-zero and Fishman scale as λ2; wrong-sign as 4λ2; unconstrained diverges ( ∼ 10 3); unconstrained+lt is 0.33 –1.63 for λ ≥ 1 (and degenerates at λ = 0 because the local-time calibration vanishes). 
+
+B.9 A3 boundary-hugging full leakage tables 
+
+This appendix collects the full boundary-hugging leakage results behind the fivefold separation quoted in Section 5.3: the fold-versus-no-fold dissociation (Figure S6), the five-seed no-reflection leakage table at two drift strengths (Table S4), and the per-baseline scatter grids that show why hard-reflected metrics look alike while leakNone separates the classes. Figure S2: Trace-violating classes show bright boundary error halos; the flux-compatible field is uniformly dark up to the boundary. Score-error magnitude fields ∥sθ − s⋆∥ on [−1, 1] 2 at (λ, ϵ ) = (3 , 0.5) , shared log scale (referenced from Section 5.1). 
+
+B.10 Flower boundary diagnostic 
+
+The flower dataset is generated from the polar curve r(θ) = 0 .78 + 0.17 sin(5 θ) with small radial/tangential noise ( σ = 0 .06 ), a near-1D manifold embedded in 2D. At 20k training steps, visual samples from all methods remain limited and often resemble a mean-radius ring rather than the five-petal target (Figure S10). We therefore treat this dataset as a diagnostic limitation, not as evidence of strong visual generation. Ours and Fishman have statistically tied MMD 2 while leakNone separates them by a factor of ≈ 5 — an instance of the masking effect described in Section 6. Ceiling diagnostics (Figure S11) indicate that the reverse stopping time tmin is not the bottleneck on this dataset; the bottleneck is score-matching saturation on the near-1D manifold. 
+
+B.11 Extreme drift ( λ ∈ { 30 , 100 })
+
+Two observations. First, at λ = 100 the stationary distribution is too tight for the reverse SDE to reach data modes at r = 0 .9, so MMD 2
+
+is uniformly poor; this is a property of the toy setup, not a method failure. Second, leakage loses discriminative power because particles rarely approach the boundary; in this regime trace error remains the right diagnostic. Note that the trace error for the unconstrained 
+
+baseline reported here ( 11 .8 at λ = 30 , 976 at λ = 100 ) is much smaller than λ2: with no architectural boundary handling, the MLP picks up a residual inward bias from the forward samples, which is qualitatively different from the λ2 trace error of the zero/wrong-trace parametrizations and from the larger trace errors observed in the GMM setup of Appendix B.8. 
+
+B.12 Baseline parametrizations 
+
+All baselines in Table S8 share the MLP backbone hθ ; they differ only in how the score is composed at the boundary. We collect the explicit formulas here for the box G = [ −1, 1] d under A = I
+
+and reflected OU drift b(t, x ) = −λ(t)x. The anisotropic case in Section 5.1 replaces si by s = A−1v with v defined analogously per coordinate. In the table, βI = n⊤b denotes the trace target computed as if A = I; it coincides with the conormal target βA = n⊤beff baseline λ = 0 λ = 1 λ = 3 λ = 10 
+
+ours 1.27e–2 ± 2.5e–3 8.64e–3 ± 1.7e–3 1.15e–2 ± 4.0e–3 2.92e–2 ± 8.3e–3 normal-zero 9.98e–3 ± 1.4e–3 9.92e–3 ± 2.6e–3 1.18e–2 ± 3.6e–3 2.55e–2 ± 5.4e–3 Fishman 1.67e–2 ± 6.8e–3 1.70e–2 ± 3.8e–3 1.77e–2 ± 2.8e–3 2.55e–2 ± 5.2e–3 wrong-sign 1.23e–2 ± 1.8e–3 1.55e–2 ± 6.2e–3 3.23e–2 ± 1.3e–2 4.16e–2 ± 2.2e–2 unconstrained 0.156 ± 9.0e–2 0.115 ± 2.3e–2 0.170 ± 3.7e–2 3.55e–2 ± 1.3e–2 unconstrained + lt 0.202 ± 4.2e–2 1.88e–2 ± 3.9e–3 2.54e–2 ± 5.8e–3 2.78e–2 ± 8.6e–3 
+
+Table S3: E4 2D 5-mode GMM independent-seed results: MMD 2 to data, mean ± std over 5 independent per-baseline seeds. Trace error is sampling-distribution-free. At λ = 0 the prescribed conormal trace vanishes, so ours, normal-zero, and wrong-sign reduce to the same trace-compatible architecture (the baseline formulas of Appendix B.12). 
+
+λ baseline dbdry = 0 .30 0.20 0.10 0.05 
+
+3 ours 0.185 ± 0.003 0.191 ± 0.006 0.215 ± 0.004 0.223 ± 0.014 
+
+3 normal-zero 0.986 ± 0.002 0.987 ± 0.003 0.989 ± 0.002 0.989 ± 0.002 3 Fishman 0.927 ± 0.009 0.948 ± 0.007 0.956 ± 0.009 0.962 ± 0.003 3 wrong-sign 0.991 ± 0.002 0.993 ± 0.003 0.993 ± 0.001 0.994 ± 0.001 10 ours 0.019 ± 0.004 0.047 ± 0.003 0.088 ± 0.007 0.104 ± 0.007 
+
+10 normal-zero 0.632 ± 0.023 0.570 ± 0.014 0.630 ± 0.069 0.675 ± 0.031 10 Fishman 0.517 ± 0.047 0.585 ± 0.028 0.572 ± 0.078 0.611 ± 0.048 10 wrong-sign 0.630 ± 0.059 0.696 ± 0.088 0.751 ± 0.069 0.709 ± 0.057 
+
+Table S4: No-reflection leakage on boundary-hugging GMM, mean ± std over 5 seeds (lower is better). 
+
+Figure S3: Zero-boundary parametrizations erase the tan-gential component the no-flux condition leaves free; the flux-compatible construction retains it. Tangential boundary trace at (λ, ϵ ) = (0 , 0.5) , where the normal trace is zero but the true tangential boundary score is nonzero (referenced from Section 5.1). 
+
+exactly when A = I, and the wrong-normal-only baseline enforces 
+
+βI in place of βA.
+
+Main-table reporting convention. In Table S7, the signal-to-noise ratio (SNR) is the across-seed gap mean divided by its standard deviation, with SNR ≥ 3 treated as a clear separation. The 
+
+A = diag(1 , 4) cell uses 5 paired seeds and the rotated cell 8 paired seeds; the two A = I controls use the archived mean ± standard-deviation summaries and a Welch-combined denominator. The CTR column is structural and has zero seed variance. Shell 0.05 denotes baseline MMD 2 leakNone ours 4.96e–3 ± 1.1e–3 0.178 ± 0.009 
+
+Fishman 5.03e–3 ± 1.8e–3 0.961 ± 0.011 normal-zero 8.56e–3 ± 3.5e–3 0.988 ± 0.002 wrong-sign 1.22e–2 ± 6.2e–3 0.992 ± 0.003 
+
+Table S5: Flower diagnostic at 20k steps and λ = 3 , mean ±
+
+std over 5 seeds. 
+
+ShellErr A, 0.05 and tang. the tangential boundary error. 
+
+• ours: sθ,i (t, x ) = −λ(t)xi +(1 −x2 
+
+> i
+
+)hθ,i (t, x ) (Proposition 3). 
+
+• zero-boundary (Fishman-style, 2D): sθ,i (t, x ) = (1 −x2)(1 −
+
+y2)hθ,i (t, x ); the scalar product factor vanishes on every face. 
+
+• normal-zero: sθ,i (t, x ) = (1 − x2 
+
+> i
+
+)hθ,i (t, x ); same per-coordinate factor as ours, no drift term. 
+
+• wrong-sign: sθ,i (t, x ) = + λ(t)xi + (1 − x2 
+
+> i
+
+)hθ,i (t, x ); inverts the conormal trace at the boundary. 
+
+• wrong-normal-only (anisotropic case): sθ,i (t, x ) = bi(t, x ) + (1 − x2 
+
+> i
+
+)hθ,i (t, x ); enforces n⊤s = n⊤b as if A = I, which differs from the conormal target n⊤As = n⊤b on faces where 
+
+ai̸ = 1 .
+
+• unconstrained + boundary estimator: sθ = hθ and an additive local-time-style boundary term computed from one-step reflected-Euler overshoots. 
+
+• unconstrained + exact boundary quadrature: sθ = hθ plus the exact analytic boundary integral, available only when ρt is closed-form (used in the analytic-2D estimator comparison of Appendix B.5). 
+
+• exact-score oracle: s = ∇ log ρt in closed form; used for analytic sampling diagnostics only. Figure S4: Trace-violating classes saturate at 10 −1–10 0 for λ ≥ 1, while flux-compatible and the quadrature oracle stay at or below 10 −3. Bulk score-matching error E∥sθ − s⋆∥2 on the full (λ, ϵ ) grid, mean over 5 seeds, shared log color scale. 
+
+λ baseline MMD 2 trace error leakNone 30 ours 0.119 ± 0.027 0 0.012 ± 0.003 
+
+30 normal-zero 0.130 ± 0.023 900 0.081 ± 0.017 30 Fishman 0.119 ± 0.016 900 0.058 ± 0.014 30 wrong-sign 0.106 ± 0.017 3600 0.130 ± 0.027 30 unconstrained 0.130 ± 0.018 11.8 ± 1.9 0.013 ± 0.002 100 ours 0.733 ± 0.021 0 0
+
+100 normal-zero 0.742 ± 0.024 10 000 0.108 ± 0.064 100 Fishman 0.642 ± 0.022 10 000 0.161 ± 0.025 100 wrong-sign 0.725 ± 0.036 40 000 0.263 ± 0.150 100 unconstrained 0.729 ± 0.052 976 ± 110 0
+
+Table S6: Extreme drift, dbdry = 0 .10 , mean ± std over 3 seeds. At λ = 100 the stationary standard deviation 1/√2λ ≈ 0.07 is much smaller than the mode radius 0.9, so MMD 2 is bad for every method. 
+
+Figure S5: Positive (red) cells mark where flux-compatible beats the lowest-error non-flux baseline in that cell. Per-cell ratio log 10 (min baseline bulk b/bulk ours ) over the same (λ, ϵ )
+
+grid. 
+
+B.13 Tangent-preserving constructions for smooth and signed-distance domains 
+
+The hyperrectangle construction of Section 3.5 preserves the tan-gential score components while pinning only the normal (conormal) component at the boundary. A naive scalar factorization by the defin-ing function ϕ of a smooth domain would pin the entire flux-score vector at the boundary, which is precisely the over-restriction we criti-cize in zero-boundary parametrizations. The correct smooth-domain analogue must therefore decompose the flux-score vector into a prescribed normal component and a free tangential component. Let G = {x ∈ Rd : ϕ(x) < 0} be a bounded domain with smooth boundary ∂G = {ϕ = 0 } and outward unit normal n(y) on 
+
+∂G . In a tubular neighborhood of ∂G , let π(x) denote the nearest-boundary projection. Let PT (y) = I − n(y)n(y)⊤ be the tangential projector at y ∈ ∂G , and let βA(t, y ) = n(y)⊤beff (t, y ) as in the main text. Define 
+
+vθ (t, x ) = βA
+
+ t, π (x) n π(x)
+
++ PT
+
+ π(x) fθ (t, x ) + ϕ(x) gθ (t, x ),sθ = A−1vθ ,
+
+where fθ , g θ : [0 , T ] × ¯G → Rd are smooth neural fields. On ∂G 
+
+we have ϕ = 0 and π(x) = x, so 
+
+n⊤vθ ∂G = βA n⊤n|{z} 
+
+> =1
+
++ n⊤PT
+
+| {z } 
+
+> =0
+
+fθ + ϕ n ⊤gθ
+
+| {z }
+
+> =0
+
+= βA,
+
+which gives n⊤Atsθ = βA on ∂G by construction. The tangential component PT fθ remains free, mirroring the role of the per-axis factor (1 − x2 
+
+> i
+
+)hi in the box construction. Figure S6: Hard reflection masks a wrong boundary trace: with the fold, ours and Fishman look alike; without it, Fishman leaks while ours does not. Boundary-hugging GMM at (d = 2 , λ = 3 , d bdry = 0 .05) . Top row (ours): data; reverse SDE with fold (leak fraction 0.000 ); without fold ( 0.223 , matching Table S4). Bottom row (Fishman): same panels, no-fold leak 0.964 (seed 0; the Table S4 five-seed mean is 0.962 ). Domain boundary ±1 dashed; everything outside is a leaked particle. 
+
+Signed-distance form (polygonal and disconnected do-mains). The construction evaluated in Experiment 4 (Section 5.4) is the signed-distance instantiation: with r(x) the signed distance to                               
+
+> ∂G (negative inside), π(x)the nearest boundary point, n=n(π(x))
+> the outward normal there, PT=I−nn ⊤the tangent projector, and
+> ηa depth gate with η(0) = 0 and η(r)>0in the interior,
+> vθ=beff +PT(π(x)) + η(r(x)) n n ⊤hθ,sθ=A−1vθ.
+
+On ∂G , η = 0 and PT hθ ⊥ n, so n⊤(vθ − beff ) = 0 : the conormal trace is pinned while the tangential component of 
+
+hθ is left free. The signed distance is non-smooth at the medial axis and the nearest boundary point can be non-unique on nonconvex or disconnected domains, so this form carries no global no-misspecification theorem; we evaluate it empirically on a polygonal, disconnected domain in Section 5.4. This is a construction sketch. We do not prove a global no-misspecification theorem for smooth domains in this work, and we do not evaluate smooth-domain experiments. The exact no-misspecification theorem (Proposition S1, Appendix A.5) is restricted to hyperrectangles. A complete smooth-domain treatment would require globalizing the local tangent decom-position through a partition of unity, controlling the regularity of π, n, and PT over the tubular neighborhood, and verifying the resulting parametrization empirically; these are natural extensions outside the scope of the present validation. 
+
+B.14 Simplex implementation: construction, representability, and baselines 
+
+On the probability simplex ∆K−1 = {x ∈ RK : xi ≥
+
+0, 1⊤x = 1 } with constant isotropic tangent diffusion A =
+
+aP (P = I − K−111 ⊤) and reflected OU drift b(x) = 
+
+−λ(x − c), c = K−11, the face Fi = {xi = 0 } carries an intrinsic outward unit normal νi = −P e i/∥P e i∥ inside the affine hyperplane 1⊤x = 1 . The no-flux conormal trace condition on Fi reduces to vi = beff  
+
+> i
+
+(x) xi=0 = λ/K (since 
+
+b is already tangent and ∇ · A = 0 for constant A). We parametrize the flux-score as 
+
+vθ (t, x ) = b(x) + M∆(x) hθ (t, x ),M∆(x) = diag( x) − xx ⊤,sθ = A−1vθ = vθ /a. 
+
+The mobility envelope M∆(x) is the standard simplex tangent-vanishing factor and is part of the parametrization , not the Figure S7: Under hard reflection all flux-respecting methods look visually similar; no-reflection leakage exposes the difference (Table S4). A3 scatter grid at λ = 3 , 4 values of dbdry × 6 baselines. forward diffusion tensor: M∆(x)ei = 0 when xi = 0 , so on 
+
+Fi the contribution of hθ vanishes and vi reduces exactly to 
+
+bi, pinning the conormal trace at λ/K by construction. 
+
+Representability under M∆. In the relative interior of the simplex, M∆(x) = diag( x) − xx ⊤ has rank K − 1
+
+with kernel spanned by 1, and its column span equals the tangent space Tx∆K−1 = {u ∈ RK : 1⊤u = 0 }; the parametrization v = b + M∆h can therefore represent any element of the interior tangent score class (combined with 
+
+M 1/2∆ -rescaling of h the interior flux-score map is bijective onto the tangent class). On the face Fi = {xi = 0 }, the 
+
+i-th row of M∆(x) vanishes identically and the remaining 
+
+(K − 1) × (K − 1) block restricts to M∆ on the smaller simplex ∆K−2 supported on the other coordinates, which is again rank-(K − 2) on its own interior and spans the tangent space of Fi; the parametrization restricts on Fi to the same construction one face dimension lower. The face restriction therefore exactly matches the conormal constraint without expressivity loss in the tangential directions, and the only function of M∆ at the parametrization level is to algebraically eliminate hθ from the normal component of v on each face. Vertices ( xi = 1 for some i) sit on a measure-zero stratum on which the construction degenerates; we work on faces in the surface-measure sense and ignore lower-dimensional strata, mirroring the box edges-and-corners treatment of Section 2.2. 
+
+Simplex baselines. The four structured simplex baselines used in Appendix B.17 are obtained by varying this prescrip-tion: flux-compatible v = b + M∆h; zero-flux / normal-zero 
+
+v = M∆h; full-boundary-zero v = ( Q 
+
+> i
+
+xi)P h ; wrong-sign 
+
+v = −b + M∆h. A fifth baseline removes the envelope al-together (unconstrained-tangent v = P h ). Their predicted face-average CTRs collapse to the closed-form family stated in Appendix A.9 (and verified in Appendix B.17 with zero seed variance). 
+
+B.15 Reproducibility and discretization 
+
+All controlled validation experiments, expanded ablations, and appendix stress tests are complete with seeds, commands, Figure S8: The boundary leakage gap widens further at λ = 10 (Table S4). A3 scatter grid at λ = 10 .and configurations recorded. For time-conditioned reflected OU experiments, the reverse stopping time tmin and step size must remain below the data mode scale: we use tmin = 0 .005 
+
+and dt = 0 .005 for the reported 2D toy experiments. Flower ceiling diagnostics confirm that the stopping time is not the bottleneck on that dataset; the bottleneck is score-matching saturation on the near-1D manifold. 
+
+B.16 Simplex K = 3 structural trace identity 
+
+5 baselines × 5 seeds, no training, λ = 3 , a = 0 .5. Coordinate CTR is the face-average squared residual of vi on Fi, and unit-normal CTR is larger by the fixed factor K/ (K − 1) = 3 /2.Standard deviation is exactly zero for every structural baseline. 
+
+Generation diagnostic (E5a). For comparison with the trained-model setting, Table S10 reports score error, shell error, MMD 2 and leakNone for the same five baselines after 
+
+10 ,000 ISM training steps at K = 3 (5 seeds). Score error here is the A-weighted error E[( sθ − s⋆)⊤A(sθ − s⋆)] on stationary reference samples, averaged over the evaluation times (the target is the stationary distribution, so the truth is time-independent), computed at the flux level against the exact stationary flux v⋆ = As ⋆ = b, the barycenter-directed drift (equivalently s⋆ = b/a on the tangent space). The score-/shell-error ordering across baselines is not monotone in trace correctness in this regime (e.g., wrong-sign attains the lowest score error 3.98 ; flux-compatible is 15 .91 ); the ordering is dominated by differential susceptibility to the interior divergence-overfitting pathology (Appendix B.19) and is not informative about boundary handling. The clean separation in this experiment is on leakNone (flux 0.036 vs zero-flux 0.527, wrong-sign 0.615); we do not interpret the score / shell error ranking as a quality ordering. 
+
+B.17 Simplex moderate-K full tables (K=16, K=32 synthetic, K=32 HITChip) 
+
+All three datasets share the training protocol: 20 ,000 ISM steps, Hutchinson divergence ( R = 16 ), Adam lr = 10 −4,gradient clipping max-norm 1, batch 256, MLP width 128 depth 4 SiLU. Boundary mass profiles of the datasets are summarized below. Table S12 retains only the face-CTR diagnostic, which is Figure S9: The leakage separation persists across d ∈ { 2, 4, 6, 8} while distributional metrics remain tangled. Dimension stress: boundary-hugging GMM at λ = 3 , dbdry = 0 .10 . leakNone for ours remains in [0 .21 , 0.34] ; trace-violating baselines saturate at 
+
+≈ 0.99 –1.00 ; distributional metrics (MMD 2, SWD, BMD 0.05 ) remain tangled across methods.                                           
+
+> setting ∆score ∆shell 0.05 ∆tang. CTR
+> A=I,b=0 4.08e–2 (62) 0.394 (83) 1.23 ( >10 3)0→0
+> A=I,b=−3x0.162 (122) 4.31 (154) 1.23 ( >10 3)9→0
+> A= diag(1 ,4) 0.287 (41) 3.96 (109) 1.96 ( >10 3)9→0
+> rotated κ=4 , multi-active, m=∞(Experiment 2), paired:
+> ∆leakNone 0.507 (133); ∆ProjDisp 9.5(66); ∆face-mass 0.161 (64)
+
+Table S7: Flux-compatible versus the Fishman-style zero-boundary class under the shared pipeline. ∆ = Fishman − flux (positive favors flux); parentheses give SNR. CTR reports the closed-form Fishman → flux value. Reporting details are in Appendix B.12. independent of reverse-sampler initialization. Moderate-K
+
+generation metrics from the earlier data-start protocol are not reported; we do not rerun this diagnostic suite because it is outside the main evidence chain. The full-boundary-zero loss_init and loss_final are exactly zero in every cell of K=16, K=32, and HITChip. 
+
+Mechanism (full-boundary-zero only). This degeneracy is specific to the full-boundary-zero baseline, whose face-vanishing factor is the product envelope Q 
+
+> i
+
+xi (not the flux-compatible mobility envelope M∆, which does not underflow). At K=16 the product envelope Q 
+
+> i
+
+xi is bounded above by 
+
+K−K ≈ 5.4 × 10 −20 at the simplex barycenter (well above the float32 normal floor ≈ 1.2 × 10 −38 , so this is not classical IEEE underflow) and is many orders smaller on the boundary-supported training data; the multiplicative attenuation places the trainable part of v below the optimizer’s effective precision relative to the unaffected b term, so gradients vanish and the network never trains. At K=32 the barycenter value K−K ≈
+
+7 × 10 −49 falls below the float32 normal floor outright. Either way the operative empirical signature is loss_init = loss_final = 0 in every full-boundary-zero cell; we report this as a numerical degeneracy of that baseline rather than as a competitive generation result. 
+
+HITChip dataset. The Lahti et al. HITChip Atlas (Lahti et al. 2014) contains 1172 stool samples from 1006 western adults, profiled at 130 genus-like taxa via the HITChip microar-ray (Dryad DOI 10.5061/dryad.pk75d, file HITChip.tab ). We aggregate to the top-31 genus-like taxa by mean row-normalized abundance, lump the remaining 99 taxa into an “Other” coordinate (yielding K=32), and apply a uniform relative pseudocount of 10 −6 before renormalizing. HITChip is a real-data structural diagnostic: flux retains CTR = 0 
+
+while unconstrained-tangent measures 187 ± 60 . It is not a generative-quality benchmark. 
+
+B.18 E6 structural and training equality tables (d = 2 and d = 4 )
+
+Box [−1, 1] d with diagonal state-dependent diffusion 
+
+Aκ(x) = diag(1+ κx i), drift b(x) = −λx , λ = 3 . Baselines: 
+
+• correct : vi = beff  
+
+> i
+
++(1 −x2 
+
+> i
+
+)hi = ( −λx i −κ)+(1 −x2 
+
+> i
+
+)hi
+
+on faces; 
+
+• omit-correction : vi = bi +(1 −x2 
+
+> i
+
+)hi (drops the −∇· A =
+
+−κ correction); 
+
+• normal-zero : vi = (1 − x2 
+
+> i
+
+)hi (drops both bi and −κ); 
+
+• wrong-sign : vi = −beff  
+
+> i
+
++(1 −x2 
+
+> i
+
+)hi (negates the effective trace). 
+
+E6 structural (no training). 5 random initializations per 
+
+(κ, baseline ) cell, 7 κ values, 4 baselines, d ∈ { 2, 4}. Mea-sured face-average CTR equals predicted value to floating-point precision; per-seed standard deviation is exactly zero. The predicted values are the closed-form family from Ap-baseline boundary behavior on ∂G purpose                                
+
+> ours (flux-compatible) exact conormal trace n⊤As =βAproposed zero-boundary (Fishman-style) score vector vanishes (conormal trace 0)over-restriction normal-zero zero normal trace; tangent free isolates the trace value wrong-sign trace inverted (opposite sign) sign sanity wrong-normal-only n⊤s=βIas if A=Iconormal ablation (§5.1) exact-quadrature oracle explicit boundary integral oracle in analytic 2D local-time style stochastic boundary correction estimator comparison unconstrained no boundary handling strawman exact-score oracle ∇log ρtin closed form analytic sanity
+
+Table S8: Baselines compared in this work. All share the backbone hθ and differ only in the boundary composition of the score.                 
+
+> baseline coord CTR unit-normal CTR flux-compatible 00
+> zero-flux 1.000 1.500 full-boundary-zero 1.000 1.500 wrong-sign 4.000 6.000 unconstrained-tangent 1.006 ±0.004 1.509 ±0.006
+
+Table S9: E5a K = 3 structural trace identity, 5 seeds. For structural baselines predicted and measured CTR coincide exactly (zero seed variance); a single value is shown. Closed-form predictions: λ2/K 2 = 1 (zero-flux, full-boundary-zero), 
+
+4λ2/K 2 = 4 (wrong-sign), coord-CTR convention; unit-normal CTR is a factor K/ (K − 1) = 3 /2 larger (Ap-pendix A.9). Unconstrained-tangent has no prescribed trace and reflects the random initialization of hθ .pendix A.9 and the body of Table S13 (which repeats them verbatim). 
+
+E6 training. 5000 ISM steps per cell, Adam lr = 3 ×
+
+10 −4, gradient clipping max-norm 1, Hutchinson divergence 
+
+R = 4 , batch 256, MLP width 64 depth 3 SiLU, reflected-OU forward bank with state-dependent diffusion: dX =
+
+−λX dt + p2Aκ(X) dW − n(X) dL (the paper Section 2.2 / Section 5.1 Itô-convention SDE; b = −λx is itself the Itô drift in the FP flux J = bρ − A∇ρ − ρ∇ · A). All 140 cells at 
+
+d = 2 and all 140 cells at d = 4 yield post-training measured CTR equal to predicted to floating-point precision, with zero seed variance. No NaN losses were observed. Representative loss trajectories ( κ = −0.75 , d = 2 , per-seed loss_init → loss_final ranges): 
+
+• correct: −3.83 to −3.19 → − 3.97 to −3.43 (converges to a divergence-bounded minimum) 
+
+• omit: −3.17 to −2.47 → − 4.00 to −3.45 
+
+• normal-zero: +0 .00 to +0 .03 → − 2.02 to −1.04 (de-creases substantially) 
+
+• wrong-sign: +7 .98 to +8 .39 → +0 .03 to +2 .05 (large decrease; loss bounded below in this case) For d = 4 the same κ = −0.75 row has wider ranges due to the additional faces: correct −7.68 to −6.47 → − 7.70 to 
+
+−7.18 ; omit −6.31 to −4.94 → − 7.50 to −6.94 ; normal-zero −0.02 to +0 .02 → − 3.78 to −2.55 ; wrong-sign +15 .93 
+
+to +17 .05 → +1 .71 to +4 .70 . The post-training measured CTR equality is preserved verbatim at both dimensions. Full per-seed data is in the supplementary material. 
+
+B.19 Moderate-K simplex optimization pathology 
+
+The interior ISM objective on bounded domains decomposes as s⊤As + 2 ∇ · (As ); both terms are evaluated at train-ing samples, and the divergence term is high-variance and unbounded below pointwise. On the moderate-dimensional simplex the tangent-Hutchinson estimate lets the optimizer drive the empirical loss downward by inflating ∥v∥ locally at sample points. Reflected DSM targets can be constructed from constrained transition kernels or approximations (Lou and Ermon 2023); we use ISM because it isolates the conormal boundary term across our tensors and geometries without a domain-specific conditional-score construction. Moderate-K
+
+generation metrics from the earlier data-start reverse protocol are omitted rather than reinterpreted. 
+
+Instrumented loss trajectory. Over 5000 steps, the quadratic term grows by ≈ 230 × (from 2 to 460), the di-vergence term falls from −186 to −1263 , ∥vθ ∥2 grows by 
+
+≈ 13 ×, and the raw parameter-gradient norm by ≈ 420 ×.These training-side quantities do not depend on reverse ini-tialization and support the narrower diagnosis that the unreg-ularized empirical ISM objective develops divergence wells. We make no moderate-K generation-quality claim. 
+
+B.20 Partial-repair stress spectrum (box, d = 2 ,
+
+dbdry = 0 .05 , λ = 3 )
+
+This stress test varies how often the reverse sampler enforces the reflective fold, decoupling the score from the sampler’s external repair mechanism. Setup: same boundary-hugging GMM data and four box baselines (correct flux-compatible, normal-zero, Fishman, wrong-sign) as Table S4, 5 seeds, 6000 ISM training steps. The reverse sampler is run with a periodic-projection boundary mode that mirror-reflects to [−1, 1] every 
+
+m reverse steps; between projections the sampler is soft-clamped to [−8, 8] for numerical safety. m = 1 recovers the standard fold protocol, m = ∞ recovers the existing no-fold protocol of Table S4. We additionally sweep the number of reverse steps N ∈ { 100 , 250 , 500 , 1000 } at m = 1 , the more practically-relevant axis of repair-weakening. 
+
+Sanity gate. The retrained-models reproduction of the published Table S4 endpoint is, at m = ∞ and dbdry =baseline score err (A) shell 0.02 shell 0.05 MMD 2 leakNone flux-compatible 15.91 ± 2.7 24.15 ± 10.1 53.90 ± 13.8 0.0203 ± 0.0046 0.036 ± 0.026                                                             
+
+> zero-flux 6.46 ±1.3 8.99 ±2.9 15.17 ±5.7 0.0264 ±0.0048 0.527 ±0.241 full-boundary-zero 8.18 ±1.0 11.26 ±0.9 19.06 ±3.2 0.0646 ±0.0053 0.058 ±0.057 wrong-sign 3.98 ±0.17 12.60 ±0.5 10.56 ±0.2 0.0384 ±0.0029 0.615 ±0.220 unconstrained-tangent 12.23 ±1.9 77.45 ±13.7 51.96 ±8.8 0.00387 ±0.0012 0.0001 ±0.00022
+
+Table S10: E5a generation diagnostic at K = 3 , λ = 3 , a = 0 .5, 10k training steps, mean ± std over 5 seeds. The score / shell error columns are reported for completeness; they are not monotone in trace correctness in this regime, and the operative diagnostic is leakNone.                     
+
+> K=16 synth ( τ= 1 .5,μ-scale 2.0) K=32 synth ( τ= 2 .5,μ-scale 3.0) K=32 HITChip
+> P(min ixi<10 −3)0.274 0.490 0.652
+> P(min ixi<10 −2)0.979 1.000 1.000
+
+Table S11: Boundary mass profiles for the three moderate-K simplex datasets. 
+
+0.05 , λ = 3 : ours 0.221 , normal-zero 0.988 , Fishman 0.971 ,wrong-sign 0.993 (5-seed mean), all within ±0.05 of the published Table S4 entries. At m = 1 , all four baselines have leak 0. Both endpoints reproduce; this is the sampler validation. 
+
+m-axis (Table S14). Hard-reflected MMD 2 measured on the folded sample (i.e. after a final post-sampling fold to 
+
+[−1, 1] ). Mean ± std over 5 seeds. 
+
+N-axis (Table S15). The more practical axis: reduce the number of reverse steps at m = 1 (the standard fold-every-step protocol). Here ours and Fishman are statistically tied across the entire practical range. 
+
+Honest reading. At the standard protocol m = 1 , ours and Fishman have a hard-reflected MMD 2 gap of +3 .1 × 10 −3
+
+with combined standard deviation ≈ 9 × 10 −3 — tied within seed noise (signal-to-noise ratio 0.4). Across the practical N-axis, the gap is +0 .001 to +0 .004 with signal-to-noise ratio ≤ 0.5 at every N. The structural separation reported in Table S4 and Figure S6 is recovered only at m ≥ 8 (signal-to-noise ratio 5.8 in Table S14) or at m = ∞. This is the reflection-masking thesis observed continuously rather than at the endpoint: as the repair weakens, the wrong conormal trace starts to manifest in distributional metrics. It is not a hard-reflected generation-quality win in standard usage, and we treat it as supporting evidence for the masking discussion in Section 6, not as a new headline. This single-tensor box stress is the precursor that Experiment 2 (Appendix B.21) generalizes to a full (κ, m ) grid with rotated A and operational metrics. 
+
+B.21 Experiment 2 full phase diagram (P1) 
+
+Setup. Box [−1, 1] 2, both faces active (corner-hugging GMM, mode-distance/std ≈ 1.5, near-face mass ≈ 0.46 —resolvable, not a spike), δ = 0 .10 , λ = 3 . Constant SPD 
+
+A = Q diag(1 , κ ) Q⊤, κ ∈ { 1, 4, 16 }, Q axis-aligned or a random rotation. Six architecture-matched baselines (flux-compatible, wrong-normal-only, zero-boundary, normal-zero, wrong-sign, unconstrained), exact ISM divergence, shared MLP/optimizer, gradient-norm clip 50 — a non-capping stabilizer that holds the high-κ divergence-overfitting base-lines (ISM loss ≈ − 1700 at κ = 16 ) finite without touch-ing any score parametrization. Partial-repair sampler folds every m ∈ { 1, 2, 4, 8, ∞} steps; 3 seeds over the grid, 8 at the κ = 4 rotated corner. Primary metrics are in-box face-mass error and projection displacement. The verdict rule and the directional prediction reported below were fixed before the runs (recorded in the experiment driver and FINDINGS_phase_diagram.md ): a positive result requires the flux score to beat the strongest non-flux baseline with SNR ≥ 3 on the primary metrics, with the advantage increasing as κ grows or repair weakens. 
+
+Result. At rotated A, m = ∞ (gain = best-non-flux error 
+
+− flux error, SNR ≥ 3 = clear): κ = 1 control face −0.003 
+
+(SNR −0.65 ), proj −0.515 (SNR −15 .9) — no advantage, since flux = wrong-normal at A = I; the per-cell best of five baselines here is the unconstrained baseline, so the negative gain is best-of-baselines selection at a null cell, not a deficiency of the construction; κ = 4 face +0 .097 (SNR 29 .4), proj 
+
++6 .77 (SNR 3.19 ) — both at the same corner; κ = 16 face 
+
+−0.001 (SNR −0.10 , saturated), proj +4 .32 (SNR 9.39 ). The 
+
+κ = 16 projection-displacement gain grows monotonically with weaker repair: m = 1 : 0 .00 , m = 2 : 0 .01 , m = 4 : 0 .03 ,
+
+m = 8 : 0 .22 , m = ∞ : 4 .32 (leaked fraction at m = ∞: flux 
+
+0.43 vs. wrong-normal 1.00 ). Under full repair the face-mass placement does not favor flux (SNR −4.7 at κ = 4 , −2.7 at 
+
+κ = 16 ). The 8-seed κ = 4 supplement tightens proj-disp SNR from 1.62 (3 seeds; gain already +6 .15 ) to 3.19 ; the result is positive under the pre-registered rule even without it (face SNR 31 at κ = 4 , proj SNR 9.4 at κ = 16 , at different corners). The pre-registered “advantage increases with κ” is refined to “increases as repair weakens; non-monotone in κ,peaking at moderate anisotropy.” Full per-condition data is in the supplementary material. 
+
+B.22 Experiment 3 full real-design posterior (P2) 
+
+Setup. Target N (μ, Σpost )1box with Σpost from the diabetes design matrix (real correlation dataset flux zero-flux full-zero wrong-sign unconstr. K=16 synth 0 0.0352 0.0352 0.141 196 ± 122               
+
+> K=32 synth 08.79e–3 8.79e–3 3.52e–2 170 ±58
+> K=32 HITChip 08.79e–3 8.79e–3 3.52e–2 187 ±60
+
+Table S12: E5b moderate-K face-average CTR. Structural predictions and measurements coincide to floating-point precision with zero seed variance over 5 seeds; unconstrained-tangent has no prescribed trace and is reported as mean ± std.                                        
+
+> κcorrect omit (= κ2)normal-zero (= λ2+κ2)wrong-sign (= 4( λ2+κ2))
+> −0.75 00.5625 9.5625 38.25
+> −0.50 00.2500 9.2500 37.00
+> −0.25 00.0625 9.0625 36.25
+> 0009.00 36.00
+> +0 .25 00.0625 9.0625 36.25
+> +0 .50 00.2500 9.2500 37.00
+> +0 .75 00.5625 9.5625 38.25
+
+Table S13: E6: measured post-training face-average CTR equals the closed-form predicted value to floating-point precision in every cell at d = 2 , with zero seed variance, and is identical before training. The wrong-sign baseline minimizes the mis-specified ISM loss from ≈ +8 at initialization down to +0 –+3 over 5000 steps (its loss is bounded below) without changing its face CTR. Numbers are mean (std) over 5 seeds; std is exactly zero in every cell. The d = 4 table is identical (face-CTR is dimension-independent for these baselines under the chosen parametrization). 
+
+R = [[1 , . 68 , −.11] , [.68 , 1, −.52] , [−.11 , −.52 , 1]] ), all three coordinates active, per-coordinate offsets set so each active face has near-boundary mass ≈ 0.5 (realized 
+
+0.27 /0.61 /0.70 — resolvable). λ = 3 , Gibbs (TMVG) refer-ence. A = Q diag(1 , κ ) Q⊤ with Q from the eigenvectors of Σpost (data-aligned direction mismatch 49 .4 at κ = 16 )plus an axis-aligned control; κ ∈ { 1, 4, 16 }; the same six baselines, exact ISM, repair m ∈ { 1, 2, 4, 8, ∞} , 3 seeds. Face-mass error is averaged over the three active faces. 
+
+Result. At rotated A, m = ∞: κ = 1 control face −0.001 
+
+(SNR −0.60 ), proj −0.703 (SNR −17 .2) — as in Experiment 2, flux = wrong-normal at A = I and the per-cell best of five baselines is the unconstrained baseline, so the negative gain is best-of-baselines selection at a null cell, not a deficiency of the construction; κ = 4 face +0 .099 (SNR 15 .1), proj +6 .27 
+
+(SNR 1.25 , noise-limited by the blow-up baseline variance); 
+
+κ = 16 face +0 .035 (SNR 12 .1), proj +2 .11 (SNR 8.32 )— both clear at the same corner, no seed supplement. The 
+
+κ = 16 projection-displacement gain vs. repair: m = 1 : 0 .00 ,
+
+m = 2 : −0.03 , m = 4 : 0 .06 , m = 8 : 0 .20 , m = ∞ : 2 .11 .Unlike P1, the face-mass effect does not saturate at κ = 16 ,and full-repair placement is mildly favorable ( m = 1 SNR 
+
++0 .7 at κ = 4 , +5 .0 at κ = 16 ) — the opposite sign from P1, which is why Section 6 reads placement as condition-dependent. Full data is in the supplementary material. 
+
+B.23 Experiment 4 full SDF polygon (P3) 
+
+Corrected protocol. The disconnected domain contains a nonconvex L-polygon, a square island, and a narrow rectangle. The target is a truncated GMM with modes near each compo-nent’s boundary; A = Rϕ diag(1 , 4) R⊤ 
+
+> ϕ
+
+with ϕ = π/ 6. Five architecture-matched baselines share the network, optimizer, non-capping Jacobian stabilizer λJac = 10 −2, and projection schedule m ∈ { 1, 2, 4, 8, ∞} . Reverse samples start from an independent finite-horizon marginal qT , obtained by evolving fresh target draws through the reflected forward process to 
+
+T = 1 . We run 3 seeds; complete configurations and per-seed metrics are in the supplementary code. 
+
+Result. Against the equal-CTR scalar mask, the tangent-preserving construction reduces ProjDisp (SNR 13 .60 ) and boundary-band error (SNR 18 .21 ) but not component-mass KL, which is the explicit negative result in Table S16. Its ProjDisp advantage grows monotonically as repair weakens: 
+
+0.000 , 0.006 , 0.015 , 0.031 , 0.183 for m = 1 , 2, 4, 8, ∞. It also beats zero-boundary on ProjDisp and boundary-band error while satisfying the trace exactly. Thus P3 supports the reflection-masking mechanism and tangent-preserving extension on this disconnected non-axis-aligned domain, but it is a supplemental method-generalization test, not a global no-misspecification or generation-quality claim. 
+
+B.24 Negative controls: single-active-face constrained posteriors (P5) 
+
+Two real-data constrained-posterior controls test whether the Experiment 2–3 effect appears when its preconditions are removed, and isolate two candidate confounds. 
+
+(a) Near-delta spike. The diabetes regression posterior over 
+
+(s3, s 4, s 5) truncated to [0 , 2] 3, where the OLS coefficient of the hugged coordinate is ≈ − 0.233 < 0, so the non-negativity constraint is binding and the truncated posterior is a near-delta spike on the face (reference near-boundary mass 0.999 ,
+
+P (βs3 < 0.05) = 0 .981 ). Reflected OU with exact ( d = 3 )ISM divergence, fold sampler, Gibbs reference. Outcome: inconclusive. The overall posterior is reproduced (sanity energy distance (ED) 0.140 ), but all three baselines under-fit the spike (near-boundary-mass error 0.648 /0.627 /0.641 
+
+for flux / wrong-normal / normal-zero against a reference baseline m=1 m=2 m=3 m=5 m=8 m= ∞                                                                        
+
+> ours 0.0248 ±8.6e–3 0.0264 ±9.6e–3 0.0250 ±1.1e–2 0.0252 ±1.0e–2 0.0229 ±9.1e–3 0.0196 ±7.4e–3 normal-zero 0.0224 ±4.0e–3 0.0240 ±4.6e–3 0.0305 ±4.5e–3 0.0400 ±8.4e–3 0.0594 ±1.1e–2 0.677 ±0.33 Fishman 0.0279 ±1.5e–3 0.0336 ±5.4e–3 0.0426 ±2.1e–3 0.0519 ±6.1e–3 0.0856 ±5.8e–3 1.330 ±0.023 wrong-sign 0.0404 ±1.4e–2 0.0507 ±1.3e–2 0.0744 ±1.2e–2 0.104 ±0.018 0.142 ±0.025 0.897 ±0.29
+
+Table S14: Partial-repair m-axis: hard-reflected MMD 2 versus periodic-projection period m. At m = 1 (standard practice), ours and Fishman are statistically tied; separation begins to emerge at m ≥ 5 and is statistically clear (SNR ≥ 5) only at m ≥ 8. Each cell is mean ± std over 5 seeds.                                                     
+
+> baseline N=1000 N=500 N=250 N=100 ours 0.0227 ±1.1e–2 0.0234 ±9.7e–3 0.0300 ±8.3e–3 0.0620 ±7.1e–3 normal-zero 0.0162 ±3.7e–3 0.0205 ±5.5e–3 0.0297 ±6.2e–3 0.0634 ±7.1e–3 Fishman 0.0237 ±3.6e–3 0.0279 ±3.7e–3 0.0344 ±4.9e–3 0.0659 ±4.2e–3 wrong-sign 0.0355 ±1.7e–2 0.0380 ±1.6e–2 0.0459 ±1.1e–2 0.0782 ±1.5e–2
+
+Table S15: Partial-repair N-axis (m=1): hard-reflected MMD 2 versus reverse-step count N . Within the practical range 
+
+N ∈ { 100 , 250 , 500 , 1000 }, ours and Fishman are statistically tied. near-boundary mass of 0.999 ; i.e., the models place only 
+
+≈ 35% of the reference near-boundary mass), and the flux-vs-baseline gaps ( ≈ 0.02 ) are an order of magnitude smaller than the shared ≈ 0.63 underfitting. The near-boundary error grows monotonically with anisotropy ( 0.37 → 0.75 over 
+
+ρ ∈ { 1, 2, 4, 8}), consistent with a continuous reflected diffu-sion smoothing a near-delta target equally for every boundary-handling choice. This is a target-sharpness limitation, not evidence about boundary correctness; we did not tune. 
+
+(b) Resolvable single active face. Removing the sharpness confound while keeping the real correlation: a controlled trun-cated Gaussian N (μ, δ 2 
+
+> t
+
+R)1box with the hugged-coordinate mode at distance ≈ δt from a single face (mode-distance/std 
+
+≈ 1, reference near-face mass 0.40 , s3 std 0.079 ), δt = 0 .10 ,
+
+ρ ∈ { 1, 4}, 3 seeds, sanity ED 0.043 (well-trained). Outcome: tie. At the primary cell (fold, ρ = 4 ) flux is marginally worst on every metric but not separated (near-boundary error 0.119 
+
+vs. 0.108 /0.105 , SNR ≤ 1.25 ); the structure-free normal-zero baseline is best under the fold, consistent with the fold masking boundary handling. Correlation ruled out: rerunning with R replaced by the identity (same seeds) gives a near-identical flux-vs-wrong gap ( +0 .0117 real-R vs. +0 .0128 
+
+at R = I on near-boundary error), so the real correlation structure is not the cause; the tie is intrinsic to the single-active-face fold geometry. No spectral-norm cap is used, the sanity and isotropy ( ρ = 1 ) controls pass, and R vs. I is a same-seed paired comparison, so the null is genuine — no claim that flux is significantly worse, only that there is no advantage here and correlation is not why. Together these con-trols show the Experiment 2–3 effect requires simultaneously active constraints and imperfect repair, and is absent — for reasons we can attribute — when either is removed. Full data is in the supplementary material. 
+
+B.25 Prediction-vs-outcome scorecard 
+
+Table S17 collects the status of every regime referenced from Section 6: each row links a regime to the reflection-masking hypothesis it tests (M1–M4) or marks a control / condition-dependent observation (—). “Positive” results are scoped to the stated regime; “null”/“inconclusive” entries confirm a null prediction or locate the effect. method CTR ProjDisp band error component KL tangent-preserving 0 0.224 ± 0.013 0.183 ± 0.001 0.209 ± 0.119 
+
+scalar mask 0 0.407 ± 0.004 0.226 ± 0.002 0.013 ± 0.001 
+
+zero-boundary 4.18 ± 0.05 2.602 ± 0.002 0.300 ± 0.000 0.146 ± 0.002 
+
+Table S16: Corrected-qT SDF results at m = ∞, mean ± std over 3 seeds (lower is better except CTR, whose target is zero). 
+
+pred. regime: observation status M1 full repair ( m=1 ): ProjDisp gain ≈ 0, face-mass sign condition-dependent (no consis-tent trace signal) confirmed M2 tested A=I: flux = wrong-normal-only, no distinction between these two classes control M3 tested single active face, full repair: flux tied (fold masks it) null M4 multi-active, weakened repair: lower Pro-jDisp and face-mass error positive (scoped) M4 ′ SDF polygon + stabilizer: lower ProjDisp and boundary-band error positive (cond.) — full-repair face-mass placement: sign flips across Exp. 2–3 ( −4.7σ/+5 .0σ)cond.-dep. — extreme κ: face-mass gain saturates (over-spread) non-monotone — SDF polygon, no stabilizer: interior diver-gence overfits null (orth.) — near-delta posterior: all methods underfit the layer inconclusive — component mass, disconnected domain: not trace-set null 
+
+Table S17: Prediction-vs-outcome scorecard. Figure S10: The five-petal structure is not recovered at either training budget; all flux-respecting baselines collapse to a mean-radius ring. Flower dataset, scatter comparison at 6k and 20k training steps, λ = 3 , seed 0. Figure S11: The reverse stopping time is not the bottleneck on the flower dataset. Forward-OU snapshots at t ∈ { 0, t min =0.005 , 0.02 , 0.5} across the GMM, boundary-hugging GMM, and flower datasets; on the flower, the tmin snapshot still preserves the petal structure. Figure S12: All flux-respecting methods are visually similar; the distinguishing signal is leakNone (Table S5). Flower 20k step, six baselines side-by-side at λ = 3 , seed 0. Figure S13: Every architectural class lies on the diagonal measured = predicted in all 640 cells, before and after training. Cross-setting CTR collapse: predicted vs measured face-average CTR across the box state-dependent grid (E6 structural and post-training, d ∈ { 2, 4}, 7 κ values, 4 baselines, 5 seeds), the simplex K = 3 structural trace identity (E5a, 4 baselines, 5 seeds), and the simplex moderate-K face-CTR column at K = 16 , K = 32 synthetic, and K = 32 HITChip (E5b, 4 structural baselines, 5 seeds). The structural baselines (filled markers) have exactly zero seed variance (jitter added only to separate coincident cells). The unique lower-left zero is the flux-compatible class across all settings; every other class is fixed at its own non-zero predicted value ( κ2, λ2 + κ2, 4( λ2 + κ2) on the state-dependent box; λ2/K 2, 4λ2/K 2 on the simplex), so the CTR identity distinguishes classes by closed-form arithmetic. Open markers (state-dependent d = 2 /d = 4 trained) overlap the filled structural markers cell-by-cell — the numerical-faithfulness statement that aggressive ISM optimization does not break the by-construction CTR identity. References 
+
+Avdeyev, P.; Shi, C.; Tan, Y.; Dudnyk, K.; and Zhou, J. 2023. Dirichlet Diffusion Score Model for Biological Sequence Generation. arXiv:2305.10699. Bortoli, V. D.; Mathieu, E.; Hutchinson, M.; Thornton, J.; Teh, Y. W.; and Doucet, A. 2022. Riemannian Score-Based Generative Modelling. arXiv:2202.02763. Christopher, J. K.; Baek, S.; and Fioretto, F. 2024. Constrained Synthesis with Projected Diffusion Models. arXiv:2402.03559. Deng, W.; Chen, Y.; Yang, N. T.; Du, H.; Feng, Q.; and Chen, R. T. Q. 2024. Reflected Schrödinger Bridge for Constrained Generative Modeling. arXiv:2401.03228. Fishman, N.; Klarner, L.; Bortoli, V. D.; Mathieu, E.; and Hutchinson, M. 2023a. Diffusion Models for Constrained Do-mains. Transactions on Machine Learning Research (TMLR), arXiv:2304.05364. Fishman, N.; Klarner, L.; Mathieu, E.; Hutchinson, M.; and de Bortoli, V. 2023b. Metropolis Sampling for Constrained Diffusion Models. arXiv:2307.05439. Ho, J.; Jain, A.; and Abbeel, P. 2020. Denoising Diffusion Probabilistic Models. arXiv:2006.11239. Huang, C.-W.; Aghajohari, M.; Bose, A. J.; Panangaden, P.; and Courville, A. 2022. Riemannian Diffusion Models. arXiv:2208.07949. Hyvärinen, A. 2005. Estimation of Non-Normalized Statisti-cal Models by Score Matching. Journal of Machine Learning Research , 6: 695–709. Khalafi, S.; Ding, D.; and Ribeiro, A. 2024. Constrained Diffusion Models via Dual Training. arXiv:2408.15094. Lahti, L.; Salojärvi, J.; Salonen, A.; Scheffer, M.; and de Vos, W. M. 2014. Tipping elements in the human intestinal ecosystem. Nature Communications , 5: 4344. Liu, G.-H.; Chen, T.; Theodorou, E. A.; and Tao, M. 2024. Mirror Diffusion Models for Constrained and Watermarked Generation. arXiv:2310.01236. Liu, S.; Kanamori, T.; and Williams, D. J. 2022. Estimating Density Models with Truncation Boundaries using Score Matching. arXiv:1910.03834. Lou, A.; and Ermon, S. 2023. Reflected Diffusion Models. arXiv:2304.04740. Nordenhög, A.; and Sharma, A. 2025. Score-based con-strained generative modeling via Langevin diffusions with boundary conditions. arXiv:2510.23985. Scealy, J. L.; and Wood, A. T. A. 2020. Score matching for compositional distributions. arXiv:2012.12461. Song, Y.; and Ermon, S. 2020. Generative Modeling by Esti-mating Gradients of the Data Distribution. arXiv:1907.05600. Song, Y.; Sohl-Dickstein, J.; Kingma, D. P.; Kumar, A.; Ermon, S.; and Poole, B. 2021. Score-Based Genera-tive Modeling through Stochastic Differential Equations. arXiv:2011.13456. Stark, H.; Jing, B.; Wang, C.; Corso, G.; Berger, B.; Barzilay, R.; and Jaakkola, T. 2024. Dirichlet Flow Matching with Applications to DNA Sequence Design. arXiv:2402.05841. Williams, D. J.; and Liu, S. 2024. Score Matching for Trun-cated Density Estimation on a Manifold. arXiv:2206.14668. Xie, T.; Zhu, Y.; Yu, L.; Yang, T.; Cheng, Z.; Zhang, S.; Zhang, X.; and Zhang, C. 2024. Reflected Flow Matching. arXiv:2405.16577. Yu, S.; Drton, M.; and Shojaie, A. 2019. Generalized Score Matching for Non-Negative Data. arXiv:1812.10551. Yu, S.; Drton, M.; and Shojaie, A. 2020. Generalized Score Matching for General Domains. arXiv:2009.11428.
