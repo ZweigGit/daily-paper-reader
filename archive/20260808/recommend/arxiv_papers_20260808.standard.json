@@ -1,0 +1,250 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-08T19:31:59.949510+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2608.03438v1",
+      "source": "arxiv",
+      "title": "Modelisation of chaotic systems with a latent Stochastic Differential Equation",
+      "abstract": "Stochastic Differential Equations (SDEs) have become a cornerstone of scientific machine learning, though they are predominantly utilized as algorithmic tools for uncertainty quantification or distribution matching. In contrast, leveraging SDEs fundamentally to model macroscopic, nonlinear physics as stochastic processes remains largely unexplored. This work introduces a probabilistic, non-intrusive reduced-order model (ROM) for chaotic dynamical systems. We argue that projecting high-dimensional nonlinear dynamics onto a low-dimensional manifold introduces irreducible uncertainty, compounded by the chaotic attractors and multi-admissible futures inherent to turbulent flows. Consequently, a chaotic system governed by a partial differential equation can be effectively modeled by an SDE in a suitable latent space. To this end, a nonlinear autoencoder is employed to map the flow field into a low-dimensional representation, within which the temporal evolution is explicitly governed by an SDE. The predictable component of the dynamics is captured by a learned drift term, while state-dependent stochasticity is absorbed by a diffusion term. We demonstrate that this probabilistic framework successfully propagates highly nonlinear states, offering a robust alternative to traditional deterministic methodologies for chaotic regimes. Ultimately, our model generates new chaotic flow trajectories that remain locally and globally consistent with the true transition kernel learned from Direct Numerical Simulation (DNS) data. Even though these generated trajectories are unique and distinct from the training set, they preserve the underlying statistics and manifolds, validating the strong generative performance and robustness of our methodology.",
+      "authors": [
+        "Ismaël Zighed",
+        "Nicolas Thome",
+        "Patrick Gallinari",
+        "Taraneh Sayadi"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn"
+      ],
+      "published": "2026-08-04T10:33:24+00:00",
+      "link": "https://arxiv.org/pdf/2608.03438v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Probabilistic latent SDE reduced-order model for chaotic dynamical systems including turbulent flows",
+      "llm_evidence_cn": "提出用于包括湍流在内的混沌动力系统的概率潜在SDE降阶模型",
+      "llm_evidence": "提出用于包括湍流在内的混沌动力系统的概率潜在SDE降阶模型",
+      "canonical_evidence": "提出用于包括湍流在内的混沌动力系统的概率潜在SDE降阶模型",
+      "llm_tldr_en": "Presents a probabilistic, non-intrusive reduced-order model using latent SDEs for chaotic systems, arguing that low-dimensional projections of turbulent flows introduce irreducible uncertainty and multiple admissible futures.",
+      "llm_tldr_cn": "该工作针对混沌动力系统（如湍流）提出一种基于潜在随机微分方程的概率非侵入式降阶模型。作者认为将高维非线性动力系统投影到低维流形会引入不可约的不确定性，加上混沌吸引子与多种可能未来，使得确定性近似失效。该模型用SDE刻画低维潜空间中的随机演化，从而量化不确定性并生成多种可能轨迹，为流体等混沌系统的概率建模提供了新途径。",
+      "llm_tldr": "该工作针对混沌动力系统（如湍流）提出一种基于潜在随机微分方程的概率非侵入式降阶模型。作者认为将高维非线性动力系统投影到低维流形会引入不可约的不确定性，加上混沌吸引子与多种可能未来，使得确定性近似失效。该模型用SDE刻画低维潜空间中的随机演化，从而量化不确定性并生成多种可能轨迹，为流体等混沌系统的概率建模提供了新途径。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "probabilistic flow models for fluid dynamics",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.05103v2",
+      "source": "arxiv",
+      "title": "Multimodal Spatiotemporal Atmospheric Data Assimilation with Latent Video Flow-matching",
+      "abstract": "Data assimilation (DA) uses Bayesian inference to update the state of a numerical forecast model with observed data. In this study, we propose a fundamentally different, unified approach to atmospheric data assimilation. We use latent video flow-matching to sample temporally consistent trajectories from a prior trained using ERA5 reanalysis (69 variables over an 8-day window). We also use posterior sampling to assimilate real observation sources, such as those from the NOAA Integrated Global Radiosonde Archive and the Integrated Surface Database. Because the prior generates a continuous trajectory, it naturally propagates information between observed and unobserved frames. Therefore, we can perform various DA tasks, such as filtering and smoothing, simply by changing the observed frames. Moreover, we generate full-state ensemble forecasts directly from sparse observations, achieving performance competitive with state-of-the-art observation-to-forecast models.",
+      "authors": [
+        "Dibyajyoti Chakraborty",
+        "Romit Maulik"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math-ph",
+        "physics.ao-ph",
+        "physics.flu-dyn"
+      ],
+      "published": "2026-08-05T17:42:29+00:00",
+      "link": "https://arxiv.org/pdf/2608.05103v2",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "latent video flow-matching for atmospheric data assimilation (fluid dynamics)",
+      "llm_evidence_cn": "潜视频流匹配用于大气数据同化（流体动力学）",
+      "llm_evidence": "潜视频流匹配用于大气数据同化（流体动力学）",
+      "canonical_evidence": "潜视频流匹配用于大气数据同化（流体动力学）",
+      "llm_tldr_en": "This paper applies latent video flow-matching to generate consistent atmospheric state trajectories and assimilate real observations, enabling filtering and other data assimilation tasks.",
+      "llm_tldr_cn": "针对传统数值预报同化方法依赖伴随模型且难以处理多模态观测的问题，本文提出用潜视频流匹配从再分析资料学习先验，生成时序一致的大气状态轨迹，并通过后验采样同化真实探空观测。该方法能自然在时间维传播信息，实现滤波等多项数据同化任务。这为流体动力学中的概率生成建模与观测融合提供了新范式。",
+      "llm_tldr": "针对传统数值预报同化方法依赖伴随模型且难以处理多模态观测的问题，本文提出用潜视频流匹配从再分析资料学习先验，生成时序一致的大气状态轨迹，并通过后验采样同化真实探空观测。该方法能自然在时间维传播信息，实现滤波等多项数据同化任务。这为流体动力学中的概率生成建模与观测融合提供了新范式。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.02151v1",
+      "source": "arxiv",
+      "title": "Fourier-Latent Diffusion for Constrained Generation of Triply Periodic Minimal Surfaces",
+      "abstract": "We propose a diffusion-based generative framework for controllable generation of triply periodic minimal surface (TPMS) structures with low residual mean curvature.Existing TPMS generation approaches are often restricted to a small set of canonical families or produce TPMS-like approximations that deviate from exact minimality. To enable this generative framework, we first construct a large-scale dataset of over 18K unique TPMS by enumerating admissible boundary loops on mirrorable fundamental bounding volumes and solving for diverse minimal-surface patches. Each surface is then projected onto a compact Fourier latent space that explicitly enforces periodicity and $D_{2h}$ symmetry. Next, a transformer-based diffusion model is trained in this latent space to support unconditional sampling, deterministic inversion, local editing, and conditional generation under user-specified constraints. Experiments demonstrate that the model generates diverse, low-curvature TPMS candidates that, under conditioning, satisfy sparse geometric constraints and match target homogenized linear elastic properties, providing a practical tool for TPMS inverse design.",
+      "authors": [
+        "Shu Yan",
+        "Bohan Wang"
+      ],
+      "primary_category": "cs.GR",
+      "categories": [
+        "cs.GR"
+      ],
+      "published": "2026-08-03T12:35:20+00:00",
+      "link": "https://arxiv.org/pdf/2608.02151v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Diffusion-based constrained generation of scientific surfaces; transferable to fluid generation.",
+      "llm_evidence_cn": "基于扩散的受约束科学结构生成，可迁移至流体生成。",
+      "llm_evidence": "基于扩散的受约束科学结构生成，可迁移至流体生成。",
+      "canonical_evidence": "基于扩散的受约束科学结构生成，可迁移至流体生成。",
+      "llm_tldr_en": "Proposes a Fourier-latent diffusion framework to generate triply periodic minimal surfaces with low residual mean curvature, demonstrating controllable diffusion-based generation for scientific structures; transferable to fluid-related generation.",
+      "llm_tldr_cn": "该论文构建了用于三周期极小曲面(TPMS)生成的扩散式生成框架，以解决现有方法局限于少量规范族或偏离精确极小性的问题。通过构造包含18000多个唯一TPMS的数据集，并将其投影到显式保持周期性与D2h对称性的傅里叶潜在空间，再训练基于Transformer的扩散模型。该框架能够以低残余平均曲率实现可控生成。虽然面向材料结构而非流体，但其受约束扩散生成思路对流体仿真中的生成建模有借鉴价值。",
+      "llm_tldr": "该论文构建了用于三周期极小曲面(TPMS)生成的扩散式生成框架，以解决现有方法局限于少量规范族或偏离精确极小性的问题。通过构造包含18000多个唯一TPMS的数据集，并将其投影到显式保持周期性与D2h对称性的傅里叶潜在空间，再训练基于Transformer的扩散模型。该框架能够以低残余平均曲率实现可控生成。虽然面向材料结构而非流体，但其受约束扩散生成思路对流体仿真中的生成建模有借鉴价值。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.02799v1",
+      "source": "arxiv",
+      "title": "A Hyperfinite Framework for Score-Based Generative Modeling",
+      "abstract": "Score-based diffusion models are typically formulated using continuous-time stochastic differential equations and measure-theoretic stochastic calculus. In this paper, we develop a hyperfinite formulation of score-based generative modeling within the framework of Nonstandard Analysis. Starting from an internal diffusion process on a hyperfinite grid, we derive the associated infinitesimal generator and establish its correspondence with the classical Fokker--Planck equation. We then obtain a hyperfinite backward-mean identity that yields the reverse-time drift and provides a constructive derivation of the reverse-time SDE. Building on these results, we show that minimization of an internal score-matching objective recovers the score function required by the reverse-time dynamics, thereby connecting score estimation with generative sampling directly at the hyperfinite level. Under suitable assumptions, we further derive a hyperfinite Girsanov formula and establish a relationship between likelihood optimization and Fisher-divergence objectives. Finally, we analyze the second-order consistency of the hyperfinite dynamics and show that the leading correction term depends explicitly on the fourth moment of the increment distribution, with the Gaussian value $κ=3$ eliminating the leading dispersion contribution. Taken together, these results provide a unified hyperfinite framework for diffusion-based generative modeling--while laying foundations for further extensions--that links discrete grid dynamics, reverse-time diffusion, score matching, and likelihood-based formulations within a common nonstandard setting.",
+      "authors": [
+        "Sunder Ram Krishnan"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.AI",
+        "cs.LG",
+        "math.PR"
+      ],
+      "published": "2026-08-03T18:51:44+00:00",
+      "link": "https://arxiv.org/pdf/2608.02799v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Theoretical foundation for score-based diffusion models; applicable to score-based generative models for fluid flow",
+      "llm_evidence_cn": "分数扩散模型的理论基础；可应用于流体流动的分数生成模型",
+      "llm_evidence": "分数扩散模型的理论基础；可应用于流体流动的分数生成模型",
+      "canonical_evidence": "分数扩散模型的理论基础；可应用于流体流动的分数生成模型",
+      "llm_tldr_en": "Presents a hyperfinite (nonstandard analysis) formulation of score-based diffusion, rigorously deriving reverse SDE and score matching; supports score-based generative modeling theory.",
+      "llm_tldr_cn": "分数扩散模型常基于连续时间SDE与测度论随机分析，该文用非标准分析在超有限网格上构造内部控制扩散过程，推导出无穷小生成元以及反向漂移的构造性表示，并证明内分数匹配可恢复分数函数。该工作为分数生成建模提供了新的数学框架，对流体动力学中分数基生成模型的稳健设计有理论支撑作用。",
+      "llm_tldr": "分数扩散模型常基于连续时间SDE与测度论随机分析，该文用非标准分析在超有限网格上构造内部控制扩散过程，推导出无穷小生成元以及反向漂移的构造性表示，并证明内分数匹配可恢复分数函数。该工作为分数生成建模提供了新的数学框架，对流体动力学中分数基生成模型的稳健设计有理论支撑作用。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "score-based generative models for fluid flow",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.05600v1",
+      "source": "arxiv",
+      "title": "LC-GRPO: Bridging Train-Inference Gap for Flow-Based GRPO with Langevin Correction",
+      "abstract": "Flow-based generative models are typically sampled by solving a deterministic ordinary differential equation (ODE), whereas online reinforcement learning requires stochastic rollouts for policy exploration and optimization. Existing GRPO methods for flow models therefore replace the inference-time ODE with a stochastic differential equation (SDE) during training. Although the ODE and SDE share the same marginal distributions in continuous time, their finite-step discretizations can differ substantially. In particular, SDE rollouts often become blurry as the exploration noise increases, creating a mismatch between the samples used for reinforcement learning and those generated by the test-time ODE sampler. We introduce LC-GRPO, a flow-based GRPO framework with Langevin correction. Each rollout transition first takes an inference-aligned ODE Euler step and then applies a stochastic Langevin correction targeting the marginal distribution at the resulting timestep. The required score is recovered directly from the flow velocity, requiring no additional score model, while the resulting transition remains an isotropic Gaussian with a tractable likelihood for policy optimization. We theoretically show that, under suitable conditions, one Langevin correction step reduces the Wasserstein error of an imperfect ODE Euler step. At a matched randomness level, we further show that the proposed transition can be more accurate than the standard Euler--Maruyama discretization of the reverse SDE. Experiments on SD3.5-Medium, FLUX.1-Dev, and HunyuanVideo demonstrate that LC-GRPO consistently improves reward optimization across text-to-image and text-to-video tasks, preserves generation quality, and substantially narrows the gap between stochastic training rollouts and deterministic test-time ODE inference.",
+      "authors": [
+        "Yingqing Guo",
+        "Hui Yuan",
+        "Zijian He",
+        "Mengdi Wang",
+        "Zheng Ding"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-08-06T04:47:57+00:00",
+      "link": "https://arxiv.org/pdf/2608.05600v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Flow-based generative model training; methodological bridge for flow matching in fluid simulation.",
+      "llm_evidence_cn": "流式生成模型训练方法，可桥接流体流匹配模拟。",
+      "llm_evidence": "流式生成模型训练方法，可桥接流体流匹配模拟。",
+      "canonical_evidence": "流式生成模型训练方法，可桥接流体流匹配模拟。",
+      "llm_tldr_en": "Proposes LC-GRPO with Langevin correction to align ODE-based inference and SDE-based RL training for flow-based generative models, improving sample quality and bridging the train-inference gap; transferable to fluid flow matching.",
+      "llm_tldr_cn": "该论文解决基于流的生成模型在推理时使用确定性ODE、训练时使用随机SDE所带来的有限步离散化不一致问题。提出LC-GRPO方法，利用朗之万校正弥补训练与推理之间的采样差距，避免SDE采样在噪声增大时变得模糊。实验表明该方法能提升流式生成模型的训练与生成质量。该技术虽未直接应用于流体，但对流体流匹配模拟具有方法上的迁移价值。",
+      "llm_tldr": "该论文解决基于流的生成模型在推理时使用确定性ODE、训练时使用随机SDE所带来的有限步离散化不一致问题。提出LC-GRPO方法，利用朗之万校正弥补训练与推理之间的采样差距，避免SDE采样在噪声增大时变得模糊。实验表明该方法能提升流式生成模型的训练与生成质量。该技术虽未直接应用于流体，但对流体流匹配模拟具有方法上的迁移价值。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.06107v1",
+      "source": "arxiv",
+      "title": "Kastor: An efficient fine-tuning strategy for generative emulation of PDE simulations",
+      "abstract": "Machine learning offers a promising avenue to accelerate physical simulations by replacing computationally expensive traditional Partial Differential Equation (PDE) solvers with fast, differentiable surrogate models. However, standard auto-regressive ML emulators often suffer from error accumulation over long horizons and struggle to capture the stochasticity of complex physical systems. In this paper, we propose Kastor, a comprehensive methodology to adapt a deterministic physics foundation model into a highly efficient and accurate generative surrogate. First, we introduce a two-stage inference scheme that combines a large-stride causal auto-regressive model with a non-causal temporal super-resolution network, significantly reducing error accumulation while minimizing computational cost. Second, we present Mean prediction regularization (MPR), a novel training objective that constrains the generative model to predict the deterministic distribution mean under null noise conditioning. This regularization dramatically improves the performance and stability of both Functional Generative Networks (FGN) and diffusion-based emulators. Finally, we demonstrate that incorporating spatial gradient matching improves the accuracy and physical fidelity of the simulations as measured by power spectrum density. Extensive evaluations on diverse simulation datasets of the benchmark The Well show that with these components, our model outperforms competing methods in forecasting accuracy, spectral consistency, and computational efficiency. Our model achieves a 42.9% average reduction in forecasting compared to our reference based on the Walrus finetuning methodology, and outperforms Walrus for 8 out of 10 datasets on variance-normalized RMSE (VRMSE).",
+      "authors": [
+        "Guillaume Couairon",
+        "Alexis Jacq",
+        "Yu-Han Wu",
+        "Renu Singh",
+        "Yana Hasson",
+        "Quentin Berthet",
+        "Romuald Elie"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.NA"
+      ],
+      "published": "2026-08-06T14:41:11+00:00",
+      "link": "https://arxiv.org/pdf/2608.06107v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "generative surrogate emulation of PDE simulations, transferable to fluid dynamics",
+      "llm_evidence_cn": "PDE模拟的生成式代理模拟，可迁移至流体动力学",
+      "llm_evidence": "PDE模拟的生成式代理模拟，可迁移至流体动力学",
+      "canonical_evidence": "PDE模拟的生成式代理模拟，可迁移至流体动力学",
+      "llm_tldr_en": "Kastor adapts a deterministic physics foundation model into a generative surrogate via a two-stage inference scheme combining large-stride causal autoregression and non-causal temporal super-resolution, reducing error accumulation for long-horizon PDE simulations.",
+      "llm_tldr_cn": "针对自回归机器学习仿真器在长时程预测中误差累积且难以刻画随机性的问题，提出Kastor方法。它将确定性物理基础模型微调为高效且准确的生成式代理模型，采用大步长因果自回归与非因果时间超分辨两阶段推理。实验表明该方法显著降低长时间模拟误差并捕获系统随机性。该方法为生成式模型用于PDE（包括流体）仿真提供了通用策略。",
+      "llm_tldr": "针对自回归机器学习仿真器在长时程预测中误差累积且难以刻画随机性的问题，提出Kastor方法。它将确定性物理基础模型微调为高效且准确的生成式代理模型，采用大步长因果自回归与非因果时间超分辨两阶段推理。实验表明该方法显著降低长时间模拟误差并捕获系统随机性。该方法为生成式模型用于PDE（包括流体）仿真提供了通用策略。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
