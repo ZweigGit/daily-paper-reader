@@ -1,0 +1,39 @@
+{
+  "label": "2026-08-09",
+  "date": "2026-08-09",
+  "generated_at": "2026-08-09T20:47:45",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202608/09/2608.01692v2-beckmann-transport-models-from-autonomous-flows-to-one-step-maps",
+      "section": "quick",
+      "title_en": "Beckmann Transport Models: From Autonomous Flows to One-Step Maps",
+      "authors": "Lee Cheuk-Kit, Florentin Coeurdoux, Peter Potaptchik, Yilun Du, Michael Samuel Albergo, Eric Vanden-Eijnden",
+      "date": "2026-08-03",
+      "pdf": "https://arxiv.org/pdf/2608.01692v2",
+      "score": "6.0",
+      "evidence": "提出基于自治流和单步映射的流匹配实现，属于流匹配方法",
+      "tldr": "现有流匹配方法通常依赖时间相关的速度场，难以在目标分布位于低维流形时精确映射。本文提出时间无关的自主动流，利用奇异目标分布实现精确分布映射，并证明其一步生成映射是某个简单守恒方程的唯一解，可直接从样本学习。该框架赋予Beckmann运输问题的通量约束以动力学意义，统一了泊松流生成模型与均衡匹配等方法。在ImageNet 256x256上验证了有效性，并纠正了现有方法的不一致。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We propose an instantiation of flow matching that relies on a time-independent velocity field (an \\emph{autonomous flow}) to exactly map between two distributions, so long as the target is singular, i.e.\\ supported on a lower-dimensional data manifold. We also show that the one-step generative map associated with this flow is the unique solution of a simple conservation equation, which can be used to learn the map directly from samples. These autonomous flows and maps give a dynamical meaning to the flux constraint of Beckmann's transportation problem. Their construction provides a unifying framework that recovers, for instance, the closed-form Poisson-flow generative model and equilibrium matching with a quadratic flow-matching regression loss. We illustrate how this theory corrects inconsistencies in existing methods and demonstrate the effectiveness of the autonomous flow and the one-step map on ImageNet 256x256.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/09/2608.04222v1-tide-a-physically-diverse-3d-turbulence-benchmark-dataset-for-advancing-scientific-machine-learning",
+      "section": "quick",
+      "title_en": "TIDE: A Physically Diverse 3D Turbulence Benchmark Dataset for Advancing Scientific Machine Learning",
+      "authors": "Yilong Dai, Yiming Sun, Yiheng Chen, Shengyu Chen, Peyman Givi, Xiaowei Jia, Runlong Yu",
+      "date": "2026-08-04",
+      "pdf": "https://arxiv.org/pdf/2608.04222v1",
+      "score": "6.0",
+      "evidence": "提供3D湍流机器学习基准数据集，可为流体动力学中的生成模型评测提供数据支撑。",
+      "tldr": "3D湍流是物理机器学习的关键测试平台，但现有资源多为单样本且缺乏基准。本文提出TIDE，一个256^3的不可压缩湍流DNS语料库，包含15种配置、独立集成、压力场和方程级验证，并配套五个任务与物理保真度指标。结果显示当前学习模型仅勉强超过持续预测，误差约为谱求解器两倍，且低点误差可能伴随小尺度动力学失真；强迫到衰减迁移暴露了条件变量缺失。TIDE使精度、保真度和条件化差距可量化。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Turbulence is a central testbed for machine learning on physical dynamics because its governing laws are known exactly. However, most existing studies remain in 2D, while 3D turbulence has fundamentally different physics and is far more costly to simulate. Existing 3D resources also typically provide only one realization per configuration, making it difficult to distinguish learning the dynamics from fitting the statistics of a single flow. In this paper, we introduce TIDE (Turbulent Incompressible DNS Ensembles), a 256^3 DNS corpus and benchmark for 3D incompressible turbulence, with 15 configurations on eight controlled axes, independent ensembles, pressure fields, and equation-level verification. The benchmark includes five tasks, standardized learned baselines, controlled generalization splits, and physical-fidelity metrics alongside pointwise error. Across the main forecasting configurations, current learned models barely outperform persistence and still make about twice the error of a spectral solver given the true equations. Moreover, lower pointwise error can coincide with severely distorted small-scale dynamics, showing that accuracy alone does not ensure physical fidelity. Generalization results further show that most regime shifts reflect limited training coverage, whereas forced-to-decay transfer exposes a missing conditioning variable: operators trained under forcing continue to predict driven evolution when the external drive is removed. Closing these accuracy, fidelity, and conditioning gaps is the central open problem made measurable by TIDE.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
