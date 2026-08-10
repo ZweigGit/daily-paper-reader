@@ -1,0 +1,207 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-10T21:05:09.805770+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2608.07161v1",
+      "source": "arxiv",
+      "title": "Fluid-DiT: Graph-Free Diffusion Transformers for Fluid Flow Simulations Learning",
+      "abstract": "Simulating complex fluid flows requires capturing full equilibrium distributions rather than just mean trajectories, yet high-fidelity solvers remain computationally prohibitive. Recent advances, such as Diffusion Graph Networks (DGNs), have combined diffusion models with graph neural networks to sample equilibrium states directly from unstructured meshes, enabling distributional accuracy even from short simulations. However, graph-based diffusion approaches suffer from hand-crafted architectural constraints, limited receptive fields in message passing, and costly multi-scale designs, which restrict scalability to larger and more complex domains. We propose Fluid-DiT, a Graph-Free Diffusion Transformer that replaces graph message passing with attention-based denoising, eliminating explicit graph design while preserving the ability to model distributions of chaotic flows. Our framework introduces a latent-space formulation that disentangles geometric fidelity from distributional learning, reducing high-frequency artifacts and accelerating sampling. By leveraging the transformer's global receptive field, Fluid-DiT naturally captures both local flow structures and long-range correlations without requiring hierarchical graph coarsening. On canonical benchmarks including laminar cylinder wakes, ellipse-flow systems, and turbulent 3D wing experiments, Fluid-DiT consistently outperforms graph-based diffusion baselines in both sample quality and distributional accuracy, achieving higher $R^2$ correlations and lower Wasserstein distances. Moreover, it generalizes robustly from short, incomplete trajectories to unseen Reynolds numbers and geometries, demonstrating strong scalability.",
+      "authors": [
+        "Shentong Mo",
+        "Guolin Ke"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CE"
+      ],
+      "published": "2026-08-07T12:28:45+00:00",
+      "link": "https://arxiv.org/pdf/2608.07161v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Fluid-DiT uses diffusion transformers to sample fluid flow equilibrium distributions",
+      "llm_evidence_cn": "Fluid-DiT 用扩散Transformer对流体流动平衡分布进行采样",
+      "llm_evidence": "Fluid-DiT 用扩散Transformer对流体流动平衡分布进行采样",
+      "canonical_evidence": "Fluid-DiT 用扩散Transformer对流体流动平衡分布进行采样",
+      "llm_tldr_en": "Fluid-DiT replaces graph message passing in diffusion graph networks with a graph-free diffusion transformer for scalable fluid flow simulation, capturing full equilibrium distributions from short simulations.",
+      "llm_tldr_cn": "现有基于图的扩散网络模拟复杂流体时受限于手工架构约束、消息传递感受野有限和多尺度设计成本高，难以扩展到更大更复杂的流体域。Fluid-DiT提出一种无图扩散Transformer，用注意力机制替代图消息传递来直接学习流动状态分布。该方法在保持分布精度的同时提升了对复杂流体仿真任务的可扩展性。该工作表明扩散Transformer可作为流体动力学高效生成式模拟的新基础模型。",
+      "llm_tldr": "现有基于图的扩散网络模拟复杂流体时受限于手工架构约束、消息传递感受野有限和多尺度设计成本高，难以扩展到更大更复杂的流体域。Fluid-DiT提出一种无图扩散Transformer，用注意力机制替代图消息传递来直接学习流动状态分布。该方法在保持分布精度的同时提升了对复杂流体仿真任务的可扩展性。该工作表明扩散Transformer可作为流体动力学高效生成式模拟的新基础模型。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.03117v1",
+      "source": "arxiv",
+      "title": "Simulation-free and finite-time diffusion model",
+      "abstract": "The performance of generative diffusion models is determined by the choice of the reference diffusion process connecting the empirical and prior distributions. Conventional approaches typically trade off simulation-free training against finite-time generation. We propose a framework for designing the reference process that achieves both simultaneously. The key idea is to prescribe tractable time-dependent conditional distributions and then construct the reference process realizing them as its marginals. This framework reveals that score matching is not fundamental to diffusion-model training but instead emerges naturally through reversal of the reference process. We further show that conditional flow matching arises as the small-noise limit of the proposed framework.",
+      "authors": [
+        "Kentaro Kaba",
+        "Masayuki Ohzeki",
+        "Yuki Sughiyama"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-08-04T04:39:14+00:00",
+      "link": "https://arxiv.org/pdf/2608.03117v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "reference-process framework unifying simulation-free diffusion and conditional flow matching",
+      "llm_evidence_cn": "统一无模拟扩散与条件流匹配的参考过程框架",
+      "llm_evidence": "统一无模拟扩散与条件流匹配的参考过程框架",
+      "canonical_evidence": "统一无模拟扩散与条件流匹配的参考过程框架",
+      "llm_tldr_en": "A framework designs reference diffusion processes achieving simultaneous simulation-free training and finite-time generation, showing score matching emerges from reversal and conditional flow matching is the small-noise limit, with direct implications for efficient generative samplers.",
+      "llm_tldr_cn": "常驻扩散模型在无模拟训练和有限时间生成之间存在权衡。该文提出通过指定易处理的条件分布来构造参考过程，从而同时实现两者。框架表明评分匹配并非扩散训练的本质，而是参考过程反转的自然结果，且条件流匹配是其小噪声极限。该理论为面向流体流动仿真的快速生成模型设计提供了统一指导。",
+      "llm_tldr": "常驻扩散模型在无模拟训练和有限时间生成之间存在权衡。该文提出通过指定易处理的条件分布来构造参考过程，从而同时实现两者。框架表明评分匹配并非扩散训练的本质，而是参考过程反转的自然结果，且条件流匹配是其小噪声极限。该理论为面向流体流动仿真的快速生成模型设计提供了统一指导。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.05557v1",
+      "source": "arxiv",
+      "title": "Hierarchical Flow Matching for 3D Point Cloud Generation",
+      "abstract": "Generating high-quality 3D point clouds requires capturing both global shape topology and local geometric details. Existing flow-based methods rely on continuous normalizing flows (CNFs) that demand expensive ODE solving and trace estimation during training, while diffusion models require hundreds of iterative denoising steps. Moreover, most approaches adopt single-level generation directly in point space, disregarding the hierarchical structure natural to 3D shapes. We propose Hierarchical Flow Matching (HFM) that extends flow matching to bilevel structure for unconditional 3D point cloud generation. HFM decomposes the task into two levels via optimal-transport flow matching: a \\textit{Latent Flow Matching} models the global shape manifold in a compact latent space, and a \\textit{Conditional Point Flow Matching} reconstructs detailed point clouds conditioned on the latent code. Both flows are trained with simple MSE regression losses. The resulting straight OT paths enable efficient sampling with as few as 15 Euler steps per flow, while the structured latent space supports downstream tasks including classification. Extensive experiments on ShapeNet and ModelNet benchmarks demonstrate that HFM achieves competitive or even best performance compared with prior state-of-the-art methods.",
+      "authors": [
+        "Linhao Wang",
+        "Qichang Zhang",
+        "Ye Su",
+        "Hao Wang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-06T03:23:49+00:00",
+      "link": "https://arxiv.org/pdf/2608.05557v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "flow matching method for hierarchical generation, adaptable to fluid flow",
+      "llm_evidence_cn": "层次化流匹配生成，可适配流体流场",
+      "llm_evidence": "层次化流匹配生成，可适配流体流场",
+      "canonical_evidence": "层次化流匹配生成，可适配流体流场",
+      "llm_tldr_en": "HFM extends flow matching to a bilevel structure for 3D point cloud generation, modeling global shape in latent space and local details in point space, avoiding expensive ODE solving and iterative denoising.",
+      "llm_tldr_cn": "针对3D点云生成中单层级方法难以同时捕捉全局拓扑与局部细节，以及连续归一化流训练昂贵、扩散模型迭代多的问题，提出层次化流匹配（HFM）。HFM将生成分解为潜空间的全局形状流匹配与点空间的局部细节流匹配，均基于最优传输流匹配。该方法在生成质量和效率上具有优势，虽面向点云，但其流匹配框架可推广到流体流场生成。",
+      "llm_tldr": "针对3D点云生成中单层级方法难以同时捕捉全局拓扑与局部细节，以及连续归一化流训练昂贵、扩散模型迭代多的问题，提出层次化流匹配（HFM）。HFM将生成分解为潜空间的全局形状流匹配与点空间的局部细节流匹配，均基于最优传输流匹配。该方法在生成质量和效率上具有优势，虽面向点云，但其流匹配框架可推广到流体流场生成。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.05666v1",
+      "source": "arxiv",
+      "title": "Potential Matching Optimal Transport: Continuous Normalizing Flows for Exact $p$-Wasserstein Dynamics",
+      "abstract": "We introduce Potential Matching Optimal Transport (PMOT), a potential-flow framework for general $p$-cost optimal transport with $c_p(x,y)=\\|x-y\\|^p$. PMOT parameterizes the CNF velocity field with a scalar potential in the generalized Benamou--Brenier form for the chosen exponent $p$. It trains the potential gradient with a self-induced matching loss along straight bridges determined by the model's own endpoints, while allowing flexible terminal distribution matching. Our main result establishes zero-loss exactness: under the stated regularity, exact terminal matching, and uniqueness assumptions, any zero-loss solution satisfies the generalized Benamou--Brenier optimality system and recovers the corresponding $p$-optimal transport map and dynamics. On synthetic benchmarks, PMOT learns $p$-specific maps that agree with the corresponding $p$-matched OT references. It also remains competitive as a likelihood-based density model on high-dimensional tabular data, and an MMD-based color transformation experiment demonstrates flexible sample-based terminal matching.",
+      "authors": [
+        "Lishuo Zhang",
+        "Ruizhi Huang",
+        "Yang Yu",
+        "Lei Li"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.NA"
+      ],
+      "published": "2026-08-06T07:04:30+00:00",
+      "link": "https://arxiv.org/pdf/2608.05666v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "continuous normalizing flow and optimal transport, a probabilistic flow method",
+      "llm_evidence_cn": "连续归一化流与最优传输方法，属于概率流模型",
+      "llm_evidence": "连续归一化流与最优传输方法，属于概率流模型",
+      "canonical_evidence": "连续归一化流与最优传输方法，属于概率流模型",
+      "llm_tldr_en": "Presents PMOT, a continuous normalizing flow framework for exact p-Wasserstein optimal transport using scalar-potential velocity fields; proves zero-loss exactness. Offers a principled flow-based generative tool but not applied to fluid dynamics.",
+      "llm_tldr_cn": "针对一般p-代价最优传输问题，提出势匹配最优传输框架，将连续归一化流的速矢场参数化为标量势，并沿直线桥构造自诱导匹配损失。理论证明零损失解满足广义Benamou-Brenier最优性系统并恢复p-最优传输。该方法为基于流的概率生成模型提供了严格工具，虽未直接面向流体，但可推广到流体动力学中的概率流建模。",
+      "llm_tldr": "针对一般p-代价最优传输问题，提出势匹配最优传输框架，将连续归一化流的速矢场参数化为标量势，并沿直线桥构造自诱导匹配损失。理论证明零损失解满足广义Benamou-Brenier最优性系统并恢复p-最优传输。该方法为基于流的概率生成模型提供了严格工具，虽未直接面向流体，但可推广到流体动力学中的概率流建模。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "probabilistic flow models for fluid dynamics",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.07042v1",
+      "source": "arxiv",
+      "title": "Limit Points of Reflow with Minibatch Optimal Transport",
+      "abstract": "Rectified flows, also called flow matching or stochastic interpolants, are generative models that learn a time-dependent vector field steering a probability curve between two probability distributions, usually referred to as latent and target distributions. Reflow accelerates inference by iteratively straightening the trajectories induced by this vector field. We study the asymptotic behavior of this iteration and characterize its limit points. First, we define weak rectified couplings which always exist. Next, when rectified flow updates are alternated with minibatch optimal transport steps of fixed batch size, we show that any limit is $N$-cyclically monotone, where $N$ is the batch size. Such $N$-cyclically monotone couplings enjoy favorable structural and stability properties such as rectifiability and straightness. Finally, restricting velocities to gradient fields and assuming additional support conditions, we prove that reflow limits coincide with the optimal transport map between the endpoint distributions.",
+      "authors": [
+        "Antonin Chambolle",
+        "Johannes Hertrich"
+      ],
+      "primary_category": "math.PR",
+      "categories": [
+        "math.PR",
+        "cs.LG",
+        "math.NA"
+      ],
+      "published": "2026-08-07T09:51:33+00:00",
+      "link": "https://arxiv.org/pdf/2608.07042v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Rectified flow / flow matching theory with minibatch optimal transport, relevant to flow-matching-based fluid modeling",
+      "llm_evidence_cn": "整流流与流匹配理论结合小批量最优传输，与基于流匹配的流体建模相关",
+      "llm_evidence": "整流流与流匹配理论结合小批量最优传输，与基于流匹配的流体建模相关",
+      "canonical_evidence": "整流流与流匹配理论结合小批量最优传输，与基于流匹配的流体建模相关",
+      "llm_tldr_en": "Analyzes the limit behavior of reflow iteration in rectified flows/flow matching, proving that limits are N-cyclically monotone under minibatch optimal transport alternation.",
+      "llm_tldr_cn": "针对整流流（flow matching/随机插值）重流迭代的收敛行为，本文提出弱整流耦合概念，并证明与小批量最优传输交替更新时，任何极限点都是N-循环单调的。该结果刻画了重流迭代的极限结构，并说明最优传输步骤带来的稳定性质。这一理论分析有助于改进基于流匹配的生成模型训练与推理效率，并为设计快速采样器提供理论基础。",
+      "llm_tldr": "针对整流流（flow matching/随机插值）重流迭代的收敛行为，本文提出弱整流耦合概念，并证明与小批量最优传输交替更新时，任何极限点都是N-循环单调的。该结果刻画了重流迭代的极限结构，并说明最优传输步骤带来的稳定性质。这一理论分析有助于改进基于流匹配的生成模型训练与推理效率，并为设计快速采样器提供理论基础。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
