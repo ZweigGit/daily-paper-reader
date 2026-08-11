@@ -6,35 +6,37 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-10
-- 运行时间：2026-08-10 21:10:12 UTC
+- 最新运行日期：2026-08-11
+- 运行时间：2026-08-11 21:18:35 UTC
 - 运行状态：成功
-- 本次总论文数：5
-- 精读区：1
+- 本次总论文数：4
+- 精读区：0
 - 速读区：4
 
 ### 今日简报（AI）
-今日精读1篇、速读多篇，聚焦扩散模型在流体模拟与生成任务中的新进展。最值得关注的是《Fluid-DiT》，以9.0高分提出图无关的扩散Transformer，为流体模拟学习提供高效新思路。建议普通读者优先精读该文，并顺带了解无模拟扩散与流匹配方向，可快速抓住生成模型前沿。
-- 详情：[/202608/10/README](/202608/10/README)
+今日完成4篇论文速读，无精读；内容聚焦科学机器学习与生成模型。
+
+值得关注：TIDE提供多样化3D湍流基准数据集，Energy-Guided Flow Matching探索能量引导流匹配新思路。
+
+建议下一步针对TIDE数据集或流匹配方向挑选一篇进行精读，以深入理解方法细节。
+- 详情：[/202608/11/README](/202608/11/README)
 
 ### 精读区论文标签
-1. [Fluid-DiT: Graph-Free Diffusion Transformers for Fluid Flow Simulations Learning](/202608/10/2608.07161v1-fluid-dit-graph-free-diffusion-transformers-for-fluid-flow-simulations-learning)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：Fluid-DiT 用扩散Transformer对流体流动平衡分布进行采样
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Simulation-free and finite-time diffusion model](/202608/10/2608.03117v1-simulation-free-and-finite-time-diffusion-model)  
+1. [TIDE: A Physically Diverse 3D Turbulence Benchmark Dataset for Advancing Scientific Machine Learning](/202608/11/2608.04222v1-tide-a-physically-diverse-3d-turbulence-benchmark-dataset-for-advancing-scientific-machine-learning)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：统一无模拟扩散与条件流匹配的参考过程框架
-2. [Hierarchical Flow Matching for 3D Point Cloud Generation](/202608/10/2608.05557v1-hierarchical-flow-matching-for-3d-point-cloud-generation)  
+   evidence：构建了具有多样性、独立集合和方程级验证的三维湍流基准数据集，为流体动力学生成模型提供标准测试平台。
+2. [Intrinsic-Hybrid Latent Diffusion Models for Generative Modeling on Unknown Manifolds](/202608/11/2608.04827v1-intrinsic-hybrid-latent-diffusion-models-for-generative-modeling-on-unknown-manifolds)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：层次化流匹配生成，可适配流体流场
-3. [Potential Matching Optimal Transport: Continuous Normalizing Flows for Exact $p$-Wasserstein Dynamics](/202608/10/2608.05666v1-potential-matching-optimal-transport-continuous-normalizing-flows-for-exact-p-wasserstein-dynamics)  
+   evidence：提出面向未知流形的几何感知扩散模型，可迁移至高维流体流场生成
+3. [Energy-Guided Flow Matching](/202608/11/2608.05811v2-energy-guided-flow-matching)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：连续归一化流与最优传输方法，属于概率流模型
-4. [Limit Points of Reflow with Minibatch Optimal Transport](/202608/10/2608.07042v1-limit-points-of-reflow-with-minibatch-optimal-transport)  
+   evidence：流匹配生成方法；可推广到流体流场模拟，但非流体专用
+4. [Second Order Drifting Models](/202608/11/2608.07924v1-second-order-drifting-models)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：整流流与流匹配理论结合小批量最优传输，与基于流匹配的流体建模相关
+   evidence：基于漂移场的一步生成模型，潜在地适用于物理流分布的高效采样
 
 
 <div class="dpr-home-promo-card">

@@ -1,0 +1,69 @@
+{
+  "label": "2026-08-11",
+  "date": "2026-08-11",
+  "generated_at": "2026-08-11T21:18:42",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202608/11/2608.04222v1-tide-a-physically-diverse-3d-turbulence-benchmark-dataset-for-advancing-scientific-machine-learning",
+      "section": "quick",
+      "title_en": "TIDE: A Physically Diverse 3D Turbulence Benchmark Dataset for Advancing Scientific Machine Learning",
+      "authors": "Yilong Dai, Yiming Sun, Yiheng Chen, Shengyu Chen, Peyman Givi, Xiaowei Jia, Runlong Yu",
+      "date": "2026-08-04",
+      "pdf": "https://arxiv.org/pdf/2608.04222v1",
+      "score": "6.0",
+      "evidence": "构建了具有多样性、独立集合和方程级验证的三维湍流基准数据集，为流体动力学生成模型提供标准测试平台。",
+      "tldr": "三维湍流是物理机器学习的核心测试平台，但现有资源多为二维或单一实现。本文提出TIDE基准，含15种配置、多个独立集成、256³分辨率及方程级验证，并设计五个任务与物理保真度指标。实验显示当前学习模型仅勉强超过持久性预测，误差约为谱求解器的两倍，且低点误差可能伴随小尺度动力学失真。强制向衰减迁移暴露了缺失条件变量问题，TIDE为准确率、保真度和条件化改进提供了量化平台。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Turbulence is a central testbed for machine learning on physical dynamics because its governing laws are known exactly. However, most existing studies remain in 2D, while 3D turbulence has fundamentally different physics and is far more costly to simulate. Existing 3D resources also typically provide only one realization per configuration, making it difficult to distinguish learning the dynamics from fitting the statistics of a single flow. In this paper, we introduce TIDE (Turbulent Incompressible DNS Ensembles), a 256^3 DNS corpus and benchmark for 3D incompressible turbulence, with 15 configurations on eight controlled axes, independent ensembles, pressure fields, and equation-level verification. The benchmark includes five tasks, standardized learned baselines, controlled generalization splits, and physical-fidelity metrics alongside pointwise error. Across the main forecasting configurations, current learned models barely outperform persistence and still make about twice the error of a spectral solver given the true equations. Moreover, lower pointwise error can coincide with severely distorted small-scale dynamics, showing that accuracy alone does not ensure physical fidelity. Generalization results further show that most regime shifts reflect limited training coverage, whereas forced-to-decay transfer exposes a missing conditioning variable: operators trained under forcing continue to predict driven evolution when the external drive is removed. Closing these accuracy, fidelity, and conditioning gaps is the central open problem made measurable by TIDE.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/11/2608.04827v1-intrinsic-hybrid-latent-diffusion-models-for-generative-modeling-on-unknown-manifolds",
+      "section": "quick",
+      "title_en": "Intrinsic-Hybrid Latent Diffusion Models for Generative Modeling on Unknown Manifolds",
+      "authors": "Yizhu Wang, Mu Niu, Xiaochen Yang",
+      "date": "2026-08-05",
+      "pdf": "https://arxiv.org/pdf/2608.04827v1",
+      "score": "6.0",
+      "evidence": "提出面向未知流形的几何感知扩散模型，可迁移至高维流体流场生成",
+      "tldr": "现有扩散模型依赖大数据且忽视几何结构，潜扩散模型虽降维却强加欧氏空间，难以刻画未知流形。本文提出内禀混合潜扩散模型（ILDM），将潜空间视为黎曼流形图表，用概率解码器量化几何与不确定性，并设计黎曼-欧氏混合扩散及对应去噪得分匹配。在COIL-100、MNIST和心脏MRI上，ILDM生成质量显著优于标准扩散和潜扩散模型。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We introduce the Intrinsic Hybrid Latent Diffusion Model (ILDM), a generative framework that integrates probabilistic dimensionality reduction with geometry-aware diffusion on unknown manifolds. While diffusion models (DMs) have achieved state-of-the-art results in high-dimensional data synthesis, they rely on large training datasets and ignore intrinsic geometric structure. Latent diffusion models (LDMs) address the high dimensionality by learning a latent space, but they typically impose a Euclidean structure, failing to capture the underlying manifold geometry, especially problematic in data-sparse regimes. ILDM addresses these limitations by interpreting the latent space as a chart of an unknown Riemannian manifold, with geometry and uncertainty quantified through a probabilistic decoder. The forward process is a hybrid diffusion that switches between Riemannian and Euclidean dynamics based on local uncertainty, where the Riemannian component is governed by a probabilistic metric tensor derived from the decoder. To learn the generative dynamics, we introduce an approximate denoising score matching method tailored to the hybrid diffusion setting, enabling a backward process defined by hybrid Langevin dynamics. Experiments on COIL-100, MNIST, and cardiac MRI datasets demonstrate that ILDM significantly improves generation quality, achieving lower FID and LPIPS scores compared to standard diffusion and latent diffusion models.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/11/2608.05811v2-energy-guided-flow-matching",
+      "section": "quick",
+      "title_en": "Energy-Guided Flow Matching",
+      "authors": "Haoyang Tong, Yu He, Fang Li, Lichen Ma, Jingling Fu, Dong Chen, Zhen Chen, Junshi Huang, Jie Cao",
+      "date": "2026-08-06",
+      "pdf": "https://arxiv.org/pdf/2608.05811v2",
+      "score": "6.0",
+      "evidence": "流匹配生成方法；可推广到流体流场模拟，但非流体专用",
+      "tldr": "像素空间生成模型需在高维空间联合学习全局结构与细节，标准流匹配固定端点导致频谱演化隐式学习。本文提出能量引导流匹配（EG-FM），以热核滤波端点代替固定端点，通过图像特定能量调度释放高频信号，重新定向速度场。无需调整骨干网络，训练推理开销极小。在ImageNet 256上FID达1.45，512分辨率微调后FID 1.58，文本生成任务亦有效。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Pixel-space generative models bypass lossy latent compression, yet necessitate joint learning of global structure and fine-grained details in a high-dimensional space. Standard flow matching interpolates noise toward a fixed clean-image endpoint, leaving the spectral evolution to be learned implicitly. In this paper, we introduce Energy-Guided Flow Matching(EG-FM) that explicitly models a coarse-to-fine generative trajectory by moving endpoint. Specifically, EG-FM replaces the fixed endpoint with a heat-kernel-filtered endpoint that evolves smoothly from low-frequency image to clean image. The fraction of high-frequency signal in moving endpoint is released by an image-specific energy-guided scheduling, leading to the re-targeting of velocity in flow matching. Our framework requires no adaptation of the backbone and training data, bringing negligible cost on the training and inference stages. In our experiment, EG-FM consistently achieves lower FID on the ImageNet class-conditional image generation task at $256 \\times 256$ with fewer epochs, reaching an FID of 1.55 at 200 epochs and 1.45 at 600 epochs. We continue training the generation task on the setting of $512 \\times 512$ resolution, yielding a FID of 1.58 after only 40 high-resolution adaptation epochs. Furthermore, we transfer EG-FM on text-to-image generation and achieve 0.85 on GenEval score and 83.9 on DPG-Bench. Code is available at https://github.com/ysng123/EG-FM.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/11/2608.07924v1-second-order-drifting-models",
+      "section": "quick",
+      "title_en": "Second Order Drifting Models",
+      "authors": "Drake Brown, Yuhao Huang, Shih-Hsin Wang, Bao Wang",
+      "date": "2026-08-08",
+      "pdf": "https://arxiv.org/pdf/2608.07924v1",
+      "score": "6.0",
+      "evidence": "基于漂移场的一步生成模型，潜在地适用于物理流分布的高效采样",
+      "tldr": "一阶漂移模型依赖核谱决定各频率衰减速率，导致细尺度结构恢复缓慢。本文通过引入人工速度变量将漂移动力学提升到相空间，使密度扰动满足二阶加速方程，与Nesterov加速原理相通。该设计缓解了频谱刚性，同时保留一步推断。实验表明二阶漂移在多个任务上收敛更快且优于一阶基线。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Drifting models are a recent class of one-step generative models that evolve the model distribution during training using a predefined sample-based drift field. Although they avoid iterative inference, their kernel-based drift fields induce frequency-dependent training dynamics: In the linearized regime, each Fourier mode of the density residual decays at a rate determined by the kernel spectrum, leading to slow recovery of fine-scale structure. We propose Second-Order Drifting Models, which lift drifting dynamics into phase space by augmenting generated samples with artificial velocity variables. We show that the resulting density perturbations obey accelerated second-order dynamics in Fourier space, connecting drifting models to the celebrated Nesterov acceleration from optimization theory. This provides a principled mechanism for mitigating the spectral stiffness of first-order drifting while preserving one-step inference. We derive a practical semi-implicit training algorithm and evaluate it on synthetic distribution matching, sequential data generation, and robotic control. Across these settings, the second-order drifting model improves convergence behavior and achieves competitive or superior performance over first-order drifting baselines.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

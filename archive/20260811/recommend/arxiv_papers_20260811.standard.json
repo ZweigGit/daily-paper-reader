@@ -1,0 +1,180 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-11T21:16:39.564409+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.04222v1",
+      "source": "arxiv",
+      "title": "TIDE: A Physically Diverse 3D Turbulence Benchmark Dataset for Advancing Scientific Machine Learning",
+      "abstract": "Turbulence is a central testbed for machine learning on physical dynamics because its governing laws are known exactly. However, most existing studies remain in 2D, while 3D turbulence has fundamentally different physics and is far more costly to simulate. Existing 3D resources also typically provide only one realization per configuration, making it difficult to distinguish learning the dynamics from fitting the statistics of a single flow. In this paper, we introduce TIDE (Turbulent Incompressible DNS Ensembles), a 256^3 DNS corpus and benchmark for 3D incompressible turbulence, with 15 configurations on eight controlled axes, independent ensembles, pressure fields, and equation-level verification. The benchmark includes five tasks, standardized learned baselines, controlled generalization splits, and physical-fidelity metrics alongside pointwise error. Across the main forecasting configurations, current learned models barely outperform persistence and still make about twice the error of a spectral solver given the true equations. Moreover, lower pointwise error can coincide with severely distorted small-scale dynamics, showing that accuracy alone does not ensure physical fidelity. Generalization results further show that most regime shifts reflect limited training coverage, whereas forced-to-decay transfer exposes a missing conditioning variable: operators trained under forcing continue to predict driven evolution when the external drive is removed. Closing these accuracy, fidelity, and conditioning gaps is the central open problem made measurable by TIDE.",
+      "authors": [
+        "Yilong Dai",
+        "Yiming Sun",
+        "Yiheng Chen",
+        "Shengyu Chen",
+        "Peyman Givi",
+        "Xiaowei Jia",
+        "Runlong Yu"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn",
+        "cs.LG"
+      ],
+      "published": "2026-08-04T20:56:23+00:00",
+      "link": "https://arxiv.org/pdf/2608.04222v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Introduces a diverse 3D turbulence benchmark dataset with ensembles and equation-level verification, providing a standard testbed for generative models on fluid dynamics.",
+      "llm_evidence_cn": "构建了具有多样性、独立集合和方程级验证的三维湍流基准数据集，为流体动力学生成模型提供标准测试平台。",
+      "llm_evidence": "构建了具有多样性、独立集合和方程级验证的三维湍流基准数据集，为流体动力学生成模型提供标准测试平台。",
+      "canonical_evidence": "构建了具有多样性、独立集合和方程级验证的三维湍流基准数据集，为流体动力学生成模型提供标准测试平台。",
+      "llm_tldr_en": "Presents TIDE, a 256^3 DNS benchmark for 3D turbulence with multiple configurations and independent ensembles, enabling robust evaluation of machine learning models on fluid dynamics.",
+      "llm_tldr_cn": "现有三维湍流机器学习研究大多只有单一实现，难以区分学习动力学与拟合单流统计。作者构建了TIDE基准，包含15种配置和独立集合的256^3直接数值模拟数据，并提供压力场与方程级验证。该基准为流体动力学的生成模型和动力学学习提供了标准化的评估平台，有助于推动生成式模型在流体力学中的应用与验证。",
+      "llm_tldr": "现有三维湍流机器学习研究大多只有单一实现，难以区分学习动力学与拟合单流统计。作者构建了TIDE基准，包含15种配置和独立集合的256^3直接数值模拟数据，并提供压力场与方程级验证。该基准为流体动力学的生成模型和动力学学习提供了标准化的评估平台，有助于推动生成式模型在流体力学中的应用与验证。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.04827v1",
+      "source": "arxiv",
+      "title": "Intrinsic-Hybrid Latent Diffusion Models for Generative Modeling on Unknown Manifolds",
+      "abstract": "We introduce the Intrinsic Hybrid Latent Diffusion Model (ILDM), a generative framework that integrates probabilistic dimensionality reduction with geometry-aware diffusion on unknown manifolds. While diffusion models (DMs) have achieved state-of-the-art results in high-dimensional data synthesis, they rely on large training datasets and ignore intrinsic geometric structure. Latent diffusion models (LDMs) address the high dimensionality by learning a latent space, but they typically impose a Euclidean structure, failing to capture the underlying manifold geometry, especially problematic in data-sparse regimes. ILDM addresses these limitations by interpreting the latent space as a chart of an unknown Riemannian manifold, with geometry and uncertainty quantified through a probabilistic decoder. The forward process is a hybrid diffusion that switches between Riemannian and Euclidean dynamics based on local uncertainty, where the Riemannian component is governed by a probabilistic metric tensor derived from the decoder. To learn the generative dynamics, we introduce an approximate denoising score matching method tailored to the hybrid diffusion setting, enabling a backward process defined by hybrid Langevin dynamics. Experiments on COIL-100, MNIST, and cardiac MRI datasets demonstrate that ILDM significantly improves generation quality, achieving lower FID and LPIPS scores compared to standard diffusion and latent diffusion models.",
+      "authors": [
+        "Yizhu Wang",
+        "Mu Niu",
+        "Xiaochen Yang"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.LG"
+      ],
+      "published": "2026-08-05T13:28:08+00:00",
+      "link": "https://arxiv.org/pdf/2608.04827v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "diffusion model framework addressing latent geometry and data sparsity, transferable to fluid flow simulation",
+      "llm_evidence_cn": "提出面向未知流形的几何感知扩散模型，可迁移至高维流体流场生成",
+      "llm_evidence": "提出面向未知流形的几何感知扩散模型，可迁移至高维流体流场生成",
+      "canonical_evidence": "提出面向未知流形的几何感知扩散模型，可迁移至高维流体流场生成",
+      "llm_tldr_en": "Proposes intrinsic hybrid latent diffusion models that incorporate manifold geometry, applicable to data-sparse high-dimensional generation tasks such as fluid flow field modeling.",
+      "llm_tldr_cn": "虽然扩散模型在高维数据生成上取得了领先效果，但其通常依赖大规模训练数据并忽视数据的内在几何结构，在数据稀疏场景下尤其吃力。该文提出内在混合潜扩散模型（ILDM），将潜空间解释为未知黎曼流形上的坐标卡，把概率降维与几何感知扩散统一起来。这样可以利用数据的低维几何结构进行高效的潜在空间生成，缓解数据不足问题。该工作为面向流体流场等具有流形结构的物理数据的生成建模提供了可迁移的方法支撑。",
+      "llm_tldr": "虽然扩散模型在高维数据生成上取得了领先效果，但其通常依赖大规模训练数据并忽视数据的内在几何结构，在数据稀疏场景下尤其吃力。该文提出内在混合潜扩散模型（ILDM），将潜空间解释为未知黎曼流形上的坐标卡，把概率降维与几何感知扩散统一起来。这样可以利用数据的低维几何结构进行高效的潜在空间生成，缓解数据不足问题。该工作为面向流体流场等具有流形结构的物理数据的生成建模提供了可迁移的方法支撑。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.05811v2",
+      "source": "arxiv",
+      "title": "Energy-Guided Flow Matching",
+      "abstract": "Pixel-space generative models bypass lossy latent compression, yet necessitate joint learning of global structure and fine-grained details in a high-dimensional space. Standard flow matching interpolates noise toward a fixed clean-image endpoint, leaving the spectral evolution to be learned implicitly. In this paper, we introduce Energy-Guided Flow Matching(EG-FM) that explicitly models a coarse-to-fine generative trajectory by moving endpoint. Specifically, EG-FM replaces the fixed endpoint with a heat-kernel-filtered endpoint that evolves smoothly from low-frequency image to clean image. The fraction of high-frequency signal in moving endpoint is released by an image-specific energy-guided scheduling, leading to the re-targeting of velocity in flow matching. Our framework requires no adaptation of the backbone and training data, bringing negligible cost on the training and inference stages. In our experiment, EG-FM consistently achieves lower FID on the ImageNet class-conditional image generation task at $256 \\times 256$ with fewer epochs, reaching an FID of 1.55 at 200 epochs and 1.45 at 600 epochs. We continue training the generation task on the setting of $512 \\times 512$ resolution, yielding a FID of 1.58 after only 40 high-resolution adaptation epochs. Furthermore, we transfer EG-FM on text-to-image generation and achieve 0.85 on GenEval score and 83.9 on DPG-Bench. Code is available at https://github.com/ysng123/EG-FM.",
+      "authors": [
+        "Haoyang Tong",
+        "Yu He",
+        "Fang Li",
+        "Lichen Ma",
+        "Jingling Fu",
+        "Dong Chen",
+        "Zhen Chen",
+        "Junshi Huang",
+        "Jie Cao"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-06T09:44:00+00:00",
+      "link": "https://arxiv.org/pdf/2608.05811v2",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "flow matching generative method; generalizable to fluid flow simulation but not fluid-specific",
+      "llm_evidence_cn": "流匹配生成方法；可推广到流体流场模拟，但非流体专用",
+      "llm_evidence": "流匹配生成方法；可推广到流体流场模拟，但非流体专用",
+      "canonical_evidence": "流匹配生成方法；可推广到流体流场模拟，但非流体专用",
+      "llm_tldr_en": "Introduces Energy-Guided Flow Matching with moving heat-kernel-filtered endpoints to model coarse-to-fine generation; a general flow-matching method transferable to fluid simulation.",
+      "llm_tldr_cn": "针对标准流匹配固定端点导致谱演化隐式学习的问题，提出能量引导流匹配。用热核滤波端点随生成过程从低频演化到清晰图像，并通过图像特定能量调度控制高频信号释放，从而重定向速度场。该方法无需额外适配即可刻画由粗到细生成轨迹，提升了像素空间生成质量，为包括流体流场在内的连续数据生成提供了可迁移方法。",
+      "llm_tldr": "针对标准流匹配固定端点导致谱演化隐式学习的问题，提出能量引导流匹配。用热核滤波端点随生成过程从低频演化到清晰图像，并通过图像特定能量调度控制高频信号释放，从而重定向速度场。该方法无需额外适配即可刻画由粗到细生成轨迹，提升了像素空间生成质量，为包括流体流场在内的连续数据生成提供了可迁移方法。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.07924v1",
+      "source": "arxiv",
+      "title": "Second Order Drifting Models",
+      "abstract": "Drifting models are a recent class of one-step generative models that evolve the model distribution during training using a predefined sample-based drift field. Although they avoid iterative inference, their kernel-based drift fields induce frequency-dependent training dynamics: In the linearized regime, each Fourier mode of the density residual decays at a rate determined by the kernel spectrum, leading to slow recovery of fine-scale structure. We propose Second-Order Drifting Models, which lift drifting dynamics into phase space by augmenting generated samples with artificial velocity variables. We show that the resulting density perturbations obey accelerated second-order dynamics in Fourier space, connecting drifting models to the celebrated Nesterov acceleration from optimization theory. This provides a principled mechanism for mitigating the spectral stiffness of first-order drifting while preserving one-step inference. We derive a practical semi-implicit training algorithm and evaluate it on synthetic distribution matching, sequential data generation, and robotic control. Across these settings, the second-order drifting model improves convergence behavior and achieves competitive or superior performance over first-order drifting baselines.",
+      "authors": [
+        "Drake Brown",
+        "Yuhao Huang",
+        "Shih-Hsin Wang",
+        "Bao Wang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "math.NA"
+      ],
+      "published": "2026-08-08T05:02:55+00:00",
+      "link": "https://arxiv.org/pdf/2608.07924v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "one-step generative model based on drift fields, potential for efficient sampling of physical flow distributions",
+      "llm_evidence_cn": "基于漂移场的一步生成模型，潜在地适用于物理流分布的高效采样",
+      "llm_evidence": "基于漂移场的一步生成模型，潜在地适用于物理流分布的高效采样",
+      "canonical_evidence": "基于漂移场的一步生成模型，潜在地适用于物理流分布的高效采样",
+      "llm_tldr_en": "Introduces second-order drifting models, a one-step generative model accelerating fine-scale recovery; method transferable to generative modeling of turbulent-like physical fields.",
+      "llm_tldr_cn": "漂移模型通过预定义样本漂移场在训练中演化模型分布，避免迭代推理，但其核漂移场导致频率依赖的训练动力学，精细结构恢复缓慢。该文提出二阶漂移模型，将生成样本扩充人工速度变量，把漂移动力学提升到相空间，使密度扰动服从傅里叶空间中的加速二阶动力学。这类似于优化理论中的Nesterov加速，能显著加快图像生成。该机制对于流体流场中多尺度精细结构的生成建模具有借鉴价值。",
+      "llm_tldr": "漂移模型通过预定义样本漂移场在训练中演化模型分布，避免迭代推理，但其核漂移场导致频率依赖的训练动力学，精细结构恢复缓慢。该文提出二阶漂移模型，将生成样本扩充人工速度变量，把漂移动力学提升到相空间，使密度扰动服从傅里叶空间中的加速二阶动力学。这类似于优化理论中的Nesterov加速，能显著加快图像生成。该机制对于流体流场中多尺度精细结构的生成建模具有借鉴价值。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
