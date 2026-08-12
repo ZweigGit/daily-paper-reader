@@ -1,0 +1,100 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-12T21:13:35.533672+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.04222v1",
+      "source": "arxiv",
+      "title": "TIDE: A Physically Diverse 3D Turbulence Benchmark Dataset for Advancing Scientific Machine Learning",
+      "abstract": "Turbulence is a central testbed for machine learning on physical dynamics because its governing laws are known exactly. However, most existing studies remain in 2D, while 3D turbulence has fundamentally different physics and is far more costly to simulate. Existing 3D resources also typically provide only one realization per configuration, making it difficult to distinguish learning the dynamics from fitting the statistics of a single flow. In this paper, we introduce TIDE (Turbulent Incompressible DNS Ensembles), a 256^3 DNS corpus and benchmark for 3D incompressible turbulence, with 15 configurations on eight controlled axes, independent ensembles, pressure fields, and equation-level verification. The benchmark includes five tasks, standardized learned baselines, controlled generalization splits, and physical-fidelity metrics alongside pointwise error. Across the main forecasting configurations, current learned models barely outperform persistence and still make about twice the error of a spectral solver given the true equations. Moreover, lower pointwise error can coincide with severely distorted small-scale dynamics, showing that accuracy alone does not ensure physical fidelity. Generalization results further show that most regime shifts reflect limited training coverage, whereas forced-to-decay transfer exposes a missing conditioning variable: operators trained under forcing continue to predict driven evolution when the external drive is removed. Closing these accuracy, fidelity, and conditioning gaps is the central open problem made measurable by TIDE.",
+      "authors": [
+        "Yilong Dai",
+        "Yiming Sun",
+        "Yiheng Chen",
+        "Shengyu Chen",
+        "Peyman Givi",
+        "Xiaowei Jia",
+        "Runlong Yu"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn",
+        "cs.LG"
+      ],
+      "published": "2026-08-04T20:56:23+00:00",
+      "link": "https://arxiv.org/pdf/2608.04222v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "A physically diverse 3D turbulence benchmark dataset with ensembles and verification, enabling training and evaluation of generative models on fluid dynamics.",
+      "llm_evidence_cn": "提供物理多样性三维湍流基准数据集，含独立集成和验证，支撑流体力学生成模型的训练与评估。",
+      "llm_evidence": "提供物理多样性三维湍流基准数据集，含独立集成和验证，支撑流体力学生成模型的训练与评估。",
+      "canonical_evidence": "提供物理多样性三维湍流基准数据集，含独立集成和验证，支撑流体力学生成模型的训练与评估。",
+      "llm_tldr_en": "This paper introduces TIDE, a 256^3 DNS benchmark for 3D incompressible turbulence with 15 configurations, independent ensembles, pressure fields, and equation-level verification, addressing the scarcity of physically diverse 3D resources for scientific ML.",
+      "llm_tldr_cn": "现有机器学习湍流研究多限于二维，三维湍流数据稀缺且通常只有单一实现，难以区分学习物理与拟合统计。本文推出TIDE，一个256^3 DNS三维不可压缩湍流基准语料，包含15种配置、独立集成、压力场和方程级验证，覆盖八个受控轴。该数据集为生成模型在三维湍流上的验证提供基础，推动科学机器学习在流体力学中的应用。",
+      "llm_tldr": "现有机器学习湍流研究多限于二维，三维湍流数据稀缺且通常只有单一实现，难以区分学习物理与拟合统计。本文推出TIDE，一个256^3 DNS三维不可压缩湍流基准语料，包含15种配置、独立集成、压力场和方程级验证，覆盖八个受控轴。该数据集为生成模型在三维湍流上的验证提供基础，推动科学机器学习在流体力学中的应用。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.10941v1",
+      "source": "arxiv",
+      "title": "Physics-informed Diffusion Generative Model for Time-Series Data Synthesis in Dynamic Systems",
+      "abstract": "Industrial time-series signals, such as turbine temperature and rotational speed in aero-engines, are essential for monitoring the health and operational status of complex dynamical systems. However, collecting such data is often limited by harsh environments (e.g., high temperature and high pressure) and the high cost of experimental testing. To address this challenge, we introduce PhysDGM, a stepwise physics-embedded diffusion generative model for synthesizing time-series data that are consistent with the underlying physical laws of dynamical systems. PhysDGM embeds physical laws directly into each reverse diffusion step of the generative process, ensuring trajectory-level physical consistency, rather than enforcing constraints only at the final output. A large-scale AI-synthetic dataset (4.4 million samples, 20x scale-up) constructed by PhysDGM demonstrates strong fidelity across 34 datasets spanning turbofan engines, aero-engines, batteries, and chemical processes. After incorporating the synthetic data, the downstream task performance substantially surpassed that using real data alone by 48% for remaining useful life prediction, 15% for health indicator estimation, 22% for state-of-health assessment, and 20% for fault diagnosis. Moreover, it requires 10-20x less training data than existing approaches, substantially reducing the high cost of data collection in dynamical systems. We further demonstrate PhysDGM's potential in identifying early-stage faults in aero-engines by incorporating AI-synthesized data. In summary, PhysDGM provides a solid foundation for generating physically consistent industrial time-series, paving the way for expanding physics-guided AI into diverse data-scarce environments, including both industrial machinery and complex chemical reaction dynamics.",
+      "authors": [
+        "Haiteng Wang",
+        "Yunfei Zhu",
+        "Tao Wang",
+        "Yikang Li",
+        "Jiabao Dong",
+        "Xiaoge Zhang",
+        "Lei Ren"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-08-11T14:11:51+00:00",
+      "link": "https://arxiv.org/pdf/2608.10941v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Physics-informed diffusion model for dynamical systems, transferable to fluid flow synthesis",
+      "llm_evidence_cn": "面向动态系统的物理信息扩散模型，可迁移至流体流动合成",
+      "llm_evidence": "面向动态系统的物理信息扩散模型，可迁移至流体流动合成",
+      "canonical_evidence": "面向动态系统的物理信息扩散模型，可迁移至流体流动合成",
+      "llm_tldr_en": "Introduces PhysDGM, a stepwise physics-embedded diffusion model for synthesizing time-series data consistent with physical laws, demonstrating trajectory-level physical consistency in dynamical systems.",
+      "llm_tldr_cn": "本文提出PhysDGM，一种逐步嵌入物理定律的扩散生成模型，用于合成符合动态系统物理规律的时间序列数据。方法在每个反向扩散步骤中嵌入物理约束，确保轨迹级物理一致性，而非仅在损失函数中添加惩罚项。实验表明该方法能够生成与真实系统行为一致的数据，为工业监测和科学仿真中的数据增强提供了新工具，也为流体动力学等领域的物理信息生成建模提供了可迁移的框架。",
+      "llm_tldr": "本文提出PhysDGM，一种逐步嵌入物理定律的扩散生成模型，用于合成符合动态系统物理规律的时间序列数据。方法在每个反向扩散步骤中嵌入物理约束，确保轨迹级物理一致性，而非仅在损失函数中添加惩罚项。实验表明该方法能够生成与真实系统行为一致的数据，为工业监测和科学仿真中的数据增强提供了新工具，也为流体动力学等领域的物理信息生成建模提供了可迁移的框架。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
