@@ -6,31 +6,27 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-12
-- 运行时间：2026-08-12 21:16:23 UTC
+- 最新运行日期：2026-08-13
+- 运行时间：2026-08-13 21:11:19 UTC
 - 运行状态：成功
 - 本次总论文数：2
 - 精读区：0
 - 速读区：2
 
 ### 今日简报（AI）
-今日速读2篇科学机器学习方向论文，均聚焦物理信息建模新方法。
-
-最值得关注的是三维湍流基准数据集TIDE，以及物理信息扩散模型用于时间序列生成。
-
-建议优先浏览TIDE数据集，对验证物理AI模型实用性很有帮助。
-- 详情：[/202608/12/README](/202608/12/README)
+今日速读2篇论文，主题聚焦扩散模型采样与极端事件生成。最值得关注的是《Diffusion Quasi-Monte Carlo》（6.0/10），涉及扩散模型中的低差异采样；另一篇《Fine-Tuning Generative Models for Extreme Events via CVaR-Penalized Wasserstein Gradient Flows》（6.0/10）则面向极端事件的条件生成。明日可优先精读这两篇，深入理解其方法对比与适用场景。
+- 详情：[/202608/13/README](/202608/13/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [TIDE: A Physically Diverse 3D Turbulence Benchmark Dataset for Advancing Scientific Machine Learning](/202608/12/2608.04222v1-tide-a-physically-diverse-3d-turbulence-benchmark-dataset-for-advancing-scientific-machine-learning)  
+1. [Diffusion Quasi-Monte Carlo](/202608/13/2608.11055v1-diffusion-quasi-monte-carlo)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：提供物理多样性三维湍流基准数据集，含独立集成和验证，支撑流体力学生成模型的训练与评估。
-2. [Physics-informed Diffusion Generative Model for Time-Series Data Synthesis in Dynamic Systems](/202608/12/2608.10941v1-physics-informed-diffusion-generative-model-for-time-series-data-synthesis-in-dynamic-systems)  
+   evidence：利用基于分数的扩散概率流ODE进行高维采样，可迁移至流体流场生成
+2. [Fine-Tuning Generative Models for Extreme Events via CVaR-Penalized Wasserstein Gradient Flows](/202608/13/2608.11544v1-fine-tuning-generative-models-for-extreme-events-via-cvar-penalized-wasserstein-gradient-flows)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：面向动态系统的物理信息扩散模型，可迁移至流体流动合成
+   evidence：生成模型极值微调，可迁移至流体湍流
 
 
 <div class="dpr-home-promo-card">

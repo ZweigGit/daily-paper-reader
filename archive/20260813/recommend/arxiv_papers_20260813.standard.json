@@ -1,0 +1,94 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-13T21:09:00.520405+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.11055v1",
+      "source": "arxiv",
+      "title": "Diffusion Quasi-Monte Carlo",
+      "abstract": "We study high-dimensional numerical integration with respect to complex target measures using diffusion-based transport maps and randomized quasi-Monte Carlo (RQMC). Score-based diffusion models induce a deterministic probability flow ODE that transports a simple prior to the target, suggesting a principled way to transform low-discrepancy points on the unit cube into informative samples. We construct a cube-to-target map by composing a Gaussian base transformation (the component-wise inverse Gaussian CDF) with an Euler-discretized probability flow ODE. To retain unbiasedness under transport approximation, we formulate integration as importance sampling (IS) on the cube. Our main result provides verifiable conditions under which the resulting IS integrand satisfies the boundary growth condition, implying an $O(N^{-1+ε})$ RMSE for scrambled nets. We then establish these conditions for diffusion probability-flow transport under mild bounded-derivative assumptions on the learned vector field, explicitly controlling the boundary singularities introduced by the inverse Gaussian CDF. Experiments range from a 2D mixture to 784D images and a 40,960D conditional vorticity-assimilation task; in the latter, blocked scrambled Sobol' sampling reduces the randomization standard deviation of nonlinear accuracy metrics at essentially unchanged online denoising cost. Together, these results give a theoretical and empirical foundation for combining diffusion generative modeling with high-precision RQMC integration.",
+      "authors": [
+        "Jianlong Chen",
+        "Yifeng Yu"
+      ],
+      "primary_category": "math.NA",
+      "categories": [
+        "math.NA"
+      ],
+      "published": "2026-08-11T15:23:24+00:00",
+      "link": "https://arxiv.org/pdf/2608.11055v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Uses score-based diffusion probability flow ODE for high-dimensional sampling; transferable to fluid flow generation",
+      "llm_evidence_cn": "利用基于分数的扩散概率流ODE进行高维采样，可迁移至流体流场生成",
+      "llm_evidence": "利用基于分数的扩散概率流ODE进行高维采样，可迁移至流体流场生成",
+      "canonical_evidence": "利用基于分数的扩散概率流ODE进行高维采样，可迁移至流体流场生成",
+      "llm_tldr_en": "Diffusion QMC combines score-based diffusion transport maps with randomized quasi-Monte Carlo for high-dimensional integration, providing verifiable conditions. The score-based generative framework is a promising tool for sampling and uncertainty quantification in fluid dynamics.",
+      "llm_tldr_cn": "针对复杂目标测度下的高维数值积分问题，论文将基于分数的扩散模型与随机拟蒙特卡洛方法结合，构造概率流ODE传输映射并保持无偏性。作者给出了边界增长条件的可验证假设，并证明了样本复杂度随精度和维度多项式增长。该方法为流体动力学中的场生成与不确定性量化提供了可迁移的生成式采样工具。",
+      "llm_tldr": "针对复杂目标测度下的高维数值积分问题，论文将基于分数的扩散模型与随机拟蒙特卡洛方法结合，构造概率流ODE传输映射并保持无偏性。作者给出了边界增长条件的可验证假设，并证明了样本复杂度随精度和维度多项式增长。该方法为流体动力学中的场生成与不确定性量化提供了可迁移的生成式采样工具。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "score-based generative models for fluid flow",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.11544v1",
+      "source": "arxiv",
+      "title": "Fine-Tuning Generative Models for Extreme Events via CVaR-Penalized Wasserstein Gradient Flows",
+      "abstract": "We propose CVaR-penalized Generative Particle Algorithm (CVaR-GPA), a robust, tail-agnostic algorithm for fine-tuning generative models to learn heavy-tailed distributions and capture extreme events, requiring no prior knowledge or estimation of the target's tail characteristics. The method is the Wasserstein gradient flow of the Lipschitz-regularized Kullback-Leibler (KL) divergence penalized by a Conditional Value-at-Risk (CVaR) discrepancy term: the Lipschitz-regularized KL divergence enables robust learning under minimal assumptions on the target distribution, while the CVaR penalty restores the velocity that otherwise vanishes prematurely in the under-sampled tails. The penalized flow admits a bounded but non-Lipschitz velocity field. This departs from the Lipschitz transport maps of standard generators, which preserve the tail behavior of a light-tailed source, and enables transport toward heavier-tailed targets. To define this flow on empirical measures, we derive the first-variation subgradients of CVaR from its Rockafellar-Uryasev representation, valid precisely where the classical density-based formula fails. The particle algorithm CVaR-GPA fine-tunes the output samples of any pre-trained model, without access to its architecture, and runs on an adaptive time horizon set by a kinetic-energy stopping criterion rather than a preset depth. On synthetic isotropic and anisotropic Student-$t$ target distributions, Neal's funnel distribution, and the real-world high-dimensional Fama-French 25 portfolio dataset, CVaR-GPA dramatically improves global and tail accuracy on heavy-tailed targets over the pre-trained baseline.",
+      "authors": [
+        "Thejani Gamage",
+        "Hyemin Gu",
+        "Zhizhen Zhang",
+        "Ziyu Chen",
+        "Markos Katsoulakis",
+        "Luc Rey-Bellet"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.LG"
+      ],
+      "published": "2026-08-12T01:26:14+00:00",
+      "link": "https://arxiv.org/pdf/2608.11544v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Fine-tuning generative models for extreme events; transferable to fluid turbulence",
+      "llm_evidence_cn": "生成模型极值微调，可迁移至流体湍流",
+      "llm_evidence": "生成模型极值微调，可迁移至流体湍流",
+      "canonical_evidence": "生成模型极值微调，可迁移至流体湍流",
+      "llm_tldr_en": "Proposes CVaR-GPA, a Wasserstein gradient flow algorithm with CVaR penalty to fine-tune generative models for heavy-tailed distributions and extreme events without tail assumptions. Transferable to extreme turbulent flow regimes.",
+      "llm_tldr_cn": "针对生成模型在重尾分布上极值事件捕获不足的问题，提出CVaR惩罚的Wasserstein梯度流算法CVaR-GPA。该方法不需要对目标分布尾特征作先验估计，通过Lipschitz正则KL散度与CVaR惩罚的联合作用恢复尾部速度。实验结果表明其能稳健学习重尾分布并捕捉极值事件。这类方法可直接迁移到流体动力学中的极端湍流事件建模。",
+      "llm_tldr": "针对生成模型在重尾分布上极值事件捕获不足的问题，提出CVaR惩罚的Wasserstein梯度流算法CVaR-GPA。该方法不需要对目标分布尾特征作先验估计，通过Lipschitz正则KL散度与CVaR惩罚的联合作用恢复尾部速度。实验结果表明其能稳健学习重尾分布并捕捉极值事件。这类方法可直接迁移到流体动力学中的极端湍流事件建模。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

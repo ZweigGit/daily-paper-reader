@@ -1,0 +1,39 @@
+{
+  "label": "2026-08-13",
+  "date": "2026-08-13",
+  "generated_at": "2026-08-13T21:11:24",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202608/13/2608.11055v1-diffusion-quasi-monte-carlo",
+      "section": "quick",
+      "title_en": "Diffusion Quasi-Monte Carlo",
+      "authors": "Jianlong Chen, Yifeng Yu",
+      "date": "2026-08-11",
+      "pdf": "https://arxiv.org/pdf/2608.11055v1",
+      "score": "6.0",
+      "evidence": "利用基于分数的扩散概率流ODE进行高维采样，可迁移至流体流场生成",
+      "tldr": "高维数值积分对复杂目标具有挑战性，扩散模型诱导的概率流ODE可将简单先验传输至目标。我们将其与随机化拟蒙特卡洛结合，通过高斯基变换和欧拉离散化构造映射，并以重要性采样保持无偏性。理论证明该积分器满足边界条件，均方根误差达O(N^{-1+ε})。在40,960维涡度同化任务中，该方法显著降低非线性精度指标的随机波动，为扩散生成与RQMC融合奠定基础。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We study high-dimensional numerical integration with respect to complex target measures using diffusion-based transport maps and randomized quasi-Monte Carlo (RQMC). Score-based diffusion models induce a deterministic probability flow ODE that transports a simple prior to the target, suggesting a principled way to transform low-discrepancy points on the unit cube into informative samples. We construct a cube-to-target map by composing a Gaussian base transformation (the component-wise inverse Gaussian CDF) with an Euler-discretized probability flow ODE. To retain unbiasedness under transport approximation, we formulate integration as importance sampling (IS) on the cube. Our main result provides verifiable conditions under which the resulting IS integrand satisfies the boundary growth condition, implying an $O(N^{-1+ε})$ RMSE for scrambled nets. We then establish these conditions for diffusion probability-flow transport under mild bounded-derivative assumptions on the learned vector field, explicitly controlling the boundary singularities introduced by the inverse Gaussian CDF. Experiments range from a 2D mixture to 784D images and a 40,960D conditional vorticity-assimilation task; in the latter, blocked scrambled Sobol' sampling reduces the randomization standard deviation of nonlinear accuracy metrics at essentially unchanged online denoising cost. Together, these results give a theoretical and empirical foundation for combining diffusion generative modeling with high-precision RQMC integration.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/13/2608.11544v1-fine-tuning-generative-models-for-extreme-events-via-cvar-penalized-wasserstein-gradient-flows",
+      "section": "quick",
+      "title_en": "Fine-Tuning Generative Models for Extreme Events via CVaR-Penalized Wasserstein Gradient Flows",
+      "authors": "Thejani Gamage, Hyemin Gu, Zhizhen Zhang, Ziyu Chen, Markos Katsoulakis, Luc Rey-Bellet",
+      "date": "2026-08-12",
+      "pdf": "https://arxiv.org/pdf/2608.11544v1",
+      "score": "6.0",
+      "evidence": "生成模型极值微调，可迁移至流体湍流",
+      "tldr": "生成模型在数据稀疏的重尾场景下难以捕捉极端事件，现有方法依赖目标尾部特征的先验知识或估计。本文提出CVaR-GPA算法，利用Lipschitz正则化KL散度结合条件风险价值（CVaR）惩罚项的Wasserstein梯度流，在不假设尾部特征的情况下实现稳健的尾部学习。该流产生有界但非Lipschitz的速度场，促使轻尾源向重尾目标传输。在合成分布、Neal funnel和Fama-French数据集上，该方法显著提升全局与尾部精度，且无需访问预训练模型内部结构。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We propose CVaR-penalized Generative Particle Algorithm (CVaR-GPA), a robust, tail-agnostic algorithm for fine-tuning generative models to learn heavy-tailed distributions and capture extreme events, requiring no prior knowledge or estimation of the target's tail characteristics. The method is the Wasserstein gradient flow of the Lipschitz-regularized Kullback-Leibler (KL) divergence penalized by a Conditional Value-at-Risk (CVaR) discrepancy term: the Lipschitz-regularized KL divergence enables robust learning under minimal assumptions on the target distribution, while the CVaR penalty restores the velocity that otherwise vanishes prematurely in the under-sampled tails. The penalized flow admits a bounded but non-Lipschitz velocity field. This departs from the Lipschitz transport maps of standard generators, which preserve the tail behavior of a light-tailed source, and enables transport toward heavier-tailed targets. To define this flow on empirical measures, we derive the first-variation subgradients of CVaR from its Rockafellar-Uryasev representation, valid precisely where the classical density-based formula fails. The particle algorithm CVaR-GPA fine-tunes the output samples of any pre-trained model, without access to its architecture, and runs on an adaptive time horizon set by a kinetic-energy stopping criterion rather than a preset depth. On synthetic isotropic and anisotropic Student-$t$ target distributions, Neal's funnel distribution, and the real-world high-dimensional Fama-French 25 portfolio dataset, CVaR-GPA dramatically improves global and tail accuracy on heavy-tailed targets over the pre-trained baseline.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
