@@ -6,27 +6,33 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-13
-- 运行时间：2026-08-13 21:11:19 UTC
+- 最新运行日期：2026-08-14
+- 运行时间：2026-08-14 21:19:54 UTC
 - 运行状态：成功
-- 本次总论文数：2
+- 本次总论文数：4
 - 精读区：0
-- 速读区：2
+- 速读区：4
 
 ### 今日简报（AI）
-今日速读2篇论文，主题聚焦扩散模型采样与极端事件生成。最值得关注的是《Diffusion Quasi-Monte Carlo》（6.0/10），涉及扩散模型中的低差异采样；另一篇《Fine-Tuning Generative Models for Extreme Events via CVaR-Penalized Wasserstein Gradient Flows》（6.0/10）则面向极端事件的条件生成。明日可优先精读这两篇，深入理解其方法对比与适用场景。
-- 详情：[/202608/13/README](/202608/13/README)
+今日速读4篇论文，聚焦生成模型与物理感知的采样与参数校准方法。最值得关注的是生成模型辅助蒙特卡洛采样，以及物理感知潜在空间替代模型，两者均获6.0分。建议后续优先精读这两篇，深入理解其算法实现与适用场景。
+- 详情：[/202608/14/README](/202608/14/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Diffusion Quasi-Monte Carlo](/202608/13/2608.11055v1-diffusion-quasi-monte-carlo)  
+1. [Leveraging generative models to assist Monte Carlo sampling](/202608/14/2608.07648v1-leveraging-generative-models-to-assist-monte-carlo-sampling)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：利用基于分数的扩散概率流ODE进行高维采样，可迁移至流体流场生成
-2. [Fine-Tuning Generative Models for Extreme Events via CVaR-Penalized Wasserstein Gradient Flows](/202608/13/2608.11544v1-fine-tuning-generative-models-for-extreme-events-via-cvar-penalized-wasserstein-gradient-flows)  
+   evidence：关于利用生成模型辅助蒙特卡洛采样的综述，广泛适用于包括流体力学在内的科学计算
+2. [Variational Parameter Calibration with Physics-Aware Latent-Space Surrogates](/202608/14/2608.11435v1-variational-parameter-calibration-with-physics-aware-latent-space-surrogates)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：生成模型极值微调，可迁移至流体湍流
+   evidence：用于流场的概率潜空间代理模型，结合变分参数校准
+3. [Making Every Step Count: Spatio-Temporal Information Allocation for Imaging Inverse Problems](/202608/14/2608.11747v1-making-every-step-count-spatio-temporal-information-allocation-for-imaging-inverse-problems)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：基于流的生成模型用于逆问题求解，可迁移至流体流动重建
+4. [XYZFlow:Scaling Multi dimensional Shortcut Flows for Efficient Generative Modeling](/202608/14/2608.12276v2-xyzflowscaling-multi-dimensional-shortcut-flows-for-efficient-generative-modeling)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：高效流匹配缩放方法，可迁移至流体动力学。
 
 
 <div class="dpr-home-promo-card">

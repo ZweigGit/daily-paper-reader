@@ -1,0 +1,176 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-14T21:15:23.708955+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.07648v1",
+      "source": "arxiv",
+      "title": "Leveraging generative models to assist Monte Carlo sampling",
+      "abstract": "Sampling high-dimensional probability distributions is a central task in scientific computing, with applications ranging from Bayesian inference to statistical physics and molecular simulation. Despite decades of methodological developments, two major challenges remain: scaling to high dimensions and efficiently exploring multimodal distributions characterized by metastable states. Classical approaches such as Markov chain Monte Carlo, tempering methods, or enhanced sampling based on collective variables have achieved major successes, but they also face intrinsic limitations. This tutorial review explores a new paradigm that has recently emerged at the interface of machine learning and computational statistical physics: the use of generative models as tools for sampling. In this context, models such as normalizing flows and diffusion models are not used in their traditional data-driven setting, but rather as flexible probabilistic models that can assist the sampling of distributions known only up to a normalization constant. This manuscript reviews the early development of this rapidly evolving field and discusses several methodological directions, including exact samplers based on generative models and strategies to train such models in the absence of data. While an exhaustive survey of the literature is not attempted, we present a selection of key ideas and methods, along with a discussion of their strengths and limitations. The review is intended to be an accessible tutorial for both physics and machine learning audiences, and it aims to provide a starting point for researchers interested in exploring this exciting area of research.",
+      "authors": [
+        "Marylou Gabrié"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cond-mat.dis-nn",
+        "cond-mat.stat-mech",
+        "cs.LG",
+        "physics.comp-ph"
+      ],
+      "published": "2026-08-07T17:14:35+00:00",
+      "link": "https://arxiv.org/pdf/2608.07648v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Tutorial on using generative models for Monte Carlo sampling, broadly applicable to scientific computing including fluid dynamics",
+      "llm_evidence_cn": "关于利用生成模型辅助蒙特卡洛采样的综述，广泛适用于包括流体力学在内的科学计算",
+      "llm_evidence": "关于利用生成模型辅助蒙特卡洛采样的综述，广泛适用于包括流体力学在内的科学计算",
+      "canonical_evidence": "关于利用生成模型辅助蒙特卡洛采样的综述，广泛适用于包括流体力学在内的科学计算",
+      "llm_tldr_en": "Tutorial review on using generative models to enhance Monte Carlo sampling in scientific computing, addressing high-dimensionality and multimodality. It covers applications in Bayesian inference and statistical physics, with ideas transferable to uncertainty quantification in fluid dynamics.",
+      "llm_tldr_cn": "该教程综述探讨了生成模型辅助蒙特卡洛采样的新范式，以应对科学计算中的高维采样与多模态分布探索挑战。文章回顾了经典方法及其局限，系统介绍了生成模型与蒙特卡洛采样相结合的多种形式，涵盖贝叶斯推断、统计物理和分子模拟等应用。尽管未聚焦流体力学，但其中的生成式采样思想可为流体流动的不确定性量化和流场生成提供直接的方法参考。",
+      "llm_tldr": "该教程综述探讨了生成模型辅助蒙特卡洛采样的新范式，以应对科学计算中的高维采样与多模态分布探索挑战。文章回顾了经典方法及其局限，系统介绍了生成模型与蒙特卡洛采样相结合的多种形式，涵盖贝叶斯推断、统计物理和分子模拟等应用。尽管未聚焦流体力学，但其中的生成式采样思想可为流体流动的不确定性量化和流场生成提供直接的方法参考。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.11435v1",
+      "source": "arxiv",
+      "title": "Variational Parameter Calibration with Physics-Aware Latent-Space Surrogates",
+      "abstract": "Forward and inverse modeling of parametric dynamical systems requires surrogate models that are not only accurate for state prediction, but also informative for parameter calibration. However, a systematic end-to-end differentiable formulation for coupling deep-learning-based reduced-order surrogates with variational parameter estimation remains underdeveloped. In this work, we introduce a physics-aware neural-network-based latent-space framework for reduced-order forward modeling and variational parameter estimation. The proposed autoencoder-based approach yields a differentiable surrogate that maps physical parameters to predicted flow fields through a latent representation. The observable supervision is used during offline training to encourage the latent variables to retain information correlated with system parameters, while the online inverse problem is solved in the parameter space through the surrogate-induced observation operator. The method is evaluated on two computational-fluid-dynamics benchmarks. The results show that reconstruction accuracy alone is insufficient for inverse modeling, owing to the lack of end-to-end differentiability or physics awareness for variational parameter calibration. Quantitative latent-space analysis further shows that observable supervision improves case-level separability and temporal organization of latent representations. Experiments with realistic measurement settings, including noisy, low-resolution, randomly masked, and block-wise partial observations, demonstrate the robustness of the proposed framework and show that it generally reduces calibration error and variability compared with the standard surrogate models.",
+      "authors": [
+        "Qiyao Zhou",
+        "Xujia Zhu",
+        "Pierre Joli",
+        "Yu Cong",
+        "Sibo Cheng"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "physics.comp-ph",
+        "physics.data-an",
+        "physics.flu-dyn"
+      ],
+      "published": "2026-08-11T21:02:31+00:00",
+      "link": "https://arxiv.org/pdf/2608.11435v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Probabilistic latent-space surrogate for flow fields with variational calibration",
+      "llm_evidence_cn": "用于流场的概率潜空间代理模型，结合变分参数校准",
+      "llm_evidence": "用于流场的概率潜空间代理模型，结合变分参数校准",
+      "canonical_evidence": "用于流场的概率潜空间代理模型，结合变分参数校准",
+      "llm_tldr_en": "Proposes a physics-aware autoencoder-based latent space that couples forward flow prediction with variational parameter estimation, enabling differentiable surrogate modeling for parametric dynamical systems.",
+      "llm_tldr_cn": "该论文针对参数化动力系统的前向与逆问题，提出了一个物理感知的自动编码器潜空间框架，能够通过可微的潜在表示将物理参数映射为预测流场，并同时用于变分参数校准。实验表明该方法在流动场预测与参数估计上具有潜力，为生成式代理模型在流体力学中的应用提供了可能。",
+      "llm_tldr": "该论文针对参数化动力系统的前向与逆问题，提出了一个物理感知的自动编码器潜空间框架，能够通过可微的潜在表示将物理参数映射为预测流场，并同时用于变分参数校准。实验表明该方法在流动场预测与参数估计上具有潜力，为生成式代理模型在流体力学中的应用提供了可能。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "probabilistic flow models for fluid dynamics",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.11747v1",
+      "source": "arxiv",
+      "title": "Making Every Step Count: Spatio-Temporal Information Allocation for Imaging Inverse Problems",
+      "abstract": "Flow-based generative models have emerged as powerful image priors for training-free inverse problem solving, capturing coherent semantics and fine-grained structure. Despite these strengths, existing flow-based inverse solvers primarily focus on the design of individual updates, largely overlooking spatio-temporal information allocation under a fixed number of function evaluations (NFEs). Temporally, insufficient early exploration can trap the flow trajectory in an incorrect semantic basin, whereas excessive allocation of NFEs to early stages leaves little budget for late-stage refinement. Spatially, data consistency provides direct constraints only within observed regions, whereas the recovery of missing regions relies mainly on the generative prior. To address these two issues, we introduce two complementary and training-free components, i.e., Spectrum-Adaptive Scheduling (SAS) and Measurement-Prioritized Attention (MPA). For temporal allocation, SAS distributes the available NFEs over flow time according to the degradation spectrum and logSNR geometry, thus better balancing semantic exploration and detail refinement. For spatial propagation, MPA exploits data-prior conflicts to guide information toward weakly constrained regions, thereby enhancing semantic and structural fidelity. Extensive experiments on standard image inverse problems, e.g., super-resolution, motion deblurring, and inpainting, demonstrate that the proposed components can be integrated into existing flow-based inverse solvers in a plug-and-play manner without retraining or additional flow-model evaluations, and can also significantly improve the restoration quality of existing solvers.",
+      "authors": [
+        "Yi Cao",
+        "Xiangyong Cao",
+        "Pei Liu",
+        "Yong-Jin Liu",
+        "Deyu Meng"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-12T07:39:22+00:00",
+      "link": "https://arxiv.org/pdf/2608.11747v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Flow-based generative models for inverse problems, transferable to fluid flow reconstruction",
+      "llm_evidence_cn": "基于流的生成模型用于逆问题求解，可迁移至流体流动重建",
+      "llm_evidence": "基于流的生成模型用于逆问题求解，可迁移至流体流动重建",
+      "canonical_evidence": "基于流的生成模型用于逆问题求解，可迁移至流体流动重建",
+      "llm_tldr_en": "Proposes spatio-temporal NFE allocation for flow-based generative inverse solvers, improving reconstruction by balancing early exploration and late refinement and constraining unobserved regions. Generalizable to fluid flow reconstruction.",
+      "llm_tldr_cn": "该文针对基于流的生成模型在逆问题求解中忽视固定评估次数下时空信息分配的问题，提出了一种新的分配策略。通过合理平衡时间上的早期探索与后期精细化，并在空间上强化缺失区域的一致性约束，显著改善了重建性能。实验验证了该策略在多个逆问题上的有效性。虽以成像逆问题为背景，但该方法可迁移至流体流动重建等科学计算任务，为生成模型在流体力学的应用提供了方法借鉴。",
+      "llm_tldr": "该文针对基于流的生成模型在逆问题求解中忽视固定评估次数下时空信息分配的问题，提出了一种新的分配策略。通过合理平衡时间上的早期探索与后期精细化，并在空间上强化缺失区域的一致性约束，显著改善了重建性能。实验验证了该策略在多个逆问题上的有效性。虽以成像逆问题为背景，但该方法可迁移至流体流动重建等科学计算任务，为生成模型在流体力学的应用提供了方法借鉴。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.12276v2",
+      "source": "arxiv",
+      "title": "XYZFlow:Scaling Multi dimensional Shortcut Flows for Efficient Generative Modeling",
+      "abstract": "High-fidelity image generation faces a trade-off between speed and quality. Diffusion models produce strong visuals but require costly iterative sampling. Existing efficient methods mainly distill pretrained models into few-step samplers, a challenging process that depends heavily on teacher-model quality. In this paper, we introduce XYZFlow, a framework that rethinks efficient generation through multidimensional scaling of flow matching. Unlike single-step mappings, XYZFlow enhances expressivity by making probability paths more identifiable and learnable through structured multidimensional conditioning. We view autoregressive modeling as implicit flow straightening, where richer context reduces trajectory ambiguity. XYZFlow realizes this idea through two orthogonal dimensions: temporal scaling, which uses non-Markovian conditioning on the full denoising history; and spatial scaling, enabled by Next Shortcut Prediction, which sequentially generates patches using preceding patches' denoising trajectories as priors. Experiments show that XYZFlow achieves state-of-the-art performance, with 7.2-8.5X teacher speedups and competitive FID, while Next Shortcut Prediction delivers superior quality-latency trade-offs over model scaling or step reduction.",
+      "authors": [
+        "Jinxiu Liu",
+        "Xuanming Liu",
+        "Kangfu Mei",
+        "Yandong Wen",
+        "Weiyang Liu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-12T17:15:42+00:00",
+      "link": "https://arxiv.org/pdf/2608.12276v2",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Scales flow matching for efficient generative modeling, transferable to fluid dynamics.",
+      "llm_evidence_cn": "高效流匹配缩放方法，可迁移至流体动力学。",
+      "llm_evidence": "高效流匹配缩放方法，可迁移至流体动力学。",
+      "canonical_evidence": "高效流匹配缩放方法，可迁移至流体动力学。",
+      "llm_tldr_en": "XYZFlow rethinks efficient generative modeling by scaling flow matching with multidimensional conditioning, improving expressivity and learning of probability paths. It views autoregressive modeling as implicit flow straightening, achieving high-fidelity generation with fewer steps.",
+      "llm_tldr_cn": "针对高保真图像生成中扩散模型迭代昂贵、现有蒸馏方法依赖教师质量的问题，XYZFlow通过多维缩放流匹配来增强概率路径的可识别性，并将自回归建模视为隐式流拉直，从而在保持采样质量的同时大幅减少采样步数。该方法为高效生成建模提供了新思路，可被用于流体流动等领域的快速生成仿真。",
+      "llm_tldr": "针对高保真图像生成中扩散模型迭代昂贵、现有蒸馏方法依赖教师质量的问题，XYZFlow通过多维缩放流匹配来增强概率路径的可识别性，并将自回归建模视为隐式流拉直，从而在保持采样质量的同时大幅减少采样步数。该方法为高效生成建模提供了新思路，可被用于流体流动等领域的快速生成仿真。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

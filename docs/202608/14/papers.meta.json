@@ -1,0 +1,69 @@
+{
+  "label": "2026-08-14",
+  "date": "2026-08-14",
+  "generated_at": "2026-08-14T21:20:00",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202608/14/2608.07648v1-leveraging-generative-models-to-assist-monte-carlo-sampling",
+      "section": "quick",
+      "title_en": "Leveraging generative models to assist Monte Carlo sampling",
+      "authors": "Marylou Gabrié",
+      "date": "2026-08-07",
+      "pdf": "https://arxiv.org/pdf/2608.07648v1",
+      "score": "6.0",
+      "evidence": "关于利用生成模型辅助蒙特卡洛采样的综述，广泛适用于包括流体力学在内的科学计算",
+      "tldr": "高维分布采样是科学计算的核心难题，经典MCMC和增强采样方法受限于高维与多模态。借鉴生成模型作为灵活概率模型，可在无数据情况下辅助采样仅知其归一化常数的分布。本文综述了基于归一化流和扩散模型的精确采样策略及无数据训练方法，梳理了早期发展，评述了各方向的优缺点，为物理与机器学习研究者提供入门指南。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Sampling high-dimensional probability distributions is a central task in scientific computing, with applications ranging from Bayesian inference to statistical physics and molecular simulation. Despite decades of methodological developments, two major challenges remain: scaling to high dimensions and efficiently exploring multimodal distributions characterized by metastable states. Classical approaches such as Markov chain Monte Carlo, tempering methods, or enhanced sampling based on collective variables have achieved major successes, but they also face intrinsic limitations. This tutorial review explores a new paradigm that has recently emerged at the interface of machine learning and computational statistical physics: the use of generative models as tools for sampling. In this context, models such as normalizing flows and diffusion models are not used in their traditional data-driven setting, but rather as flexible probabilistic models that can assist the sampling of distributions known only up to a normalization constant. This manuscript reviews the early development of this rapidly evolving field and discusses several methodological directions, including exact samplers based on generative models and strategies to train such models in the absence of data. While an exhaustive survey of the literature is not attempted, we present a selection of key ideas and methods, along with a discussion of their strengths and limitations. The review is intended to be an accessible tutorial for both physics and machine learning audiences, and it aims to provide a starting point for researchers interested in exploring this exciting area of research.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/14/2608.11435v1-variational-parameter-calibration-with-physics-aware-latent-space-surrogates",
+      "section": "quick",
+      "title_en": "Variational Parameter Calibration with Physics-Aware Latent-Space Surrogates",
+      "authors": "Qiyao Zhou, Xujia Zhu, Pierre Joli, Yu Cong, Sibo Cheng",
+      "date": "2026-08-11",
+      "pdf": "https://arxiv.org/pdf/2608.11435v1",
+      "score": "6.0",
+      "evidence": "用于流场的概率潜空间代理模型，结合变分参数校准",
+      "tldr": "参数化动力系统的逆建模需要既准确又具参数信息量的代理模型。本文提出一种物理感知的潜在空间自编码器框架，将物理参数映射到流场预测，并通过可观测监督训练提升潜在表示的可分性与时间组织。在计算流体力学基准上，该方法相比标准代理模型在噪声、低分辨率等局部观测下降低了标定误差与方差。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Forward and inverse modeling of parametric dynamical systems requires surrogate models that are not only accurate for state prediction, but also informative for parameter calibration. However, a systematic end-to-end differentiable formulation for coupling deep-learning-based reduced-order surrogates with variational parameter estimation remains underdeveloped. In this work, we introduce a physics-aware neural-network-based latent-space framework for reduced-order forward modeling and variational parameter estimation. The proposed autoencoder-based approach yields a differentiable surrogate that maps physical parameters to predicted flow fields through a latent representation. The observable supervision is used during offline training to encourage the latent variables to retain information correlated with system parameters, while the online inverse problem is solved in the parameter space through the surrogate-induced observation operator. The method is evaluated on two computational-fluid-dynamics benchmarks. The results show that reconstruction accuracy alone is insufficient for inverse modeling, owing to the lack of end-to-end differentiability or physics awareness for variational parameter calibration. Quantitative latent-space analysis further shows that observable supervision improves case-level separability and temporal organization of latent representations. Experiments with realistic measurement settings, including noisy, low-resolution, randomly masked, and block-wise partial observations, demonstrate the robustness of the proposed framework and show that it generally reduces calibration error and variability compared with the standard surrogate models.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/14/2608.11747v1-making-every-step-count-spatio-temporal-information-allocation-for-imaging-inverse-problems",
+      "section": "quick",
+      "title_en": "Making Every Step Count: Spatio-Temporal Information Allocation for Imaging Inverse Problems",
+      "authors": "Yi Cao, Xiangyong Cao, Pei Liu, Yong-Jin Liu, Deyu Meng",
+      "date": "2026-08-12",
+      "pdf": "https://arxiv.org/pdf/2608.11747v1",
+      "score": "6.0",
+      "evidence": "基于流的生成模型用于逆问题求解，可迁移至流体流动重建",
+      "tldr": "基于流的生成模型作为逆问题先验虽能捕获语义和细节，但现有求解器忽略固定NFE下的时空信息分配。时间上早期探索不足会陷入错误语义，空间上观测区与缺失区约束不均。本文提出频谱自适应调度(SAS)根据退化谱分布可调用时步，以及测量优先注意力(MPA)利用数据-先验冲突引导信息流向弱约束区域。两组件即插即用无需重训，在超分辨率、运动去模糊和修复任务上显著提升现有基于流求解器的恢复质量。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Flow-based generative models have emerged as powerful image priors for training-free inverse problem solving, capturing coherent semantics and fine-grained structure. Despite these strengths, existing flow-based inverse solvers primarily focus on the design of individual updates, largely overlooking spatio-temporal information allocation under a fixed number of function evaluations (NFEs). Temporally, insufficient early exploration can trap the flow trajectory in an incorrect semantic basin, whereas excessive allocation of NFEs to early stages leaves little budget for late-stage refinement. Spatially, data consistency provides direct constraints only within observed regions, whereas the recovery of missing regions relies mainly on the generative prior. To address these two issues, we introduce two complementary and training-free components, i.e., Spectrum-Adaptive Scheduling (SAS) and Measurement-Prioritized Attention (MPA). For temporal allocation, SAS distributes the available NFEs over flow time according to the degradation spectrum and logSNR geometry, thus better balancing semantic exploration and detail refinement. For spatial propagation, MPA exploits data-prior conflicts to guide information toward weakly constrained regions, thereby enhancing semantic and structural fidelity. Extensive experiments on standard image inverse problems, e.g., super-resolution, motion deblurring, and inpainting, demonstrate that the proposed components can be integrated into existing flow-based inverse solvers in a plug-and-play manner without retraining or additional flow-model evaluations, and can also significantly improve the restoration quality of existing solvers.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/14/2608.12276v2-xyzflowscaling-multi-dimensional-shortcut-flows-for-efficient-generative-modeling",
+      "section": "quick",
+      "title_en": "XYZFlow:Scaling Multi dimensional Shortcut Flows for Efficient Generative Modeling",
+      "authors": "Jinxiu Liu, Xuanming Liu, Kangfu Mei, Yandong Wen, Weiyang Liu",
+      "date": "2026-08-12",
+      "pdf": "https://arxiv.org/pdf/2608.12276v2",
+      "score": "6.0",
+      "evidence": "高效流匹配缩放方法，可迁移至流体动力学。",
+      "tldr": "高保真图像生成面临速度与质量的权衡，扩散模型迭代采样昂贵，现有蒸馏方法依赖教师模型质量。本文提出XYZFlow，通过多维扩展流匹配提升生成效率：时间维度用非马尔可夫条件依赖完整去噪历史，空间维度用Next Shortcut Prediction顺序生成补丁。实验实现7.2-8.5倍教师加速和竞争性FID，质量-延迟权衡优于模型扩展或步数缩减。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "High-fidelity image generation faces a trade-off between speed and quality. Diffusion models produce strong visuals but require costly iterative sampling. Existing efficient methods mainly distill pretrained models into few-step samplers, a challenging process that depends heavily on teacher-model quality. In this paper, we introduce XYZFlow, a framework that rethinks efficient generation through multidimensional scaling of flow matching. Unlike single-step mappings, XYZFlow enhances expressivity by making probability paths more identifiable and learnable through structured multidimensional conditioning. We view autoregressive modeling as implicit flow straightening, where richer context reduces trajectory ambiguity. XYZFlow realizes this idea through two orthogonal dimensions: temporal scaling, which uses non-Markovian conditioning on the full denoising history; and spatial scaling, enabled by Next Shortcut Prediction, which sequentially generates patches using preceding patches' denoising trajectories as priors. Experiments show that XYZFlow achieves state-of-the-art performance, with 7.2-8.5X teacher speedups and competitive FID, while Next Shortcut Prediction delivers superior quality-latency trade-offs over model scaling or step reduction.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
