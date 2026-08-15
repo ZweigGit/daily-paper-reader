@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-08-15 <!--dpr-date:20260815-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/15/2608.12286v1-patternformer-learning-multiple-solution-patterns-in-reaction--diffusion-systems" data-sidebar-item="{&quot;title&quot;: &quot;PatternFormer: Learning Multiple Solution Patterns in Reaction--Diffusion Systems&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.12286v1-patternformer-learning-multiple-solution-patterns-in-reaction--diffusion-systems&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;基于大语言模型的生成式框架，用于学习多个PDE解集，可迁移至流体动力学&quot;}">PatternFormer: Learning Multiple Solution Patterns in Reaction--Diffusion Systems</a>
   * 2026-08-14 <!--dpr-date:20260814-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/14/2608.07648v1-leveraging-generative-models-to-assist-monte-carlo-sampling" data-sidebar-item="{&quot;title&quot;: &quot;Leveraging generative models to assist Monte Carlo sampling&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.07648v1-leveraging-generative-models-to-assist-monte-carlo-sampling&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;关于利用生成模型辅助蒙特卡洛采样的综述，广泛适用于包括流体力学在内的科学计算&quot;}">Leveraging generative models to assist Monte Carlo sampling</a>

@@ -1,0 +1,24 @@
+{
+  "label": "2026-08-15",
+  "date": "2026-08-15",
+  "generated_at": "2026-08-15T20:22:07",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202608/15/2608.12286v1-patternformer-learning-multiple-solution-patterns-in-reaction--diffusion-systems",
+      "section": "quick",
+      "title_en": "PatternFormer: Learning Multiple Solution Patterns in Reaction--Diffusion Systems",
+      "authors": "Zhipeng Chang, Wenpeng Yin, Wenrui Hao",
+      "date": "2026-08-12",
+      "pdf": "https://arxiv.org/pdf/2608.12286v1",
+      "score": "6.0",
+      "evidence": "基于大语言模型的生成式框架，用于学习多个PDE解集，可迁移至流体动力学",
+      "tldr": "非线性偏微分方程在相同参数下常有多重解，但现有神经算子与物理信息网络只能预测单一分支。PatternFormer借助大语言模型，将无序共存的解集转化为规范序列，通过一次自回归生成完整解集，并用物理残差约束保证无界解族。在非线性椭圆问题中一次推理即可恢复全部分支，在Gray-Scott系统中还能生成训练数据中不存在的有效图灵斑。该方法可跨多稳态系统连续微调，为解景观基础模型奠定基础。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Many nonlinear models across physics, chemistry, and biology exhibit multiple solutions for the same parameters, and capturing this entire solution set is essential for understanding pattern-forming systems. Yet existing learned surrogates are fundamentally single-valued: neural operators map each parameter to a single output, and physics-informed neural networks converge to one branch. We develop \\textbf{PatternFormer} (PF), a large language model-based framework for learning the multiple solutions of nonlinear partial differential equations. By transforming unordered coexisting solutions into canonical sequences, PF produces structured solution sets in a single autoregressive pass, terminating automatically for finite families and enforcing physical residual constraints for unbounded ones. On nonlinear elliptic problems it recovers all solution branches in one inference step; on Gray--Scott it generates coexisting Turing patterns, including physically valid states absent from the reference data and beyond training. PF can also be sequentially fine-tuned across multistable systems, toward general foundation models for solution landscapes.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
