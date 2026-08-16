@@ -1,0 +1,39 @@
+{
+  "label": "2026-08-16",
+  "date": "2026-08-16",
+  "generated_at": "2026-08-16T19:06:07",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202608/16/2608.11572v1-recast-a-machine-learning-framework-for-correction-and-super-resolution-of-coarse-grid-pde-solvers",
+      "section": "quick",
+      "title_en": "RECAST: A Machine-Learning Framework for Correction and Super-Resolution of Coarse-Grid PDE Solvers",
+      "authors": "Maryam Reza, Farbod Faraji",
+      "date": "2026-08-12",
+      "pdf": "https://arxiv.org/pdf/2608.11572v1",
+      "score": "7.0",
+      "evidence": "面向粗网格PDE求解器的校正与超分辨率机器学习框架，可迁移至流体流动模拟",
+      "tldr": "粗网格求解器能降低偏微分方程模拟成本，但空间分辨率和轨迹精度受损。RECAST框架在数值时间步进中加入学习校正，并从校正后的粗历史重建细网格状态。在六个一维PDE系统上，粗化8-16倍、千步闭环测试中，误差降低约50-92%，且能泛化到未见参数。这项工作为高维数值模拟的机器学习加速提供了概念验证。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Coarse-grid numerical solvers can substantially reduce the computational cost of time-dependent PDE simulation, but under-resolution often degrades both the trajectory and the spatial fidelity of the solution. We introduce RECAST (Recurrent Error Correction And Super-resolution of coarse-grid Trajectories), a machine-learning framework designed to restore this lost accuracy while retaining coarse-grid evolution. RECAST combines learned correction within the numerical time-stepping loop with reconstruction of the corresponding fine-grid state from the corrected coarse history. We evaluate the framework on six one-dimensional PDE systems spanning transport, diffusion, dispersion, reaction, and wave dynamics, using spatial grids coarsened by factors of 8-16 and 1000-step closed-loop rollouts from unseen initial conditions. Across the test cases, RECAST remains closely aligned with the fine-grid reference solutions and reduces time-averaged relative error by approximately 50-92% compared with the corresponding uncorrected coarse-grid solvers. Additional tests show generalization to unseen PDE parameter values, while comparison with a contemporary coarse-correction architecture shows that RECAST achieves lower error and better long-horizon agreement with the fine-grid reference over 5000-step rollouts. These results demonstrate that the learned correction and reconstruction capabilities of RECAST can enable substantially coarser PDE evolution without the corresponding loss of solution fidelity, providing a proof-of-concept route toward machine-learning acceleration of higher-dimensional numerical simulations across science and engineering.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/16/2608.09613v1-marrying-optimal-transport-and-odes-for-unified-continuous-time-4d-reconstruction-and-tracking",
+      "section": "quick",
+      "title_en": "Marrying Optimal Transport and ODEs for Unified Continuous-Time 4D Reconstruction and Tracking",
+      "authors": "Liying Yang, Hao Mo, Jialun Liu, Chen Liu, Xinxing Yu, Chenhao Guan, Hui Ma, Xiao Cao, Ajian Liu, Yanyan Liang",
+      "date": "2026-08-10",
+      "pdf": "https://arxiv.org/pdf/2608.09613v1",
+      "score": "6.0",
+      "evidence": "利用最优传输与常微分方程及流匹配引导解码器学习连续速度场，可迁移至流体流动模拟。",
+      "tldr": "现有统一4D重建与点跟踪方法依赖启发式插值或仅预测整数时间戳，缺乏运动学一致性。本文提出Uni4R，通过最优传输与ODE协同学习连续速度场，结合Flow Matching引导解码器和积分一致性训练，实现任意时间戳的连续动态建模，在4D重建、点跟踪及新基准上均达SOTA。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Existing unified 4D reconstruction and point tracking approaches typically rely on heuristic interpolations or just predict at integer timestamps, lacking kinematic coherence and failing to model dynamics at any arbitrary timestamp. In this paper, we propose Uni4R, a framework that unifies these tasks by learning continuous velocity fields through the synergy of Optimal Transport (OT) and Ordinary Differential Equation (ODE). Importantly, this continuous velocity field acts as a kinematic prior that mutually benefits both 4D reconstruction and point tracking. Specifically, we propose the Flow Matching Guided Decoder (FMGD). A global velocity branch first extracts anchor features that capture the global dynamic state of the sequence. Then, FMGD leverages Flow Matching (FM) theory to formulate a probability path defined by OT on the anchor feature manifold, instantiating it as FM-guided velocity features for velocity prediction. This establishes a robust kinematic inductive bias. Meanwhile, a point reconstruction branch provides geometric features. The local velocity prediction module then joint above features and time embeddings, to decode velocities at arbitrary timestamps. To overcome the absence of high-quality ground-truth velocities in fractional frames, we propose an integral-consistency training strategy. This strategy uses an ODE solver to integrate velocities to recover target pointmaps, enabling the model to be supervised end-to-end directly from integer timestamps. Experimental results demonstrate that Uni4R achieves SOTA performance in both 4D reconstruction and point tracking, and achieves SOTA in our new kinematics-aware benchmark at continuous time.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
