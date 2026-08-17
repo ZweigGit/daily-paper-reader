@@ -6,27 +6,31 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-16
-- 运行时间：2026-08-16 19:06:00 UTC
+- 最新运行日期：2026-08-17
+- 运行时间：2026-08-17 20:03:59 UTC
 - 运行状态：成功
-- 本次总论文数：2
-- 精读区：0
+- 本次总论文数：3
+- 精读区：1
 - 速读区：2
 
 ### 今日简报（AI）
-今日速读2篇论文，聚焦机器学习加速PDE求解与4D重建追踪。最值得关注的是7分《RECAST》，用机器学习修正粗网格求解器，实现超分辨率效果；另有6分工作结合最优传输与ODE做连续时间4D重建。建议普通读者优先精读RECAST，理解其框架对科学计算效率提升的潜力。
-- 详情：[/202608/16/README](/202608/16/README)
+今日精读1篇高分论文，速读2篇，共处理3篇AI4Science方向工作。  
+最值得关注的是《Multiphase-Diff》（9.0分）：扩散模型用于高对比多相物理系统，能清晰生成尖锐界面。  
+下一步建议追踪扩散生成模型在物理模拟中的落地潜力，同时浏览两篇6分论文作背景拓展。
+- 详情：[/202608/17/README](/202608/17/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [Multiphase-Diff: Diffusion-Based Generative Modeling for High-Contrast Multiphase Physical Systems with Sharp Interfaces](/202608/17/2608.13669v1-multiphase-diff-diffusion-based-generative-modeling-for-high-contrast-multiphase-physical-systems-with-sharp-interfaces)  
+   标签：评分：9.0/10、query:genmod-fluid
+   evidence：基于扩散的生成模型用于高对比度、尖锐界面的多相物理系统，直接对应流体流动模拟
 
 ### 速读区论文标签
-1. [RECAST: A Machine-Learning Framework for Correction and Super-Resolution of Coarse-Grid PDE Solvers](/202608/16/2608.11572v1-recast-a-machine-learning-framework-for-correction-and-super-resolution-of-coarse-grid-pde-solvers)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：面向粗网格PDE求解器的校正与超分辨率机器学习框架，可迁移至流体流动模拟
-2. [Marrying Optimal Transport and ODEs for Unified Continuous-Time 4D Reconstruction and Tracking](/202608/16/2608.09613v1-marrying-optimal-transport-and-odes-for-unified-continuous-time-4d-reconstruction-and-tracking)  
+1. [Distillation of Foundation Models for Time-dependent PDEs](/202608/17/2608.11937v1-distillation-of-foundation-models-for-time-dependent-pdes)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：利用最优传输与常微分方程及流匹配引导解码器学习连续速度场，可迁移至流体流动模拟。
+   evidence：利用教师模型生成PDE合成轨迹训练紧凑代理模型，与流体动力学的生成式建模相关。
+2. [The Advective Fisher-Rao Geometry of Deterministic Measure Transport](/202608/17/2608.12111v1-the-advective-fisher-rao-geometry-of-deterministic-measure-transport)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：提出确定性测度输运的平流Fisher-Rao几何，为流匹配方法提供理论基础
 
 
 <div class="dpr-home-promo-card">

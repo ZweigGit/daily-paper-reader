@@ -1,0 +1,130 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-17T19:58:34.672929+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2608.13669v1",
+      "source": "arxiv",
+      "title": "Multiphase-Diff: Diffusion-Based Generative Modeling for High-Contrast Multiphase Physical Systems with Sharp Interfaces",
+      "abstract": "Physics-constrained diffusion for high-contrast, sharp-interface multiphase fields faces three coupled difficulties. At coefficient jumps, expanded pointwise strong-form PDE residuals contain singular gradient terms that can penalize physical interfaces. Under extreme contrast, low-magnitude phases may fall below the diffusion noise floor and be erased, misscaled, or generated with negative coefficients, while a global likelihood scale allows high-magnitude phases to dominate supervision. We therefore propose Multiphase-Diff, which makes three corresponding contributions: (i) a conservative flux residual that avoids differentiating discontinuous coefficients and enforces discrete conservation; (ii) an analytic bijective representation that maps low-amplitude signals to order-one latent scales and guarantees coefficient positivity through exponential decoding; and (iii) a Jacobi-preconditioned likelihood that normalizes local residual scales for balanced supervision. Experiments on three complementary multiphase benchmarks demonstrate the superiority of Multiphase-Diff over seven baselines in both physical and distributional fidelity and its robustness across phase contrasts and compositions, establishing its effectiveness for scientific sample generation in this challenging regime.",
+      "authors": [
+        "Yining Huang",
+        "Zhenyu Liang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-13T18:05:58+00:00",
+      "link": "https://arxiv.org/pdf/2608.13669v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "diffusion-based generative modeling for high-contrast multiphase physical systems with sharp interfaces, directly relevant to fluid flow simulation",
+      "llm_evidence_cn": "基于扩散的生成模型用于高对比度、尖锐界面的多相物理系统，直接对应流体流动模拟",
+      "llm_evidence": "基于扩散的生成模型用于高对比度、尖锐界面的多相物理系统，直接对应流体流动模拟",
+      "canonical_evidence": "基于扩散的生成模型用于高对比度、尖锐界面的多相物理系统，直接对应流体流动模拟",
+      "llm_tldr_en": "Multiphase-Diff addresses three coupled difficulties of physics-constrained diffusion for high-contrast sharp-interface multiphase fields, proposing a conservative flux residual, discrete conservation, and a corrected global likelihood scale.",
+      "llm_tldr_cn": "高对比度、尖锐界面的多相物理系统在物理约束扩散建模中面临系数跳变、低幅值相被噪声淹没等困难。Multiphase-Diff 提出三项贡献：避免对不连续系数求导的守恒通量残差、离散守恒约束以及修正全局似然尺度。该方法能更可靠地生成具有清晰界面的多相场，为扩散模型用于多相流体模拟提供了可行的物理约束方案，对计算流体力学中的生成建模具有重要价值。",
+      "llm_tldr": "高对比度、尖锐界面的多相物理系统在物理约束扩散建模中面临系数跳变、低幅值相被噪声淹没等困难。Multiphase-Diff 提出三项贡献：避免对不连续系数求导的守恒通量残差、离散守恒约束以及修正全局似然尺度。该方法能更可靠地生成具有清晰界面的多相场，为扩散模型用于多相流体模拟提供了可行的物理约束方案，对计算流体力学中的生成建模具有重要价值。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.11937v1",
+      "source": "arxiv",
+      "title": "Distillation of Foundation Models for Time-dependent PDEs",
+      "abstract": "Foundation models for time-dependent partial differential equations (PDEs) are trained on large and diverse collections of physical systems and can generalize effectively to new downstream tasks. After fine-tuning on only a few trajectories from a target domain, they can achieve strong accuracy in low-data regimes. However, these models are typically large and computationally intensive, limiting their usefulness as fast surrogates for numerical solvers. We propose Teacher Rollout Extension (TREX), a knowledge distillation framework that transfers the predictive capability of a pretrained foundation model into a compact and efficient student. Starting from a fine-tuned teacher, TREX augments limited downstream data by generating long synthetic trajectories through teacher rollouts, optionally with periodic noise injection. This procedure samples from the teacher-induced rollout distribution without requiring explicit knowledge of the initial-condition distribution, while exposing the student to long-horizon states and local recovery behavior around states encountered during autoregressive prediction. The student can further incorporate task-specific inductive biases, such as equivariance, that the teacher does not necessarily enforce. We evaluate TREX on multiple PDE benchmarks. The resulting students can match or surpass the teacher's accuracy while reducing the number of parameters by several orders of magnitude and achieving more than an order-of-magnitude speedup in inference.",
+      "authors": [
+        "Daniel Musekamp",
+        "Boshra Ariguib",
+        "Andrei Manolache",
+        "Mathias Niepert"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-08-12T11:24:08+00:00",
+      "link": "https://arxiv.org/pdf/2608.11937v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Uses teacher-generated synthetic PDE trajectories to train compact student surrogates; relevant to generative/surrogate modeling for fluid dynamics.",
+      "llm_evidence_cn": "利用教师模型生成PDE合成轨迹训练紧凑代理模型，与流体动力学的生成式建模相关。",
+      "llm_evidence": "利用教师模型生成PDE合成轨迹训练紧凑代理模型，与流体动力学的生成式建模相关。",
+      "canonical_evidence": "利用教师模型生成PDE合成轨迹训练紧凑代理模型，与流体动力学的生成式建模相关。",
+      "llm_tldr_en": "Proposes TREX, a knowledge distillation framework that augments limited PDE data with synthetic trajectories from a fine-tuned teacher foundation model and trains a compact student, achieving comparable accuracy with much smaller models.",
+      "llm_tldr_cn": "本文提出TREX知识蒸馏框架，针对时间相关偏微分方程基础模型推理开销大的问题，利用微调后的教师模型生成合成轨迹扩充有限训练数据，并训练紧凑学生模型，在多个PDE基准（含流体流）上以更小模型达到或超过教师精度，为生成式/数据驱动流体模拟提供了高效替代方案。",
+      "llm_tldr": "本文提出TREX知识蒸馏框架，针对时间相关偏微分方程基础模型推理开销大的问题，利用微调后的教师模型生成合成轨迹扩充有限训练数据，并训练紧凑学生模型，在多个PDE基准（含流体流）上以更小模型达到或超过教师精度，为生成式/数据驱动流体模拟提供了高效替代方案。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.12111v1",
+      "source": "arxiv",
+      "title": "The Advective Fisher-Rao Geometry of Deterministic Measure Transport",
+      "abstract": "A novel advective Fisher-Rao metric is introduced for optimization tasks on paths of probability measures governed by the continuity equation. This metric is shown to lead to optimal descent directions.   It is then shown that this metric arises naturally from three different perspectives: As the rescaled zero-noise limit of the Fisher-Rao metric on path measures, as the expected value of the second variation of the Freidlin--Wentzell large deviation rate functional, and as the Hessian of the Benamou--Brenier action functional from dynamic optimal transport.   We supplement this geometric construction with computational experiments. Here, we demonstrate empirically that the advective Fisher-Rao metric yields the desired optimal fitting of probability densities, whereas the Gauss--Newton method yields optimal fitting of velocity fields.",
+      "authors": [
+        "Benjamin Gess",
+        "Johannes Müller"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC",
+        "cs.LG",
+        "math.DG",
+        "math.PR"
+      ],
+      "published": "2026-08-12T14:32:31+00:00",
+      "link": "https://arxiv.org/pdf/2608.12111v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Introduces advective Fisher-Rao geometry for deterministic measure transport, foundational for flow matching methods",
+      "llm_evidence_cn": "提出确定性测度输运的平流Fisher-Rao几何，为流匹配方法提供理论基础",
+      "llm_evidence": "提出确定性测度输运的平流Fisher-Rao几何，为流匹配方法提供理论基础",
+      "canonical_evidence": "提出确定性测度输运的平流Fisher-Rao几何，为流匹配方法提供理论基础",
+      "llm_tldr_en": "Introduces advective Fisher-Rao metric for measure transport optimization, derived from large deviation and optimal transport perspectives, with experiments on density fitting.",
+      "llm_tldr_cn": "针对概率测度路径上的优化问题，引入平流Fisher-Rao度量，推导出最优下降方向。该度量可视为Fisher-Rao路径度量零噪声极限、Freidlin-Wentzell速率泛函的二阶变化以及Benamou-Brenier作用量的Hessian，从三方面给出几何解释。计算实验表明该度量能实现最优的概率密度拟合，为流匹配等生成建模方法提供了新的几何工具。",
+      "llm_tldr": "针对概率测度路径上的优化问题，引入平流Fisher-Rao度量，推导出最优下降方向。该度量可视为Fisher-Rao路径度量零噪声极限、Freidlin-Wentzell速率泛函的二阶变化以及Benamou-Brenier作用量的Hessian，从三方面给出几何解释。计算实验表明该度量能实现最优的概率密度拟合，为流匹配等生成建模方法提供了新的几何工具。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

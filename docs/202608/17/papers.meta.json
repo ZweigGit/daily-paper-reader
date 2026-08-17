@@ -1,0 +1,54 @@
+{
+  "label": "2026-08-17",
+  "date": "2026-08-17",
+  "generated_at": "2026-08-17T20:04:05",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202608/17/2608.13669v1-multiphase-diff-diffusion-based-generative-modeling-for-high-contrast-multiphase-physical-systems-with-sharp-interfaces",
+      "section": "deep",
+      "title_en": "Multiphase-Diff: Diffusion-Based Generative Modeling for High-Contrast Multiphase Physical Systems with Sharp Interfaces",
+      "authors": "Yining Huang, Zhenyu Liang",
+      "date": "2026-08-13",
+      "pdf": "https://arxiv.org/pdf/2608.13669v1",
+      "score": "9.0",
+      "evidence": "基于扩散的生成模型用于高对比度、尖锐界面的多相物理系统，直接对应流体流动模拟",
+      "tldr": "高对比度、尖锐界面的多相物理系统在物理约束扩散建模中面临系数跳变、低幅值相被噪声淹没等困难。Multiphase-Diff 提出三项贡献：避免对不连续系数求导的守恒通量残差、离散守恒约束以及修正全局似然尺度。该方法能更可靠地生成具有清晰界面的多相场，为扩散模型用于多相流体模拟提供了可行的物理约束方案，对计算流体力学中的生成建模具有重要价值。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Physics-constrained diffusion for high-contrast, sharp-interface multiphase fields faces three coupled difficulties. At coefficient jumps, expanded pointwise strong-form PDE residuals contain singular gradient terms that can penalize physical interfaces. Under extreme contrast, low-magnitude phases may fall below the diffusion noise floor and be erased, misscaled, or generated with negative coefficients, while a global likelihood scale allows high-magnitude phases to dominate supervision. We therefore propose Multiphase-Diff, which makes three corresponding contributions: (i) a conservative flux residual that avoids differentiating discontinuous coefficients and enforces discrete conservation; (ii) an analytic bijective representation that maps low-amplitude signals to order-one latent scales and guarantees coefficient positivity through exponential decoding; and (iii) a Jacobi-preconditioned likelihood that normalizes local residual scales for balanced supervision. Experiments on three complementary multiphase benchmarks demonstrate the superiority of Multiphase-Diff over seven baselines in both physical and distributional fidelity and its robustness across phase contrasts and compositions, establishing its effectiveness for scientific sample generation in this challenging regime.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/17/2608.11937v1-distillation-of-foundation-models-for-time-dependent-pdes",
+      "section": "quick",
+      "title_en": "Distillation of Foundation Models for Time-dependent PDEs",
+      "authors": "Daniel Musekamp, Boshra Ariguib, Andrei Manolache, Mathias Niepert",
+      "date": "2026-08-12",
+      "pdf": "https://arxiv.org/pdf/2608.11937v1",
+      "score": "6.0",
+      "evidence": "利用教师模型生成PDE合成轨迹训练紧凑代理模型，与流体动力学的生成式建模相关。",
+      "tldr": "时间相关PDE的基础模型虽能通过少量样本微调取得高精度，但模型庞大、推理慢。为此提出TREX知识蒸馏框架，利用教师模型生成扩展轨迹并注入噪声，训练紧凑学生模型。实验表明，学生模型在参数减少几个数量级的同时，精度可媲美甚至超越教师，推理速度提升一个数量级以上。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Foundation models for time-dependent partial differential equations (PDEs) are trained on large and diverse collections of physical systems and can generalize effectively to new downstream tasks. After fine-tuning on only a few trajectories from a target domain, they can achieve strong accuracy in low-data regimes. However, these models are typically large and computationally intensive, limiting their usefulness as fast surrogates for numerical solvers. We propose Teacher Rollout Extension (TREX), a knowledge distillation framework that transfers the predictive capability of a pretrained foundation model into a compact and efficient student. Starting from a fine-tuned teacher, TREX augments limited downstream data by generating long synthetic trajectories through teacher rollouts, optionally with periodic noise injection. This procedure samples from the teacher-induced rollout distribution without requiring explicit knowledge of the initial-condition distribution, while exposing the student to long-horizon states and local recovery behavior around states encountered during autoregressive prediction. The student can further incorporate task-specific inductive biases, such as equivariance, that the teacher does not necessarily enforce. We evaluate TREX on multiple PDE benchmarks. The resulting students can match or surpass the teacher's accuracy while reducing the number of parameters by several orders of magnitude and achieving more than an order-of-magnitude speedup in inference.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/17/2608.12111v1-the-advective-fisher-rao-geometry-of-deterministic-measure-transport",
+      "section": "quick",
+      "title_en": "The Advective Fisher-Rao Geometry of Deterministic Measure Transport",
+      "authors": "Benjamin Gess, Johannes Müller",
+      "date": "2026-08-12",
+      "pdf": "https://arxiv.org/pdf/2608.12111v1",
+      "score": "6.0",
+      "evidence": "提出确定性测度输运的平流Fisher-Rao几何，为流匹配方法提供理论基础",
+      "tldr": "针对确定性测度传输路径上的优化问题，引入一种新的平流Fisher-Rao度量。该度量被证明能提供最优下降方向，并可从三个视角自然导出：路径测度上Fisher-Rao度量的重标定零噪声极限、Freidlin-Wentzell大偏差率泛函的二阶变分期望，以及动态最优传输中Benamou-Brenier作用泛函的Hessian。计算实验表明该度量实现最优密度拟合，而Gauss-Newton方法实现最优速度场拟合。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "A novel advective Fisher-Rao metric is introduced for optimization tasks on paths of probability measures governed by the continuity equation. This metric is shown to lead to optimal descent directions.   It is then shown that this metric arises naturally from three different perspectives: As the rescaled zero-noise limit of the Fisher-Rao metric on path measures, as the expected value of the second variation of the Freidlin--Wentzell large deviation rate functional, and as the Hessian of the Benamou--Brenier action functional from dynamic optimal transport.   We supplement this geometric construction with computational experiments. Here, we demonstrate empirically that the advective Fisher-Rao metric yields the desired optimal fitting of probability densities, whereas the Gauss--Newton method yields optimal fitting of velocity fields.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

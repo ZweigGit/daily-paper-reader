@@ -1,0 +1,917 @@
+Title: Multiphase-Diff: Diffusion-Based Generative Modeling for High-Contrast Multiphase Physical Systems with Sharp Interfaces
+
+URL Source: https://arxiv.org/pdf/2608.13669v1
+
+Published Time: Mon, 17 Aug 2026 00:04:10 GMT
+
+Number of Pages: 14
+
+Markdown Content:
+# Multiphase-Diff: Diffusion-Based Generative Modeling for High-Contrast Multiphase Physical Systems with Sharp Interfaces 
+
+Yining Huang 1, Zhenyu Liang 2,3 ∗
+
+> 1
+
+University of Texas at Austin 
+
+> 2
+
+The Hong Kong University of Science and Technology 
+
+> 3
+
+University of Maryland, College Park 
+
+Abstract 
+
+Physics-constrained diffusion for high-contrast, sharp-interface multiphase fields faces three coupled difficulties. At coefficient jumps, expanded pointwise strong-form PDE residuals contain singular gradient terms that can penalize physical interfaces. Under extreme contrast, low-magnitude phases may fall below the diffusion noise floor and be erased, misscaled, or generated with negative coefficients, while a global likelihood scale allows high-magnitude phases to dom-inate supervision. We therefore propose Multiphase-Diff ,which makes three corresponding contributions: (i) a con-servative flux residual that avoids differentiating discontin-uous coefficients and enforces discrete conservation; (ii) an analytic bijective representation that maps low-amplitude sig-nals to order-one latent scales and guarantees coefficient positivity through exponential decoding; and (iii) a Jacobi-preconditioned likelihood that normalizes local residual scales for balanced supervision. Experiments on three complemen-tary multiphase benchmarks demonstrate the superiority of Multiphase-Diff over seven baselines in both physical and dis-tributional fidelity and its robustness across phase contrasts and compositions, establishing its effectiveness for scientific sample generation in this challenging regime. 
+
+1 Introduction 
+
+Learning generative models that capture the structure of com-plex scientific data while respecting known physical princi-ples is a central objective of AI for science (Karniadakis et al. 2021). In scientific domains, fidelity extends beyond statistical agreement with observed data: generated physical fields must also satisfy the physical admissibility require-ments imposed by conservation laws, constitutive relations, and boundary and interface conditions. This requirement is particularly challenging in multiphase systems with extreme material contrasts and sharp interfaces, where heterogeneous statistics interact with nonsmooth physics. Denoising diffusion probabilistic models (DDPMs) (Ho, Jain, and Abbeel 2020; Sohl-Dickstein et al. 2015) have at-tracted widespread attention in generative modeling because of their training stability, broad mode coverage, and high sample quality (Nichol and Dhariwal 2021; Song et al. 2021). However, as purely data-driven models, their denoising ob-jective learns to reproduce the statistical patterns of the train-ing data, thereby promoting distributional fidelity without 
+
+> ∗
+
+Corresponding author. 
+
+necessarily ensuring physical fidelity . Under this paradigm, a generated field may appear plausible while violating the governing conservation laws, limiting its use in downstream scientific applications. Recent studies incorporate partial differential equations (PDEs) into diffusion models to improve the physical con-sistency of generated fields. For example, residuals derived from the Darcy equation can guide fluid-field generation to-ward physically admissible solutions. Some of these methods have been evaluated primarily on smooth fields or systems with moderate heterogeneity (Shu, Li, and Barati Farimani 2023; Jacobsen, Zhuang, and Duraisamy 2025). Moving be-yond these relatively regular settings, DiffusionPDE (Huang et al. 2024) considers binary Darcy coefficients but evaluates them only at moderate contrast. FunDiff (Wang et al. 2026) considers Burgers solutions with sharp gradients and elastic-ity fields containing material interfaces, but does not study discontinuous material coefficients under extreme contrast. Taken together, the physics-informed diffusion-based gener-ation of physical fields with high material contrast and sharp interfaces remains insufficiently studied. High-contrast, sharp-interface multiphase fields pose three challenges: Interface irregularity. Expanded pointwise strong-form residuals are not classically well defined at coef-ficient jumps, creating artificial penalties that can blur or sup-press interfaces. Low-amplitude phase under-resolution. 
+
+Low-magnitude phases can have negligible signal-to-noise ratios during diffusion and be underweighted by absolute-error training, causing them to be erased, misscaled, or driven to inadmissible negative values. Residual-scale heterogene-ity. Residual magnitudes vary substantially across phases and samples, causing a global likelihood scale to be dominated by high-flux regions and preventing balanced supervision. To solve these problems, we propose Multiphase-Diff ,whose contributions are as follows: 1. We introduce a conservative flux residual based on finite-volume two-point fluxes and harmonic face averag-ing, which avoids differentiating the coefficient, remains well posed across coefficient jumps of arbitrary contrast, and enforces discrete conservation. 2. We develop an analytic bijective representation using logarithmic and inverse hyperbolic sine transformations to resolve low-amplitude phases and ensure coefficient arXiv:2608.13669v1 [cs.CV] 13 Aug 2026 positivity, together with a Jacobi-preconditioned resid-ual likelihood that accounts for local residual scales and balances physics supervision across phases and samples with widely varying magnitudes. 3. We validate Multiphase-Diff against a broad set of base-lines on three complementary discontinuous multiphase benchmarks, demonstrating improved physical fidelity and robustness to phase contrast and composition. 
+
+2 Related Work 
+
+2.1 Generative Modeling of Multiphase Systems 
+
+Generative models are increasingly used to capture the com-plex geometries and statistical distributions of multiphase systems. Early studies employed GANs to reconstruct mul-tiphase electrode microstructures (Gayon-Lombardo et al. 2020), variational autoencoders to explore the design space of dual-phase materials (Attari et al. 2023), and likelihood-based generative flows to synthesize three-dimensional porous media (Guan et al. 2021). More recently, diffusion models have been applied to conditional reservoir-facies gen-eration and facies-based geomodel parameterization (Lee et al. 2025; Di Federico and Durlofsky 2025), as well as to the reconstruction of heterogeneous and multiphase porous mi-crostructures (Lyu and Ren 2024; Zhu, Bijeljic, and Blunt 2025; Baishnab et al. 2025). Conditional diffusion mod-els further control effective properties such as permeability, phase volume fraction, and tortuosity (Lyu and Ren 2024; Baishnab et al. 2025), and related methods support property-driven microstructure design and structural topology opti-mization (Vlassis and Sun 2023; Mazé and Ahmed 2023; Giannone et al. 2023). Across this literature, the generated output is the phase morphology or material layout. Physi-cal quantities serve mainly as conditioning variables, design objectives, or evaluation metrics rather than being gener-ated jointly with the material field under a local conserva-tion law. Consequently, these methods do not directly model coefficient–solution pairs constrained by local conservation. 
+
+2.2 Physics-Constrained Diffusion Models 
+
+Physics-constrained diffusion models introduce PDE infor-mation during either training or sampling. PIDM formulates the PDE residual as a training-time likelihood (Bastek, Sun, and Kochmann 2025), while physics-informed consistency models apply residual supervision in a separate fine-tuning stage (Chang et al. 2026). Gradient-based approaches use residual information to steer generation: PG-Diffusion condi-tions denoising on residual gradients (Shu, Li, and Barati Fa-rimani 2023), whereas CoCoGen and DiffusionPDE correct intermediate samples during inference (Jacobsen, Zhuang, and Duraisamy 2025; Huang et al. 2024). Related guidance has also been developed for scaled spectral latent representa-tions (Gallon et al. 2026). Beyond direct residual guidance, FunDiff incorporates physical priors into a function autoen-coder before latent generation with rectified flow (Wang et al. 2026), and physics-informed distillation converts a pretrained diffusion model into a PDE-supervised one-step generator (Zhang, Wang, and Zou 2025). Despite these ad-vances, these methods are not designed for extreme-contrast discontinuities, which require the field representation, resid-ual discretization, and likelihood scaling to accommodate sharp interfaces and widely separated phase magnitudes. 
+
+3 Preliminary 
+
+A denoising diffusion probabilistic model (DDPM) (Ho, Jain, and Abbeel 2020) consists of a fixed forward process q and a learned reverse process pθ . Let x0 ∼ qdata be a clean sample and xt its noisy version at timestep t ∈ { 1, . . . , T }, where 
+
+T is the number of diffusion steps. We use N (x; m, C ) for a Gaussian distribution over x with mean m and covariance 
+
+C, and I for the identity matrix. 
+
+Forward process. Given a variance schedule {βt ∈
+
+(0 , 1) }Tt=1 , define αt = 1 − βt, ¯αt = Qts=1 αs, and ¯α0 = 1 .The one-step transition and direct sampling formula are 
+
+q(xt | xt−1) = N (xt; √αt xt−1, β tI)
+
+xt = √¯αt x0 + √1 − ¯αt ϵ ϵ ∼ N (0 , I ) (1) The schedule is chosen so that ¯αT ≈ 0, making xT ap-proximately standard Gaussian noise. 
+
+Reverse process. Generation starts from p(xT ) =
+
+N (xT ; 0 , I ). Under the x0-prediction parameterization, the network fθ with parameters θ predicts ˆx0 = fθ (xt, t ). Sub-stituting ˆx0 into the forward posterior gives the reverse mean, while the scalar variance is fixed to its posterior value: 
+
+pθ (xt−1 | xt) = N (xt−1; μθ,t , ΣtI)
+
+μθ,t =
+
+√¯αt−1 βt
+
+1 − ¯αt
+
+ˆx0 +
+
+√αt(1 − ¯αt−1)1 − ¯αt
+
+xt
+
+Σt = 1 − ¯αt−1
+
+1 − ¯αt
+
+βt
+
+(2) Applying these transitions from t = T to t = 1 transforms Gaussian noise into a sample from the learned distribution. The training objective is introduced in Section 4.4; further details appear in the original DDPM paper (Ho, Jain, and Abbeel 2020). 
+
+4 Methodology 
+
+We propose Multiphase-Diff , a physics-constrained diffu-sion framework for generative modeling of high-contrast multiphase fields with sharp interfaces. As illustrated in Figure 1, it learns the joint distribution of a positive ma-terial coefficient a(x) and its solution u(x), governed by 
+
+∇ · (a(x)∇u(x)) = f (x) for x ∈ Ω with prescribed bound-ary conditions. Here, a denotes a material property such as permeability, viscosity, or conductivity, u is the corre-sponding physical response, and f is a prescribed source. Given paired observations of (a, u ), Multiphase-Diff gener-ates coefficient–solution pairs that reproduce the data distri-bution while satisfying local conservation. 
+
+4.1 Conservative Flux Residual 
+
+The principal difficulty arises at material interfaces where 
+
+a is discontinuous. Consider a positive piecewise-constant coefficient on Ω ⊂ R2. Across a perfect interface without interfacial sources or contact resistance, the solution and normal flux satisfy Clean Sample                                                 
+
+> 𝒛 𝒂 =𝒍𝒏 𝒂 − 𝒎 𝒂
+> 𝒔 𝒂
+> 𝒛 𝒖 =𝒂𝒔𝒊𝒏𝒉 𝒖/𝒖 𝟎 − 𝒎 𝒖
+> 𝒔 𝒖 𝒕𝒓
+> Analytic Bijective Representation
+> Clean Latent 𝒛 𝟎
+> 𝒛 𝒂 𝒛 𝒖
+> Noisy Latent 𝒛 𝒕
+> 𝒛 𝒂,𝒕 𝒛 𝒖,𝒕
+> Forward
+> Process
+> Coefficient 𝒂 Solution 𝒖
+> U-Net
+> Predicted Clean ƶ𝒛 𝟎
+> ƶ𝒛 𝒂 ƶ𝒛 𝒖
+> 𝒈 −𝟏
+> Decoded Clean Prediction
+> ƶ𝒂 ƶ𝒖
+> Conservative Flux Residual
+> ෩𝑹 𝒊 =𝑹 𝒊
+> 𝑺 𝒊
+> ,𝑺 𝒊 = 𝐬𝐭𝐨𝐩𝐠𝐫𝐚𝐝 𝑸 𝒊
+> Jacobi-Preconditioned Likelihood
+> 𝓛 = 𝔼 𝒕,𝒛 𝟎 ,𝝐 𝝀 𝒕 𝒛 𝟎 − ƶ 𝒛 𝟎 𝒛 𝒕 , 𝒕 𝟐 +𝒄
+> 𝟐𝚺 𝒕
+> 𝐩𝐡𝐲𝐬 ෩𝑹 𝒈 −𝟏 ƶ𝒛 𝟎 𝒛 𝒕 , 𝒕 𝟐
+> Distributional
+> Fidelity
+> Physical
+> Fidelity
+> Overall Training Objective 𝑹 𝒊 ƶ𝒂 , ƶ 𝒖 = 𝑯 −𝟐 ෍
+> 𝒋∈𝓝 𝒊
+> 𝑻 𝒊𝒋 𝒖 𝒋 − 𝒖 𝒊 + 𝑯 −𝟐 ෍
+> 𝒃∈𝓑 𝑫 𝒊
+> 𝑻 𝒊𝒃 𝒖 𝒃 − 𝒖 𝒊 − ത 𝒇 𝒊
+> Physical Space Physical Space Latent Diffusion Space
+
+Training 
+
+Inference     
+
+> 𝑧 𝑇 ∼ 𝒩 0, 𝐼
+> U-Net
+> ƶ𝑧 𝑎 ƶ𝑧 𝑢
+> 𝒈 −𝟏
+> ƶ𝒂 ƶ𝒖
+
+Figure 1: Overview of Multiphase-Diff, illustrated with a Darcy coefficient–solution pair. During training, the analytic bijection 
+
+g maps (a, u ) to the clean latent z0, which is corrupted by the forward process and reconstructed by a clean-latent-predicting U-Net. The prediction ˆz0 is decoded to (ˆ a, ˆu), whose conservative finite-volume flux residual is Jacobi-preconditioned to define the physics loss combined with the latent data loss. These mechanisms keep low-amplitude phases resolvable and coefficients positive, enforce interface-compatible local conservation, and balance residual scales across phases and samples, respectively. Inference requires no residual correction and performs standard reverse diffusion in latent space followed by one decoding step. 
+
+[ u ] = 0 [ a ∂ nu ] = 0 (3) where [·] denotes the interface jump and n its unit nor-mal. Consequently, the normal derivative generally scales inversely with the coefficient. Some physics-constrained dif-fusion methods evaluate PDE residuals pointwise on pre-dicted fields (Bastek, Sun, and Kochmann 2025; Jacobsen, Zhuang, and Duraisamy 2025; Huang et al. 2024), which is effective for smooth fields but can introduce a nonphysical signal at discontinuous leading coefficients. This limitation is evident from the expanded strong form 
+
+∇ · (a∇u) = a ∆u + ∇a · ∇ u (4) Because a is piecewise constant, ∇a contains a singular interface contribution, and ∇a · ∇ u is not classically defined there. On a grid with spacing H, directly approximating ∇a
+
+at an interface scales as ∆a/H , where ∆a is the coefficient jump. The resulting artificial residual grows with contrast and grid refinement, penalizing the interface itself and potentially encouraging interface blurring or phase suppression. We instead introduce a conservative flux residual based on discrete cellwise balance. At each sampled diffusion time, the predicted coefficient–solution pair is decoded into physi-cal space and evaluated using differentiable two-point fluxes with harmonic transmissibilities, following locally conser-vative finite-volume principles (Aavatsmark 2002; Edwards and Rogers 1998). This construction enforces flux continuity without differentiating or penalizing the coefficient jump. On the uniform orthogonal cell-centered grid used here, let ai and ui denote the values in cell i, N (i) its neighbors, and BD (i) and BN (i) its Dirichlet and Neumann boundary faces. For b ∈ B D (i), ub is prescribed; for b ∈ B N (i),
+
+ϕb = ( a∇u) · nb is the prescribed outward flux. We absorb the Neumann contribution into the boundary-adjusted source 
+
+¯fi = fi − H−1 P
+
+b∈B N (i) ϕb, where fi is the cell-averaged source. The residual is 
+
+Ri(a, u ) = H−2 X
+
+j∈N (i)
+
+Tij (uj − ui)+ H−2 X
+
+b∈B D (i)
+
+Tib (ub − ui) − ¯fi
+
+(5) The transmissibilities are 
+
+Tij = 2aiaj
+
+ai + aj
+
+Tib = 2 ai (6) This construction is suited to grid-resolved sharp inter-faces because (i) the coefficient enters through harmonic face averaging, which remains finite at any positive contrast and limits the flux according to the smaller adjacent co-efficient without introducing a singular interface term; (ii) 
+
+each internal face flux enters adjacent cell balances with op-posite signs and cancels exactly, ensuring discrete conserva-tion; and (iii) the residual uses the data-generating discretiza-tion, allowing reference fields to approach solver tolerance without discretization mismatch. The resulting transmissibil-ities require positive coefficients, motivating the positivity-preserving representation introduced next. 
+
+4.2 Analytic Bijective Representation 
+
+Although the conservative residual resolves the interface sin-gularity, high contrast remains difficult for diffusion. Normal-izing the high phase to aH = 1 with contrast γ = 10 6 places the low phase at aL = 10 −6. At a timestep with noise stan-dard deviation 10 −2, this signal is four orders of magnitude below the noise. More generally, SNR L(t) = ¯ αta2
+
+L/(1 − ¯αt).This SNR and the squared-loss contribution under equal rel-ative error are γ−2 times those of the high phase, or 10 −12 in this example. The model may therefore erase or misscale the low phase, and small denoising errors may drive a positive coefficient below zero. We perform diffusion in the analytic bijective space z0 =
+
+g(a, u ) = ( za, z u):za = ln a − ma
+
+sa
+
+zu = asinh( u/u 0) − mu
+
+str 
+
+> u
+
+(7) Here, ma, s a and mu, s tr  
+
+> u
+
+are the training-set means and standard deviations of ln a and asinh( u/u 0), respectively, and u0 > 0 is a fixed solution scale. The logarithm converts multiplicative contrast into additive separation: aH = 1 and 
+
+aL = 10 −6 become 0 and −13 .8 before standardization and approximately +1 and −1 for balanced phases afterward. Diffusion thus operates on separated order-one modes, while logarithmic differences represent relative coefficient errors. Decoding gives a = exp( ma + saza) > 0 and u =
+
+u0 sinh( mu +str  
+
+> u
+
+zu). Hence, coefficients used for generation and physics evaluation remain positive. The inverse hyper-bolic sine transformation compresses signed solutions while remaining linear near zero. Unlike learned latent autoen-coders (Rombach et al. 2022), both maps are non-learned, invertible, and monotone. At each timestep, the predicted clean latent ˆz0 is decoded as (ˆ a, ˆu) = g−1(ˆ z0) before evalu-ating physics. The residual scale can nevertheless vary across phases and samples, motivating the following normalization. 
+
+4.3 Jacobi-Preconditioned Likelihood 
+
+The preceding components address interface irregularity, low-phase resolution, and coefficient positivity. However, a common global scale for absolute residuals remains prob-lematic. If phases with aH = 1 and aL = 10 −6 both contain a 1% relative error, their absolute residuals may differ by ap-proximately 10 6, making their contributions to the squared loss differ by approximately 10 12 when other factors are com-parable. The optimizer is then driven primarily by high-phase residuals. We convert each absolute residual into a relative physical violation. Define the unscaled diagonal coefficient of the flux stencil as Di = P  
+
+> j∈N (i)
+
+Tij + P  
+
+> b∈B D(i)
+
+Tib . It collects the transmissibilities connected to cell i and measures the local sensitivity of its balance equation to changes in the solution. Accordingly, Di/H 2 is the magnitude of the operator diago-nal, and Disˆu/H 2 estimates the natural residual scale. Here, 
+
+sˆu > 0 is a detached robust per-sample scale of the decoded solution, with the solution gauge fixed in Neumann cases. We define Qi = Disˆu/H 2 + ∥f ∥∞ + ε, where ε is a positive numerical floor, and use 
+
+Si = stopgrad( Qi) eRi = Ri
+
+Si
+
+(8) This Jacobi normalization rescales each equation by its local operator magnitude. It reduces phase- and sample-dependent residual-scale variation while preserving the con-servation target because eRi = 0 if and only if Ri = 0 .Detaching Qi removes the direct gradient incentive to in-flate predicted scales. Apart from ε, eR is dimensionless and invariant under (a, u, f ) 7 → (λa, u, λf ). We denote this nor-malization by eR = P(a, u, f ) and use it as the mean of a zero-residual likelihood below. Algorithm 1: Multiphase-Diff Training and Sampling 
+
+Require: Data distribution qdata (a, u ); bijection g
+
+Require: Flux residual R; Jacobi normalization P
+
+Require: Model fθ ; schedules {¯αt, λ t, Σt}Tt=1 ; c, Σmin  
+
+> 1:
+
+repeat  
+
+> 2:
+
+Sample (a, u ) ∼ qdata (a, u ) 
+
+> 3:
+
+z0 ← g(a, u ) 
+
+> 4:
+
+Sample t ∼ Uniform {1, . . . , T } and ϵ ∼ N (0 , I ) 
+
+> 5:
+
+zt ← √¯αt z0 + √1 − ¯αt ϵ 
+
+> 6:
+
+ˆz0 ← fθ (zt, t ) 
+
+> 7:
+
+Ldata ← λt∥z0 − ˆz0∥2 
+
+> 8:
+
+(ˆ a, ˆu) ← g−1(ˆ z0) 
+
+> 9:
+
+eR ← P (ˆ a, ˆu, f ) 
+
+> 10:
+
+Σphys  
+
+> t
+
+← max(Σ t, Σmin ) 
+
+> 11:
+
+L ← L data + c
+
+2Σ phys 
+
+> t
+
+∥ eR∥2 
+
+> 12:
+
+Update θ using ∇θ L 
+
+> 13:
+
+until convergence 
+
+Sampling  
+
+> 14:
+
+Draw zT ∼ N (0 , I ) and apply the learned reverse pro-cess to obtain ˆz0 return (ˆ a, ˆu) = g−1(ˆ z0)
+
+4.4 Training Objective 
+
+Applying the clean-sample parameterization of Section 3 in latent space, the network predicts ˆz0(zt, t ) from zt generated by (1). Its equivalence to noise prediction under timestep-dependent weighting is derived in the Supplementary Mate-rial. We apply the Min-SNR weight λt (Hang et al. 2023) to latent regression and evaluate physics on g−1(ˆ z0).Following the virtual-observation formulation (Rixner and Koutsourelakis 2021; Bastek, Sun, and Kochmann 2025), physical consistency is represented by the zero-residual ob-servation ˆr = 0 with likelihood 
+
+qR(ˆ r = 0 | ˆz0, t ) = N 0; eR g−1(ˆ z0) , Σphys 
+
+> t
+
+c I
+
+!
+
+(9) where c > 0 controls physics supervision and Σphys  
+
+> t
+
+=max(Σ t, Σmin ), with Σmin > 0, prevents the likelihood vari-ance from vanishing when Σ1 = 0 . Combining its negative log-likelihood with latent regression gives 
+
+L = Et,z 0,ϵ 
+
+"
+
+λt∥z0 − ˆz0(zt, t )∥2
+
++ c
+
+2Σ phys 
+
+> t
+
+eR g−1(ˆ z0(zt, t ))  2
+
+# (10) The terms promote latent distributional fidelity and de-coded physical consistency, respectively. Training adds one decoding and residual evaluation per iteration, while infer-ence uses standard latent diffusion followed by one decoding step. Algorithm 1 summarizes both procedures. DDPM PG-Diffusion CoCoGen DiffusionPDE FunDiff PIDM PIDM-log Multiphase-Diff (a) Physical Residual Fidelity (PRF) ↓
+
+Case 1 1.09 ×10 −2 1.34 ×10 −2 1.96 ×10 −2 9.76 ×10 −3 6.28 ×10 −3 9.81 ×10 −4 8.26 ×10 −4 3.58 ×10 −4
+
+Case 2 8.57 ×10 −2 1.14 ×10 −1 1.60 ×10 −1 9.18 ×10 −2 1.47 ×10 −3 4.57 ×10 −1 1.61 ×10 −3 2.30 ×10 −4
+
+Case 3 3.43 ×10 −3 3.16 ×10 −3 1.24 ×10 −3 3.23 ×10 −3 4.48 ×10 −3 1.68 ×10 −3 3.15 ×10 −3 4.17 ×10 −4
+
+(b) Negative-coefficient rate (Neg, %) ↓
+
+Case 1 1.9 4.5 6.9 2.8 0.0 2.4 0.0 0.0 
+
+Case 2 7.0 11.1 14.8 8.8 0.0 43.0 0.0 0.0 
+
+Case 3 20.0 28.1 33.1 27.0 0.0 3.2 0.0 0.0 
+
+(c) Worst per-phase Wasserstein-1 distance of ln a (W1) ↓
+
+Case 1 0.144 0.298 0.116 0.174 0.038 1.305 0.179 0.008 
+
+Case 2 1.141 1.140 1.149 1.187 1.339 3.397 1.422 0.933 
+
+Case 3 2.522 2.520 2.715 2.502 0.739 2.486 1.282 0.025 
+
+(d) Interface sharpness (Sharp) ↓
+
+Case 1 0.135 0.237 0.104 0.150 0.126 0.123 0.055 0.023 
+
+Case 2 0.120 0.118 0.099 0.131 0.045 0.240 0.128 0.023 
+
+Case 3 0.733 0.792 0.639 0.720 0.374 1.154 0.193 0.039 
+
+Table 1: Baseline comparison over 256 generated samples. Lower is better for all metrics, and the best values are shown in bold. 10 −4 10 −2 10 0        
+
+> DDPM
+> PG-Diffusion CoCoGen DiffusionPDE FunDiff PIDM PIDM-log Multiphase-Diff
+> (a) PRF
+> 020 40
+> (b) Neg (%)
+> 10 −210 −110 0
+> DDPM
+> PG-Diffusion CoCoGen DiffusionPDE FunDiff PIDM PIDM-log Multiphase-Diff
+> (c) Worst-phase W1
+> 10 −110 0
+> (d) Sharp
+> Case 1 Case 2 Case 3
+
+Figure 2: Four-metric visual comparison across three bench-marks. PRF, W1, and Sharp use log scales; Neg is linear. Shading highlights Multiphase-Diff’s superior performance. 
+
+5 Experiments and Results 
+
+We evaluate Multiphase-Diff through three complementary studies: Section 5.2 compares it against seven baselines, Sec-tion 5.3 ablates the three components, and Section 10 evalu-ates its robustness to phase contrast and phase composition. 
+
+5.1 Experimental Setup 
+
+Datasets. We consider three complementary multiphase benchmarks. Case 1 models Darcy flow through a two-facies porous medium and jointly generates the permeability K and pressure p; K has irregular sharp jumps with a contrast of approximately 10 3, while p remains continuous but devel-ops discontinuous gradients across facies interfaces. Case 2 models fully developed gas–liquid duct flow and generates the viscosity μ and axial velocity w; the two phases pro-duce sharp viscosity interfaces, contrasts from 55 to 10 4,and strongly heterogeneous velocity scales. Case 3 models electronic conduction through a three-phase electrode and generates the conductivity σ and electric potential φ. The electrode contains active-material, conductive-binder, and pore phases, which form a trimodal conductivity field with a contrast of 10 6. It also includes near-insulating pores and con-ductive structures only one to two pixels wide. Each dataset contains 10 ,000 training and 1,000 validation coefficient– solution pairs on a 64 × 64 cell-centered grid. More infor-mation is provided in the Supplementary Material. 
+
+Metrics. We use four metrics in physical space. Physical Residual Fidelity ( PRF ) is the median Jacobi-preconditioned conservative residual and evaluates local physical consis-tency. The negative-coefficient rate ( Neg ) is the fraction of inadmissible coefficient values and evaluates positivity. The worst per-phase Wasserstein-1 distance of ln a (W1) com-pares generated and reference coefficient distributions within each phase and evaluates whether even the least accurately generated phase has the correct magnitude. Interface sharp-ness ( Sharp ) is the Wasserstein-1 distance between the gen-erated and reference distributions of neighboring-cell jumps in ln a and evaluates the preservation of sharp interfaces. Definitions are provided in the Supplementary Material. Case 1                                                                                                   
+
+> Two-Facies Darcy Flow
+> γ ~ 10³
+> Reference
+> Kp|R|
+> Strongest Baseline (PIDM-log)
+> Kp|R|
+> Multiphase-Diff
+> Kp|R|
+> 10⁻² 10⁻¹ 10⁰ -5 0510 10⁻⁴ 10⁻³ 10⁻² 10⁻¹ 10⁰ 10⁻² 10⁻¹ 10⁰ -5 0510 10⁻⁴ 10⁻³ 10⁻² 10⁻¹ 10⁰ 10⁻² 10⁻¹ 10⁰ -5 0510 10⁻⁴ 10⁻³ 10⁻² 10⁻¹ 10⁰
+> Case 2
+> Gas-Liquid Duct Flow
+> γ ~ 55-10⁴
+> Reference
+> μw|R|
+> Strongest Baseline (FunDiff)
+> μw|R|
+> Multiphase-Diff
+> μw|R|
+> 10⁰ 10² 10⁴ 0 0.01 0.02 0.03 10⁻⁴ 10⁻³ 10⁻² 10⁻¹ 10⁰ 10⁰ 10² 10⁴ 0 0.01 0.02 0.03 10⁻⁴ 10⁻³ 10⁻² 10⁻¹ 10⁰ 10⁰ 10² 10⁴ 0 0.01 0.02 0.03 10⁻⁴ 10⁻³ 10⁻² 10⁻¹ 10⁰
+> Case 3
+> Three-Phase Electrode Conduction
+> γ ~ 10⁶
+> Reference
+> σφ|R|
+> Strongest Baseline (CoCoGen)
+> σφ|R|
+> Multiphase-Diff
+> σφ|R|
+> 10⁻⁶ 10⁻⁴ 10⁻² 10⁰ 0 0.25 0.5 0.75 110⁻⁴ 10⁻³ 10⁻² 10⁻¹ 10⁰ 10⁻⁶ 10⁻⁴ 10⁻² 10⁰ 0 0.25 0.5 0.75 110⁻⁴ 10⁻³ 10⁻² 10⁻¹ 10⁰ 10⁻⁶ 10⁻⁴ 10⁻² 10⁰ 0 0.25 0.5 0.75 110⁻⁴ 10⁻³ 10⁻² 10⁻¹ 10⁰
+
+Figure 3: Qualitative comparison of coefficient, solution, and Jacobi-preconditioned residual magnitude | eR| across three cases. The strongest baseline is selected by the lowest PRF; green pixels in CoCoGen’s σ field indicate non-positive conductivity. 
+
+Implementation. All diffusion models share a 12 .78 M-parameter 2D U-Net, with extra conditioning channels only for PG-Diffusion. We use T = 100 cosine-scheduled steps and x0-prediction with Min-SNR-5 weighting. Each model is trained for 100 ,000 steps with Adam at a learning rate of 
+
+10 −4. The batch size is 32 , and the EMA decay is 0.999 .Each model is evaluated on 256 samples. The weights on the preconditioned flux and pointwise residuals are 0.1 and 
+
+10 −3. All experiments use a single NVIDIA RTX 4090 GPU. 
+
+5.2 Baseline Comparison 
+
+We compare Multiphase-Diff with seven baselines. 
+
+DDPM (Ho, Jain, and Abbeel 2020) serves as the physics-free reference. PG-Diffusion (Shu, Li, and Barati Farimani 2023) conditions denoising on the PDE-residual gradient. 
+
+CoCoGen (Jacobsen, Zhuang, and Duraisamy 2025) cor-rects clean estimates through residual descent during sam-pling, whereas DiffusionPDE (Huang et al. 2024) guides noisy samples by backpropagating the physical residual through the denoiser. FunDiff (Wang et al. 2026) learns a physics-informed function autoencoder before generating la-tent representations with rectified flow. PIDM (Bastek, Sun, and Kochmann 2025) incorporates a conventional pointwise residual into diffusion training. Finally, PIDM-log augments PIDM with the positivity-preserving logarithmic representa-tion from Section 4.2, isolating the benefit of this represen-tation from the remaining proposed components. Across all three benchmarks, Multiphase-Diff achieves the strongest overall balance between physical and distributional fidelity. As shown in Table 1 and Figure 2, it obtains the low-est PRF, worst per-phase W1, and interface-sharpness error in every case while maintaining a zero negative-coefficient rate. Relative to the strongest competing method in each case, Multiphase-Diff reduces PRF by factors of 2.3, 6.4,and 3.0, respectively. The four complementary metrics col-lectively demonstrate this overall advantage, as several base-lines preserve positivity but still exhibit substantial physical-residual, phase-distribution, or interface errors. The gener-ated coefficient–solution pairs and their local residual fields in Figure 3 further illustrate how Multiphase-Diff preserves sharp multiphase structure while maintaining local physical consistency, even under extreme contrast and thin phases. The three cases highlight complementary capabilities of the proposed framework. Case 1 shows that Multiphase-Diff recovers both the magnitude of a low-permeability phase and its irregular sharp interfaces when the principal difficulty lies in the discontinuous coefficient. Case 2 shows that it preserves sharp gas–liquid viscosity interfaces together with their heterogeneous velocity responses, demonstrating its ef-fectiveness when discontinuous coefficients are coupled with strongly disparate solution scales. Case 3 provides the most stringent test, combining a conductivity contrast of 10 6, three material phases, near-insulating pores, and conductive struc-tures only one to two pixels wide. Multiphase-Diff preserves all three conductivity modes without non-positive values and achieves substantially lower phase-distribution and interface errors, demonstrating its effectiveness under extreme con-trast, thin phases, and near-degeneracy. 
+
+5.3 Component Ablations 
+
+We ablate the three components introduced in Section 4, with results reported in Table 2. We additionally report interfaces Variant PRF ( ×10 −3) ↓ Worst W1 ↓ Sharp ↓ Int. PFE ↓                  
+
+> w/o Flux Res. 0.826 /1.61 /3.15 0.179 /1.422 /1.282 0.055 /0.128 /0.193 62 .2/0.2/164 .30.098 /0.080 /0.013
+> w/o Bijection Diverged 0/0/00.492 /0.739 /0.384
+> w/o Jacobi 0.085 /0.044 /1.05 2.021 /2.647 /0.982 0.137 /0.166 /0.213 0/0/2.40.316 /0.098 /0.032
+> Multiphase-Diff 0.358 /0.230 /0.417 0.008 /0.933 /0.025 0.023 /0.023 /0.039 63 .8/64 .2/187 .90.045 /0.073 /0.010
+
+Table 2: Component ablations on Cases 1/2/3. Lower is better for metrics marked by ↓; Int. diagnoses interface collapse and should remain comparable to that of the complete Multiphase-Diff model. Best values are bold. 
+
+per sample (Int.) to detect interface collapse and phase-fraction error (PFE) to measure composition errors. 
+
+w/o Conservative Flux Residual. The w/o Flux Res. vari-ant replaces the conservative flux residual with the pointwise residual, yielding PIDM-log. PRF increases across all three cases; moreover, Int. decreases from 64 .2 to 0.2 in Case 2, while the worst W1 increases from 0.025 to 1.282 in Case 3. These results show that the conservative residual preserves sharp and thin phases while enforcing local conservation. 
+
+w/o Analytic Bijective Representation. The w/o Bijec-tion variant replaces the analytic bijection with affine nor-malization, causing all runs to diverge at steps 300 , 700 , and 
+
+1100 . Affine decoding produces non-positive coefficients and destabilizes harmonic transmissibilities, whereas the bijec-tion ensures positivity and stable flux-based training. 
+
+w/o Jacobi Preconditioning. The w/o Jacobi variant trains with the raw residual, whose uneven gradients over-whelm the data objective and encourage the model to shrink coefficient contrast and flatten the solution. The resulting interface-free fields are easier to satisfy physically, explain-ing the deceptively lower PRF in Cases 1 and 2 despite zero interfaces and worst W1 values of 2.021 and 2.647 .In Case 3, the raw residual underweights the near-insulating phase, whose errors instead increase the preconditioned PRF. Jacobi preconditioning prevents both failures by balancing physics gradients across phases and samples. 
+
+5.4 Robustness Study 
+
+To further assess the robustness of Multiphase-Diff for high-contrast, sharp-interface multiphase systems, we examine its sensitivity to phase contrast and composition through two controlled five-point sweeps based on Case 1. The contrast sweep fixes the high-permeability volume fraction at vf = 0.5 and varies γ ∈ {10 1, 10 2, 10 3, 10 4, 10 5},while the composition sweep fixes γ = 10 3 and varies 
+
+vf ∈ { 0.1, 0.3, 0.5, 0.7, 0.9}, including settings in which either phase becomes a minority. Multiphase-Diff is trained independently at each setting and evaluated using the same four metrics as in the main comparison. As shown in Figure 4, PRF remains within 3.10 × 10 −4–
+
+4.07 × 10 −4 across the contrast sweep and 2.22 × 10 −4–
+
+8.09 ×10 −4 across the composition sweep, with Neg remain-ing zero throughout. The worst per-phase W1 stays below 
+
+0.034 and 0.018 , respectively, while Sharp remains below 
+
+0.021 and 0.010 . The largest composition-sweep PRF oc-curs at vf = 0 .7 rather than at either composition extreme. 0.1 0.3 0.5 0.7 0.9           
+
+> High-phase volume fraction vf
+> 10 −7
+> 10 −6
+> 10 −5
+> 10 −4
+> 10 −3
+> Physical Residual Fidelity (PRF)
+> Neg = 0% at all 10 settings
+> Composition sweep ( γ= 10 3)Contrast sweep ( vf= 0.5 )Reference-data floor
+> 10 110 210 310 410 5
+> Phase contrast γ
+
+Figure 4: Robustness study to phase contrast and composi-tion. The upper and lower axes show the two sweeps; PRF remains of order 10 −4 and Neg is zero. The dashed line marks the reference-data floor. These results show that Multiphase-Diff maintains physical consistency, phase fidelity, and sharp interfaces across four orders of magnitude in contrast and retains minority phases occupying only about 10% of the domain. 
+
+6 Conclusion 
+
+We presented Multiphase-Diff , a physics-constrained diffu-sion framework for generative modeling of high-contrast, sharp-interface multiphase fields. To overcome the inter-face irregularity, low-amplitude phase under-resolution, and residual-scale heterogeneity that arise specifically in this regime, Multiphase-Diff makes three corresponding method-ological contributions: a conservative flux residual, an ana-lytic bijective representation, and a Jacobi-preconditioned likelihood, respectively. Extensive experiments on three complementary benchmarks, including comparisons with seven baselines, component ablations, and controlled robust-ness sweeps, validate the roles of these mechanisms and the framework’s robustness across phase contrasts and compo-sitions. In the three cases, Multiphase-Diff reduces PRF by factors of 2.3, 6.4, and 3.0, respectively, over the strongest baseline while preserving coefficient positivity, per-phase distributions, and sharp interfaces. 
+
+Limitations. Our current study is limited to steady elliptic conservation laws. Future work will extend Multiphase-Diff to time-dependent systems with evolving interfaces, which will require space–time conservative residuals and tempo-rally consistent generative modeling. References 
+
+Aavatsmark, I. 2002. An Introduction to Multipoint Flux Ap-proximations for Quadrilateral Grids. Computational Geo-sciences , 6: 405–432. Attari, V.; Khatamsaz, D.; Allaire, D.; and Arroyave, R. 2023. Towards Inverse Microstructure-Centered Materials Design Using Generative Phase-Field Modeling and Deep Varia-tional Autoencoders. Acta Materialia , 259: 119204. Baishnab, N.; Herron, E.; Balu, A.; Sarkar, S.; Krishna-murthy, A.; and Ganapathysubramanian, B. 2025. 3D Multi-phase Heterogeneous Microstructure Generation Using Con-ditional Latent Diffusion Models. Digital Discovery , 4: 3175–3190. Bastek, J.-H.; Sun, W.; and Kochmann, D. M. 2025. Physics-Informed Diffusion Models. In International Conference on Learning Representations .Chang, C.-C.; Dai, C.-Y.; Lin, T.-S.; Lai, M.-C.; and Lai, C.-H. 2026. Stabilizing Physics-Informed Consistency Models via Structure-Preserving Training. arXiv preprint arXiv:2602.09303 .Di Federico, G.; and Durlofsky, L. J. 2025. Latent Diffusion Models for Parameterization of Facies-Based Geomodels and Their Use in Data Assimilation. Computers & Geosciences ,194: 105755. Edwards, M. G.; and Rogers, C. F. 1998. Finite Volume Discretization with Imposed Flux Continuity for the General Tensor Pressure Equation. Computational Geosciences , 2: 259–290. Gallon, D.; von Wurstemberger, P.; Cheridito, P.; and Jentzen, A. 2026. Physics-Informed Diffusion Models in Spectral Space. arXiv:2602.09708. Gayon-Lombardo, A.; Mosser, L.; Brandon, N. P.; and Cooper, S. J. 2020. Pores for Thought: Generative Adver-sarial Networks for Stochastic Reconstruction of 3D Multi-Phase Electrode Microstructures with Periodic Boundaries. 
+
+npj Computational Materials , 6: 82. Giannone, G.; Srivastava, A.; Winther, O.; and Ahmed, F. 2023. Aligning Optimization Trajectories with Diffusion Models for Constrained Design Generation. In Advances in Neural Information Processing Systems , volume 36. Guan, K. M.; Anderson, T. I.; Creux, P.; and Kovscek, A. R. 2021. Reconstructing Porous Media Using Generative Flow Networks. Computers & Geosciences , 156: 104905. Hang, T.; Gu, S.; Li, C.; Bao, J.; Chen, D.; Hu, H.; Geng, X.; and Guo, B. 2023. Efficient Diffusion Training via Min-SNR Weighting Strategy. In Proceedings of the IEEE/CVF International Conference on Computer Vision , 7441–7451. Ho, J.; Jain, A.; and Abbeel, P. 2020. Denoising Diffusion Probabilistic Models. In Advances in Neural Information Processing Systems , volume 33, 6840–6851. Huang, J.; Yang, G.; Wang, Z.; and Park, J. J. 2024. Dif-fusionPDE: Generative PDE-Solving under Partial Observa-tion. In Advances in Neural Information Processing Systems ,volume 37. Jacobsen, C.; Zhuang, Y.; and Duraisamy, K. 2025. CoCo-Gen: Physically Consistent and Conditioned Score-Based Generative Models for Forward and Inverse Problems. SIAM Journal on Scientific Computing , 47(2): C399–C425. Karniadakis, G. E.; Kevrekidis, I. G.; Lu, L.; Perdikaris, P.; Wang, S.; and Yang, L. 2021. Physics-Informed Machine Learning. Nature Reviews Physics , 3: 422–440. Lee, D.; Ovanger, O.; Eidsvik, J.; Aune, E.; Skauvold, J.; and Hauge, R. 2025. Latent Diffusion Model for Conditional Reservoir Facies Generation. Computers & Geosciences ,194: 105750. Lyu, X.; and Ren, X. 2024. Microstructure Reconstruction of 2D/3D Random Materials via Diffusion-Based Deep Gen-erative Models. Scientific Reports , 14: 5041. Mazé, F.; and Ahmed, F. 2023. Diffusion Models Beat GANs on Topology Optimization. In Proceedings of the AAAI Con-ference on Artificial Intelligence , volume 37, 9108–9116. Nichol, A. Q.; and Dhariwal, P. 2021. Improved Denoising Diffusion Probabilistic Models. In Proceedings of the Inter-national Conference on Machine Learning , 8162–8171. Rixner, M.; and Koutsourelakis, P.-S. 2021. A Proba-bilistic Generative Model for Semi-Supervised Training of Coarse-Grained Surrogates and Enforcing Physical Con-straints through Virtual Observables. Journal of Compu-tational Physics , 434: 110218. Rombach, R.; Blattmann, A.; Lorenz, D.; Esser, P.; and Om-mer, B. 2022. High-Resolution Image Synthesis with La-tent Diffusion Models. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition ,10684–10695. Shu, D.; Li, Z.; and Barati Farimani, A. 2023. A Physics-Informed Diffusion Model for High-Fidelity Flow Field Reconstruction. Journal of Computational Physics , 478: 111972. Sohl-Dickstein, J.; Weiss, E. A.; Maheswaranathan, N.; and Ganguli, S. 2015. Deep Unsupervised Learning Using Nonequilibrium Thermodynamics. In Proceedings of the International Conference on Machine Learning , 2256–2265. Song, Y.; Sohl-Dickstein, J.; Kingma, D. P.; Kumar, A.; Er-mon, S.; and Poole, B. 2021. Score-Based Generative Mod-eling through Stochastic Differential Equations. In Interna-tional Conference on Learning Representations .Vlassis, N. N.; and Sun, W. 2023. Denoising Diffusion Algo-rithm for Inverse Design of Microstructures with Fine-Tuned Nonlinear Material Properties. Computer Methods in Ap-plied Mechanics and Engineering , 413: 116126. Wang, S.; Dou, Z.; Shan, S.; Liu, T.-R.; and Lu, L. 2026. FunDiff: Diffusion Models over Function Spaces for Physics-Informed Generative Modeling. Nature Communications ,17: 5749. Zhang, Y.; Wang, P.; and Zou, D. 2025. Physics-informed distillation of diffusion models for pde-constrained genera-tion. In Forty-third International Conference on Machine Learning .Zhu, L.; Bijeljic, B.; and Blunt, M. J. 2025. Diffusion Model-Based Generation of Three-Dimensional Multiphase Pore-Scale Images. Transport in Porous Media , 152: 22. Supplementary Materials 7 Equivalence of Clean-Sample and Noise Prediction 
+
+This section supplies the timestep-dependent equivalence stated in Section 4.4 of the main paper. In latent space, the forward diffusion process is 
+
+zt = √¯αt z0 + √1 − ¯αt ϵ, ϵ ∼ N (0 , I ). (11) Given a noise predictor ϵθ (zt, t ), the corresponding clean-sample prediction is 
+
+bz0,θ (zt, t ) = zt − √1 − ¯αt ϵθ (zt, t )
+
+√¯αt
+
+. (12) Conversely, a clean-sample predictor determines a noise pre-diction through 
+
+ϵθ (zt, t ) = zt − √¯αt bz0,θ (zt, t )
+
+√1 − ¯αt
+
+. (13) Subtracting (13) from the true noise obtained from (11) gives 
+
+ϵ − ϵθ (zt, t ) = 
+
+r ¯αt
+
+1 − ¯αt
+
+ bz0,θ (zt, t ) − z0
+
+. (14) Therefore, 
+
+∥ϵ − ϵθ (zt, t )∥22
+
+= SNR( t) ∥z0 − bz0,θ (zt, t )∥22 ,
+
+SNR( t) = ¯αt
+
+1 − ¯αt
+
+.
+
+(15) Thus, a weighted noise-prediction objective 
+
+E
+
+h
+
+w(ϵ) 
+
+> t
+
+∥ϵ − ϵθ (zt, t )∥22
+
+i
+
+(16) is exactly a clean-sample regression objective with 
+
+w(z0) 
+
+> t
+
+= w(ϵ) 
+
+> t
+
+SNR( t). (17) For Min-SNR-γ weighting, the noise-prediction weight is 
+
+w(ϵ) 
+
+> t
+
+= min {SNR( t), γ }
+
+SNR( t) . (18) Equation (17) therefore yields the clean-sample weight 
+
+λt = w(z0) 
+
+> t
+
+= min {SNR( t), γ }. (19) We use γ = 5 . The latent data term used in the main paper is hence 
+
+Ldata = Et,z 0,ϵ 
+
+h
+
+λt ∥z0 − bz0,θ (zt, t )∥22
+
+i
+
+. (20) The equivalence above concerns the diffusion regression term. Physics is evaluated on the decoded clean estimate 
+
+g−1(bz0,θ ), as specified in Section 4.4 of the main paper; it is not evaluated on the noisy latent zt.
+
+8 Benchmark and Dataset Details 
+
+8.1 Unified governing problem and discretization 
+
+All three benchmarks generate coefficient–solution pairs 
+
+(a, u ) governed by 
+
+∇· (a(x)∇u(x)) = f (x), x ∈ Ω = [0 , 1] 2. (21) The coefficient is positive and piecewise constant or nearly piecewise constant. Across an internal material interface Γ,the weak solution satisfies 
+
+[u]Γ = 0 , [a∇u · n]Γ = 0 . (22) Consequently, u remains continuous while its normal deriva-tive can jump by the coefficient ratio. We discretize (21) on a 64 × 64 cell-centered grid with spacing H = 1 /64 . For neighboring cells i and j, the two-point transmissibility is the harmonic mean 
+
+Tij = 2aiaj
+
+ai + aj
+
+. (23) Writing N (i) for the set of cell neighbors and BD (i) for Dirichlet boundary faces adjacent to cell i, the discrete con-servative residual is 
+
+Ri(a, u, f ) = 1
+
+H2
+
+X 
+
+> j∈N (i)
+
+Tij (uj − ui)+ 1
+
+H2
+
+X 
+
+> b∈B D(i)
+
+Tib (ub − ui) − ¯fi.
+
+(24) Prescribed Neumann fluxes are absorbed into the boundary-adjusted source ¯fi. The same face fluxes, source discretiza-tion, and boundary treatment are used by the data-generating solver, the training residual, and evaluation. Each benchmark contains 10,000 training pairs and 1,000 validation pairs gen-erated with disjoint random seeds. Phase labels are retained for evaluation only and are not supplied to the unconditional generators. 
+
+8.2 Case 1: two-facies Darcy flow 
+
+The generated pair is permeability and pressure, 
+
+(a, u ) = ( K, p ), ∇· (K∇p) = −fs. (25) The permeability contains irregular, sharp two-facies inter-faces with the characteristic contrast of approximately 10 3
+
+reported in the main paper. Because permeability varies con-tinuously within each facies, the empirical global maximum-to-minimum ratio over the validation split is 6.73 × 10 3. A fixed dipole forcing drives the flow: fs = +10 in the top-left corner region covering 12 .5% of each coordinate extent and 
+
+fs = −10 in the corresponding bottom-right region. All ex-ternal boundaries are impermeable, K∇p · n = 0 , and the additive pressure nullspace is removed using the zero-mean gauge X
+
+> i
+
+pi = 0 . (26) The source and sink have equal total strength, ensuring com-patibility with the Neumann problem. The benchmark jointly tests sharp permeability jumps and the corresponding discon-tinuity of the pressure gradient. 8.3 Case 2: fully developed gas–liquid duct flow 
+
+The generated pair is viscosity and axial velocity, 
+
+(a, u ) = ( μ, w ), ∇· (μ∇w) = −G, (27) where G = 1 is the imposed axial pressure-gradient mag-nitude. Fully developed flow reduces the axial momentum equation to the cross-sectional elliptic problem (27). No-slip conditions are imposed on the duct walls, 
+
+w = 0 on ∂Ω. (28) The two phases form sharp viscosity interfaces. Across the interface, velocity and tangential traction are continuous: 
+
+[w]Γ = 0 , [μ∇w · n]Γ = 0 . (29) The coefficient takes values in {1, 55 , 10 3, 10 4}: the gas vis-cosity is normalized to one and the three liquid types yield contrasts from 55 to 10 4. The validation phase fractions are 
+
+0.26 /0.74 for gas/liquid. Together with the heterogeneous velocity scales, this makes both the coefficient and solution channels multiscale. 
+
+8.4 Case 3: three-phase electrode conduction 
+
+The generated pair is electronic conductivity and electric potential, 
+
+(a, u ) = ( σ, φ ), ∇· (σ∇φ) = 0 . (30) The microstructure contains pore, active-material, and conductive-binder phases with conductivity levels 
+
+{10 −6, 10 −3, 1}, respectively. Their trimodal field spans a total contrast of 10 6, with a near-insulating pore phase. We impose φ = 1 and φ = 0 on the x = 0 and x = 1 sides, respectively, and homogeneous Neumann conditions on the two remaining sides. The validation phase fractions are 
+
+0.42 /0.47 /0.11 . The dataset includes conductive features only one to two cells wide. This case combines trimodality, thin structures, and a nearly degenerate coefficient while retaining strict positivity. 
+
+8.5 Jacobi-preconditioned evaluation residual 
+
+For completeness, the residual used by PRF is recalled here because it is needed to make the metric definition unambigu-ous. Define the unscaled diagonal magnitude 
+
+Di = X 
+
+> j∈N (i)
+
+Tij + X 
+
+> b∈B D(i)
+
+Tib . (31) Let sbu > 0 be the detached robust per-sample scale of the decoded solution after fixing the solution gauge in Neumann cases. The local normalizer and dimensionless residual are 
+
+Qi = Disbu
+
+H2 + ∥f ∥∞ + ε, (32) 
+
+Si = stopgrad( Qi), eRi = Ri
+
+Si
+
+, (33) where ε > 0 is a numerical floor. 
+
+9 Exact Evaluation Metrics 
+
+All metrics are computed after decoding to physical space. Let {(ba(n), bu(n))}Ng 
+
+> n=1
+
+denote generated samples and let 
+
+{a(m)ref }Nr 
+
+> m=1
+
+denote reference validation coefficients. The re-ported experiments use Ng = 256 .
+
+9.1 Physical Residual Fidelity 
+
+For each generated sample, we first average the absolute Jacobi-preconditioned conservative residual over its cells and then take the median across samples: 
+
+PRF = median 1≤n≤Ng
+
+"
+
+1
+
+NcNcX
+
+> i=1
+
+eRi
+
+ba(n), bu(n), f 
+
+ #
+
+.
+
+(34) The index i includes the cells whose balance equations con-tain boundary contributions. Lower values indicate better local conservation. Scoring held-out reference coefficient– solution pairs with the same operator gives the reference-data floor. 
+
+9.2 Negative-coefficient rate 
+
+The negative-coefficient rate is the fraction of generated co-efficient values outside the admissible positive domain: 
+
+Neg = 1
+
+Ng NcNg
+
+X
+
+> n=1
+> Nc
+
+X
+
+> i=1
+
+1
+
+hba(n) 
+
+> i
+
+≤ 0
+
+i
+
+, Nc = 64 2. (35) No clipping is applied before computing this metric. 
+
+9.3 Worst per-phase Wasserstein distance 
+
+Phases are segmented by fixed midpoint thresholds in 
+
+log 10 a. The threshold sets used in evaluation are 
+
+E1 =  12 log 10 (2 × 10 −3) ,
+
+E2 =  12 log 10 (55) ,
+
+E3 = {− 4.5, −1.5}.
+
+(36) These give two phases in Cases 1 and 2 and three phases in Case 3. For phase k, let Agen  
+
+> k
+
+and Aref  
+
+> k
+
+be the pooled generated and reference coefficient values assigned to that phase. Generated values with ba ≤ 0 are excluded from the logarithmic distance and are instead accounted for by (35). The phase-wise distance is 
+
+dk = W1
+
+ {ln a : a ∈ A gen  
+
+> k
+
+, a > 0}, {ln a : a ∈ A ref  
+
+> k
+
+} ,
+
+(37) and the reported statistic is 
+
+WorstPhase -W1 = max  
+
+> k
+
+dk. (38) Using the natural logarithm makes this metric measure multi-plicative coefficient error without allowing a well-reproduced high-magnitude phase to hide failure on a low-magnitude phase. 
+
+9.4 Interface sharpness 
+
+For a positive coefficient field a, define the multiset of hori-zontal and vertical neighboring-cell jumps 
+
+J (a) = {| ln ai − ln aj | : ( i, j ) ∈ F int } , (39) where Fint contains every horizontal and vertical interior face. A generated face is included only if both adjacent coeffi-cients are positive; non-positive mass is measured separately by Neg. Pooling faces across samples, interface sharpness is 
+
+Sharp = W1(J (ba), J (aref )) . (40) Setting PRF Neg (%) Worst W1 Sharp                                                       
+
+> Contrast sweep, vf= 0 .5
+> γ= 10 13.10 ×10 −40.0 0.009 0.006
+> γ= 10 23.50 ×10 −40.0 0.015 0.009
+> γ= 10 33.48 ×10 −40.0 0.013 0.009
+> γ= 10 44.07 ×10 −40.0 0.034 0.016
+> γ= 10 53.99 ×10 −40.0 0.029 0.021
+> Composition sweep, γ= 10 3
+> vf= 0 .12.22 ×10 −40.0 0.009 0.006
+> vf= 0 .32.61 ×10 −40.0 0.006 0.005
+> vf= 0 .53.48 ×10 −40.0 0.013 0.009
+> vf= 0 .78.09 ×10 −40.0 0.018 0.008
+> vf= 0 .93.35 ×10 −40.0 0.018 0.007
+
+Table 3: Complete results for the controlled contrast and composition sweeps reported in the main paper. The distribution includes both within-phase and inter-phase neighboring jumps. Consequently, the statistic detects both smeared interfaces and spurious high-frequency jumps with-out requiring a method-specific interface threshold. 
+
+10 Complete Robustness Values 
+
+Table 3 lists the numerical values underlying the two ro-bustness curves in Section 5.4 of the main paper. These are controlled Darcy benchmarks: the composition is fixed at 
+
+vf = 0 .5 in the contrast sweep, and the contrast is fixed at 
+
+γ = 10 3 in the composition sweep. Lower is better for all metrics. 
+
+11 Baseline Implementations and Complete Results 
+
+11.1 Baseline implementation details 
+
+All diffusion methods except FunDiff use the shared protocol reported in the main paper: a 12.78M-parameter U-Net, T =100 cosine-scheduled steps, x0-prediction with Min-SNR-5 weighting, Adam with learning rate 10 −4, batch size 32, EMA decay 0.999, 100,000 training steps, and 256 evaluation samples. FunDiff instead uses a function autoencoder with eight latent channels followed by rectified flow (40k + 60k steps), as listed in Table 4. The table records the method-specific settings used in the final runs. PG-Diffusion uses two additional conditioning channels, null-condition dropout 0.1, and guidance scale 3.0. CoCoGen and DiffusionPDE reuse the DDPM checkpoint and introduce physics only during sampling. 
+
+11.2 Complete per-phase distribution distances 
+
+Table 5 expands the worst-phase statistic in the main pa-per into its individual phase contributions. Each row maxi-mum reproduces the corresponding worst per-phase W1 in the main-paper Table 1. 
+
+11.3 Additional diagnostics 
+
+Table 6 reports quantities computed in the main evaluation but omitted from the main-paper comparison for space. PRF mean is more sensitive than its median counterpart to high-residual samples. Phase-fraction error (PFE) is the mean absolute error in phase area fractions. The interface count is the number of coefficient interfaces per sample satisfying the common detection criterion; it is a diagnostic for interface collapse rather than a monotone score to maximize. 
+
+12 Reference-Data Floors 
+
+To quantify finite-sample and numerical floors, we score the held-out validation pairs with the same residual and compare five fixed random split-half partitions (seeds 0–4) for the two distributional metrics. Table 7 reports the validation PRF median and Neg rate, and the split-half mean ± standard deviation for worst-phase W1 and Sharp. Case 1 has a small nonzero W1 floor because permeability varies continuously within each facies. Case 2 uses μ ∈{1, 55 , 10 3, 10 4}; the liquid-phase floor reflects variation in the finite-sample mixture of the three liquid viscosities. Case 3 uses exactly three conductivity levels, so each phase is a point mass and the per-phase W1 floor is zero. 
+
+13 Additional Qualitative Samples 
+
+Figures 5–7 compare the reference data, all seven baselines, and Multiphase-Diff. A fixed array index (0) was selected be-fore visual inspection and used for every method. Because the models are unconditional, equal array indices do not imply paired samples; the fixed index provides only a reproducible, non-cherry-picked selection. Each column contains the co-efficient, solution, and preconditioned residual magnitude. Color scales are shared within each case, and green marks non-positive generated coefficients. Method Physics location Representation Residual Weight Training or sampling modification DDPM none affine standardization none 0 standard reverse diffusion PG-Diffusion conditioning affine standardization pointwise strong form 10 −3 two conditioning channels; guidance scale 3.0 CoCoGen sampling correction affine standardization flux + Jacobi at sampling 0 N = 100 , M = 10 , η = 0 .05 
+
+DiffusionPDE sampling guidance affine standardization flux + Jacobi at sampling 0 ζ = 0 .1 over all T steps FunDiff autoencoder prior function autoencoder, 8 latent channels physics-informed autoencoder 0.1 FAE 40k steps + rectified flow 60k steps PIDM training likelihood affine standardization pointwise strong form 10 −3 standard reverse diffusion PIDM-log training likelihood bijective log/asinh pointwise strong form 10 −3 standard reverse diffusion 
+
+Multiphase-Diff training likelihood bijective log/asinh conservative flux + Jacobi 0.1 standard reverse diffusion; no sampling correction 
+
+Table 4: Implementation settings for the seven baselines and Multiphase-Diff. Weights denote the training-time physics coeffi-cient; inference-time methods reuse the physics-free DDPM checkpoint. 
+
+Case 1 Case 2 Case 3 Method low K high K gas liquid pore active binder DDPM 0.144 0.006 1.141 0.538 2.522 0.682 0.001 PG-Diffusion 0.298 0.005 1.140 0.667 2.520 0.725 0.001 CoCoGen 0.116 0.005 1.149 0.580 2.715 0.508 0.001 DiffusionPDE 0.174 0.006 1.119 1.187 2.502 0.681 0.001 FunDiff 0.038 0.033 0.051 1.339 0.146 0.219 0.739 PIDM 1.305 0.145 1.884 3.397 2.486 1.047 1.228 PIDM-log 0.028 0.179 0.248 1.422 0.059 0.080 1.282 
+
+Multiphase-Diff 0.008 0.004 0.010 0.933 0.013 0.009 0.025 
+
+Table 5: Per-phase Wasserstein-1 distance of ln a on the positive support. Lower is better. Non-positive coefficient values are excluded from this logarithmic distance and reported separately by Neg. 
+
+Case Method PRF median PRF mean PFE Interfaces/sample Neg (%) 1 DDPM 1.09 × 10 −2 2.56 × 10 −2 0.005 29.0 1.9 1 PG-Diffusion 1.34 × 10 −2 3.98 × 10 −2 0.011 40.7 4.5 1 CoCoGen 1.96 × 10 −2 1.83 × 10 −1 0.000 49.0 6.9 1 DiffusionPDE 9.76 × 10 −3 4.77 × 10 −2 0.052 29.9 2.8 1 FunDiff 6.28 × 10 −3 7.26 × 10 −3 0.025 93.1 0.0 1 PIDM 9.81 × 10 −4 2.93 × 10 −3 0.360 9.2 2.4 1 PIDM-log 8.26 × 10 −4 2.39 × 10 −3 0.117 65.4 0.0 1 Multiphase-Diff 3.58 × 10 −4 5.40 × 10 −4 0.045 63.8 0.0 2 DDPM 8.57 × 10 −2 1.04 × 10 −1 0.090 44.4 7.0 2 PG-Diffusion 1.14 × 10 −1 1.45 × 10 −1 0.089 51.2 11.1 2 CoCoGen 1.60 × 10 −1 1.81 × 10 −1 0.077 55.9 14.8 2 DiffusionPDE 9.18 × 10 −2 1.10 × 10 −1 0.077 47.2 8.8 2 FunDiff 1.47 × 10 −3 2.17 × 10 −3 0.081 51.7 0.0 2 PIDM 4.57 × 10 −1 4.57 × 10 −1 0.207 0.0 43.0 2 PIDM-log 1.61 × 10 −3 7.52 × 10 −3 0.068 0.3 0.0 2 Multiphase-Diff 2.30 × 10 −4 3.40 × 10 −4 0.073 64.2 0.0 3 DDPM 3.43 × 10 −3 3.76 × 10 −3 0.144 133.4 20.0 3 PG-Diffusion 3.16 × 10 −3 3.65 × 10 −3 0.090 126.8 28.1 3 CoCoGen 1.24 × 10 −3 1.35 × 10 −3 0.067 132.5 33.1 3 DiffusionPDE 3.23 × 10 −3 3.66 × 10 −3 0.102 121.1 27.0 3 FunDiff 4.48 × 10 −3 4.50 × 10 −3 0.025 102.7 0.0 3 PIDM 1.68 × 10 −3 1.75 × 10 −3 0.260 47.7 3.2 3 PIDM-log 3.15 × 10 −3 3.40 × 10 −3 0.013 159.8 0.0 3 Multiphase-Diff 4.17 × 10 −4 4.51 × 10 −4 0.010 187.9 0.0 
+
+Table 6: Additional diagnostics for all eight methods. Lower is better for PRF, PFE, and Neg. Interface counts diagnose preservation or collapse and should be interpreted relative to the reference morphology. Case PRF Neg (%) Worst W1 Sharp Darcy 4.57 × 10 −7 0.0 0.0030 ± 0.0010 0.0069 ± 0.0031 
+
+Gas–liquid 3.69 × 10 −7 0.0 0.1406 ± 0.0799 0.0034 ± 0.0017 
+
+Electrode 2.17 × 10 −7 0.0 0.0000 ± 0.0000 0.0066 ± 0.0038 
+
+Table 7: Reference-data floors under the exact evaluation conventions of the main paper. Reference DDPM PG-Diffusion CoCoGen Diffusion-PDE FunDiff PIDM PIDM-log Multiphase-Diff 
+
+> 10 −2
+> 10 −1
+> 10 0
+> -20 020
+> 10 −4
+> 10 −2
+> 10 0
+> Kp|̃ R|
+
+Case 1: two-facies Darcy flow ( γ ≈ 10 3)
+
+Figure 5: Qualitative comparison of the reference data, all seven baselines, and Multiphase-Diff on Case 1. Columns correspond to methods; rows show permeability K, pressure p, and Jacobi-preconditioned conservative residual magnitude | eR|; green denotes non-positive permeability. Reference DDPM PG-Diffusion CoCoGen Diffusion-PDE FunDiff PIDM PIDM-log Multiphase-Diff 
+
+> 10 0
+> 10 1
+> 10 2
+> 10 3
+> 10 4
+> 0.01 0.02 0.03
+> 10 −4
+> 10 −2
+> 10 0
+> μw|̃ R|
+
+Case 2: gas-liquid duct flow ( γ = 55-10 4)
+
+Figure 6: Qualitative comparison of the reference data, all seven baselines, and Multiphase-Diff on Case 2. Rows show viscosity 
+
+μ, axial velocity w, and Jacobi-preconditioned conservative residual magnitude | eR|; green denotes non-positive viscosity. Reference DDPM PG-Diffusion CoCoGen Diffusion-PDE FunDiff PIDM PIDM-log Multiphase-Diff 
+
+> 10 −6
+> 10 −4
+> 10 −2
+> 10 0
+> 0.25 0.5 0.75
+> 10 −4
+> 10 −2
+> 10 0
+> σφ|̃ R|
+
+Case 3: three-phase electrode conduction ( γ = 10 6)Figure 7: Qualitative comparison of the reference data, all seven baselines, and Multiphase-Diff on Case 3. Rows show conductivity σ, electric potential φ, and Jacobi-preconditioned conservative residual magnitude | eR|; green denotes non-positive conductivity.
