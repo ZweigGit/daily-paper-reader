@@ -1,0 +1,329 @@
+Title: Generative Learning of Separatrices
+
+URL Source: https://arxiv.org/pdf/2608.14743v1
+
+Published Time: Tue, 18 Aug 2026 00:12:00 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+# GENERATIVE LEARNING OF SEPARATRICES 
+
+A P REPRINT 
+
+Ellis R. Crabtree 
+
+Dept. of Predictive Analytics Johns Hopkins All Children’s Hospital St. Petersburg, FL 33701 
+
+ellis@jhmi.edu 
+
+Dimitris G. Giovanis 
+
+Dept. of Civil and Systems Engineering Johns Hopkins University Baltimore, MD 21218 
+
+dgiovan1@jhu.edu 
+
+Anastasia Georgiou 
+
+Dept. of Chemical and Biomolecular Engineering Johns Hopkins University Baltimore, MD 21218 
+
+ageorgi3@jhu.edu 
+
+George Datseris 
+
+Dept. of Mathematics and Statistics University of Exeter Exeter, EX4 4QJ 
+
+g.datseris@exeter.ac.uk 
+
+Ioannis G. Kevrekidis 
+
+Dept. of Chemical and Biomolecular Engineering Johns Hopkins University Baltimore, MD 21218 
+
+yannisk@jhu.edu 
+
+August 18, 2026 
+
+# ABSTRACT 
+
+The identification and reconstruction of the boundaries separating basins of attraction in multistable, multidimensional dynamical systems presents a fundamental challenge in computational dynamics. These (often geometrically complex) structures govern transition pathways and other important large timescale behavior, yet they remain typically under-sampled since their neighborhood does not get routinely visited during direct simulations. Traditional computational approaches targeted for their approximate construction (including manifold continuation, edge tracking, and bisection algorithms, among others) face computational limitations in high-dimensional systems and require a priori 
+
+knowledge of the dynamical system and its equations. Simplistic sampling methods such as random or uniform sampling of the phase space typically fail to quantitatively approximate separatrices and their structure altogether, suffering increasingly from the curse of dimensionality as the system dimension grows. We introduce and implement a framework that combines supervised classification with generative modeling to address this challenge. Our approach first trains neural network classifiers on uniformly or randomly sampled initial conditions, importantly labeled by their corresponding basins of attraction in the system of interest. Using uncertainty metrics of the trained classifier to quantify decision boundaries, the method then identifies these high uncertainty regions and boundaries of the classifier as preliminary approximate separatrices . Subsequently, score-based generative models are trained specifically on samples from high-uncertainty regions, ultimately generating densities of samples consistent with the empirical density of samples on the manifold (or regions close to this manifold) that constitutes the separatrix between basins in the sampled region. This approach leverages the complementary strengths of (a) discriminative models for global phase space partitioning and (b) generative models for detailed geometric sampling, resulting in a systematic, iterative, data-driven framework that produces empirically consistent reconstructions of (approximate) separatrix manifolds. 
+
+Keywords Generative Models · Uncertainty Quantification · Dynamical Systems arXiv:2608.14743v1 [cs.LG] 13 Aug 2026 Generative Learning of Separatrices A P REPRINT 
+
+# 1 Introduction 
+
+A valuable step in the modeling of multistable systems is the characterization of the boundaries of their basins of attraction, commonly known as separatrices . These separatrices often possess intricate and complex geometric structures that may even be fractal in nature. Typically, these separatrices correspond to stable manifolds of saddle-type invariant sets, unstable (source-type) invariant sets such as limit cycles, or other complex manifolds. In multistable dynamical systems [1, 2] trajectories initialized from arbitrary, generic points in phase space tend to converge to one of several attracting sets—fixed points, limit cycles, strange attractors, or other attracting invariant manifolds. The basin of attraction for each attractor comprises the set of initial conditions whose forward-time trajectories asymptotically approach that attractor [3]. Long-time numerical simulations of said systems often experience difficulty in sampling the phase space of these systems in sufficient detail because their trajectories become effectively trapped in neighborhoods of attractors, yielding statistically stationary behavior that provides information only about the local dynamics within a single basin. Characterizing separatrices presents significant computational and theoretical difficulties that have motivated substantial research in computational dynamics and adjacent fields. In principle, if one has a dense coverage of estimated basins via emergent techniques such as the recurrences-based [4] or featurize-and-group [5] methods, identifying the separatrix may be tractable. This however becomes quickly infeasible as system dimension increases, as the cost of a dense covering of the basins scales exponentially. Sampling points near the separatrices in order to enhance the time computational orbits spent near them is equally challenging, as separatrices typically correspond to state space regions of low probability density and often have formally zero volume. This leads to the problem that the regions that govern transitions between basins and determine the system’s response to perturbations are those least visited by typical trajectories. Recent advances in applied mathematics have yielded several complementary approaches for identifying and approxi-mating separatrices in high-dimensional dynamical systems. These include techniques such as manifold continuation [6, 7, 8, 9], edge tracking and bisection algorithms [10], or Lyapunov exponent Monte Carlo sampling [11]. The application of these and more rudimentary techniques spans diverse fields including chemical kinetics and reactor design (identifying steady states and bifurcations in chemical reactions) [12, 13], ecology (regime shifts in population dynamics and ecosystems) [14], climate science [15], and even comprehensive, extremely high dimensional climate models [16]. Reconstructing separatrices provides not only a characterization of critical transition thresholds but also generates representative samples from regions of phase space that are otherwise markedly undersampled by direct numerical simulation, while the prior mentioned methods such as continuation require explicit knowledge of equations. In parallel, the machine learning community has developed powerful generative modeling frameworks capable of learning to sample from complex probability distributions from finite sample sets and subsequently generating new samples that reflect the statistical properties of the training data, with early work involving models such as variational autoencoders and generative adversarial networks [17, 18]. Score-based generative models (SGMs) represent a particularly promising class of deep generative models [19, 20]. These models learn the score function ∇x log p(x),where p(x) is the target data distribution, and use this learned score to generate samples via Langevin dynamics or by solving a reverse-time stochastic differential equation. Additionally, these architectures have been applied to climate modeling problems specifically targeting the generation of samples near tipping points and separatrix regions [21], demonstrating that deep generative models can be specialized to focus on dynamically critical regions of phase space. Crucially, recent work has identified connections between generative models such as SGMs and classical techniques in statistical physics and enhanced sampling [22, 23]. Furthermore, SGMs and other generative models have been shown to generate density-consistent data on manifolds [24, 25], and have demonstrated state-of-the-art performance in high-dimensional generative tasks, and they exhibit a remarkable ability to recover low-dimensional manifold structure embedded in high-dimensional ambient spaces [26]. This has enabled hybrid approaches that combine the representational power of deep neural networks with physics-informed constraints and sampling strategies. As a continuation/extension of these efforts, this work presents a framework that combines (a) supervised classification of basins of attraction with (b) sampling of densities on a manifold performed by a generative model, to achieve comprehensive characterization and reconstruction of separatrices in multistable dynamical systems. The methodology proceeds as follows: 1. Basin classification: Train neural network classifiers to predict basin membership from provided phase space coordinates with known (labeled) basins. 2. Decision boundary identification: Extract the decision boundaries of the trained classifier with the help of uncertainty metrics; these boundaries will approximate the true separatrices under appropriate conditions. 2Generative Learning of Separatrices A P REPRINT 
+
+3. Generative modeling on boundaries: Train score-based or other generative models specifically on data of high uncertainty, which lie near the identified decision boundaries, enabling targeted sampling of separatrix regions. 4. Refinement and visualization: Use generated samples to refine separatrix approximations iteratively and produce high-fidelity visual representations of basin boundary geometry. This integrated approach leverages the complementary strengths of discriminative and generative models: classification provides global phase space partitioning and basin boundary localization, while generative models guide (and thus enhance) detailed sampling and reconstruction of the geometric structures comprising those boundaries. The framework is particularly well-suited to high-dimensional systems where traditional continuation or bisection methods become computationally prohibitive, and provides a data-driven (and density-consistent with the empirical data) pathway to extracting geometric structures of separatrices from simulation or experimental time series data. 
+
+# 2 Proposed Mathematical Framework 
+
+Consider an autonomous dynamical system in Rn governed by a flow Φt(x) = x(t). Assume that this system contains 
+
+k distinct attractors A1, A 2, . . . , A k with corresponding basins of attraction B1, B 2, . . . , B k. The basin boundaries 
+
+∂B i are (n − 1) -dimensional sets (generically) that coincide with stable manifolds W s(S) of saddle-type invariant sets 
+
+S. These saddle points, unstable periodic orbits, or chaotic saddles play a critical role in organizing the phase space topology and mediating transitions between basins under perturbation. Our proposed approach uses a classification neural network to classify (assign the correct) basins of attraction Bi
+
+for given initial conditions. Beyond the assignment of the right basin for a given point, the classifier also reports an uncertainty metric (i.e. how sure the network is that the predicted basin is correct). The uncertainty metric used in this work is based on Monte Carlo dropout [27], which is represented by an entropy. This entropy, H, is a measure of how much the network’s predictions vary when it is run multiple times with different random subsets of neurons temporarily switched off (dropout); if the predictions consistently agree, H is low and the classifier is confident, but if they disagree, H is high, signaling that the point likely lies in an uncertain region—such as near a boundary between basins. A generative model is then given initial conditions as training data with the uncertainty metric as a label; this then allows for the generation of new points at high uncertainty phase space areas, which will naturally lie at or near boundaries between the basins of the system. These high uncertainty points function as proxy sampling points for local and global separatrices and/or their surrounding regions of phase space, depending on sampling density and model parameters. Algorithms 1 and 2 outline the framework. The identification of separatrices with high-uncertainty regions from the trained classifier represents an approximation whose validity depends critically on the relationship between the classifier’s learned decision boundary and the true dynamical basin boundary. Under ideal conditions—sufficient training data uniformly distributed across phase space, adequate network capacity, and successful optimization—the classifier learns to assign high probability to the correct basin membership; classification uncertainty (quantified via entropy of the MC dropout predictive distribution) should peak near the true separatrix ∂B i, where infinitesimal changes in initial conditions lead to different asymptotic outcomes. However, several sources of systematic bias affect this approximation. First, the classifier decision boundary depends on the training data distribution. Regions of phase space with sparse coverage of sampled initial conditions will exhibit elevated uncertainty regardless of proximity to the true separatrix, since the network has insufficient information to make confident predictions. This creates a fundamental confound: high uncertainty may indicate either proximity to a basin boundary or absence of training data. If the model is not trained on sufficiently numerous examples near the true decision boundary, and that boundary is not geometrically simple, the model may confidently misclassify instances by erroneously extrapolating learned patterns beyond their valid range. Furthermore, the geometry of the classifier decision boundary is constrained by the neural network’s inductive bias. Standard feedforward networks with smooth activation functions (e.g., ReLU, tanh) produce piecewise smooth decision boundaries whose complexity scales with network depth and width. For separatrices with fractal structure or those involving fine-scale geometric detail, finite networks necessarily produce smoothed approximations. The decision boundary may capture large-scale topology while missing fine structure below the effective resolution determined by network architecture and training procedure. Additionally, training data imbalance between basins systematically biases decision boundaries. If basin B1 is overrepresented relative to basin B2 in the training set, standard cross-entropy loss could incentivize the classifier to expand the predicted region for B1 at the expense of B2, shifting the decision boundary away from its dynamically correct location. This is particularly problematic when the dynamics itself creates sampling bias. 3Generative Learning of Separatrices A P REPRINT 
+
+Algorithm 1 Basin Classifier Network Training and Inference 
+
+Input: Training data D1 = {(x(t0)i, B i)}Ni=1 (initial conditions from a dynamical system, x(t0), and discrete labels given by the initial condition’s basin of attraction, Bi that is reached from each initial condition after some time t), neural network f (D1); θ) with dropout layers, loss function L, number of epochs E, batch size B, number of MC samples M
+
+— Training Phase —  
+
+> 1:
+
+for epoch = 1 to E do  
+
+> 2:
+
+Shuffle training data  
+
+> 3:
+
+for each batch {(xb, y b)}Bb=1 do  
+
+> 4:
+
+Enable dropout  
+
+> 5:
+
+Compute predictions: ˆyb = f (xb; θ) 
+
+> 6:
+
+Compute loss: Lbatch = L(ˆ yb, y b) 
+
+> 7:
+
+Update parameters: θ ← θ − η∇θ Lbatch  
+
+> 8:
+
+end for  
+
+> 9:
+
+end for — Inference Phase (Monte Carlo Dropout) — Require: New input sample x(t0) 
+
+> 10:
+
+Initialize average probabilities, ¯p as a zero vector  
+
+> 11:
+
+for m = 1 to M do  
+
+> 12:
+
+Enable dropout at inference  
+
+> 13:
+
+Run forward pass of network: ˆym ← f (x(t0)m) 
+
+> 14:
+
+Apply softmax to get probabilities: pm ← softmax( ˆym) 
+
+> 15:
+
+Get average probabilities: ¯p ← ¯p + 1 
+
+> M
+
+pm 
+
+> 16:
+
+end for  
+
+> 17:
+
+Compute uncertainty (entropy): H(¯ p) = − P 
+
+> m
+
+¯pk log ¯ pk 
+
+> 18:
+
+return ˆy, ¯p, H (¯ p)
+
+Algorithm 2 Training a score-based generative model (SGM) to approximate the separatrices 
+
+Input: Training data D2 = {(x(t0)j )}Nj=1 (initial condition samples from a dynamical system, x(t0), with correspond-ing distribution P (D2), where D2 is chosen by selecting an entropy threshold from the Monte Carlo dropout of the classifier network, H(¯ p). For practical notation purposes we will call the uncertainty threshold z. 
+
+> 1:
+
+Retain high entropy D2 data from Algorithm 1. In this work, all initial conditions with z above the 90th percentile were retained.  
+
+> 2:
+
+Train a SGM on D2 to model the distributions of high entropy samples  
+
+> 3:
+
+Use the trained SGM to sample from ˆP (D2) — approximated measures in ambient space at the prescribed high entropy  
+
+> 4:
+
+return ˆP (D2) for high z
+
+The approximation is most reliable when: (1) training trajectories provide relatively uniform coverage of phase space, perhaps through strategic initial condition selection, (2) sufficient trajectory data exists near the separatrix, which can be achieved iteratively by generating initial conditions (and subsequent trajectories) from high-uncertainty regions, (3) the network architecture is sufficiently expressive to capture the separatrix geometry at the scale of interest, and (4) class balance is maintained or explicitly corrected through loss function weighting. These considerations motivate the iterative refinement approach and the integration of generative models: by producing samples near/along provisional boundary estimates, the generative model enables targeted generation of new trajectories that reduce sampling bias, while validation against dynamical properties (e.g., checking that generated points lie near saddle points/manifolds or exhibit long transient times) provides quality control on the reconstruction. To this point, the entropy threshold selected can offer some fine control on how "wide or narrow" the end result approximation of the separatrix becomes. In this work, a threshold of ninety percent was decided to be quantitative and qualitatively sufficient for the examples that follow. 
+
+# 3 Numerical Examples 
+
+We demonstrate the proposed framework on three dynamical systems that exhibit multistability with progressively complex basin boundary structures. The Newton method fractal boundary provides a two-dimensional benchmark 4Generative Learning of Separatrices A P REPRINT 
+
+with intricate, self-similar basin boundaries whose fractal geometry is well-characterized, allowing us to assess the method’s ability to reconstruct fine-scale geometric detail. The continuous stirred tank reactor (CSTR) model represents a canonical problem in chemical process engineering where separatrices delineate operationally critical boundaries between stable regimes, and where traditional continuation methods have been extensively applied. Finally, the three-dimensional Lorenz system exemplifies chaotic dynamics where basin boundaries, formed by two-dimensional stable manifolds of saddle equilibria, separate trajectories leading to qualitatively different asymptotic behaviors, possibly on a strange attractor. Together, these examples demonstrate the framework’s capability to handle systems with varying dimensionality, geometric complexity, and practical significance, while demonstrating advantages over traditional methods by sidestepping computationally intensive integration/continuation and avoiding any required apriori knowledge of the dynamical system. 
+
+3.1 The Newton Method Fractal Boundary 
+
+The Newton fractal is generated by applying Newton’s method for root finding to the polynomial f (z) = z3 − 1 in the complex plane. The iterative map is given by 
+
+zn+1 = zn − f (zn)
+
+f ′(zn) = zn − z3 
+
+> n
+
+− 13z2
+
+> n
+
+= 2z3 
+
+> n
+
++ 1 3z2
+
+> n
+
+, (1) where z ∈ C. Each initial condition z0 ∈ C converges to one of three roots: r1 = 1 , r2 = ei2π/ 3, and r3 = ei4π/ 3. The basins of attraction for these roots are separated by fractal boundaries. This system provides an interesting test case for validating separatrix reconstruction accuracy due to its well-studied geometric properties and the self-similar structure of its basin boundaries across multiple spatial scales due to its fractal nature. Figure 1 demonstrates the algorithmic framework presented in section 2 in three steps: basin classification, using UQ metrics to identify the classifier decision boundary given by the high entropy initial conditions, and generative sampling of the separatrix by an SGM trained on the high entropy initial conditions. Forty thousand uniformly sampled initial conditions (a 200x200 mesh grid) on the complex plane were integrated 50 steps each using Newton’s method using equation 1. This grid of initial conditions labeled by the endpoints of their trajectories were used to train the neural network classifier. Once trained, the classifier evaluated a new finer mesh grid of 160,000 (400x400) samples. The top ten percent of the evaluated samples with respect to their entropy predicted by the classifier (16,000 samples) were retained for SGM training. Once trained on the high entropy points, the SGM then generated 16,000 new samples for comparison with the high entropy training dataset that effectively approximates the decision boundary (and thus the separatrix) of the system. Once the framework was implemented and executed, the marginal densities of the high entropy points corresponding to the decision boundary of the classifier were compared with the marginal densities of the SGM generated samples. Two metrics were used to quantitatively compare the two sets: Wasserstein distance, used generally to measure the "work" required to transform one density into another [28], and the Chamfer distance, the average of nearest-neighbor distances from each point in one set to the closest point in the other set [29]. These quantities effectively measure the difference in density and difference in coverage of the two sets, respectively, and the averages of the distances between the two marginals (real and complex) are reported in Table 1. Figure 2 displays the marginal distributions plotted against each other and qualitatively compared. 5Generative Learning of Separatrices A P REPRINT 
+
+Figure 1: Newton fractal basin classification for the complex polynomial f (z) = z3 − 1, illustrating the uncertainty quantification and generative sampling framework across four subfigures. Top-left: uniformly sampled initial conditions in the complex plane, labeled and colored by their basin of attraction under Newton’s method iteration zn+1 =
+
+zn − f (zn)/f ′(zn). Top-right: high-entropy points identified by the UQ metric derived from the classifier neural network, highlighting regions of fractal boundary ambiguity where basin membership is uncertain. Bottom-left: 
+
+generated samples produced by a score-based generative model (SGM) trained exclusively on the high-entropy initial conditions, learning to reproduce the complex boundary structure. Bottom-right: overlay comparison in the complex plane contrasting the true high-entropy data against the SGM-generated samples, demonstrating the model’s ability to capture the fractal geometry near basin boundaries. 
+
+Figure 2: For the Newton fractal, marginal distributions in histogram form of (a) the high entropy samples corresponding to the decision boundary of the classifier plotted along with (b) the marginal distributions of the SGM generated samples. 6Generative Learning of Separatrices A P REPRINT 
+
+Table 1: Marginal Distribution Comparison Metrics for the Newton Fractal Metric Value Chamfer Distance 0.0115 Sliced Wasserstein Distance 0.0493 
+
+3.2 Sensitivity Analysis of the Entropy Threshold with a Continuous Stirred Tank Reactor (CSTR) Example 
+
+A critical consideration in the proposed framework is the selection of the entropy percentile threshold used to identify points near the separatrix. The 90th percentile threshold is chosen in the analysis throughout this work as a reasonable illustration, but depending on the desired quantity and accuracy of the output, other threshold values may be warranted. We performed a sensitivity analysis to examine how variations in the entropy threshold affect the extracted high-entropy point set and to identify regions of stability in the threshold parameter space. Consider the non-isothermal continuous stirred tank reactor (CSTR) model studied by Uppal, Ray, and Poore [12], given by the functional dimensionless equations 
+
+dx 1
+
+dt = −x1 + Da (1 − x1) exp( x2) = f1(x1, x 2) (2) 
+
+dx 2
+
+dt = −x2 + BDa (1 − x1) exp( x2) − β(x2) = f2(x1, x 2) (3) which exhibit multiple steady states arising from the interplay between reaction kinetics dependent on temperature, concentration, and other factors. Characterizing this separatrix is important for reactor design and control, as it can delineate safe operating regions and determine startup trajectories that avoid extinction or runaway reactions. We investigate this system at the parameter values B, Da, β = 16 .2, 0.12823 , 3.0, which exhibit a stable steady state surrounded by an unstable limit cycle (the separatrix), surrounded by a larger stable limit cycle. Following the framework, 40,000 uniformly sampled initial conditions in the range of x1, x 2 = [0 , 1] , [0 , 10] . The initial conditions were then integrated using equations 2 and 3, and because the stable steady state lies close to the unstable limit cycle, the basins of attraction were labeled by time to convergence rather than location in phase space. Small perturbations near the steady state can lead to qualitatively different transient behaviors, despite originating from nearly identical regions in phase space, making this separatrix vanishingly small and difficult for the network to identify when using the traditional labels. This grid of initial conditions labeled by basin based on time to convergence of their trajectories were used to train the neural network classifier. Once trained, the classifier evaluated a new finer mesh grid of 160,000 (400x400) samples. The sensitivity analysis evaluates thresholds ranging from the 75th to 99th percentile of the entropy distribution. For each candidate threshold, we compute several diagnostic quantities: the number of points exceeding the threshold, the spatial coverage of the resulting point set as a fraction of the domain, the centroid location of the extracted points, and the spatial spread characterized by the standard deviation in each coordinate direction. From these quantities, we derive a combined instability score that measures the sensitivity of the results to small perturbations in the threshold. Specifically, the instability score incorporates the normalized rate of change in point count with respect to the percentile threshold and the magnitude of centroid displacement as the threshold varies. Regions where this score is minimized correspond to threshold values where the extracted separatrix approximation is most stable with respect to the threshold hyperparameter. Mathematically, the score is defined as follows: Let N (p) denote the number of grid points whose entropy exceeds the p-th percentile threshold, and let μx1 (p), μx2 (p)
+
+denote the coordinates of the centroid of that high-entropy point set, each regarded as continuous functions of the percentile p. The combined instability score S(p), which quantifies how sensitive the detected separatrix is to the choice of threshold, is defined as: 
+
+S(p) = 
+
+dN (p)
+
+dp 
+
+max 
+
+> p
+
+dN (p)
+
+dp 
+
++
+
+s dμ x1 (p)
+
+dp 
+
+2
+
++
+
+ dμ x2 (p)
+
+dp 
+
+2
+
+max 
+
+> p
+
+s dμ x1 (p)
+
+dp 
+
+2
+
++
+
+ dμ x2 (p)
+
+dp 
+
+2 (4) where the first term captures the normalized rate of change of the number of detected high-entropy points with respect to the threshold percentile (sensitivity of the point count), and the second term captures the normalized magnitude of 7Generative Learning of Separatrices A P REPRINT 
+
+the rate of change of the centroid position (sensitivity of the spatial location of the detected region). Both derivatives are normalized by their respective maxima over the sampled percentile range so that each term lies in [0 , 1] , and the two are summed to produce a single scalar measure of overall instability at each threshold p. Lower values of S(p) indicate percentile choices for which the separatrix detection is more robust to small perturbations in the threshold. Figure I4 presents the results of this analysis. The top row displays the high-entropy regions identified at three representative threshold values (85th, 90th, and 95th percentiles), overlaid on the entropy field computed by the MC Dropout classifier. As the threshold increases, the extracted region contracts to a tighter estimation of the separatrix where classification uncertainty is highest. The bottom panel shows the instability score as a function of the percentile threshold. The vertical dashed lines indicate the thresholds corresponding to the top row visualizations, while the green dashed line marks the most stable threshold identified by the analysis. The 97th percentile of points gives the optimal instability score, indicating that it would be the appropriate threshold for the most exact point-wise approximation of the separatrix in this example, trading off less SGM training data for estimation accuracy. Maintaining consistency with the rest of this work, rather than optimizing each example’s cutoff distance, we demonstrate the method with a uniform entropy cutoff. The top ten percent of the evaluated samples with respect to their entropy predicted by the classifier (16,000 samples) were retained for SGM training. Once trained on the high entropy points, the SGM then generated 16,000 new samples for comparison with the high entropy training dataset that effectively approximates the decision boundary (and thus the separatrix) of the system. Figure 3 displays the training data given by the classifier, and Figure 5 displays the scatter plot of the high entropy points and SGM generated samples as well as their marginal distributions. The Wasserstein and Chamfer distance metrics were again computed to quantify the difference in density and difference in coverage of the two sets and the averages of the distances between the two marginals (real and complex). Their values are 0.0572 and 0.0088 , respectively. 
+
+Figure 3: Uniformly sampled initial conditions of the CSTR model equations defined by equations 2 and 3 colored by binary label of the corresponding attractor identified by time to convergence (purple for the stable steady state and yellow for the stable limit cycle). 8Generative Learning of Separatrices A P REPRINT 
+
+Figure 4: Sensitivity analysis of the entropy threshold selection for the CSTR system. Top row: High-entropy regions identified at the 85th, 90th, and 95th percentile thresholds of the instability score defined by equation 4 colored as purple, cyan, and light green, respectively, plotted with the entropy field computed by the MC Dropout classifier shaded from dark red to white. Bottom: Instability score as a function of the percentile threshold; lower values indicate greater stability with respect to threshold perturbations. The green dashed line indicates the most stable threshold, while colored dotted lines correspond to the thresholds visualized in the top row. 
+
+Figure 5: Comparison of high-entropy points and the SGM-generated samples for the CSTR system. Left: Scatter plot overlay of the high-entropy training points (blue) extracted from the MC Dropout classifier at the 90th percentile threshold and the samples (red) generated by the trained score-based generative model. The spatial agreement between the two distributions indicates that the SGM has successfully learned to sample from the separatrix. Middle: Marginal density distributions along the x1 coordinate (dimensionless concentration), showing close agreement between the high-entropy and the generated samples. Right: Marginal density distributions along the x2 coordinate. The strong overlap in both marginal distributions demonstrates that the generative model accurately captures the statistical structure of the classifier’s decision boundary corresponding to the dynamical separatrix. The “peaks" in the high entropy marginals are a product of their uniform sampling. 9Generative Learning of Separatrices A P REPRINT 
+
+3.3 A Comparison of Methods with the Lorenz System 
+
+The Lorenz system, originally derived as a simplified model of atmospheric convection, is a three-dimensional autonomous system given by 
+
+dx dt = σ(y − x), (5) 
+
+dy dt = x(ρ − z) − y, (6) 
+
+dz dt = xy − βz, (7) where (x, y, z ) ∈ R3 represent the system state and σ, ρ, and β are parameters. We consider the parameter values 
+
+σ = 10 , ρ = 20 , and β = 8 /3. At these parameters, which lie below the critical value ρc ≈ 24 .74 for the onset of chaos, the system exhibits bistability between two stable fixed points C± = ( ±pβ(ρ − 1) , ±pβ(ρ − 1) , ρ − 1) , while the origin remains an unstable saddle with a two-dimensional stable manifold and a one-dimensional unstable manifold. The stable manifold W s(0) of the origin forms the separatrix, a two-dimensional surface that divides the phase space into two basins of attraction corresponding to C+ and C−. This configuration provides an interesting test case for three-dimensional separatrix reconstruction in a system with well-defined multistability, a geometrically complex basin boundary structure, and chaotic transient behavior. This separatrix is the 2D stable manifold of the origin of the 3D Lorenz system described by the above parameter values, which we will briefly call the "2D Lorenz Manifold" from now on. 
+
+Figure 6: For the Lorenz System, Comparison of high entropy points from three different methods (MC dropout, deep ensemble averaging, and Laplace approximation) versus a sampled manifold obtained via SCIGMA. The three metrics used are Chamfer distance, coverage, and Hausdorff distance. To assess the effectiveness of different uncertainty quantification approaches for separatrix identification, we compared three methods for estimating predictive uncertainty from the trained classifier: Monte Carlo (MC) dropout, deep ensemble averaging [30], and Laplace approximation [31]. For each method, we identified high-uncertainty regions and evaluated their geometric correspondence to the ground truth separatrix computed using the SCIGMA [32] continuation software. 1 Performance was quantified using three metrics: coverage (the fraction of true separatrix points within a specified distance of high-uncertainty regions), Chamfer distance (measuring average nearest-neighbor distances between predicted and true boundary points in both directions, described and cited in previous sections), and Hausdorff distance (capturing worst-case deviations) [33]. MC dropout outperformed the alternatives in coverage and Chamfer distance while staying comparatively equal or better with the other methods in Hausdorff distance, as detailed in Figure 6. The superior performance of MC dropout likely stems from its ability to capture local uncertainty variations more effectively than the global uncertainty estimates provided by methods such as Laplace approximation, while requiring substantially less computational cost than training full ensembles. Using MC dropout as the uncertainty quantification method of choice, we applied the complete framework (classification, boundary identification via high-uncertainty regions, and generative modeling on boundary data) to reconstruct the separatrix of the Lorenz system. The final output from the score-based generative model, comprising samples along the reconstructed boundary, was compared against the ground truth manifold. The generative model substantially             
+
+> 1The ground truth separatrix was computed using SCIGMA, a software package for invariant-manifold computation and visualization [32]. We used the December 2025 macOS ARM release with the mstable continuation commands, initialized from the unstable saddle at (0 ,0,0) . Numerical integration used dt = 0 .005 ; AUTO continuation used ds = 0 .01 ,ds min = 10 −6, and
+> ds max = 1 , with all other parameters set to their defaults.
+
+10 Generative Learning of Separatrices A P REPRINT 
+
+Figure 7: Three-dimensional plots of the approximated 2D Lorenz Manifold. Left: An overlaid comparison of the generated approximation of the manifold using the generative method plotted as red points and the sampled manifold found via SCIGMA in blue points. Right: the SCIGMA calculated manifold points, colored by distance to the approximated manifold (effectively the Chamfer distance). improved the quality of the reconstruction relative to the classifier alone: the Chamfer distance decreased from 3.05 to 1.58 (a 48.2% reduction) and coverage increased from 96.7% to 99%. The Hausdorff distance improved slightly (from 20.9 to 20.58), consistent with the low variation seen between the UQ methods. Qualitatively, the generated samples captured the fine-scale geometric features of the separatrix. While this is demonstrated in the improved metrics and not readily apparent from the three dimensional point clouds in Figure 7, this can be seen when looking at two dimensional projections of the ground truth manifold versus the approximate manifold from the generative model, demonstrated in Figure 8. These projections do not exactly approximate the true calculated separatrix due to the large sampled region and inherent complexity of the manifold, but with iterations on specific regions, they would approach an exact approximation. These results demonstrate that the integrated classification-generation approach produces separatrix reconstructions with fidelity comparable to specialized continuation methods, while offering advantages in computational efficiency and applicability to systems where continuation methods face challenges, such as when the equations to a system are not known a priori .11 Generative Learning of Separatrices A P REPRINT 
+
+Figure 8: Sets of two dimensional projections from various sections of the separatrix calculated using traditional methods (plotted in blue), versus the generated points that approximate the separatrix (maked in red). Inset metrics describing the Chamfer distance, coverage, and sliced Wasserstein distance of each projection are included in each plot. 
+
+# 4 Conclusion 
+
+This work has introduced a data-driven framework for computationally approximating separatrices in multistable dynamical systems by combining supervised classification with generative modeling. The methodology addresses fundamental sampling challenges inherent in characterizing basin boundaries: these structures govern transitions between stable states yet remain poorly sampled in standard numerical simulations due to their repelling behavior. We have demonstrated the framework’s effectiveness on three representative dynamical systems. Across these examples, the method successfully identified and reconstructed basin boundaries with fidelity comparable to traditional techniques while offering advantages in computational efficiency, applicability to high-dimensional systems, and circumvention of required system knowledge. The framework provides particular value for systems where traditional continuation and bisection methods face limitations. By learning directly from trajectory data rather than requiring known equations, it accommodates systems known only through simulation or experiment. The approach naturally extends to high-dimensional phase spaces where visualization fails and manifold continuation becomes prohibitively expensive. Moreover, the generative component addresses a fundamental need: producing representative samples from regions of phase space that standard simulations systematically undersample. This framework demonstrates that modern machine learning, when appropriately integrated with dynamical systems theory, provides powerful capabilities for characterizing global geometric structures in complex nonlinear systems by enabling a data-driven understanding of critical transitions that govern system behavior. 12 Generative Learning of Separatrices A P REPRINT 
+
+4.1 Future Work 
+
+The future work will focus on augmenting this method with an iterative and active learning framework to mitigate its existing limitations. Isolated high-uncertainty regions can emerge in sparsely sampled areas far from any true separatrix, leading to false positive identification of spurious boundaries. These arise when the network, lacking local training data, defaults to uncertain predictions while still being far from any dynamically significant structure. Several promising directions exist for extending this methodology and mitigating this limitation. First, systematic evaluation of the framework’s performance in sparse data regimes would address a critical practical constraint. Understanding how reconstruction quality degrades with reduced training data and identifying minimum data requirements for reliable separatrix identification would guide deployment in data-limited contexts. Developing uncertainty quantification measures that indicate when additional data is needed would further enhance practical utility, and some readily available metrics already exist, e.g., basin entropy [34]. Additionally, active learning strategies offer substantial potential for improving sample efficiency. Current implementation treats initial condition sampling as uniform or predetermined, but an adaptive approach could iteratively select the most informative regions for new trajectory generation. In future work we plan to utilize functionality offered by the software DynamicalSystems.jl, which provides generic functions for labeling trajectories according to their basin membership [4]. This will allow for an iterative refinement of separatrices, iteratively probing high uncertainty regions with denser sampling. Finally, integration with optimal experimental design principles could formalize selection criteria to maximize information gain about basin boundary geometry per simulation. Further tests will be performed for the improved methods, including multi-seed robustness tests and improvements on our existing threshold sensitivity studies. 
+
+# References 
+
+[1] Ulrike Feudel, Alexander N. Pisarchik, and Kenneth Showalter. Multistability and tipping: From mathematics and physics to climate and brain—Minireview and preface to the focus issue. Chaos: An Interdisciplinary Journal of Nonlinear Science , 28(3):033501, March 2018. ISSN 1054-1500, 1089-7682. doi:10.1063/1.5027718. [2] Alexander N Pisarchik and Alexander E Hramov. Multistability in Physical and Living Systems . Springer International Publishing, 2022. ISBN 978-3-030-98395-6. doi:10.1007/978-3-030-98396-3. URL https: //link.springer.com/10.1007/978-3-030-98396-3 .[3] George Datseris and Ulrich Parlitz. Nonlinear Dynamics: A Concise Introduction Interlaced with Code . Under-graduate Lecture Notes in Physics. Springer International Publishing, Cham, 2022. ISBN 978-3-030-91031-0 978-3-030-91032-7. doi:10.1007/978-3-030-91032-7. [4] George Datseris and Alexandre Wagemakers. Effortless estimation of basins of attraction. Chaos: An In-terdisciplinary Journal of Nonlinear Science , 32(2):023104, February 2022. ISSN 1054-1500, 1089-7682. doi:10.1063/5.0076568. [5] George Datseris, Kalel Luiz Rossi, and Alexandre Wagemakers. Framework for global stability analysis of dynamical systems. Chaos: An Interdisciplinary Journal of Nonlinear Science , 33(7):073151, July 2023. ISSN 1054-1500, 1089-7682. doi:10.1063/5.0159675. [6] Bernd Krauskopf, Hinke M Osinga, Eusebius J Doedel, Michael E Henderson, John Guckenheimer, Alexander Vladimirsky, Michael Dellnitz, and Oliver Junge. A survey of methods for computing (un) stable manifolds of vector fields. International Journal of Bifurcation and Chaos , 15(03):763–791, 2005. [7] D. G. Aronson, M. A. Chory, G. R. Hall, and R. P. McGehee. Bifurcations from an invariant circle for two-parameter families of maps of the plane: a computer-assisted study. Communications in Mathematical Physics , 83 (3):303 – 354, 1982. [8] I. G. Kevrekidis. A numerical study of global bifurcations in chemical dynamics. AIChE Journal , 33(11): 1850–1864, 1987. doi:https://doi.org/10.1002/aic.690331112. URL https://aiche.onlinelibrary.wiley. com/doi/abs/10.1002/aic.690331112 .[9] Mark E Johnson, Michael S Jolly, and Ioannis G Kevrekidis. Two-dimensional invariant manifolds and global bifurcations: some approximation and visualization studies. Numerical Algorithms , 14(1):125–140, 1997. [10] Joseph D Skufca, James A Yorke, and Bruno Eckhardt. Edge of chaos in a parallel shear flow. Physical review letters , 96(17):174101, 2006. [11] Ali Reza Armiyoon and Christine Q. Wu. A novel method to identify boundaries of basins of attraction in a dynamical system using lyapunov exponents and monte carlo techniques. Nonlinear Dynamics , 79(1): 275–293, 2014. ISSN 1573-269X. doi:10.1007/s11071-014-1663-z. URL http://dx.doi.org/10.1007/ s11071-014-1663-z .13 Generative Learning of Separatrices A P REPRINT 
+
+[12] A. Uppal, W.H. Ray, and A.B. Poore. On the dynamic behavior of continuous stirred tank reactors. Chemical Engineering Science , 29(4):967–985, 1974. ISSN 0009-2509. doi:https://doi.org/10.1016/0009-2509(74)80089-8. URL https://www.sciencedirect.com/science/article/pii/0009250974800898 .[13] S.S. Elnashaie, M.E. Abashar, and F.A. Teymour. Bifurcation, instability and chaos in fluidized bed catalytic reactors with consecutive exothermic chemical reactions. Chaos, Solitons and Fractals , 3(1):1–33, 1993. ISSN 0960-0779. doi:https://doi.org/10.1016/0960-0779(93)90037-2. URL https://www.sciencedirect.com/ science/article/pii/0960077993900372 .[14] Marten Scheffer, Steve Carpenter, Jonathan A Foley, Carl Folke, and Brian Walker. Catastrophic shifts in ecosystems. Nature , 413(6856):591–596, 2001. [15] Ulrike Feudel and Celso Grebogi. Multistability and the control of complexity. Chaos: An Interdisciplinary Journal of Nonlinear Science , 7(4):597–604, 1997. [16] Reyk Börner, Oliver Mehling, Jost von Hardenberg, and Valerio Lucarini. Global stability of the atlantic overturning circulation: Edge state, long transients and boundary crisis under co 2 forcing, 2025. URL https: //arxiv.org/abs/2504.20002 .[17] Diederik P Kingma and Max Welling. Auto-encoding variational bayes, 2013. URL https://arxiv.org/abs/ 1312.6114 .[18] I. J. Goodfellow, J. Pouget-Abadie, M. Mirza, B. Xu, D. Warde-Farley, S. Ozair, A. Courville, and Y. Bengio. Generative Adversarial Networks. arXiv:1406.2661 [cs, stat] , June 2014. URL http://arxiv.org/abs/1406. 2661 . arXiv: 1406.2661. [19] Yang Song, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-based generative modeling through stochastic differential equations, 2020. URL https://arxiv.org/abs/ 2011.13456 .[20] Yang Song and Stefano Ermon. Improved techniques for training score-based generative models, 2020. URL 
+
+https://arxiv.org/abs/2006.09011 .[21] Jennifer Sleeman, David Chung, Anand Gnanadesikan, Jay Brett, Yannis Kevrekidis, Marisa Hughes, Thomas Haine, Marie-Aude Pradal, Renske Gelderloos, Chace Ashcraft, et al. A generative adversarial network for climate tipping point discovery (tip-gan). arXiv preprint arXiv:2302.10274 , 2023. [22] Ellis R Crabtree, Juan M Bello-Rivas, Andrew L Ferguson, and Ioannis G Kevrekidis. Gans and closures: Micro-macro consistency in multiscale modeling. Multiscale modeling & simulation , 21(3):1122–1146, 2023. [23] ER Crabtree, JM Bello-Rivas, and IG Kevrekidis. Micro-macro consistency in multiscale modeling: Score-based model assisted sampling of fast/slow dynamical systems. Chaos: An Interdisciplinary Journal of Nonlinear Science , 34(5), 2024. [24] Dimitris G Giovanis, Ellis Crabtree, Roger G Ghanem, and Ioannis G Kevrekidis. Generative learning of densities on manifolds. Computer Methods in Applied Mechanics and Engineering , 446:118266, 2025. [25] Ellis R Crabtree, Dimitris G Giovanis, Nikolaos Evangelou, Juan M Bello-Rivas, and Ioannis G Kevrekidis. Generative learning for slow manifolds and bifurcation diagrams. Computers & Chemical Engineering , page 109544, 2025. [26] Jakiw Pidstrigach. Score-based generative models detect manifolds, 2022. URL https://arxiv.org/abs/ 2206.01018 .[27] Yarin Gal and Zoubin Ghahramani. Dropout as a bayesian approximation: Representing model uncertainty in deep learning. In international conference on machine learning , pages 1050–1059. PMLR, 2016. [28] Clark R Givens and Rae Michael Shortt. A class of wasserstein metrics for probability distributions. Michigan Mathematical Journal , 31(2):231–240, 1984. [29] Haoqiang Fan, Hao Su, and Leonidas J Guibas. A point set generation network for 3d object reconstruction from a single image. In Proceedings of the IEEE conference on computer vision and pattern recognition , pages 605–613, 2017. [30] Balaji Lakshminarayanan, Alexander Pritzel, and Charles Blundell. Simple and scalable predictive uncertainty estimation using deep ensembles. Advances in neural information processing systems , 30, 2017. [31] David JC MacKay. A practical bayesian framework for backpropagation networks. Neural computation , 4(3): 448–472, 1992. [32] I. G. Kevrekidis, M. S. Jolly, M. A. Taylor, M. E. Johnson, and Robert Hölzel. SCIGMA: Stability computations and interactive graphics for invariant manifold analysis. https://scigma.org/ , 2025. 14 Generative Learning of Separatrices A P REPRINT 
+
+[33] Daniel P Huttenlocher, Gregory A. Klanderman, and William J Rucklidge. Comparing images using the hausdorff distance. IEEE Transactions on pattern analysis and machine intelligence , 15(9):850–863, 2002. [34] Alvar Daza, Alexandre Wagemakers, Bertrand Georgeot, David Guéry-Odelin, and Miguel A. F. Sanjuán. Basin entropy: a new tool to analyze uncertainty in dynamical systems. Scientific Reports , 6(1), August 2016. ISSN 2045-2322. doi:10.1038/srep31416. URL http://dx.doi.org/10.1038/srep31416 .15

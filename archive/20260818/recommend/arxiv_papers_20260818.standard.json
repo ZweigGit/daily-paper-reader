@@ -1,0 +1,210 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-18T20:34:18.822596+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2608.14744v1",
+      "source": "arxiv",
+      "title": "Iterative Refinement Diffusion for Super-Resolved Data Assimilation of Multiscale Physical Systems",
+      "abstract": "Recovering high-resolution states from sparse, low-resolution observations is a central challenge in scientific machine learning and data assimilation. Classical data assimilation exploits temporal information through forecast-analysis cycles, but often requires repeated access to expensive high-resolution forecast models. Generative super-resolution can recover unresolved structure from coarse observations, but is commonly used as a one-shot mapping that does not fully exploit constraints from past states. We introduce Iterative Refinement (IR), a learned data assimilation framework that combines these perspectives. Instead of performing a single coarse-to-fine reconstruction, IR decomposes the task into resolution-wise forecast-analysis operations across a multiresolution hierarchy. At each stage, a shared neural operator with resolution-dependent spectral mode slicing provides a dynamical prior, while a shared conditional diffusion corrector uses the current coarser-resolution state to produce a refined posterior at the next finer resolution. We evaluate IR on one-dimensional stochastically forced Burgers dynamics and two-dimensional Kraichnan turbulence. On the challenging 256x256 Kraichnan benchmark, IR achieves an RMSE of 0.184 and an SSIM of 0.836, outperforming spectral upsampling, one-shot diffusion super-resolution, enhanced deep super-resolution, and an autoregressive forecaster. On the more constrained Burgers testbed, IR remains competitive with one-shot diffusion, which achieves the lowest RMSE. These results show that one-shot generative reconstruction can be effective for simpler settings, while hierarchical forecast-analysis refinement becomes advantageous in strongly multiscale and underdetermined regimes. Overall, IR combines temporal priors, generative correction, and multiresolution reconstruction for learned data assimilation in complex physical systems.",
+      "authors": [
+        "Mrigank Dhingra",
+        "Ramchandran Muthukumar",
+        "Rebecca Willett",
+        "Omer San"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "physics.flu-dyn"
+      ],
+      "published": "2026-08-13T22:45:40+00:00",
+      "link": "https://arxiv.org/pdf/2608.14744v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Uses iterative refinement diffusion for super-resolved data assimilation of multiscale physical systems, applicable to fluid flows",
+      "llm_evidence_cn": "利用迭代细化扩散模型进行多尺度物理系统的超分辨率数据同化，可适用于流体流动",
+      "llm_evidence": "利用迭代细化扩散模型进行多尺度物理系统的超分辨率数据同化，可适用于流体流动",
+      "canonical_evidence": "利用迭代细化扩散模型进行多尺度物理系统的超分辨率数据同化，可适用于流体流动",
+      "llm_tldr_en": "Proposes Iterative Refinement Diffusion, a learned data assimilation framework that iteratively recovers high-resolution physical states from coarse observations, combining generative super-resolution with temporal constraints.",
+      "llm_tldr_cn": "针对稀疏低分辨率观测下难以恢复高分辨率物理状态的问题，现有生成式超分通常是一次性映射，未充分利用时间约束。本文提出迭代细化扩散（IR）框架，将数据同化分解为逐分辨率细化步骤，并在每一步中融入历史状态信息。实验表明该方法能更好地重建多尺度物理系统的高分辨率状态。该框架为基于扩散模型的物理场同化与仿真提供了新的途径。",
+      "llm_tldr": "针对稀疏低分辨率观测下难以恢复高分辨率物理状态的问题，现有生成式超分通常是一次性映射，未充分利用时间约束。本文提出迭代细化扩散（IR）框架，将数据同化分解为逐分辨率细化步骤，并在每一步中融入历史状态信息。实验表明该方法能更好地重建多尺度物理系统的高分辨率状态。该框架为基于扩散模型的物理场同化与仿真提供了新的途径。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.16546v1",
+      "source": "arxiv",
+      "title": "Supervising the Path to Fine Scales: GalerkinFlow for Scientific-Field and Image Super-Resolution",
+      "abstract": "Most super-resolution models learn from paired data by supervising only the final high-resolution output. This provides little control over how the prediction should evolve between the downsampled observation and its fine target. We introduce GalerkinFlow, an equation-agnostic framework that turns each coarse--fine pair into supervision along an entire reconstruction path. At a random sample of intermediate states on the reconstruction path, the model predicts the coarse-to-fine residual velocity and uses coarse-anchor point to define a pseudo-endpoint. We show that the reconstruction loss of this pseudo-endpoint is exactly related to the intermediate velocity loss through a known time-dependent weight. Consequently, every intermediate state contributes supervision toward the same fine target, rather than serving only as an internal step toward an endpoint loss. Because intermediate states already reveal part of the missing fine-scale structure, we additionally supervise the coarse endpoint used during one-step inference. A finite-difference objective further constrains local spatial variation. GalerkinFlow combines convolutional features with scale-conditioned Galerkin operator mixing and requires no governing equation or physical metadata. It achieves the lowest raw-space errors among the evaluated equation-agnostic baselines on Navier--Stokes and Darcy Flow, while remaining competitive on DIV2K.",
+      "authors": [
+        "Zikang Zhan"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.CE",
+        "cs.LG"
+      ],
+      "published": "2026-08-17T13:18:58+00:00",
+      "link": "https://arxiv.org/pdf/2608.16546v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "flow-based generative framework for scientific-field super-resolution with coarse-to-fine velocity, applicable to fluid field super-resolution",
+      "llm_evidence_cn": "面向科学场超分辨率的流匹配生成框架，可应用于流场重建与超分辨率",
+      "llm_evidence": "面向科学场超分辨率的流匹配生成框架，可应用于流场重建与超分辨率",
+      "canonical_evidence": "面向科学场超分辨率的流匹配生成框架，可应用于流场重建与超分辨率",
+      "llm_tldr_en": "GalerkinFlow supervises every step along a coarse-to-fine reconstruction path by learning residual velocities, enabling equation-agnostic scientific-field and image super-resolution with controllable evolution between observation and target.",
+      "llm_tldr_cn": "现有超分辨率模型只监督最终高分辨率输出，难以控制重建演化过程。GalerkinFlow将每个粗细样本对转化为重建路径上的监督信号，通过预测残差速度并构造伪端点更新，使每一步都向精细尺度推进。该方法与方程无关，可直接用于科学场与图像超分辨率，为流场生成提供新的生成式监督范式。",
+      "llm_tldr": "现有超分辨率模型只监督最终高分辨率输出，难以控制重建演化过程。GalerkinFlow将每个粗细样本对转化为重建路径上的监督信号，通过预测残差速度并构造伪端点更新，使每一步都向精细尺度推进。该方法与方程无关，可直接用于科学场与图像超分辨率，为流场生成提供新的生成式监督范式。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.12276v1",
+      "source": "arxiv",
+      "title": "XYZFlow:Scaling Multi dimensional Shortcut Flows for Efficient Generative Modeling",
+      "abstract": "High-fidelity image generation faces a trade-off between speed and quality. Diffusion models produce strong visuals but require costly iterative sampling. Existing efficient methods mainly distill pretrained models into few-step samplers, a challenging process that depends heavily on teacher-model quality. In this paper, we introduce XYZFlow, a framework that rethinks efficient generation through multidimensional scaling of flow matching. Unlike single-step mappings, XYZFlow enhances expressivity by making probability paths more identifiable and learnable through structured multidimensional conditioning. We view autoregressive modeling as implicit flow straightening, where richer context reduces trajectory ambiguity. XYZFlow realizes this idea through two orthogonal dimensions: temporal scaling, which uses non-Markovian conditioning on the full denoising history; and spatial scaling, enabled by Next Shortcut Prediction, which sequentially generates patches using preceding patches' denoising trajectories as priors. Experiments show that XYZFlow achieves state-of-the-art performance, with 7.2-8.5X teacher speedups and competitive FID, while Next Shortcut Prediction delivers superior quality-latency trade-offs over model scaling or step reduction.",
+      "authors": [
+        "Jinxiu Liu",
+        "Xuanming Liu",
+        "Kangfu Mei",
+        "Yandong Wen",
+        "Weiyang Liu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-12T17:15:42+00:00",
+      "link": "https://arxiv.org/pdf/2608.12276v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Scaling multi-dimensional shortcut flows for efficient flow matching; transferable to flow matching for fluid simulation",
+      "llm_evidence_cn": "通过多维捷径流扩展流匹配，提出的高效生成建模方法可迁移至流体模拟",
+      "llm_evidence": "通过多维捷径流扩展流匹配，提出的高效生成建模方法可迁移至流体模拟",
+      "canonical_evidence": "通过多维捷径流扩展流匹配，提出的高效生成建模方法可迁移至流体模拟",
+      "llm_tldr_en": "XYZFlow scales flow matching with multidimensional shortcut flows and implicit flow straightening for efficient high-fidelity image generation. The approach strengthens flow matching itself, making it directly relevant to flow-matching methods for fluid simulation, though no fluid experiment is included.",
+      "llm_tldr_cn": "针对扩散模型采样成本高、蒸馏方法依赖教师模型质量的问题，本文提出XYZFlow，通过多维条件扩展流匹配，将自回归建模视为隐式流拉直，使概率路径更易识别和学习。在图像生成上实现了高效高保真采样，缓解了速度与质量的权衡。由于这是对流匹配生成方法本身的改进，因此对面向流体模拟的流匹配方法具有方法学参考价值，但论文未做流体实验。",
+      "llm_tldr": "针对扩散模型采样成本高、蒸馏方法依赖教师模型质量的问题，本文提出XYZFlow，通过多维条件扩展流匹配，将自回归建模视为隐式流拉直，使概率路径更易识别和学习。在图像生成上实现了高效高保真采样，缓解了速度与质量的权衡。由于这是对流匹配生成方法本身的改进，因此对面向流体模拟的流匹配方法具有方法学参考价值，但论文未做流体实验。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.12286v1",
+      "source": "arxiv",
+      "title": "PatternFormer: Learning Multiple Solution Patterns in Reaction--Diffusion Systems",
+      "abstract": "Many nonlinear models across physics, chemistry, and biology exhibit multiple solutions for the same parameters, and capturing this entire solution set is essential for understanding pattern-forming systems. Yet existing learned surrogates are fundamentally single-valued: neural operators map each parameter to a single output, and physics-informed neural networks converge to one branch. We develop \\textbf{PatternFormer} (PF), a large language model-based framework for learning the multiple solutions of nonlinear partial differential equations. By transforming unordered coexisting solutions into canonical sequences, PF produces structured solution sets in a single autoregressive pass, terminating automatically for finite families and enforcing physical residual constraints for unbounded ones. On nonlinear elliptic problems it recovers all solution branches in one inference step; on Gray--Scott it generates coexisting Turing patterns, including physically valid states absent from the reference data and beyond training. PF can also be sequentially fine-tuned across multistable systems, toward general foundation models for solution landscapes.",
+      "authors": [
+        "Zhipeng Chang",
+        "Wenpeng Yin",
+        "Wenrui Hao"
+      ],
+      "primary_category": "math-ph",
+      "categories": [
+        "math-ph"
+      ],
+      "published": "2026-08-12T17:31:38+00:00",
+      "link": "https://arxiv.org/pdf/2608.12286v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Generative LLM-based framework for multiple solutions of PDEs; transferable to fluid dynamics",
+      "llm_evidence_cn": "基于大语言模型的生成式框架学习PDE多解，可迁移至流体动力学",
+      "llm_evidence": "基于大语言模型的生成式框架学习PDE多解，可迁移至流体动力学",
+      "canonical_evidence": "基于大语言模型的生成式框架学习PDE多解，可迁移至流体动力学",
+      "llm_tldr_en": "PatternFormer is an LLM-based generative framework that autoregressively produces canonical sequences of multiple solutions for nonlinear PDEs, addressing the single-output limitation of neural operators. Validated on reaction-diffusion systems, the method can transfer to multiple-solution fluid dynamics problems.",
+      "llm_tldr_cn": "针对非线性PDE存在多解而现有代理模型只能单值输出的问题，本文提出PatternFormer，基于大语言模型将无序共存的解转化为规范序列，并自回归生成完整解集，能自动终止有限解族。在反应-扩散系统中验证了该方法能捕捉全部解集。由于流体动力学同样面临多解/多模式问题，该生成式代理框架可迁移用于流体流动的模式学习与解集生成。",
+      "llm_tldr": "针对非线性PDE存在多解而现有代理模型只能单值输出的问题，本文提出PatternFormer，基于大语言模型将无序共存的解转化为规范序列，并自回归生成完整解集，能自动终止有限解族。在反应-扩散系统中验证了该方法能捕捉全部解集。由于流体动力学同样面临多解/多模式问题，该生成式代理框架可迁移用于流体流动的模式学习与解集生成。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.14743v1",
+      "source": "arxiv",
+      "title": "Generative Learning of Separatrices",
+      "abstract": "The identification and reconstruction of the boundaries separating basins of attraction in multistable, multidimensional dynamical systems presents a fundamental challenge in computational dynamics. These structures govern transition pathways and other important large timescale behavior, yet they remain typically under-sampled since their neighborhood does not get routinely visited during direct simulations. Traditional computational approaches face computational limitations in high-dimensional systems and require a priori knowledge of the dynamical system and its equations. Simplistic sampling methods such as random or uniform sampling of the phase space typically fail to quantitatively approximate separatrices and their structure altogether.   We introduce and implement a framework that combines supervised classification with generative modeling to address this challenge. Our approach first trains neural network classifiers on uniformly or randomly sampled initial conditions labeled by their corresponding basins of attraction in the system of interest. Using uncertainty metrics of the trained classifier to quantify decision boundaries, the method then identifies these high uncertainty regions and boundaries of the classifier as preliminary approximate separatrices. Subsequently, score-based generative models are trained specifically on samples from high-uncertainty regions, ultimately generating densities of samples consistent with the empirical density of samples on or close to the manifold that constitutes the separatrix between basins in the sampled region. This approach leverages the complementary strengths of (a) discriminative models for global phase space partitioning and (b) generative models for detailed geometric sampling, resulting in a systematic, iterative, data-driven framework that produces empirically consistent reconstructions of (approximate) separatrix manifolds.",
+      "authors": [
+        "Ellis R. Crabtree",
+        "Dimitris G. Giovanis",
+        "Anastasia Georgiou",
+        "George Datseris",
+        "Ioannis G. Kevrekidis"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.DS",
+        "stat.ML"
+      ],
+      "published": "2026-08-13T21:37:21+00:00",
+      "link": "https://arxiv.org/pdf/2608.14743v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Generative learning of separatrices in dynamical systems; applicable to fluid transport analysis",
+      "llm_evidence_cn": "生成式学习动力系统中的分界线，可用于流体输运分析",
+      "llm_evidence": "生成式学习动力系统中的分界线，可用于流体输运分析",
+      "canonical_evidence": "生成式学习动力系统中的分界线，可用于流体输运分析",
+      "llm_tldr_en": "This paper proposes a generative learning framework to reconstruct separatrices in multistable dynamical systems. It overcomes the under-sampling of separatrix neighborhoods and the computational limits of traditional approaches, enabling quantitative approximations of basin boundaries in high-dimensional systems without explicit equations.",
+      "llm_tldr_cn": "该文研究多稳态动力系统中分界面的生成式学习与重建问题。由于分界面附近状态在直接数值模拟中很少被访问，传统方法难以精确刻画其几何结构。作者提出一个生成式框架，利用生成模型在数据驱动下重建相空间中的分界面，避免了对系统方程的显式依赖。实验结果证明该方法能定量逼近分界面结构，为高维动力系统及流体输运结构的分析提供了新工具。",
+      "llm_tldr": "该文研究多稳态动力系统中分界面的生成式学习与重建问题。由于分界面附近状态在直接数值模拟中很少被访问，传统方法难以精确刻画其几何结构。作者提出一个生成式框架，利用生成模型在数据驱动下重建相空间中的分界面，避免了对系统方程的显式依赖。实验结果证明该方法能定量逼近分界面结构，为高维动力系统及流体输运结构的分析提供了新工具。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -6,31 +6,35 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-17
-- 运行时间：2026-08-17 20:03:59 UTC
+- 最新运行日期：2026-08-18
+- 运行时间：2026-08-18 20:38:37 UTC
 - 运行状态：成功
-- 本次总论文数：3
+- 本次总论文数：5
 - 精读区：1
-- 速读区：2
+- 速读区：4
 
 ### 今日简报（AI）
-今日精读1篇高分论文，速读2篇，共处理3篇AI4Science方向工作。  
-最值得关注的是《Multiphase-Diff》（9.0分）：扩散模型用于高对比多相物理系统，能清晰生成尖锐界面。  
-下一步建议追踪扩散生成模型在物理模拟中的落地潜力，同时浏览两篇6分论文作背景拓展。
-- 详情：[/202608/17/README](/202608/17/README)
+今日共读5篇论文，精读1篇、速读4篇，聚焦科学场与图像超分辨率及生成建模前沿。最值得关注的是精读论文《Iterative Refinement Diffusion for Super-Resolved Data Assimilation of Multiscale Physical Systems》（8.0分），其将迭代细化扩散用于多尺度物理系统的超分辨率数据同化；速读中的《GalerkinFlow》也值得一瞥，它通过监督路径实现科学场与图像超分辨率。下一步可重点探索扩散模型与物理约束结合的超分方案，兼顾精度与生成效率。
+- 详情：[/202608/18/README](/202608/18/README)
 
 ### 精读区论文标签
-1. [Multiphase-Diff: Diffusion-Based Generative Modeling for High-Contrast Multiphase Physical Systems with Sharp Interfaces](/202608/17/2608.13669v1-multiphase-diff-diffusion-based-generative-modeling-for-high-contrast-multiphase-physical-systems-with-sharp-interfaces)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：基于扩散的生成模型用于高对比度、尖锐界面的多相物理系统，直接对应流体流动模拟
+1. [Iterative Refinement Diffusion for Super-Resolved Data Assimilation of Multiscale Physical Systems](/202608/18/2608.14744v1-iterative-refinement-diffusion-for-super-resolved-data-assimilation-of-multiscale-physical-systems)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：利用迭代细化扩散模型进行多尺度物理系统的超分辨率数据同化，可适用于流体流动
 
 ### 速读区论文标签
-1. [Distillation of Foundation Models for Time-dependent PDEs](/202608/17/2608.11937v1-distillation-of-foundation-models-for-time-dependent-pdes)  
+1. [Supervising the Path to Fine Scales: GalerkinFlow for Scientific-Field and Image Super-Resolution](/202608/18/2608.16546v1-supervising-the-path-to-fine-scales-galerkinflow-for-scientific-field-and-image-super-resolution)  
+   标签：评分：7.0/10、query:genmod-fluid
+   evidence：面向科学场超分辨率的流匹配生成框架，可应用于流场重建与超分辨率
+2. [XYZFlow:Scaling Multi dimensional Shortcut Flows for Efficient Generative Modeling](/202608/18/2608.12276v1-xyzflowscaling-multi-dimensional-shortcut-flows-for-efficient-generative-modeling)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：利用教师模型生成PDE合成轨迹训练紧凑代理模型，与流体动力学的生成式建模相关。
-2. [The Advective Fisher-Rao Geometry of Deterministic Measure Transport](/202608/17/2608.12111v1-the-advective-fisher-rao-geometry-of-deterministic-measure-transport)  
+   evidence：通过多维捷径流扩展流匹配，提出的高效生成建模方法可迁移至流体模拟
+3. [PatternFormer: Learning Multiple Solution Patterns in Reaction--Diffusion Systems](/202608/18/2608.12286v1-patternformer-learning-multiple-solution-patterns-in-reaction--diffusion-systems)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：提出确定性测度输运的平流Fisher-Rao几何，为流匹配方法提供理论基础
+   evidence：基于大语言模型的生成式框架学习PDE多解，可迁移至流体动力学
+4. [Generative Learning of Separatrices](/202608/18/2608.14743v1-generative-learning-of-separatrices)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：生成式学习动力系统中的分界线，可用于流体输运分析
 
 
 <div class="dpr-home-promo-card">

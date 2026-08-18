@@ -1,0 +1,335 @@
+Title: Supervising the Path to Fine Scales: GalerkinFlow for Scientific-Field and Image Super-Resolution
+
+URL Source: https://arxiv.org/pdf/2608.16546v1
+
+Published Time: Tue, 18 Aug 2026 02:06:05 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Supervising the Path to Fine Scales: GalerkinFlow for Scientific-Field and Image Super-Resolution 
+
+# Zikang Zhan 
+
+University College London London, United Kingdom zikang.zhan.22@ucl.ac.uk 
+
+Abstract 
+
+Most super-resolution models learn from paired data by su-pervising only the final high-resolution output. This provides little control over how the prediction should evolve between the downsampled observation and its fine target. We intro-duce GalerkinFlow, an equation-agnostic framework that turns each coarse–fine pair into supervision along an entire recon-struction path. At a random sample of intermediate states on the reconstruction path, the model predicts the coarse-to-fine residual velocity and uses coarse-anchor point to define a pseudo-endpoint. We show that the reconstruction loss of this pseudo-endpoint is exactly related to the intermediate velocity loss through a known time-dependent weight. Consequently, every intermediate state contributes supervision toward the same fine target, rather than serving only as an internal step toward an endpoint loss. Because intermediate states already reveal part of the missing fine-scale structure, we additionally supervise the coarse endpoint used during one-step inference. A finite-difference objective further constrains local spatial variation. GalerkinFlow combines convolutional features with scale-conditioned Galerkin operator mixing and requires no governing equation or physical metadata. It achieves the low-est raw-space errors among the evaluated equation-agnostic baselines on Navier–Stokes and Darcy Flow, while remaining competitive on DIV2K. 
+
+# Introduction 
+
+Super-resolution (SR) is typically framed as a problem of ar-chitectural design and model expressiveness. While image-based methods focus on developing stronger local feature extractors, implicit representations, or generative priors, sci-entific methods often incorporate operator layers, spectral structures, or knowledge of the underlying dynamics. Al-though these directions are valuable, they leave a fundamen-tal question relatively underexplored: how much supervision can actually be extracted from a single paired coarse-and-fine sample? We investigate this question within scientific domains where governing equations and physical metadata are un-available. In our setting, the model receives only a down-sampled field, its paired fine target during training, and a requested scale. It is not provided with differential operators, coefficients, forcing terms, boundary conditions, temporal derivatives, or PDE residuals. While this equation-agnostic setting is more restricted than physics-informed reconstruc-tion, it is broadly applicable: the identical training procedure can be utilized whether the data is simulated, empirically measured, or completely decoupled from its original solver. Most deterministic methods treat a coarse-fine pair merely as a single endpoint constraint. After aligning the coarse observation onto the target grid, they learn the maximum corrective mapping directly from the coarse anchor to the fine target. While this trains the model to match the exact state encountered during inference, it fails to capture how a progressively refined field should behave when part of the missing structure is already present. Numerous endpoint mappings can perfectly fit the observed pairs without estab-lishing a consistent trajectory across partially restored fields. Fundamentally, a direct decoder lacks an explicit restoration state or progress variable upon which a sequential constraint could act. Our foundational observation is that a paired sample de-fines strictly more than its two endpoints. The linear trajec-tory between the coarse anchor and the fine target yields a continuum of partially restored states, and the pair deter-mines the exact residual from each such state back to the fine endpoint. Consequently, GalerkinFlow samples these intermediate states and learns a progress-conditioned resid-ual field. This shifts the training paradigm from enforcing a single terminal constraint per pair to imposing state-residual constraints along a task-relevant trajectory. This formulation does not produce new information; rather, it fully exploits the geometric relationship already embedded within the pair. Unlike noise-to-data generative flows, our source is the deter-ministic coarse observation, rendering the entire restoration path strictly deterministic. Nevertheless, intermediate states must be handled cau-tiously. Except at the strict coarse endpoint ( t = 0 ), any constructed intermediate state inherently leaks partial infor-mation regarding the fine displacement. A model conditioned on both this intermediate state and the coarse anchor could exploit this partial target information as a shortcut. In con-trast, one-step inference during testing begins solely at the coarse endpoint and lacks this advantage. To mitigate this training-inference discrepancy, we retain an explicit coarse-anchor reconstruction objective. Path and endpoint supervi-sion thus play complementary roles: the former constrains the residual field across the restoration progress, while the latter anchors the actual inverse problem at t = 0 . Addi-arXiv:2608.16546v1 [cs.CV] 17 Aug 2026 tionally, a finite-difference loss is applied to constrain spatial variations at the reconstructed endpoint. Notably, none of these terms requires evaluating a governing PDE. We parameterize the residual field using an established local-global architecture. A Residual Dense Network (RDN) encoder (Zhang et al. 2018b) extracts neighborhood-aware features from the coarse anchor, while Galerkin attention (Cao 2021) provides domain-wide mixing using parameters independent of the target grid’s spatial resolution. Scale and target-cell mappings enable this unified model definition to operate across various uniform grids. We do not claim the CNN-Galerkin combination itself as a novelty; SRNO (Wei and Zhang 2023) has successfully applied convolutional en-coders with Galerkin-type operator layers for image SR. In-stead, our core contribution lies in the coarse-anchored path objective built around this backbone. Our primary empirical claims center on scientific recon-struction. On Navier-Stokes and Darcy Flow datasets, Galerk-inFlow improves upon all evaluated equation-agnostic base-lines (including U-Net, FNO, U-NO, and SRNO) across all reported raw-space error metrics at both 2× and 4× scales. Furthermore, we conduct RGB experiments on DIV2K and four transfer datasets as a cross-domain stress test. In these settings, GalerkinFlow obtains strong PSNR and SSIM, while LPIPS reveals a more mixed perceptual comparison with image-specialized baselines. Our contributions are: 
+
+• We formulate each coarse-fine pair as a deterministic path, where intermediate states carry exact endpoint-residual targets. We explicitly relate residual-field error along this restorative path to the one-step endpoint error derived from each sampled state. 
+
+• We introduce a coarse-anchored Galerkin residual-field model that combines pathwise supervision with an ex-plicit t = 0 reconstruction objective. The latter prevents training from relying only on fine structure already ex-posed by intermediate states. 
+
+• We demonstrate comprehensive evaluations across two PDE-field benchmarks and natural RGB images. Galerk-inFlow yields substantial improvements in raw-space PDE accuracy and strong RGB fidelity scores. Concur-rently, the LPIPS results delimit the scope of our claims: perceptual-feature alignment is not uniformly improved by the current objective and backbone. 
+
+# Related Work 
+
+Endpoint Super-Resolution 
+
+Most supervised SR methods learn a direct map from a coarse input to a fine endpoint. U-Net-style encoder–decoders (Ron-neberger, Fischer, and Brox 2015) and RDN residual dense blocks (Zhang et al. 2018b) construct robust local representa-tions. LIIF instead queries local latent codes and coordinates, decoupling the output grid from a fixed pixel-shuffle head (Chen, Liu, and Wang 2021). SwinIR introduces shifted-window transformer blocks to image restoration, remaining a strong image-SR baseline for image SR (Liang et al. 2021). Fundamentally, these methods rely exclusively on paired end-points for training. In scientific data, convolutional networks have similarly reconstructed turbulent fields without plac-ing a governing equation in the network or loss function (Fukami, Fukagata, and Taira 2019). While such methods are equation-agnostic, their standard objectives do not spec-ify how the predictor should behave on partially restored intermediate fields. Neural operators learn mappings between function spaces and can reuse parameters across compatible discretizations (Kovachki et al. 2023). FNO performs global kernel opera-tions in Fourier space (Li et al. 2021), while U-NO uses a U-shaped multiresolution operator to increase depth with con-trolled memory (Rahman, Ross, and Azizzadenesheli 2023). SRNO combines an image encoder with Galerkin-type atten-tion for continuous image SR (Wei and Zhang 2023). More recently, HiNOTE develops a hierarchical Galerkin operator and a frequency-aware loss prior for arbitrary-scale scien-tific SR (Luo, Qian, and Yoon 2024). These works moti-vate resolution-compatible and global architectures. Galerk-inFlow adopts related components but changes the super-vised object from a terminal field to a progress-conditioned endpoint residual field. 
+
+Trajectory-Based Super-Resolution 
+
+Flow matching fits vector fields at sampled states along pre-scribed probability paths (Lipman et al. 2023), while rectified flow studies straight transport and efficient integration (Liu, Gong, and Liu 2023). Functional Flow Matching (FFM) ex-tends this construction to function spaces (Kerrigan, Miglior-ini, and Smyth 2024). Conditional generative models have also represented the multiple fine outputs compatible with a coarse input. SRFlow learns a conditional image distri-bution with a normalizing flow (Lugmayr et al. 2020), and PSRFlow uses a flow-based latent distribution to quantify uncertainty in scientific SR (Shen and Shen 2023). Adap-tive Flow Matching separates deterministic large scales from stochastic small-scale content for weather and Kolmogorov-flow downscaling (Fotiadis et al. 2025). Recent image methods bring trajectory and endpoint con-straints closer together. FlowSR combines rectified flow, con-sistency learning, and explicit high-resolution regularization for one-step image SR (Xu et al. 2025). CTMSR maps points on a probability-flow trajectory to a common output and adds distribution trajectory matching (You et al. 2025). RFMSR starts from a low-quality-centered latent distribution and re-tains velocity supervision while adding end-to-end single-step training (Huang et al. 2026). These works show that path and endpoint supervision have already been success-fully combined for image SR tasks. In contrast, our objective is deterministic and conceptu-ally more constrained. Unlike generative frameworks, our source is strictly the observed coarse field rather than Gaus-sian noise, and we do not employ a teacher model or a distribution-matching loss. The supervised vector-field target is the paired endpoint residual from each sampled interme-diate state. The main experiments use one Euler step from the lifted coarse anchor. During training, intermediate states define additional residual targets along the restoration path, and t strictly denotes restoration progress. Derivative-Aware Supervision 
+
+Pointwise values and spatial derivatives describe different aspects of a field. Sobolev training explores objectives that match function values together with derivatives (Czarnecki et al. 2017). GalerkinFlow uses the simpler finite-difference analogue: adjacent output differences are compared with those of the paired fine target. This term is computed en-tirely from observed samples. It encourages local variation shared by image edges and scientific fields, but it is neither a dimensionally scaled physical-gradient norm nor related to a governing equation. 
+
+# Method 
+
+Problem Setting 
+
+Let xlr ∈ RC×h×w be a C-channel downsampled observa-tion, let s > 1 be the requested scale, and let y ∈ RC×H×W
+
+be the paired fine target. The target dimensions are deter-mined by s and the input grid. Super-resolution learns 
+
+Gθ : RC×h×w × S −→ RC×H×W
+
+(xlr , s ) 7 −→ by (1) Here θ denotes all trainable parameters and S is either one fixed scale or a set of training scales. No differential operator, physical coefficient, forcing, boundary condition, or temporal derivative is supplied to Gθ or its loss. The downsampled observation and target lie on different grids. We apply a fixed lifting operator Us to place the ob-servation on the target grid, 
+
+x0 = Us(xlr ), ds = y − x0, x0 ∈ RC×H×W
+
+(2) where x0 is the coarse anchor and ds is the paired coarse-to-fine displacement. The experiments use bicubic lifting, so it has no trainable parameters. The condition cs denotes the lifted coarse anchor together with four broadcast maps: vertical and horizontal scale val-ues and target-cell sizes 1/H and 1/W . In the network, the coarse anchor is first encoded by an RDN feature ex-tractor, while the scale-cell maps are concatenated directly. Fully convolutional features and Galerkin aggregation keep the learned parameter shapes independent of H and W . This gives architectural support for arbitrary uniform output grids. Generalization to an unseen scale is still an empirical prop-erty and depends on which scales are represented during training. 
+
+Model Architecture 
+
+As shown in Figure 1, the GalerkinFlow combines local con-volutional features with global operator mixing. An RDN encoder maps the lifted coarse anchor x0 to neighborhood-aware features (Zhang et al. 2018b), as illustrated in Figure 2. At every target-grid location, the network concatenates the current state xt, positional encodings, a broadcast time embedding, the encoded features, and the scale conditions. A 1 × 1 convolution lifts this tensor to d hidden channels. The lifted field passes through Galerkin attention blocks (Cao 2021). For one head, let Q, K, V ∈ Rn×dh be query, key, and value arrays over n = HW target locations. After normalizing keys and values, the global association is 
+
+A(Q, K, V) = Q
+
+ KT V
+
+n
+
+
+
+. (3) The multiplication order avoids forming an n×n matrix. One head costs O(nd 2
+
+> h
+
+) rather than O(n2dh). On a uniform grid with locations {ξi}ni=1 , the central matrix has the quadrature form 
+
+KT V
+
+n = 1
+
+n
+
+> n
+
+X
+
+> i=1
+
+k(ξi)T v(ξi) ≃
+
+Z
+
+> Ω
+
+k(ξ)T v(ξ) dμ (ξ). (4) This normalized association has been interpreted as a learned Petrov–Galerkin-type projection (Cao 2021). Coordinates and cell sizes preserve information about the requested dis-cretization, while the learned attention parameters remain defined as the target grid changes. A final projection layer produces the residual field. 
+
+Path-Conditioned Endpoint Residual Field 
+
+Conventional endpoint regression uses (xlr , y) only through a terminal reconstruction loss. We instead define the straight paired path 
+
+xt = (1 − t)x0 + ty = x0 + tds, t ∈ [0 , 1] (5) The parameter t denotes restoration progress. The implemen-tation supervises the residual vector field from each sampled state to the fine endpoint, 
+
+rt = y − xt = (1 − t)ds (6) Thus the learned vector field is endpoint-directed rather than the constant derivative dxt/dt = ds of the linear path: 
+
+vθ (xt, t, cs) ≃ rt (7) At training time, t is sampled uniformly from [0 , 1) , so each pair supplies residual-field constraints at many partially re-stored states. This does not create independent labels; it reuses the same observed pair while changing the state at which the predictor is supervised. This target has a direct one-step reconstruction interpreta-tion. From a sampled state, define 
+
+eyt = xt + vθ (xt, t, cs) (8) Because y = xt + rt,
+
+∥eyt − y∥1 = ∥vθ − rt∥1
+
+∥eyt − y∥22 = ∥vθ − rt∥22
+
+(9) Residual-field regression therefore controls the endpoint pre-dicted from every sampled state. This relation motivates path supervision without claiming that the constructed segment is a physical evolution. The implemented residual field loss is 
+
+Lvf = λ1 E D−1∥vθ − rt∥1
+
+
+
++λ2 E D−1∥vθ − rt∥22
+
+ (10) where λ1 and λ2 denote the coefficients, D = CHW and the arguments of vθ follow Equation 7. Figure 1: The Architecture of GalerkinFlow model. 
+
+ODE Endpoint Reconstruction Loss 
+
+The residual-field loss supervises the direction from sam-pled intermediate states to the paired endpoint. At test time, however, the target endpoint is unknown and the model must recover it only from the coarse anchor. The field loss in Equation 10 provides local residual supervision along the constructed path, but it does not directly penalize the end-point produced by this inference procedure. To align training with inference, we run the same endpoint solver during train-ing and compare its output with the paired target. 
+
+by = x0 + vθ (x0, 0, cs). (11) The implementation evaluates Equation 11 with explicit Eu-ler updates 
+
+x(k+1) = x(k) + ∆ t vθ (x(k), t k, cs). (12) The reconstruction term trains this predicted endpoint with 
+
+Lrec = D−1∥by − y∥1. (13) 
+
+Endpoint Gradient Consistency Loss 
+
+The reconstruction loss aligns the endpoint values pro-duced by the ODE solver with the paired target. For super-resolution, value agreement alone does not explicitly con-strain how neighboring cells or pixels change relative to one another. This matters for image edges and textures, and also for sharp spatial variations in PDE fields. We therefore add a second endpoint-level penalty that compares first-order finite differences of the predicted and target endpoints. Let e = by − y, and let ∆x and ∆y denote adjacent hori-zontal and vertical differences. The endpoint variation term is 
+
+Lgrad = D−1 
+
+> x
+
+∥∆xe∥1 + D−1 
+
+> y
+
+∥∆y e∥1, (14) where Dx and Dy are the corresponding numbers of differ-ences. Pointwise reconstruction controls values, while this term penalizes disagreement between neighboring changes. It follows the motivation of derivative-aware and Sobolev training (Czarnecki et al. 2017), but it is computed on the re-constructed endpoint, does not divide by physical grid spac-ing, and is not a PDE residual. 
+
+Full Training Objective 
+
+The complete training objective is 
+
+L = Lvf + λrec Lrec + λgrad Lgrad . (15) where λrec and λgrad denote the coefficients for the recon-struction and gradient losses. The source, target, and intermediate states are paired and deterministic. GalerkinFlow is therefore a reconstruction model rather than a calibrated conditional generator, and its path is not a trajectory of the PDE that produced the field. 
+
+# Experimental Setup 
+
+Datasets and Protocol 
+
+The controlled PDE benchmark uses fixed-scale specialists at 2× and 4× for every learned method. This separates re-construction accuracy from unseen-scale generalization. The architecture can also be trained across scales, but an arbitrary-scale claim requires a separate protocol with held-out integer and non-integer scales. All experiments are run on Nvidia GH200 GPUs. 
+
+Navier–Stokes (Zappala 2024) The scalar field is stored as trajectories of 64 × 64 frames. Training draws frames from the first 4,000 trajectories. Evaluation uses 1,000 frames from 1,000 held-out trajectories. For 2×, each fine frame is downsampled to 32 ×32 ; for 4×, it is downsampled to 16 ×16 .The coarse field is lifted back to the target grid by the same bicubic operator supplied to every method. 
+
+Darcy Flow (Takamoto et al. 2022) The target scalar field comes from the PDEBench dataset collection and has a non-square 64 ×128 grid. We use the provided train and test splits and evaluate all 1,000 test samples. Coarse observations have resolution 32 × 64 at 2× and 16 × 32 at 4×.Figure 2: Architecture of Residual Dense Networks (RDN). There are skip connections at the end of each dense block, and convolution layers in the block are densely connected to each other. 
+
+RGB images. The in-domain image benchmark uses the DIV2K validation images (Agustsson and Timofte 2017). To test transfer of DIV2K-trained checkpoints, we also evaluate Set5 (Bevilacqua et al. 2012), Set14 (Zeyde, Elad, and Protter 2012), BSD100 (Martin et al. 2001), and Urban100 (Huang, Singh, and Ahuja 2015). The benchmark uses one crop of 
+
+128 × 128 RGB pixels per image. The low-resolution input is generated by bicubic downsampling to 64 × 64 at 2× or 
+
+32 × 32 at 4×, and predictions are compared on the original 
+
+128 × 128 crop. 
+
+Baselines and Implementation 
+
+For PDE fields, we compare with bicubic interpolation, U-Net (Ronneberger, Fischer, and Brox 2015), FNO (Li et al. 2021), U-NO (Rahman, Ross, and Azizzadenesheli 2023), and SRNO (Wei and Zhang 2023). Each learned PDE method has a separately trained checkpoint for the same dataset and scale. The evaluation harness supplies identical raw input– target pairs and maps every prediction back from its training normalization before metrics are accumulated. For RGB images, all learned checkpoints were trained on DIV2K. The baselines are bicubic interpolation, LIIF (Chen, Liu, and Wang 2021), SRNO (Wei and Zhang 2023), RDN (Zhang et al. 2018b), and SwinIR (Liang et al. 2021). The evaluated GalerkinFlow PDE checkpoints use 4Galerkin blocks, 8 heads, and 128 hidden-channel width. The RGB checkpoints use 256 hidden-channel width and 16 heads. Training samples one t per example and uses the loss weights in Equation 15. 
+
+Metrics 
+
+For N samples, raw-space relative L2 is the mean of per-sample ratios 
+
+Rel -L2 = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+∥byi − yi∥2
+
+∥yi∥2
+
+. (16) MSE and MAE are pooled over raw scalar values. Relative L2
+
+is the primary metric because it normalizes field magnitude; MSE and MAE expose squared and absolute pointwise be-havior. For RGB images, PSNR is averaged over the cropped RGB patches, SSIM is computed with data range 1 (Wang et al. 2004), and LPIPS uses VGG features with normalized RGB inputs (Zhang et al. 2018a). Higher PSNR and SSIM are better; lower LPIPS is better. 
+
+# Results and Analysis 
+
+PDE Super-Resolution 
+
+Table 1 shows the strongest evidence for GalerkinFlow. It obtains the lowest raw relative L2, MSE, and MAE on ev-ery PDE dataset and scale. Relative to SRNO, the relative-
+
+L2 reductions are 94.6% on Navier–Stokes 2×, 98.3% on Navier–Stokes 4×, 78.3% on Darcy Flow 2×, and 83.9% on Darcy Flow 4×. The same ordering under squared and absolute pointwise errors indicates that the improvement is not an artifact of one metric. The scale effect differs by baseline. Bicubic and SRNO degrade substantially from 2× to 4×, FNO improves over Navier–Stokes 
+
+Scale Method Rel-L2 MSE MAE 
+
+2× Bicubic 0.015335 1.777 ×10 −4 9.671 ×10 −3
+
+2× U-Net 0.024337 3.831 ×10 −4 1.208 ×10 −2
+
+2× FNO 0.009255 5.817 ×10 −5 5.809 ×10 −3
+
+2× U-NO 0.104592 8.351 ×10 −3 6.811 ×10 −2
+
+2× SRNO 0.006291 3.155 ×10 −5 1.795 ×10 −3
+
+2× GalerkinFlow (ours) 0.000337 8.094 ×10 −8 1.731 ×10 −4
+
+4× Bicubic 0.036574 1.023 ×10 −3 1.977 ×10 −2
+
+4× U-Net 0.026176 4.520 ×10 −4 1.339 ×10 −2
+
+4× FNO 0.030712 6.692 ×10 −4 1.897 ×10 −2
+
+4× U-NO 0.295490 6.066 ×10 −2 1.946 ×10 −1
+
+4× SRNO 0.021681 3.785 ×10 −4 6.709 ×10 −3
+
+4× GalerkinFlow (ours) 0.000365 1.404 ×10 −7 6.321 ×10 −5
+
+Darcy Flow 
+
+Scale Method Rel-L2 MSE MAE 
+
+2× Bicubic 0.011960 3.663 ×10 −5 3.709 ×10 −3
+
+2× U-Net 0.013411 7.624 ×10 −5 4.316 ×10 −3
+
+2× FNO 0.009905 2.727 ×10 −5 3.372 ×10 −3
+
+2× U-NO 0.061559 9.721 ×10 −4 2.039 ×10 −2
+
+2× SRNO 0.004657 6.194 ×10 −6 7.499 ×10 −4
+
+2× GalerkinFlow (ours) 0.001010 8.943 ×10 −7 2.271 ×10 −4
+
+4× Bicubic 0.036394 3.354 ×10 −4 9.192 ×10 −3
+
+4× U-Net 0.020486 1.356 ×10 −4 6.359 ×10 −3
+
+4× FNO 0.023478 1.398 ×10 −4 7.732 ×10 −3
+
+4× U-NO 0.110599 3.137 ×10 −3 3.994 ×10 −2
+
+4× SRNO 0.012141 3.889 ×10 −5 2.434 ×10 −3
+
+4× GalerkinFlow (ours) 0.001949 1.851 ×10 −6 1.884 ×10 −4
+
+Table 1: PDE super-resolution at 2× and 4×.
+
+Scale Method PSNR ↑ SSIM ↑ LPIPS ↓
+
+2× Bicubic 29.86 0.8586 0.1885 
+
+2× SRNO 34.10 0.9300 0.1130 
+
+2× LIIF 33.89 0.9279 0.1157 
+
+2× SwinIR 34.16 0.9313 0.1118 
+
+2× RDN 33.72 0.9264 0.1177 
+
+2× GalerkinFlow (ours) 38.19 0.9410 0.1271 
+
+4× Bicubic 25.73 0.6748 0.3784 
+
+4× SRNO 28.39 0.7810 0.2932 
+
+4× LIIF 28.22 0.7763 0.2984 
+
+4× SwinIR 28.43 0.7825 0.2915 
+
+4× RDN 28.12 0.7723 0.3022 
+
+4× GalerkinFlow (ours) 33.77 0.8228 0.2867 
+
+Table 2: DIV2K RGB super-resolution. bicubic but trails SRNO on all four PDE settings, and U-NO is unstable in these checkpoint evaluations. U-Net im-proves over bicubic at 4× but remains far from GalerkinFlow. GalerkinFlow keeps very small errors at both scales, which is consistent with the coarse-anchored path objective: the model is trained on residual targets from sampled restora-tion states while also being constrained at the actual coarse endpoint used during one-step inference. 
+
+RGB Super-Resolution 
+
+The DIV2K results in Table 2 show that the GalerkinFlow are strong on distortion-oriented RGB metrics. GalerkinFlow obtains the highest PSNR and SSIM at both scales, improving over the best non-GalerkinFlow PSNR by 4.03 dB at 2× and 5.34 dB at 4×. The perceptual metric gives a more mixed view: GalerkinFlow has the lowest LPIPS at 4×, but SwinIR remains better at 2×. Thus the RGB evidence is not only a transfer sanity check, but also supports competitive natural-image reconstruction under this protocol. Table 3 shows that the DIV2K-trained GalerkinFlow checkpoints also transfer well to the four external im-age datasets. GalerkinFlow has the highest PSNR in ev-ery dataset-scale setting, with gains over the best non-GalerkinFlow baseline ranging from 0.27 dB on Set5 to 1.94 dB on Urban100 4×. SSIM is also strongest in most settings, except Set14 4× and Urban100 2×. LPIPS is less uniformly favorable. GalerkinFlow is best on Set5 4×, but image-specialized baselines especially SwinIR, remain stronger on several validation cases. 
+
+# Ablation Study 
+
+Table 4 shows a consistent improvement as the two endpoint-level objectives are added on Navier–Stokes 2×. Relative to vector-field supervision alone, adding endpoint reconstruc-tion reduces Rel-L2, MSE, and MAE by 51.8%, 78.7%, and 52.1%, respectively. This supports the role of Lrec in anchor-ing training to the coarse state encountered by the ODE solver at inference. Adding gradient consistency yields a further re-duction of 68.5%, 88.8%, and 60.4% over the no-gradient variant, giving the full objective the lowest error under all three metrics. Thus, in this setting, residual-field supervision establishes the restoration direction, endpoint reconstruction constrains the integrated solution, and gradient consistency provides complementary control of local spatial variation. All tables report one-step reconstruction from the lifted coarse anchor. Intermediate path states enlarge the supervised region during training, but they are not additional inference iterations in these results. The same learned field can be evaluated with more Euler intervals, yet that changes the compute budget and should be considered as an accuracy– cost tradeoff. The PDE and RGB outcomes also clarify where the cur-rent backbone matters. On PDE fields, the CNN–Galerkin residual-field model and coarse-anchored objective are eval-uated in the same scalar raw space used to train the check-points, and the gains are large across every error metric. On RGB images, the same design now gives strong PSNR and SSIM, but LPIPS shows that perceptual-feature align-ment remains less consistently improved than pointwise fi-delity. This split motivates future work on lighter image-specialized residual-field models, explicit perceptual objec-tives, and parameter-matched PDE retraining before attribut-ing all gains to any single architectural component. Scale Method Set5 Set14 BSD100 Urban100                                                             
+
+> 2×Bicubic 33.27/0.910/0.135 28.39/0.842/0.182 27.09/0.813/0.208 25.03/0.779/0.206
+> 2×SRNO 38.20/0.943/0.079 31.91/0.903/0.120 30.18/0.889/0.146 31.31/0.913/0.101
+> 2×LIIF 38.00/0.942/0.080 31.75/0.900/0.122 30.09/0.887/0.147 30.93/0.906/0.106
+> 2×SwinIR 38.22/0.943/ 0.078 31.92/0.903/ 0.118 30.20/0.889/ 0.146 31.49/ 0.913 /0.100
+> 2×RDN 38.06/0.943/0.081 31.64/0.899/0.124 30.03/0.886/0.149 30.55/0.900/0.110
+> 2×GalerkinFlow (ours) 38.49 /0.967 /0.084 32.87 /0.904 /0.120 31.44 /0.890 /0.155 31.91 /0.909/0.121
+> 4×Bicubic 28.28/0.797/0.261 24.37/0.656/0.343 23.47/0.603/0.401 21.52/0.558/0.405
+> 4×SRNO 33.26/0.888/0.189 27.31/0.765/0.265 25.48/0.702/0.338 25.19/0.729/0.276
+> 4×LIIF 33.16/0.886/0.190 27.23/0.763/0.268 25.40/0.698/0.341 25.01/0.721/0.284
+> 4×SwinIR 33.28/0.888/0.192 27.36/ 0.767 /0.264 25.48/0.702/ 0.337 25.29/0.735/ 0.269
+> 4×RDN 33.02/0.885/0.192 27.22/0.762/0.270 25.33/0.694/0.345 24.69/0.709/0.293
+> 4×GalerkinFlow (ours) 33.55 /0.913 /0.189 28.12 /0.755/0.283 27.03 /0.707 /0.349 27.23 /0.755 /0.295
+
+Table 3: Validation dataset of DIV2K-trained RGB checkpoints to Set5, Set14, BSD100, and Urban100. Each entry is PSNR/S-SIM/LPIPS. Higher PSNR/SSIM and lower LPIPS are better.              
+
+> Losses Rel-L2raw MSE raw MAE raw Vector field + rec + grad 3.369 ×10 −48.094 ×10 −81.731 ×10 −4
+> Vector field + rec 1.068 ×10 −37.255 ×10 −74.374 ×10 −4
+> Vector field only 2.215 ×10 −33.407 ×10 −69.129 ×10 −4
+
+Table 4: Loss ablation on Navier–Stokes 2×.
+
+# Conclusion 
+
+This work investigated how much supervision can be ex-tracted from a paired coarse–fine sample beyond conven-tional endpoint regression. GalerkinFlow interprets each pair as a deterministic restoration path and trains a scale-conditioned residual field at sampled intermediate states, where the exact target is the remaining displacement to the fine endpoint. The pathwise objective is complemented by ODE endpoint reconstruction from the coarse anchor actually encountered at inference and by finite-difference consistency at the reconstructed endpoint. Together, these terms connect intermediate-state supervision, final-value accuracy, and lo-cal spatial variation without requiring a governing equation, physical coefficients, or solver metadata. A CNN encoder and Galerkin operator backbone provide the local feature ex-traction and global mixing needed to realize this objective on both scientific fields and RGB images. Fresh checkpoint evaluations establish the strongest evi-dence on scientific super-resolution. GalerkinFlow achieves the lowest Rel-L2, MSE, and MAE among the evalu-ated equation-agnostic baselines on both Navier–Stokes and Darcy Flow at 2× and 4×. The Navier–Stokes 2× ablation further shows a consistent progression: endpoint reconstruc-tion improves over vector-field supervision alone, and gradi-ent consistency improves all three errors again. GalerkinFlow also obtains the highest PSNR and SSIM on DIV2K at both scales and the highest PSNR across all reported Set5, Set14, BSD100, and Urban100 transfer settings. LPIPS is less uni-form, with image-specialized models retaining an advantage in several cases, so the evidence is strongest for distortion-oriented fidelity rather than perceptual-feature alignment. Taken together, these results support a supervision prin-ciple: a paired endpoint does not provide only one training constraint, but determines a continuum of endpoint-directed residual targets along a task-relevant path. Exploiting this structure can constrain how reconstruction behaves before reaching the endpoint while the explicit coarse-anchor loss preserves alignment with one-step inference. The contribu-tion is therefore neither a new physical solver nor a condi-tional generative model; it is an equation-agnostic way to organize supervision already contained in paired data. This perspective is especially useful when only low-resolution observations are available and the equations or acquisition process are unknown. Several limitations define the next steps. The current benchmarks use dataset-specific checkpoints, and most use scale-specific checkpoints, so they do not show arbitrary-scale reconstruction with one shared model. Though Galerk-inFLow can query one checkpoint on arbitrary uniform target scales, the accuracy is decreased. The loss ablation covers only Navier–Stokes at 2×, and therefore does not establish universal loss weights. Moreover, the constructed path is not a physical trajectory, the finite-difference term is not a PDE residual, and no conservation law or boundary condi-tion is guaranteed. Future work should evaluate shared-scale checkpoints, and perceptual objectives, parameter-matched backbones, and physically constrained variants, while also quantifying the accuracy–cost tradeoff of multi-step ODE integration. 
+
+# References 
+
+Agustsson, E.; and Timofte, R. 2017. NTIRE 2017 Challenge on Single Image Super-Resolution: Dataset and Study. In 
+
+Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition Workshops , 126–135. Bevilacqua, M.; Roumy, A.; Guillemot, C.; and Alberi-Morel, M. L. 2012. Low-Complexity Single-Image Super-Resolution Based on Nonnegative Neighbor Embedding. In 
+
+Proceedings of the British Machine Vision Conference .Cao, S. 2021. Choose a Transformer: Fourier or Galerkin. In Advances in Neural Information Processing Systems , vol-ume 34. Chen, Y.; Liu, S.; and Wang, X. 2021. Learning Continuous Image Representation with Local Implicit Image Function. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 8628–8638. Czarnecki, W. M.; Osindero, S.; Jaderberg, M.; Swirszcz, G.; and Pascanu, R. 2017. Sobolev Training for Neural Networks. In Advances in Neural Information Processing Systems , volume 30. Fotiadis, S.; Brenowitz, N. D.; Geffner, T.; Cohen, Y.; Pritchard, M.; Vahdat, A.; and Mardani, M. 2025. Adaptive Flow Matching for Resolving Small-Scale Physics. In Pro-ceedings of the 42nd International Conference on Machine Learning , volume 267 of Proceedings of Machine Learning Research , 17489–17521. PMLR. Fukami, K.; Fukagata, K.; and Taira, K. 2019. Super-Resolution Reconstruction of Turbulent Flows with Machine Learning. Journal of Fluid Mechanics , 870: 106–120. Huang, J.-B.; Singh, A.; and Ahuja, N. 2015. Single Im-age Super-Resolution from Transformed Self-Exemplars. In 
+
+Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition , 5197–5206. Huang, S.; Luo, T.; Liu, J.; Liu, D.; and Zhou, P. 2026. RFMSR: Residual Flow Matching for Image Super-Resolution. arXiv:2607.12753. Kerrigan, G.; Migliorini, G.; and Smyth, P. 2024. Functional Flow Matching. In Proceedings of the 27th International Conference on Artificial Intelligence and Statistics , volume 238 of Proceedings of Machine Learning Research , 3934– 3942. PMLR. Kovachki, N. B.; Li, Z.; Liu, B.; Azizzadenesheli, K.; Bhat-tacharya, K.; Stuart, A. M.; and Anandkumar, A. 2023. Neu-ral Operator: Learning Maps Between Function Spaces with Applications to PDEs. Journal of Machine Learning Re-search , 24(89): 1–97. Li, Z.; Kovachki, N.; Azizzadenesheli, K.; Liu, B.; Bhat-tacharya, K.; Stuart, A.; and Anandkumar, A. 2021. Fourier Neural Operator for Parametric Partial Differential Equa-tions. In International Conference on Learning Representa-tions .Liang, J.; Cao, J.; Sun, G.; Zhang, K.; Van Gool, L.; and Timofte, R. 2021. SwinIR: Image Restoration Using Swin Transformer. In Proceedings of the IEEE/CVF International Conference on Computer Vision Workshops , 1833–1844. Lipman, Y.; Chen, R. T. Q.; Ben-Hamu, H.; Nickel, M.; and Le, M. 2023. Flow Matching for Generative Modeling. In 
+
+International Conference on Learning Representations .Liu, X.; Gong, C.; and Liu, Q. 2023. Flow Straight and Fast: Learning to Generate and Transfer Data with Rectified Flow. In International Conference on Learning Representations .Lugmayr, A.; Danelljan, M.; Van Gool, L.; and Timofte, R. 2020. SRFlow: Learning the Super-Resolution Space with Normalizing Flow. In European Conference on Computer Vision .Luo, X.; Qian, X.; and Yoon, B.-J. 2024. Hierarchical Neu-ral Operator Transformer with Learnable Frequency-Aware Loss Prior for Arbitrary-Scale Super-Resolution. In Pro-ceedings of the 41st International Conference on Machine Learning , volume 235 of Proceedings of Machine Learning Research , 33466–33485. PMLR. Martin, D.; Fowlkes, C.; Tal, D.; and Malik, J. 2001. ADatabase of Human Segmented Natural Images and Its Ap-plication to Evaluating Segmentation Algorithms and Mea-suring Ecological Statistics. In Proceedings of the IEEE International Conference on Computer Vision , volume 2, 416–423. Rahman, M. A.; Ross, Z. E.; and Azizzadenesheli, K. 2023. U-NO: U-Shaped Neural Operators. Transactions on Ma-chine Learning Research .Ronneberger, O.; Fischer, P.; and Brox, T. 2015. U-Net: Convolutional Networks for Biomedical Image Segmenta-tion. In Medical Image Computing and Computer-Assisted Intervention , 234–241. Shen, J.; and Shen, H.-W. 2023. PSRFlow: Probabilistic Su-per Resolution with Flow-Based Models for Scientific Data. arXiv:2308.04605. Takamoto, M.; Praditia, T.; Leiteritz, R.; MacKinlay, D.; Alesiani, F.; Pflüger, D.; and Niepert, M. 2022. PDEBench Datasets. DaRUS .Wang, Z.; Bovik, A. C.; Sheikh, H. R.; and Simoncelli, E. P. 2004. Image Quality Assessment: From Error Visibility to Structural Similarity. IEEE Transactions on Image Process-ing , 13(4): 600–612. Wei, M.; and Zhang, X. 2023. Super-Resolution Neural Operator. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 18247–18256. Xu, J.; Li, W.; Sun, H.; Li, F.; Wang, Z.; Peng, L.; Ren, J.; Yang, H.; Hu, X.; Pei, R.; and Heng, P.-A. 2025. Fast Image Super-Resolution via Consistency Rectified Flow. In 
+
+Proceedings of the IEEE/CVF International Conference on Computer Vision , 11755–11765. You, W.; Zhang, M.; Zhang, L.; Zhou, X.; Shi, K.; and Gu, S. 2025. Consistency Trajectory Matching for One-Step Gener-ative Super-Resolution. In Proceedings of the IEEE/CVF In-ternational Conference on Computer Vision , 12747–12756. Zappala, E. 2024. Navier_Stokes_Dataset.mat. Figshare .Zeyde, R.; Elad, M.; and Protter, M. 2012. On Single Im-age Scale-Up Using Sparse-Representations. In Curves and Surfaces , 711–730. Zhang, R.; Isola, P.; Efros, A. A.; Shechtman, E.; and Wang, O. 2018a. The Unreasonable Effectiveness of Deep Features as a Perceptual Metric. In Proceedings of the IEEE Confer-ence on Computer Vision and Pattern Recognition , 586–595. Zhang, Y.; Tian, Y.; Kong, Y.; Zhong, B.; and Fu, Y. 2018b. Residual Dense Network for Image Super-Resolution. In 
+
+Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition , 2472–2481.
