@@ -1,0 +1,54 @@
+{
+  "label": "2026-08-19",
+  "date": "2026-08-19",
+  "generated_at": "2026-08-19T19:30:17",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202608/19/2608.18004v1-composing-flow-matching-energies-with-known-physics-generation-ood-detection-and-inversion-on-pde-fields",
+      "section": "deep",
+      "title_en": "Composing Flow-Matching Energies with Known Physics: Generation, OOD Detection, and Inversion on PDE Fields",
+      "authors": "Yixuan Sun, Anirban Samaddar, Sandeep Madireddy",
+      "date": "2026-08-18",
+      "pdf": "https://arxiv.org/pdf/2608.18004v1",
+      "score": "9.0",
+      "evidence": "流匹配模型直接用于PDE/物理场，可覆盖流体控制方程",
+      "tldr": "针对物理场概率建模中数据驱动与已知物理结构难以结合的问题，本文利用流匹配模型得到显式能量函数，其梯度等价于学习到的分数，并恢复边际负对数密度。该能量支持MCMC采样器进行能量校正生成、OOD检测和反问题后验采样，实验证明能降低PDE残差和谱距离，提升OOD检测准确率。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Probabilistic modeling of physical fields benefits from both a data-driven prior and known physical structure such as the governing equations. Energy-based models (EBMs) are a natural fit since energies compose additively, which enables augmenting physics information during inference. However, EBMs have been difficult to train and sample from due to the intractable partition function. We show in this work that flow matching models with a potential-induced velocity yield an explicit scalar energy at all transport times, whose gradient is exactly the converted learned score and which recovers the marginal negative log-density at the population optimum. The time-dependent energy functions are obtained purely from the matching regression objective on an independent linear Gaussian interpolation, without a variational form or additional MCMC steps, and the sampling retains the flow ODE. Access to the energy function from a trained model serves three roles: energy-corrected data generation, energy as a scoring function for out-of-distribution (OOD) detection, and energy compositional posterior sampling for inverse problems. In particular, we show the explicit energy permits general MCMC samplers in the predictor-corrector sampling framework, reducing PDE residual and spectral distance compared to the flow ODE baseline. Furthermore, we demonstrate utilizing the data energy and physics-based energy (e.g., PDE residuals) as complementary mechanisms to improve detection accuracy for OOD tasks. In addition, we explore the connection to MCMC-based inference for inverse problems by composing the energy with a quadratic observational likelihood that yields a posterior energy, used as an explicitly chosen family of inference-time targets.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/19/2608.12438v1-unifying-generative-models-with-path-integrals",
+      "section": "quick",
+      "title_en": "Unifying Generative Models with Path Integrals",
+      "authors": "Ramon Winterhalder",
+      "date": "2026-08-12",
+      "pdf": "https://arxiv.org/pdf/2608.12438v1",
+      "score": "7.0",
+      "evidence": "用路径积分统合流式、扩散、变分与对抗生成模型，与扩散和基于分数的生成方法直接相关",
+      "tldr": "生成建模中流、扩散、变分和对抗等方法各异，缺乏统一理论。本文提出基于路径积分的统一框架，利用MSRJD形式将概率流分离为自由与相互作用部分，并引入微扰论展开。该展开给出确定性采样器的一圈修正，无需随机采样成本，在实验中把树级误差从53%降到1.6%。还推导出响应加权得分匹配目标及对称等变漂移的EFT算子设计，为生成模型提供统一可微扰的理论范式。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We formulate generative modeling as a path integral in which flow-based, diffusion-based, variational, and adversarial models arise as different evaluation principles for a single master action. Its Martin-Siggia-Rose-Janssen-de~Dominicis (MSRJD) form separates free from interacting probability flows and opens them to diagrammatic perturbation theory. The expansion yields a one-loop correction to deterministic samplers at no stochastic-sampling cost, which we validate on solvable and nonlinear drifts, where it reduces a 53 % tree-level error to 1.6 %. Imperfect learned scores enter as insertions and yield a response-weighted score-matching objective, and symmetry-equivariant drift design becomes an operator expansion with EFT power counting.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/19/2608.11572v1-recast-a-machine-learning-framework-for-correction-and-super-resolution-of-coarse-grid-pde-solvers",
+      "section": "quick",
+      "title_en": "RECAST: A Machine-Learning Framework for Correction and Super-Resolution of Coarse-Grid PDE Solvers",
+      "authors": "Maryam Reza, Farbod Faraji",
+      "date": "2026-08-12",
+      "pdf": "https://arxiv.org/pdf/2608.11572v1",
+      "score": "6.0",
+      "evidence": "用于粗网格PDE求解器修正与超分辨率的机器学习框架，与流体动力学相关",
+      "tldr": "粗网格求解器可大幅降低时间相关偏微分方程的模拟成本，但网格欠解析常使轨迹与空间保真度退化。RECAST是一种机器学习框架，通过递归误差校正嵌入数值时间步进循环，并利用校正后的粗网格历史重建细网格状态，同时保留粗网格演化效率。在六个一维PDE系统（输运、扩散、色散、反应、波动）上，以8-16倍粗化和1000步闭环测试，时间平均相对误差降低约50-92%，且对未见参数泛化良好。该工作为高维科学与工程模拟的机器学习加速提供了概念验证。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Coarse-grid numerical solvers can substantially reduce the computational cost of time-dependent PDE simulation, but under-resolution often degrades both the trajectory and the spatial fidelity of the solution. We introduce RECAST (Recurrent Error Correction And Super-resolution of coarse-grid Trajectories), a machine-learning framework designed to restore this lost accuracy while retaining coarse-grid evolution. RECAST combines learned correction within the numerical time-stepping loop with reconstruction of the corresponding fine-grid state from the corrected coarse history. We evaluate the framework on six one-dimensional PDE systems spanning transport, diffusion, dispersion, reaction, and wave dynamics, using spatial grids coarsened by factors of 8-16 and 1000-step closed-loop rollouts from unseen initial conditions. Across the test cases, RECAST remains closely aligned with the fine-grid reference solutions and reduces time-averaged relative error by approximately 50-92% compared with the corresponding uncorrected coarse-grid solvers. Additional tests show generalization to unseen PDE parameter values, while comparison with a contemporary coarse-correction architecture shows that RECAST achieves lower error and better long-horizon agreement with the fine-grid reference over 5000-step rollouts. These results demonstrate that the learned correction and reconstruction capabilities of RECAST can enable substantially coarser PDE evolution without the corresponding loss of solution fidelity, providing a proof-of-concept route toward machine-learning acceleration of higher-dimensional numerical simulations across science and engineering.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

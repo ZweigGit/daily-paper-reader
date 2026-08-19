@@ -1,0 +1,129 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-19T19:26:33.036888+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2608.18004v1",
+      "source": "arxiv",
+      "title": "Composing Flow-Matching Energies with Known Physics: Generation, OOD Detection, and Inversion on PDE Fields",
+      "abstract": "Probabilistic modeling of physical fields benefits from both a data-driven prior and known physical structure such as the governing equations. Energy-based models (EBMs) are a natural fit since energies compose additively, which enables augmenting physics information during inference. However, EBMs have been difficult to train and sample from due to the intractable partition function. We show in this work that flow matching models with a potential-induced velocity yield an explicit scalar energy at all transport times, whose gradient is exactly the converted learned score and which recovers the marginal negative log-density at the population optimum. The time-dependent energy functions are obtained purely from the matching regression objective on an independent linear Gaussian interpolation, without a variational form or additional MCMC steps, and the sampling retains the flow ODE. Access to the energy function from a trained model serves three roles: energy-corrected data generation, energy as a scoring function for out-of-distribution (OOD) detection, and energy compositional posterior sampling for inverse problems. In particular, we show the explicit energy permits general MCMC samplers in the predictor-corrector sampling framework, reducing PDE residual and spectral distance compared to the flow ODE baseline. Furthermore, we demonstrate utilizing the data energy and physics-based energy (e.g., PDE residuals) as complementary mechanisms to improve detection accuracy for OOD tasks. In addition, we explore the connection to MCMC-based inference for inverse problems by composing the energy with a quadratic observational likelihood that yields a posterior energy, used as an explicitly chosen family of inference-time targets.",
+      "authors": [
+        "Yixuan Sun",
+        "Anirban Samaddar",
+        "Sandeep Madireddy"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "physics.comp-ph"
+      ],
+      "published": "2026-08-18T16:53:08+00:00",
+      "link": "https://arxiv.org/pdf/2608.18004v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "flow matching models explicitly applied to PDE/physics fields, includes fluid-relevant governing equations",
+      "llm_evidence_cn": "流匹配模型直接用于PDE/物理场，可覆盖流体控制方程",
+      "llm_evidence": "流匹配模型直接用于PDE/物理场，可覆盖流体控制方程",
+      "canonical_evidence": "流匹配模型直接用于PDE/物理场，可覆盖流体控制方程",
+      "llm_tldr_en": "Flow-matching models with potential-induced velocity yield explicit scalar energies whose gradients are learned scores, enabling additive composition of physics at inference for generation, OOD detection, and inversion on PDE fields.",
+      "llm_tldr_cn": "该工作针对物理场概率建模中难以同时利用数据驱动先验与已知物理结构的问题，提出将流匹配模型与能量基模型结合：利用势诱导速度的流匹配模型在任意传输时间给出显式标量能量，其梯度即学习得分。由此可在推理时以加法形式融入物理信息，完成PDE场上的生成、分布外检测与反演任务。该工作为科学计算中的生成建模提供了可组合物理知识的新框架。",
+      "llm_tldr": "该工作针对物理场概率建模中难以同时利用数据驱动先验与已知物理结构的问题，提出将流匹配模型与能量基模型结合：利用势诱导速度的流匹配模型在任意传输时间给出显式标量能量，其梯度即学习得分。由此可在推理时以加法形式融入物理信息，完成PDE场上的生成、分布外检测与反演任务。该工作为科学计算中的生成建模提供了可组合物理知识的新框架。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.12438v1",
+      "source": "arxiv",
+      "title": "Unifying Generative Models with Path Integrals",
+      "abstract": "We formulate generative modeling as a path integral in which flow-based, diffusion-based, variational, and adversarial models arise as different evaluation principles for a single master action. Its Martin-Siggia-Rose-Janssen-de~Dominicis (MSRJD) form separates free from interacting probability flows and opens them to diagrammatic perturbation theory. The expansion yields a one-loop correction to deterministic samplers at no stochastic-sampling cost, which we validate on solvable and nonlinear drifts, where it reduces a 53 % tree-level error to 1.6 %. Imperfect learned scores enter as insertions and yield a response-weighted score-matching objective, and symmetry-equivariant drift design becomes an operator expansion with EFT power counting.",
+      "authors": [
+        "Ramon Winterhalder"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "hep-ph",
+        "stat.ML"
+      ],
+      "published": "2026-08-12T14:52:25+00:00",
+      "link": "https://arxiv.org/pdf/2608.12438v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Theoretical unification of flow-based, diffusion, variational, and adversarial generative models with path integrals; directly relevant to diffusion and score-based generative methods",
+      "llm_evidence_cn": "用路径积分统合流式、扩散、变分与对抗生成模型，与扩散和基于分数的生成方法直接相关",
+      "llm_evidence": "用路径积分统合流式、扩散、变分与对抗生成模型，与扩散和基于分数的生成方法直接相关",
+      "canonical_evidence": "用路径积分统合流式、扩散、变分与对抗生成模型，与扩散和基于分数的生成方法直接相关",
+      "llm_tldr_en": "This paper formulates generative modeling as a path integral, unifying flow-based, diffusion, variational, and adversarial models under one action. It derives one-loop corrections and a response-weighted score-matching objective, offering a theoretical foundation that can be applied to generative models for fluid flow.",
+      "llm_tldr_cn": "该论文将生成建模表示为路径积分，使基于流、扩散、变分和对抗的生成模型成为单一主行动的等价评价原则。其MSRJD形式分离自由与相互作用概率流，并发展出图微扰理论，给出无随机采样成本的一环修正，在非线性漂移上使误差从53%降至1.6%。该理论还为不完美学习分数提供了响应加权分数匹配目标，为包括流体动力学在内的生成式建模奠定了更坚实的基础。",
+      "llm_tldr": "该论文将生成建模表示为路径积分，使基于流、扩散、变分和对抗的生成模型成为单一主行动的等价评价原则。其MSRJD形式分离自由与相互作用概率流，并发展出图微扰理论，给出无随机采样成本的一环修正，在非线性漂移上使误差从53%降至1.6%。该理论还为不完美学习分数提供了响应加权分数匹配目标，为包括流体动力学在内的生成式建模奠定了更坚实的基础。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.11572v1",
+      "source": "arxiv",
+      "title": "RECAST: A Machine-Learning Framework for Correction and Super-Resolution of Coarse-Grid PDE Solvers",
+      "abstract": "Coarse-grid numerical solvers can substantially reduce the computational cost of time-dependent PDE simulation, but under-resolution often degrades both the trajectory and the spatial fidelity of the solution. We introduce RECAST (Recurrent Error Correction And Super-resolution of coarse-grid Trajectories), a machine-learning framework designed to restore this lost accuracy while retaining coarse-grid evolution. RECAST combines learned correction within the numerical time-stepping loop with reconstruction of the corresponding fine-grid state from the corrected coarse history. We evaluate the framework on six one-dimensional PDE systems spanning transport, diffusion, dispersion, reaction, and wave dynamics, using spatial grids coarsened by factors of 8-16 and 1000-step closed-loop rollouts from unseen initial conditions. Across the test cases, RECAST remains closely aligned with the fine-grid reference solutions and reduces time-averaged relative error by approximately 50-92% compared with the corresponding uncorrected coarse-grid solvers. Additional tests show generalization to unseen PDE parameter values, while comparison with a contemporary coarse-correction architecture shows that RECAST achieves lower error and better long-horizon agreement with the fine-grid reference over 5000-step rollouts. These results demonstrate that the learned correction and reconstruction capabilities of RECAST can enable substantially coarser PDE evolution without the corresponding loss of solution fidelity, providing a proof-of-concept route toward machine-learning acceleration of higher-dimensional numerical simulations across science and engineering.",
+      "authors": [
+        "Maryam Reza",
+        "Farbod Faraji"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "physics.comp-ph"
+      ],
+      "published": "2026-08-12T02:30:49+00:00",
+      "link": "https://arxiv.org/pdf/2608.11572v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "ML framework for correction and super-resolution of coarse-grid PDE solvers, relevant to fluid dynamics",
+      "llm_evidence_cn": "用于粗网格PDE求解器修正与超分辨率的机器学习框架，与流体动力学相关",
+      "llm_evidence": "用于粗网格PDE求解器修正与超分辨率的机器学习框架，与流体动力学相关",
+      "canonical_evidence": "用于粗网格PDE求解器修正与超分辨率的机器学习框架，与流体动力学相关",
+      "llm_tldr_en": "RECAST combines learned correction inside numerical time-stepping and super-resolution from coarse history to restore accuracy of coarse-grid PDE simulations at low cost.",
+      "llm_tldr_cn": "该论文提出RECAST框架，针对粗网格PDE求解器计算快但精度低的问题，在学习误差修正的同时从修正后的粗历史重建细网格状态。该框架在六个一维PDE系统（包括输运、扩散、波动等）上验证，能显著恢复精度。它将机器学习嵌入数值求解循环，为高效高保真流体模拟提供了新途径。",
+      "llm_tldr": "该论文提出RECAST框架，针对粗网格PDE求解器计算快但精度低的问题，在学习误差修正的同时从修正后的粗历史重建细网格状态。该框架在六个一维PDE系统（包括输运、扩散、波动等）上验证，能显著恢复精度。它将机器学习嵌入数值求解循环，为高效高保真流体模拟提供了新途径。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

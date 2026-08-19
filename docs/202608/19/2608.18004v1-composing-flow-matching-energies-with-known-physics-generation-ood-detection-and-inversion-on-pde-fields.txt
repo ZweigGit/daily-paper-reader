@@ -1,0 +1,808 @@
+Title: Composing Flow-Matching Energies with Known Physics: Generation, OOD Detection, and Inversion on PDE Fields
+
+URL Source: https://arxiv.org/pdf/2608.18004v1
+
+Published Time: Wed, 19 Aug 2026 01:13:55 GMT
+
+Number of Pages: 16
+
+Markdown Content:
+# Composing Flow-Matching Energies with Known Physics: Generation, OOD Detection, and Inversion on PDE Fields 
+
+## Yixuan Sun 1, ∗, Anirban Samaddar 1, Sandeep Madireddy 1
+
+> 1
+
+Mathematics and Computer Science, Argonne National Laboratory 
+
+Abstract 
+
+Probabilistic modeling of physical fields benefits from both a data-driven prior and known physical structure such as the governing equations. Energy-based models (EBMs) are a natural fit since energies compose additively, which enables augmenting physics information during inference. However, EBMs have been difficult to train and sample from due to the intractable partition function. We show in this work that flow matching models with a potential-induced velocity yield an explicit scalar energy at all transport times, whose gradient is exactly the converted learned score and which recovers the marginal negative log-density at the population optimum. The time-dependent energy functions are obtained purely from the matching regression objective on an independent linear Gaus-sian interpolation, without a variational form or additional MCMC steps, and the sampling retains the flow ODE. Access to the energy function from a trained model serves three roles: energy-corrected data generation, energy as a scoring function for out-of-distribution (OOD) detection, and energy composi-tional posterior sampling for inverse problems. In particular, we show the explicit energy permits general MCMC samplers in the predictor-corrector sampling framework, reducing PDE residual and spectral distance compared to the flow ODE base-line. Furthermore, we demonstrate utilizing the data energy and physics-based energy (e.g., PDE residuals) as comple-mentary mechanisms to improve detection accuracy for OOD tasks. In addition, we explore the connection to MCMC-based inference for inverse problems by composing the energy with a quadratic observational likelihood that yields a posterior energy, used as an explicitly chosen family of inference-time targets. 
+
+## Introduction 
+
+Flow matching models (Lipman et al. 2022; Tong et al. 2023) have been widely used for high-dimensional data generation, including natural images as well as scientific data. In scien-tific machine learning, flow matching models not only pro-duce accurate solution fields for various PDE problems but also provide uncertainty quantification through sampling-based predictions (Li, Zhou, and Farimani 2025; Chen and Deng 2026; Kerrigan, Migliorini, and Smyth 2023). How-ever, beyond unconditional or conditional generation, other scientific tasks, such as out-of-distribution (OOD) detection, model composition, and inverse problems, often require ad-ditional machinery at inference time: flow matching allows exact likelihood computation but only through expensive 
+
+> ∗
+
+Corresponding author: yixuan.sun@anl.gov Data on true negative log density 
+
+> ODE samples on learned energy
+> low high
+
+Figure 1: Energy landscapes and flow generated samples of 2D datasets from potential parameterized flow matching training. The flow ODE samplers correctly generate samples resembling true data points. At the same time, the learned energy landscapes share visually the same geometries as the true negative log densities, where a lower value represents higher likelihood. integration and trace estimation; guidance-based posterior sampling does not faithfully target the posterior it defines (Du et al. 2023); and for inverse problems the required noisy likelihood must be approximated (Chung et al. 2022), for which the correction needs a different sampler (Wu et al. 2024a). Meanwhile, energy-based models (EBMs) (LeCun et al. 2006; Kim and Bengio 2016; Carbone 2024) as a family of generative models hold the promise of a single model for all three tasks, due to their access to explicit energy functions. However, energy-based models are challenging to train, often requiring expensive sampling using MCMC and extensive hyperparameter tuning (Du and Mordatch 2019; Song and Kingma 2021; Nijkamp et al. 2019). While methods such as denoising score matching (Vincent 2011) do not need ex-pensive negative samples from the model, they suffer from ill-defined scores and estimation difficulty outside of the data support (Song and Ermon 2019), and do not address the sam-pling obstacles where noise-initialized MCMC chains have poor mixing, especially in high-dimensional space (Koehler, Heckett, and Risteski 2022). To combine the training and sampling efficiency of flow matching with the explicit unnormalized density of EBMs, arXiv:2608.18004v1 [cs.LG] 18 Aug 2026 several hybrid formulations have recently been proposed (Balcerak et al. 2025; Loo et al. 2025; Zhou et al. 2025). Each requires a customized training scheme rather than the stan-dard flow matching objective, and all remain under-explored for modeling PDE fields. In this work, we exploit the ex-plicit connection between flow matching models and EBMs by equating the score functions of the marginal distributions at all transport times in flow matching to the negative gradi-ent of the energy function. Using a potential-induced veloc-ity parameterization within standard flow matching training, we recover the time-dependent energy functions as a direct read-out. These energy functions, as unnormalized negative log densities (Figure 1), grant a single trained flow match-ing model the flexibility to perform efficient data generation, OOD detection, and inverse problems. In particular, for mod-eling PDE fields, we propose a total energy formulation that additively incorporates known physical structures into the energy function to augment the learned prior. This total en-ergy admits an effective scoring function for OOD detection and also improves sampling in data generation and inverse problems. We summarize our contributions as follows: 
+
+• We adopt a potential parameterization of standard flow matching that provides time-dependent EBMs along the transport path, making the converted score conservative by construction, enabling straightforward training and supporting multiple inference tasks. 
+
+• We construct a total energy by augmenting the data energy with known physical structures, and propose an Energy-based Predictor-Corrector (EnergyPC) framework that enables physics-aware unconditional generation and pos-terior sampling. 
+
+• We show that the data energy and the physical energy are complementary scoring functions for OOD detection, and that the total energy combining them is effective across the tested corruptions. 
+
+• We demonstrate the effectiveness of our approach on high-dimensional PDE datasets (Poisson, Helmholtz, and Burgers) through improved data generation, OOD detec-tion, and PDE solution field reconstruction and coefficient inference compared to flow ODE, predictor–corrector, and guidance-based posterior sampling baselines. 
+
+## Related Work 
+
+Energy-based models. Probabilistic energy-based models (LeCun et al. 2006; Ngiam et al. 2011; Ackley, Hinton, and Sejnowski 1985) use the Boltzmann distribution to approxi-mate the target distribution through a parameterized energy function. EBMs have appealing properties arising from the explicit access to the unnormalized density, making them a natural choice for density estimation, out-of-distribution de-tection (Liu et al. 2020; Wu et al. 2024b; Grathwohl et al. 2019; Habring et al. 2025), model composition (Du and Kael-bling 2024; Wu et al. 2023), and uncertainty quantification (Fuchsgruber, Wollschläger, and Günnemann 2024; Friedli et al. 2025). However, EBMs have historically been difficult to train and sample from, requiring expensive Markov chain Monte Carlo sampling (Hinton 2002) or its variants (Hinton 2002; Tieleman 2008; Du and Mordatch 2019). Score match-ing eliminates the need for expensive MCMC but faces chal-lenges such as ill-defined scores and estimation difficulties in areas off the low-dimensional data manifold (Song and Ermon 2019). Multilevel EBMs and noise annealing sub-stantially improve the learning of EBMs (Song and Ermon 2019; Gao et al. 2020; Li, Chen, and Sommer 2019), but they still require careful noise schedule design. Our work is closely related to the multilevel treatment of EBMs, where we construct a series of EBMs at different noise levels using a time-dependent energy function, but with a straightforward noise schedule from the flow matching training objective. 
+
+Flow Matching. Flow matching (Lipman et al. 2022; Tong et al. 2023) models attempt to learn a velocity field, param-eterized by a neural network, that transports samples from a source (easy to sample) to a target (complex) data distribu-tion. The learned velocity is then used in either an ODE or SDE, initialized with random draws from the source distribu-tion and solved numerically to draw samples from the target distribution. A well-trained flow matching model learns the ground truth marginal distributions along the transport path (Liu, Gong, and Liu 2022). Despite their success in gen-erative modeling, flow matching models do not explicitly provide access to the likelihood or energy of the underlying data distribution. The likelihood can be accessed using the change-of-variables formula (Lipman et al. 2022; Chen et al. 2018), which is expensive for high-dimensional datasets aris-ing from physical processes. Flow matching has also been applied to physical fields, with physics imposed through hard constraints, guidance, or fine-tuning of the learned velocity (Cheng et al. 2024; Utkarsh et al. 2025; Tauberschmidt et al. 2026; Liang et al. 2025). Our work instead uses a potential parameterization, whose gradient approximates the velocity field, and follows the standard flow matching training objec-tive. This allows the construction of marginal energy func-tions, which incorporate physical structure additively and score OOD samples directly. 
+
+Energy-based flow/diffusion models. Thanks to the com-mon connection to the score function, many works explore the relationship between flow matching (or diffusion) models and EBMs. For example, Energy Matching (Balcerak et al. 2025) uses a global time-independent potential flow to trans-port samples from source distributions to near the target data manifold and then runs MLE training via MCMC to obtain the global energy. VAPO (Loo et al. 2025) creates a density-weighted Poisson equation and utilizes deep Ritz method to solve the variational form of the equation as the training ob-jective to obtain the Boltzmann energy. Equilibrium match-ing (Wang and Du 2025) learns an implicit energy based model by enforcing equilbrium point at the end of the flow transport. While leveraging simplicity and strength of flow matching, these frameworks need customized training target to attain the EBM. Our work aligns closely with the energy diffusion models (Du et al. 2023; Du, Mao, and Tenenbaum 2024; Thornton et al. 2025) but under the flow matching framework for modeling PDE fields, where we access the 
+
+time-dependent marginal energies through a parameterized potential that induces the flow and augment the data-learned prior energy with known physical structures. 
+
+## Methods 
+
+The objective of our work is to learn the transport between the source Gaussian N (0 , I ) and the target distribution of PDE fields pdata (x) through flow matching. Additionally, along the transport path, we are interested in modeling the marginal distributions as EBMs and learn the energy func-tions. We show in this section when parameterizing the flow velocity field using a scalar potential, the energy function of marginal distributions can be directly obtained in terms of the flow potential and the predefined noise schedule. Next, we augment the flow matching-trained energies for PDE fields with known physical structures, which enables energy-based correctors during sampling and admits a suitable scoring function for OOD detection. 
+
+Energy and Potential Flow. Let x ∈ Rd, and let p0(x) = 
+
+N (0 , I ) and p1(x) = pdata (x) denote the source and target distributions. Given the interpolant xt = αtx1 + σtx0, let 
+
+pt(x) denote the induced marginal at t ∈ [0 , 1] . We construct a series of time-dependent energy-based models such that 
+
+pt(x) = exp( −E(x, t )) 
+
+Zt
+
+, Z t =
+
+Z
+
+> Rd
+
+exp( −E(x, t )) dx, 
+
+(1) where E : Rd × [0 , 1] → R, so that the score of the time marginal is ∇x log pt(x) = −∇ xE(x, t ).Consider a forward diffusion process transporting data samples to the source, 
+
+dx s = f (x, s )ds + g(s)dW s, s : 0 → 1, (2) with s = 1 − t. Throughout we use the linear path αt = t,
+
+σt = 1 − t, for which f (x, 1 − t) = −x/t and g2(1 − t) = 2(1 − t)/t (see the supplementary material). Reversing (2) and substituting t back (Anderson 1982; Song et al. 2020), the associated probability flow ODE is 
+
+dx t = −f (x, 1 − t) + 12 g2(1 − t)∇x log pt(x) dt. (3) Let the drift in (3) be the gradient of a time-dependent po-tential Φ( x, t ), so that dx t/dt = ∇xΦ( x, t ) defines a flow 
+
+ϕt(x0) = xt. Note that this formulation restricts the velocity to curl-free fields; for a Gaussian path this is no restriction at the optimum, since f is linear and isotropic in x and g de-pends only on t, making both terms of the (3) drift gradients. The associated continuity equation 
+
+∂p t
+
+∂t = −∇ x · (pt∇xΦ) (4) shares the same marginal density as that induced by (2). Solv-ing (3) for the score gives an explicit relationship between the time marginals and the potential-induced velocity field, 
+
+∇x log pt(x) = 2∇xΦ( x, t ) + 2 f (x, 1 − t)
+
+g(1 − t)2 , (5) and combining with (1) yields the energy 
+
+E(x, t ) = ∥x∥2 − 2tΦ( x, t )2(1 − t) + c(t), (6) where c(t) is a constant of integration with respect to x.We adopt c ≡ 0, for which E(x, 0) = ∥x∥2/2 recovers the energy of the Gaussian source. This energy function is the direct read-out from the poten-tial that induces the flow transporting Gaussian samples to the target distribution, and setting c(t) = 0 does not affect fixed-time MCMC sampling and OOD scoring. Note that at transport terminal time t = 1 , the energy becomes an indeter-minate and numerically unstable representation. In practice, following the standard remedy (Karras et al. 2022; Ma et al. 2024) we set a minimum noise level σmin > 0 and treat the energy at that noise level as a close approximation to the true data energy. 
+
+EBM training through Flow Matching. To obtain the energy function in (6), we shift the learning objective from the velocity field to the potential function. We parameterize the potential function Φθ using a neural network with the parameter set θ, and we take the gradient, which is easily computable via automatic differentiation. Using the linear interpolant (Lipman et al. 2022; Liu, Gong, and Liu 2022), where xt = (1 − t)x0 + tx 1, x 0 ∼ N (0 , I ), x 1 ∼ pdata (x),we obtain the standard flow matching objective 
+
+L(θ) = Et,x 0,x 1 [∥∇ xt Φθ (xt, t ) − (x1 − x0)∥22]. (7) Once the model is trained, we obtain the flow potential 
+
+Φθ (x, t ) along with the learned energy functions Eθ (x, t )
+
+for downstream tasks. Note that (6) is an identity at the pop-ulation optimum, where the target marginal, the marginal induced by ∇xΦθ , and the read-out density exp {− Eθ }/Z θ
+
+coincide. Under finite training they need not, as (6) assigns the energy pointwise without enforcing consistency with the transport. We therefore treat Eθ as a read-out that inherits the accuracy of the learned velocity, the same plug-in sta-tus as the velocity-to-score conversion in flow-based SDE and posterior samplers (Kim, Kim, and Ye 2025; Ma et al. 2024). Also, with a standard neural network implementation (e.g., affine maps, Lipschitz activations, and normalization layers), Φθ grows at most linearly in ∥x∥, so the energy in (6) yields a normalizable density for t < 1, admitting a valid EBM. Such training of the EBMs takes advantage of the established matching objective, avoiding the expensive and unstable MCMC sampling required by conventional EBM training. 
+
+Sampling. Following the training outline above, a trained potential Φθ admits both the velocity field ∇xΦθ (x, t ), used for sampling by solving the ODE, and the energy function 
+
+Eθ (x, t ), which allows MCMC-based samplers to be incor-porated. In addition, for general PDE fields, it is straightfor-ward to add known physical structures to the learned energy function to refine the prior energy. We consider the PDE residual as the additional structure and construct the total energy as 
+
+Etot (x, t ) = Eθ (x, t ) + λt∥R(x)∥2, (8) where ∥R(x)∥ is squared the L2 norm of the PDE residual, corresponding to a Gaussian likelihood on the residual with 
+
+λt = 12σ2 
+
+> R(t)
+
+and λt is a time-dependent non-negative scalar controlling its contribution. We present Etot as an annealing Algorithm 1: EnergyPC: energy-based predictor–corrector with optional adjustment 
+
+Require: transport-time grid 0 = t0 < · · · < t N = 1 −
+
+σmin , corrector steps M , noise floor σmin , ODE solver ODEStep, Langevin proposal Q with step size η, flag adjust 
+
+Ensure: approximate sample from p1 
+
+> 1:
+
+x ∼ N (0 , I ) 
+
+> 2:
+
+for k = 0 , . . . , N − 1 do  
+
+> 3:
+
+x ← ODEStep  x, ∇xΦθ , t k → tk+1 
+
+ 
+
+> 4:
+
+σ ← 1 − tk+1  
+
+> 5:
+
+for j = 1 , . . . , M do  
+
+> 6:
+
+(ˆ x, Λ) ← Q .Propose  x, ∇xEtot (x, t k+1 ), η ,where Λ = log q(x | ˆx) − log q(ˆ x | x) 
+
+> 7:
+
+if adjust then  
+
+> 8:
+
+log α ← Etot (x, t k+1 ) − Etot (ˆ x, t k+1 ) + Λ  
+
+> 9:
+
+u ∼ U (0 , 1) ; x ← ˆx if log u < log α else 
+
+x 
+
+> 10:
+
+else  
+
+> 11:
+
+x ← ˆx 
+
+> 12:
+
+end if  
+
+> 13:
+
+end for  
+
+> 14:
+
+end for  
+
+> 15:
+
+return ˆx1 ← x + σmin ∇xΦθ (x, 1 − σmin )
+
+family of inference-time targets rather than the exact inter-mediate marginals induced by the interpolant. The residual of a noisy field is uninformative, so we schedule λt to zero at high noise levels. Therefore, the intermediate members are not required to be the marginals of any distribution, and serve only as an annealing path along which the corrector tracks the target. At the terminal time the field is nearly clean, and the terminal member recovers the learned prior corrected by the known physical structure. Access to this total energy enables more general MCMC samplers to be used in the predictor-corrector (PC) frame-work introduced in (Song et al. 2020), which is effective at limiting error accumulation and improving distribution alignment when simulating the flow ODE. Moreover, a cor-rector that uses Etot additionally encourages the physical feasibility of samples, which may not be captured by purely data-driven training. We use Etot in the corrector step and name the resulting sampling process EnergyPC. Algorithm 1 shows the EnergyPC framework that uses the Metropolis adjusted Langevin algorithm (MALA) as the MCMC corrector. Note that the energy-based PC frame-work also accepts other samplers that utilize energy, such as Hamiltonian Monte Carlo, replica exchange, and Jarzynski-reweighted variants (Earl and Deem 2005; Jarzynski 1997). At each predictor step k and transport time t, we run 
+
+M steps of corrector, for which the proposal is given by a Langevin step on the total energy, 
+
+ˆxk = xk − η∇xEtot + p2ηϵ, ϵ ∼ N (0 , I ) (9) Then a Metropolis adjustment step decides whether to accept the proposal, 
+
+α = min 
+
+
+
+1, pt(ˆ xk)q(xk | ˆxk)
+
+pt(xk)q(ˆ xk | xk)
+
+
+
+, (10) where q(ˆ xk | xk) = N (ˆ xk; xk − η∇xEtot (xk, t ), 2ηI )
+
+and q(xk | ˆxk) = N (xk; ˆ xk − η∇ˆxEtot (ˆ xk, t ), 2ηI ). Ac-ceptance requires α ≥ u, u ∼ U [0 , 1] . Here, α is eas-ily computable through the energy function as pt(x) ∝
+
+exp( −Etot (x, t )) . Compared to the unadjusted Langevin step used in the standard PC framework, the Metropolis adjustment makes the corrector kernel exactly invariant to 
+
+exp {− Etot (x, t )} at each noise level, removing the dis-cretization bias of the unadjusted step (Roberts and Tweedie 1996). 
+
+Energy as Scoring Function. Energy functions measure the compatibility of the data with underlying distribution, where the compatible data with higher likelihood present low energy values. Therefore, energy functions provide suitable scoring for OOD tasks. Similar to the settings in (Liu et al. 2020; Wu et al. 2024b), we construct a classifier from the terminal time energy Etot (x, t max ), t max = 1 − σmin to perform inference time OOD using a discriminator defined as 
+
+D(x) = 
+
+0, E tot (x, t max ) ≤ τ
+
+1, E tot (x, t max ) > τ , (11) where τ is the scoring threshold, and an input of energy value greater than the threshold is considered an out-of-distribution sample, as a lower energy corresponds to a higher likelihood in (1). We use AUROC (Hendrycks and Gimpel 2016) to eval-uate the performance of the energy function as a scoring function. Using Nin in-distribution test fields and an equal number M = Nin of corrupted fields per tier, we com-pute the energy values of these samples and denote them as si, i = 1 , . . . , N in and tj , j = 1 , . . . , M . AUROC, de-fined in (12), measures the fraction of in-distribution and out-of-distribution pairs the energy ranks correctly, there-fore represents the probability of the energy score correctly ranking such pairs. AUROC = 1
+
+Nin M
+
+X
+
+> i
+
+X
+
+> j
+
+[1(tj > s i) + 12 1(tj = si)] 
+
+(12) Here, a value of 1 indicates that the OOD samples are per-fectly separable using the energy score, while a value smaller than 0.5 means the OOD samples appear more in-distribution than real samples, which implies score failure that the energy carries the opposite information. A value of 0.5 means the energy carries no information to rank the sample pairs. 
+
+Posterior Energy for Inverse Problem. The learned en-ergy from flow matching training is useful in solving inverse problems, since EBMs provide a straightforward definition of the posterior by adding the likelihood energy term. For PDE fields with an (a, u ) pair, where a is the coefficient and 
+
+u is the solution field, let {oi}Ni=1 denote a set of observed points in the solution field, related to the field through the observation operator H as 
+
+o = H(x) + ϵ, ϵ ∼ N (0 , σ 2obs I). (13) The likelihood is then p(o | x) = N (o; H(x), σ 2obs I), and the posterior of the joint field x = ( a, u ) is 
+
+log p(x|o) = log p(x) + log p(o | x) + C
+
+= −
+
+
+
+Etot + ∥{ oi}Ni=1 − H(x)∥2
+
+2σ2obs 
+
+| {z }  
+
+> posterior energy =Epos
+
++C, (14) where C collects the normalizing constants of the prior and likelihood terms. The likelihood energy from the conditional Gaussian distribution (13) is quadratic and composes directly with the prior energy. As with Etot , Epos defines an anneal-ing family rather than the sequence of marginals the flow dynamics would transport. Here, the quadratic likelihood is evaluated on the current field at every noise level, which is accurate only as the field becomes clean, and the terminal member coincides with the flow posterior. Similar to the use of energy in the PC framework, existing flow-based posterior samplers (e.g., FlowDPS (Kim, Kim, and Ye 2025)) can leverage the posterior energy to improve accuracy. At each posterior sampling step, the guided velocity with guidance coefficient ν at noise level t is 
+
+∇xΦθ (x, t | o) = ∇xΦθ (x, t ) + ν∇x log p(o | E[x1|xt]) ,
+
+(15) and we apply the energy-based MCMC corrector (step 5-11 in Algorithm 1) at the same noise level 
+
+x ← EnergyCorr (x, E pos , η ). (16) The posterior energy gives the corrector an explicit target at each noise level, which the guidance term alone does not provide. 
+
+## Experiments 
+
+We train and evaluate the potential flow matching framework on the PDE field datasets from (Huang et al. 2024) and show the impact of the energy functions in unconditional genera-tion, OOD detection, and inverse problems on solution field reconstruction and coefficient inference. Model architecture, hyperparameters, and training details are described in the supplementary material. 
+
+Unconditional generation We compare the performance of unconditional generation of the PDE fields using the pro-posed EnergyPC framework against the flow ODE sampler (Lipman et al. 2022; Tong et al. 2023) and the standard PC framework (Song et al. 2020) on the Poisson, Helmholtz, and Burgers equation datasets. Note that EnergyPC-ULA can also be considered the standard PC framework, as it requires only the gradient of the energy function. We use Etot (x, t ) in the energy corrector step listed in Algorithm 1 and generate 100 samples from each sampling process. Sample quality is as-sessed using sliced W2 distance, radial log-spectral distance, mean squared error of the mean (MMSE), mean squared er-ror of the standard deviation (SMSE), and PDE residuals (see the supplementary material for details). We conduct two sets of comparisons against the ODE sampler: one with the same number of noise levels, where the EnergyPC framework consumes extra computation per step, Poisson Burgers 
+
+Figure 2: Visualization of samples of Poisson and Burgers samples generated using the baseline flow ODE and Ener-gyPC with MALA. and the other with the same computational budget, where it uses a coarser transport time grid. In particular, the ODE sampler runs at three budgets: 120, 240, and 360 transport steps. Standard PC and EnergyPC samplers use the same 120 predictor steps, with additional corrector cost matching 240 and 360 neural function evaluations for the ULA and MALA correctors, respectively. Table 1 shows the generation metrics with different sam-plers for the three datasets. We observe that the corrector with energy-based adjustment (MALA) is superior to the purely score-based corrector (ULA), and that EnergyPC with ULA outperforms the standard PC on Poisson and has similar per-formance on Helmholtz and Burgers generation. Particularly, the application of EnergyPC with MALA effectively reduces the PDE residual and spectral distance on all three datasets. Figure 2 shows the effect of EnergyPC visually, where the refined samples present improved physical feasibility. Never-theless, unlike the physical feasibility, the EnergyPC frame-work has a less consistent effect on the MMSE and SMSE metrics. This could be due to the drift-dominant corrector step from the SNR-adjusted step size (Song and Ermon 2019) and the limited sample size. 
+
+Out-of-distribution detection We investigate the usage of 
+
+Etot in OOD tasks by comparing the energy values of cor-rupted samples against those of true data samples. We syn-thesize OOD samples from true data samples by applying blur, roll, channel shuffle, and noise injection operations, and use samples across PDEs (Poisson and Helmholtz) as additional OOD instances. The blur operation is a Gaussian convolution, which acts as a low-pass filter on the original clean fields. The roll operation shifts the fields, preserving the bulk physical feasibility. Channel shuffle creates a mis-match between the coefficient and solution fields, so that 
+
+a and u are individually in-distribution but jointly out-of-distribution. Noising operations add Gaussian noise scaled by the field standard deviation. Figure 3 shows example re-sults of the above operations. We report the AUROC values computed from Nin = M =256 true and OOD samples, using energy terms in (8) sepa-rately, where Eθ (x, t ) encodes the distributional information learned from data, ∥R∥ detects physical inconsistency, and Table 1: Unconditional generation metrics across samplers and datasets, with 95% bootstrap confidence intervals (2000 resamples of the 100-sample ensemble). MMSE/SMSE ×10 −4; Burgers PDE residual ×10 −4. Bold marks the best mean value per column within each dataset.                                                                                                                     
+
+> Dataset Sampler NFE Sliced-W2↓Spectral ↓PDE resid ↓MMSE ↓SMSE ↓
+> Poisson ODE120 120 0.0532 ±0.0046 1.180 ±0.079 13 .66 ±5.46 2.66 ±3.14 16 .33 ±4.30
+> ODE240 240 0.0520 ±0.0048 1.181 ±0.079 14 .59 ±5.91 2.92 ±3.51 12 .72 ±3.75
+> ODE360 360 0.0518 ±0.0048 1.181 ±0.076 14 .94 ±5.82 3.01 ±3.71 11 .58 ±3.69
+> Standard PC 240 0.0449 ±0.0047 1.013 ±0.034 4.54 ±0.93 3.12 ±2.73 22 .51 ±4.91
+> EnergyPC-ULA (ours) 240 0.0449 ±0.0050 0.979 ±0.024 3.65 ±0.57 3.12 ±2.85 22 .51 ±4.87
+> EnergyPC-MALA (ours) 360 0.0420 ±0.0050 0.915 ±0.032 2.46 ±0.64 1.81 ±2.06 18 .35 ±4.27
+> Helmholtz ODE120 120 0.0594 ±0.0038 0.919 ±0.055 2.86 ±1.49 4.12 ±3.03 28 .40 ±4.77
+> ODE240 240 0.0561 ±0.0038 0.911 ±0.061 3.13 ±1.65 4.50 ±3.52 23 .07 ±4.47
+> ODE360 360 0.0550 ±0.0039 0.909 ±0.059 3.24 ±1.59 4.65 ±3.79 21 .28 ±4.46
+> Standard PC 240 0.0574 ±0.0040 0.942 ±0.022 3.69 ±0.51 6.67 ±4.05 30 .53 ±5.14
+> EnergyPC-ULA (ours) 240 0.0574 ±0.0042 0.942 ±0.018 3.69 ±0.41 6.69 ±4.25 30 .52 ±5.20
+> EnergyPC-MALA (ours) 360 0.0551 ±0.0038 0.848 ±0.026 1.19 ±0.36 5.48 ±3.45 27 .74 ±5.00
+> Burgers ODE120 120 0.0521 ±0.0147 1.734 ±0.098 3.59 ±0.69 9.16 ±13 .57 12 .07 ±9.96
+> ODE240 240 0.0616 ±0.0155 1.814 ±0.104 4.21 ±0.82 9.95 ±14 .09 21 .82 ±14 .29
+> ODE360 360 0.0654 ±0.0158 1.842 ±0.102 4.46 ±0.85 10 .25 ±14 .35 26 .12 ±15 .17
+> Standard PC 240 0.0451 ±0.0118 1.399 ±0.084 3.36 ±0.62 7.19 ±9.74 11 .43 ±8.13
+> EnergyPC-ULA (ours) 240 0.0451 ±0.0120 1.399 ±0.089 3.36 ±0.62 7.19 ±9.81 11 .43 ±8.12
+> EnergyPC-MALA (ours) 360 0.0435 ±0.0123 1.303 ±0.089 3.05 ±0.52 4.64 ±8.02 8.50 ±6.91
+
+Table 2: OOD detection AUROC with the energy, with 95% bootstrap confidence intervals ( italic =at or near chance). The learned energy E and the PDE residual R are complementary: each is blind where the other separates, and the total energy Etot 
+
+flags every tier where either does.                                                                                         
+
+> Poisson Helmholtz Burgers OOD tier EREtot EREtot EREtot
+> Gaussian noise 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 Noise ( 10% field std) 1.00 1.00 1.00 1.00 1.00 1.00 1.00 0.843 ±0.027 1.00 Noise ( 50% field std) 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 Channel shuffle 0.992 ±0.005 1.00 1.00 1.00 1.00 1.00 –––Cross-PDE 1.00 1.00 1.00 1.00 1.00 1.00 –––Blur / smoothing 0.636 ±0.034 1.00 1.00 1.00 1.00 1.00 0.614 ±0.035 0.490 ±0.034 0.672 ±0.032
+> Spatial roll 1.00 1.00 1.00 1.00 1.00 1.00 1.00 0.558 ±0.035 1.00
+
+Etot combines the two complementary terms, which the ex-periments show to be a better scoring function for OOD detection. Values in Table 2 indicate that in most of the test-ing cases, the data energy and PDE residual alone are capable of perfect or near-perfect detection of OOD samples, which means the separate energy terms are adequate scoring func-tions that correctly rank true and OOD samples. In particular, all energies capture the channel-shuffled cases, where each channel ( a and u) individually satisfies the distribution. This demonstrates that the learned energies score the channels jointly, where the mismatched pairs are off-manifold. However, the Gaussian convolution blurred samples cause a large accuracy reduction on the data energy for both the Poisson and Burgers datasets. The smoothed samples are vi-sually consistent with true samples despite the loss of high frequency details, and lie towards the mode of the data distri-bution, corresponding to high likelihood regions, but not in the distribution’s typical set (Nalisnick et al. 2019). Hence, the data energy term alone struggles to distinguish the blurred samples from true samples, while Etot improves the detec-tion accuracy for both datasets. Similarly, due to the periodic boundary conditions in the Burgers data, the spatial roll oper-ation preserves the physical feasibility of a sample but pulls it out of the data distribution. Thus, the physical energy term alone could not distinguish the corrupted samples cleanly, but Etot prevents the failure. The experiment showcases that the learned data energy and PDE residual energy are complementary as OOD scoring functions, and that the total Etot is a suitable single scoring function for OOD detection purposes. 
+
+Inverse Modeling. We also test the role of energy func-tions in posterior sampling on top of popular guidance-based diffusion posterior samplers. Following the inverse problem setup in (Huang et al. 2024), for the Poisson and Helmholtz datasets, we randomly sample 500 locations in the solution field u as the observed points, and reconstruct the solution field as well as infer the corresponding coefficient field a.We evaluate model performance by incorporating the energy clean       
+
+> a(coefficient) u(solution)
+> roll (H/4)
+> a(coefficient) u(solution)
+> blur
+> noise 10%
+> ch-shuffle
+> noise 50%
+> cross-PDE
+> pure Gaussian
+
+Figure 3: Synthetic OOD sample examples on the Poisson a
+
+and u pairs. Table 3: Relative L2 errors of reconstructed u and inferred 
+
+a in the inverse problem. Fields are the ensemble mean over 16 samples; energy correctors are added at the base’s own predictor levels. ± is the standard deviation over resamples of the 16 draws. 
+
+Dataset Method aRE ↓ uRE ↓
+
+Poisson DiffusionPDE 0.285 ±0.020 0.146 ±0.017 
+
++Epos -ULA 0.304 ±0.057 0.151 ±0.018 
+
++Epos -MALA 0.255 ±0.010 0.150 ±0.020 
+
+FlowDPS 0.378 ±0.008 0.039 ±0.001 
+
++Epos -ULA 0.373 ±0.007 0.038 ±0.001 
+
++Epos -MALA 0.353 ±0.012 0.036 ±0.001 
+
+Helmholtz DiffusionPDE 0.254 ±0.008 0.139 ±0.028 
+
++Epos -ULA 0.231 ±0.007 0.129 ±0.018 
+
++Epos -MALA 0.244 ±0.008 0.128 ±0.030 
+
+FlowDPS 0.338 ±0.009 0.047 ±0.001 
+
++Epos -ULA 0.315 ±0.007 0.045 ±0.001 
+
++Epos -MALA 0.319 ±0.007 0.046 ±0.001 
+
+correctors into the DiffusionPDE (Huang et al. 2024) and FlowDPS (Kim, Kim, and Ye 2025) frameworks. Similar to the procedure outlined in Algorithm 1, we apply an energy-based corrector step (16) with the posterior energy 
+
+after each guidance-updated ODE integration step. Table 3 shows the relative L2 errors of the reconstructed solution and inferred coefficient fields produced by DiffusionPDE, FlowDPS, and their energy-corrector extensions, and Fig-ure 4 shows an example of the effect. Overall, the energy correctors lead to improved results within both frameworks, with the largest and most consistent gains in coefficient in-ference; the exception is DiffusionPDE on Poisson, where the solution field error increases slightly. More specifically, for the Poisson equation data, MALA energy correctors out-perform ULA energy correctors in both the DiffusionPDE and FlowDPS settings. For the Helmholtz data, while both correctors outperform the baseline, the ULA corrector shows recovered  a
+
+> Ground truth
+> reconstructed  uabs. error | a a * |
+> 500 obs ( u)
+> DiffusionPDE
+> uRE 0.146
+> aRE 0.285
+> DiffusionPDE+E
+> uRE 0.150
+> aRE 0.255
+> FlowDPS
+> uRE 0.039
+> aRE 0.378
+> FlowDPS+E
+> uRE 0.036
+> aRE 0.353
+> 0.4
+> 0.0 0.4
+> a
+> 0.01
+> 0.00 0.01
+> u
+> 0.00 0.15 0.30
+> |a a * |
+
+Figure 4: Poisson solution field reconstruction and coefficient inference comparison using energy-corrector with MALA (+E) extended diffusion posterior samplers. marginal improvement over the MALA corrector. Neverthe-less, rooted in the explicitly defined posterior energy, the energy correctors exhibit enhanced performance in posterior sampling. 
+
+## Conclusion 
+
+We show in this work that a potential-parameterized flow matching model with a Gaussian probability path provides explicit energy functions for the transport-time marginal distributions. When modeling PDE fields, such energies combined with additional physical structure create an aug-mented prior, the total energy, which enables a flexible en-ergy adjustment-based predictor–corrector framework (Ener-gyPC) for refined sampling that improves sample quality and physical feasibility. Concurrently, the total energy, consisting of complementary terms for OOD scoring, can also act as an effective single scoring function for OOD detection. Further-more, the total energy composes straightforwardly with the observational likelihood energy, which leads to better field reconstruction and coefficient inference in PDE field inverse problems. 
+
+Limitations. In spite of the success in data generation, OOD detection, and inverse problems, the proposed frame-work has two major limitations. First, the potential param-eterization of the flow leads to additional computational complexity compared to the standard flow matching mod-els, which will affect both training and sampling efficiency. Second, the read-out energy becomes singular algebraically at the terminal transport time t = 1 . So, the true terminal en-ergy is not recoverable directly from this framework. Future work will focus on addressing these challenges. 
+
+## References 
+
+Ackley, D. H.; Hinton, G. E.; and Sejnowski, T. J. 1985. A learning algorithm for Boltzmann machines. Cognitive science , 9(1): 147–169. Anderson, B. D. 1982. Reverse-time diffusion equation mod-els. Stochastic Processes and their Applications , 12(3): 313– 326. Balcerak, M.; Amiranashvili, T.; Terpin, A.; Shit, S.; Bo-gensperger, L.; Kaltenbach, S.; Koumoutsakos, P.; and Menze, B. 2025. Energy Matching: Unifying flow match-ing and energy-based models for generative modeling. arXiv:2504.10612. Carbone, D. 2024. Hitchhiker’s guide on the relation of Energy-Based Models with other generative models, sampling and statistical physics: a comprehensive review. arXiv:2406.13661. Chen, R. T. Q.; Rubanova, Y.; Bettencourt, J.; and Du-venaud, D. 2018. Neural ordinary differential equations. arXiv:1806.07366. Chen, Z.; and Deng, S. 2026. Flow marching for a generative PDE foundation model. arXiv:2509.18611. Cheng, C.; Han, B.; Maddix, D. C.; Ansari, A. F.; Stuart, A.; Mahoney, M. W.; and Wang, Y. 2024. Gradient-free generation for hard-constrained systems. arXiv:2412.01786. Chung, H.; Kim, J.; Mccann, M. T.; Klasky, M. L.; and Ye, J. C. 2022. Diffusion posterior sampling for general noisy inverse problems. arXiv:2209.14687. Dhariwal, P.; and Nichol, A. 2021. Diffusion Models Beat GANs on Image Synthesis. arXiv:2105.05233. Du, Y.; Durkan, C.; Strudel, R.; Tenenbaum, J. B.; Diele-man, S.; Fergus, R.; Sohl-Dickstein, J.; Doucet, A.; and Grathwohl, W. 2023. Reduce, reuse, recycle: Compositional generation with energy-based diffusion models and MCMC. arXiv:2302.11552. Du, Y.; and Kaelbling, L. 2024. Compositional gen-erative modeling: A single model is not all you need. arXiv:2402.01103. Du, Y.; Mao, J.; and Tenenbaum, J. B. 2024. Learning itera-tive reasoning through energy diffusion. arXiv:2406.11179. Du, Y.; and Mordatch, I. 2019. Implicit generation and mod-eling with energy based models. Neural Inf Process Syst ,3603–3613. Durall, R.; Keuper, M.; and Keuper, J. 2020. Watch your Up-Convolution: CNN Based Generative Deep Neural Networks are Failing to Reproduce Spectral Distributions. arXiv:2003.01826. Earl, D. J.; and Deem, M. W. 2005. Parallel tempering: The-ory, applications, and new perspectives. Physical Chemistry Chemical Physics , 7(23): 3910–3916. Friedli, L.; Ginsbourger, D.; Doucet, A.; and Linde, N. 2025. An energy-based model approach to rare event probability estimation. SIAM/ASA Journal on Uncertainty Quantifica-tion , 13(2): 400–424. Fuchsgruber, D.; Wollschläger, T.; and Günnemann, S. 2024. Energy-based epistemic uncertainty for graph neural net-works. Advances in Neural Information Processing Systems ,37: 34378–34428. Gao, R.; Song, Y.; Poole, B.; Wu, Y. N.; and Kingma, D. P. 2020. Learning energy-based models by diffusion recovery likelihood. arXiv:2012.08125. Grathwohl, W.; Wang, K.-C.; Jacobsen, J.-H.; Duvenaud, D.; Norouzi, M.; and Swersky, K. 2019. Your classifier is secretly an energy based model and you should treat it like one. arXiv:1912.03263. Habring, A.; Holler, M.; Pock, T.; and Zach, M. 2025. Energy-based models for inverse imaging problems. arXiv:2507.12432. Hendrycks, D.; and Gimpel, K. 2016. A baseline for detect-ing misclassified and out-of-distribution examples in neural networks. arXiv preprint arXiv:1610.02136 .Hinton, G. E. 2002. Training products of experts by mini-mizing contrastive divergence. Neural computation , 14(8): 1771–1800. Huang, J.; Yang, G.; Wang, Z.; and Park, J. J. 2024. Diffu-sionPDE: Generative PDE-solving under partial observation. arXiv:2406.17763. Jarzynski, C. 1997. Nonequilibrium equality for free energy differences. Physical review letters , 78(14): 2690. Karras, T.; Aittala, M.; Aila, T.; and Laine, S. 2022. Elucidat-ing the design space of diffusion-based generative models. arXiv:2206.00364. Kerrigan, G.; Migliorini, G.; and Smyth, P. 2023. Functional flow matching. arXiv preprint arXiv:2305.17209 .Kim, J.; Kim, B. S.; and Ye, J. C. 2025. FlowDPS: Flow-Driven Posterior Sampling for inverse problems. arXiv:2503.08136. Kim, T.; and Bengio, Y. 2016. Deep directed gen-erative models with energy-based probability estimation. arXiv:1606.03439. Koehler, F.; Heckett, A.; and Risteski, A. 2022. Statistical Efficiency of Score Matching: The View from Isoperimetry. arXiv:2210.00726. Kolouri, S.; Nadjahi, K.; Simsekli, U.; Badeau, R.; and Ro-hde, G. K. 2019. Generalized Sliced Wasserstein Distances. arXiv:1902.00434. LeCun, Y.; Chopra, S.; Hadsell, R.; Ranzato, A.; and Huang, F. J. 2006. A tutorial on energy-based learning. Li, Z.; Chen, Y.; and Sommer, F. T. 2019. Learning energy-Based Models in high-dimensional spaces with multi-scale denoising score matching. arXiv:1910.07762. Li, Z.; Zhou, A.; and Farimani, A. B. 2025. Generative latent neural pde solver using flow matching. URL https://arxiv. org/abs/2503.22600 .Liang, J.; Sun, Y.; Samaddar, A.; Madireddy, S.; and Fioretto, F. 2025. Chance-constrained Flow Matching for High-Fidelity Constraint-aware Generation. arXiv:2509.25157. Lienen, M.; Lüdke, D.; Hansen-Palmus, J.; and Günnemann, S. 2024. From Zero to Turbulence: Generative Modeling for 3D Flow Simulation. arXiv:2306.01776. Lipman, Y.; Chen, R. T. Q.; Ben-Hamu, H.; Nickel, M.; and Le, M. 2022. Flow Matching for generative modeling. arXiv:2210.02747. Liu, W.; Wang, X.; Owens, J. D.; and Li, Y. 2020. Energy-based out-of-distribution detection. arXiv:2010.03759. Liu, X.; Gong, C.; and Liu, Q. 2022. Flow Straight and Fast: Learning to Generate and Transfer Data with Rectified Flow. arXiv:2209.03003. Loo, J. Y.; Adeline, M.; Lau, J. K.; Leong, F. Y.; Tew, H. H.; Pal, A.; Baskaran, V. M.; Ting, C.-M.; and Phan, R. C.-W. 2025. Learning energy-based generative models via potential flow: A variational principle approach to probability density homotopy matching. arXiv:2504.16262. Ma, N.; Goldstein, M.; Albergo, M. S.; Boffi, N. M.; Vanden-Eijnden, E.; and Xie, S. 2024. SiT: Exploring Flow and Diffusion-based Generative Models with Scalable Inter-polant Transformers. arXiv:2401.08740. Nalisnick, E.; Matsukawa, A.; Teh, Y. W.; and Lakshmi-narayanan, B. 2019. Detecting out-of-distribution inputs to deep generative models using typicality. arXiv:1906.02994. Ngiam, J.; Chen, Z.; Koh, P. W.; and Ng, A. Y. 2011. Learning deep energy models. In Proceedings of the 28th international conference on machine learning (ICML-11) , 1105–1112. Nijkamp, E.; Hill, M.; Han, T.; Zhu, S.-C.; and Wu, Y. N. 2019. On the anatomy of MCMC-based Maximum Likeli-hood learning of energy-based models. arXiv:1903.12370. Roberts, G. O.; and Tweedie, R. L. 1996. Exponential con-vergence of Langevin distributions and their discrete approx-imations. Bernoulli , 2(4): 341 – 363. Salimans, T.; and Ho, J. 2021. Should EBMs model the energy or the score? In Energy based models workshop-ICLR 2021 .Song, Y.; and Ermon, S. 2019. Generative modeling by esti-mating gradients of the data distribution. arXiv:1907.05600. Song, Y.; and Kingma, D. P. 2021. How to train your energy-Based Models. arXiv:2101.03288. Song, Y.; Sohl-Dickstein, J.; Kingma, D. P.; Kumar, A.; Ermon, S.; and Poole, B. 2020. Score-based gener-ative modeling through stochastic differential equations. arXiv:2011.13456. Tauberschmidt, J.; Fellenz, S.; Vollmer, S. J.; and Duncan, A. B. 2026. Physics-Constrained Fine-Tuning of Flow-Matching Models for Generation and Inverse Problems. arXiv:2508.09156. Thornton, J.; Bethune, L.; Zhang, R.; Bradley, A.; Nakkiran, P.; and Zhai, S. 2025. Composition and control with dis-tilled energy diffusion models and sequential Monte Carlo. arXiv:2502.12786. Tieleman, T. 2008. Training restricted Boltzmann machines using approximations to the likelihood gradient. In Pro-ceedings of the 25th international conference on Machine learning - ICML ’08 . ACM Press. Tong, A.; Fatras, K.; Malkin, N.; Huguet, G.; Zhang, Y.; Rector-Brooks, J.; Wolf, G.; and Bengio, Y. 2023. Improving and generalizing flow-based generative models with mini-batch optimal transport. arXiv:2302.00482. Utkarsh, U.; Cai, P.; Edelman, A.; Gomez-Bombarelli, R.; and Rackauckas, C. V. 2025. Physics-Constrained Flow Matching: Sampling generative models with hard con-straints. arXiv:2506.04171. Vincent, P. 2011. A connection between score matching and denoising autoencoders. Neural Comput. , 23(7): 1661–1674. Wang, R.; and Du, Y. 2025. Equilibrium Matching: Generative modeling with implicit energy-based models. arXiv:2510.02300. Wu, L.; Trippe, B. L.; Naesseth, C. A.; Blei, D. M.; and Cunningham, J. P. 2024a. Practical and Asymptot-ically Exact Conditional Sampling in Diffusion Models. arXiv:2306.17775. Wu, T.; Maruyama, T.; Wei, L.; Zhang, T.; Du, Y.; Iaccarino, G.; and Leskovec, J. 2023. Compositional Generative Inverse Design. In The Twelfth International Conference on Learning Representations .Wu, Y.; Ye, X.; Dai, S.; Pan, D.; Li, X.; Zhang, W.; and Chen, Y. 2024b. Revisiting energy-based model for out-of-distribution detection. arXiv:2412.03058. Zhou, W.; Sprague, C. I.; Viliuga, V.; Tadiello, M.; Elofsson, A.; and Azizpour, H. 2025. Energy-based flow matching for generating 3D molecular structure. arXiv:2508.18949. A Energy formulation 
+
+A.1 The identification of f and g
+
+From the main text, the linear interpolant is 
+
+xt = t x 1 + (1 − t) x0, x0 ∼ N (0 , I ), t : 0 → 1, (17) so the conditional path is Gaussian, pt(x | x1) = N αtx1, σ 2 
+
+> t
+
+I with 
+
+αt = t, σt = 1 − t. (18) Introduce the diffusion time s = 1 − t, so s : 1 → 0 is the forward direction corresponding the transport from data to source, and α(s) = 1 − s, σ(s) = s. A linear forward SDE 
+
+dx = f (x, s ) d s + g(s) d w, f (x, s ) = h(s) x, (19) started at x1 ∼ pdata has mean and variance functions as 
+
+˙α = h(s) α(s), ˙σ2 = 2 h(s) σ2(s) + g2(s). (20) Substituting α(s) = 1 − s into the first equation gives h(s) = −1/(1 − s), and then substituting σ2(s) = s2 into the second gives 
+
+g2(s) = 2 s + 2s2
+
+1 − s = 2s
+
+1 − s . (21) Therefore, we have 
+
+f (x, s ) = − x
+
+1 − s , g2(s) = 2s
+
+1 − s , (22) Using the flow transport time t, which reaches 
+
+f (x, 1 − t) = − xt , g(1 − t) = 
+
+r 2(1 − t)
+
+t . (23) 
+
+A.2 Terminal Energy 
+
+By setting the constant c(t) ≡ 0, we obtain the energy of transport marginals as follows, 
+
+Et(x, t ) = ∥x∥2 − 2t Φ( x, t )2(1 − t) (24) We use this quantity faithfully for t ∈ [0 , t max ]. For qualitative visualization in Figure 1 and AUROC computation, we use 
+
+tmax = 0 .99999 and a simplified scalar energy as E(x) = ∥x∥2 − 2Φ( x, t max ), dropping the positive constant 1/(1 − tmax )
+
+and the factor tmax , which largely preserves the energy landscape geometry and has minimal impact on AUROC values. For EnergyPC usage in unconditional generation and inverse problem experiments, we set the noise floor σmin = 10 −3, hence the corresponding terminal time tmax = 0 .999 .
+
+## B Potential flow model training details 
+
+We implement the framework in PyTorch 2.11 (CUDA 12.8, Python 3.12) and run all training and evaluation on a single NVIDIA A100-SXM4-40GB GPU; the Python environment is managed by uv and pinned by the uv.lock file shipped with the code. 
+
+Scalar-potential parameterization. The network is a scalar-valued map Φθ : Rd × [0 , 1] → R formed from the dot product 
+
+between an ADM/guided-diffusion UNet backbone Nθ (Dhariwal and Nichol 2021) and the input itself x:
+
+Φθ (x, t ) = x, N θ (x, t ) , (25) with ∇xΦθ computed by automatic differentiation and being used in the training objective. The dot product formulation has, in both our experiment and a previous work (Du et al. 2023), had better empirical results than the denoising autoencoder objective form in (Salimans and Ho 2021). Time conditioning enters as two extra scalars appended to the flattened state, t and σ = 1 − t;
+
+t is passed through the usual sinusoidal timestep embedding. 
+
+Data normalization. The data is standardized channel-wise based on fixed values ported from DiffuisonPDE codebase during both training and sampling. 
+
+xnorm  
+
+> c
+
+= xc − μc
+
+σc
+
+(26) While distributional metrics are computed in the normalized space, we use the same statistics to rescale the generated samples back to the original physical scale to the compute PDE residuals. 
+
+xc = σcxnorm  
+
+> c
+
++ μc (27) 10 Architecture. We use the same model architecture and hyperparameters for the three datasets, Poisson, Helmholtz, and Burgers. The detailed hyperparameter configuration are listed in the following table. 
+
+Hyperparameter Value Note 
+
+Backbone 
+
+dims 2 for 2D PDE fields 
+
+data.image_size 128 fields are 128 × 128 
+
+data.channels 2 / 1 Poisson, Helmholtz / Burgers 
+
+nf 128 base width 
+
+channel_mult [1 , 2, 2, 4] widths 128 , 256 , 256 , 512 at 128 2, 64 2, 32 2, 16 2
+
+num_res_blocks 4 per resolution 
+
+activation silu use_scale_shift_norm true FiLM-style conditioning 
+
+conv_resample false no learned resampling 
+
+resblock_updown false 
+
+Attention 
+
+attention_resolutions [4 , 8] downsample factors, i.e. 32 2 and 16 2
+
+num_head_channels 64 sets head count; 19 blocks total heads (derived) 4 / 8 256 /64 at 32 2, 512 /64 at 16 2
+
+use_new_attention_order true 
+
+Conditioning, regularization, head 
+
+temb_type time sinusoidal embedding of t; σ = 1 − t appended 
+
+dropout 0.13 
+
+with_fourier_features false num_classes null unconditional; no CFG output head ⟨x, N θ (x, t )⟩ zero-init 3 × 3 conv, then contract Parameter count 121M 
+
+Model training. Table below lists the details of the implemented training objective, optimizer parameters, and number of gradient steps used for model training. The reported evaluation results use the raw (non-EMA) weights at step 34000 for Poisson and at the final step 40000 for Helmholtz and Burgers. 
+
+Hyperparameter Value Note 
+
+Interpolant and time sampling 
+
+scheduling / fm_target fmot conditional-OT path; target v⋆ = x1 − ε
+
+t_start , t_max 10 −5, 0.99999 t ∼ U [tstart , t max ] per step 
+
+mean_power , var_power 1, 1 αt = t, σt = 1 − t
+
+sigma_eps 0 no additive noise floor on σt
+
+augment_t true t and σt appended to the flat input 
+
+shift_schedule false no resolution-dependent t shift 
+
+Optimizer 
+
+optimizer Adam lr 2 × 10 −4
+
+beta1 0.9 β2 = 0 .999 derived, not configured 
+
+eps 10 −8
+
+weight_decay 0
+
+warmup 5000 linear 
+
+anneal_rate , anneal_iters 1, [0 , 0] no LR decay 
+
+grad_clip , grad_clip_mode 3, std clip to 3√ ˆm2 + 0 .1 per parameter 
+
+batch_size 4 small_batch_size = 4 , so no subsetting 
+
+n_iters 40 ,000 
+
+seed 49 
+
+## C Additional details on EnergyPC 
+
+All samplers act on the normalized space. Samples are rescaled by to the original physical space for PDE residual computation and visualization. 
+
+Noise ladder and predictor. The network is conditioned on t, so the ladder is built in the noise scale σ(t) = 1 − t and converted back. We place the given number of levels, L, geometrically in σ,
+
+σi = σmax 
+
+ σmin 
+
+> σmax
+
+i/ (L−1) 
+
+, ti = 1 − σi, (28) 11 with σmax = 1 − tmin = 1 − 10 −5 and σmin = 10 −3, so t runs from 10 −5 to 0.999 . The predictor is one explicit Euler step of the probability-flow ODE, x ← x + σmin ∇xΦθ(x, 1 − σmin ), after which the corrector runs at ti+1 .
+
+EnergyPC target. The EnergyPC targets the physics-augmented total energy 
+
+Etot (x) = Et(x) + λt∥R∥2, R(ˆ x1) = F (ˆ x1)
+
+N , (29) with Et from (24), N is the number of discrete points for the length of the domain, and F the discrete PDE residual operator of Section D. We use the leaf gradient, ∇ˆx1 λt∥R∥2, of the physical energy term to get Langevin proposals; Metropolis steps direclty use Etot , so the sampler targets e−Etot /Z .The step size is chosen per sample and per level as 
+
+η = min 
+
+
+
+2 snr √d / ∥ˆs∥2, c σ 2
+
+, snr = 0 .1, c = 0 .5, (30) where d is the flattened state dimension and ˆs = − 12 ∇Etot is the corrector drift of Eq. (29). The first term follows the SNR-adaptive rule of (Song et al. 2020), sizing the move relative to the drift norm, with two changes: we evaluate it per sample rather than on the batch-averaged norms, and use √d ≈ E∥z∥ in place of the sampled noise norm. The second term is the classic NCSN step (Song and Ermon 2019), acting as a cap. The adaptive step is what allows the physics term to be run unclipped. Where ˆx1 is still off-manifold the residual gradient is stiff and ∥ˆs∥ is large, and the rule shrinks η there automatically; a fixed 
+
+cσ 2 step would instead require clipping the drift, which would cost MALA its exact target. Evaluating it per sample matters for the same reason, since a single off-manifold sample is what diverges and a batch-averaged step would size the move from the others. The rule also keeps acceptance nonzero at the top of the ladder, where a fixed step overshoots and is rejected almost surely, while the cσ 2 cap bounds the move at the other end, when ∥ˆs∥ is small. 
+
+Physics weight schedule λt. In the reported PC rows the physics weight is gated on the noise scale, 
+
+λi = λmax ·
+
+
+
+0, σi ≥ 0.3,
+
+0.3 − σi
+
+0.25 , 0.05 < σ i < 0.3,
+
+1, σi ≤ 0.05 ,λmax = 2 . (31) At high noise ˆx1 is far off-manifold, so ∥R∥2 and its gradient are large and dominate ∥ˆs∥; the gate confines physics to the band where the Tweedie estimate is meaningful. Since the schedule multiplies λmax , it is identically zero when λmax = 0 : the “Standard PC” rows run the same code path with the physics term absent at every level. 
+
+Inverse problems: EnergyPC on Epos For the inverse experiments the predictor is an unmodified faithful DiffusionPDE or FlowDPS guidance step and the corrector targets the true posterior energy 
+
+Epos (x, t ) = Etot (x, t ) + 12σ2obs 
+
+m ⊙ (ˆ x1 − o) 22, (32) where m is the 0/1 observation mask, o the normalized observations, and σo = noise /std channel (values listed below) the true observation-noise standard deviation in normalized space. The observation term is the squared residual, so (32) is a proper Gaussian negative log-likelihood and the MH ratio is exact. Dataset Noise (physical) std channel σo
+
+Poisson 5.5×10 −4 1/36 .5 = 0 .027397 0.0201 
+
+Helmholtz 5.6×10 −4 0.028 0.0200 
+
+Predictor settings. Both baselines are used unmodified at their released defaults, shown in the table below. Both guide the Tweedie estimate ˆx1 = x+σ ∇xΦθ (x, t ) with L2-norm losses. Note that FlowDPS (Kim, Kim, and Ye 2025) is observation-only, whereas DiffusionPDE (Huang et al. 2024) guides on both the observations and the residual. Method Parameter Value DiffusionPDE steps 200 
+
+ζobs , ζpde 1, 1
+
+PDE guidance start after 80% of steps late obs. scale 0.1
+
+guidance-norm clip 50 
+
+FlowDPS steps 200 
+
+DC step size 30 .0
+
+DC inner iterations 3
+
+physics guidance none 12 D PDE datasets 
+
+All three datasets are the DiffusionPDE release (Huang et al. 2024) (https://github.com/jhhuangchloe/DiffusionPDE), read from the distributed .mat files at 128 × 128 resolution. Each has 10000 samples split contiguously into 9000 train (indices [0 , 9000) )and 1000 test (indices [9000 , 10000) ); every evaluation in the paper draws from the test split only. Dataset Equation Channels Residual operator Poisson ∆u = a on (0 , 1) 2, u|∂Ω = 0 [a, u ], C=2 F = ∆ hu − a
+
+Helmholtz ∆u + u = a on (0 , 1) 2, u|∂Ω = 0 [a, u ], C=2 F = ∆ hu + u − a
+
+Burgers ut + uu x − νu xx = 0 , ν = 0 .01 [u(t, x )] , C=1 F = ut + uu x − νu xx 
+
+Discretization of the residual operators. PDE residual calculations are directly ported from the DiffusionPDE codebase, matching their discretization exactly. Poisson and Helmholtz use the 5-point Laplacian with zero padding and grid spacing 
+
+h = 1 /(S − 1) , S = 128 , and the four boundary edges are zeroed after applying the stencil. Burgers uses central-difference 
+
+3-tap stencils in both axes with unit grid spacing ( dt = d x = 1 ) and zero padding, with rows indexing time and columns space on a 128 × 128 space–time grid. 
+
+Channel-wise statistics. Following DiffusionPDE, fields are normalized by a fixed per-channel standardization, where the mean is 0 for every channel, and standard deviation listed as follows Dataset Channel mean μc std sc
+
+Poisson f (source) 0 2.15 
+
+ϕ (solution) 0 0.027397 
+
+Helmholtz a (forcing) 0 2.15 
+
+u (wave) 0 0.028 
+
+Burgers u 0 1.415 
+
+## E Evaluation Metrics 
+
+Distributional metrics (sliced-W2, spectral distance, MMSE/SMSE) are computed in the normalized coordinates , which weights channels of very different physical scale comparably. The PDE residual is computed in the original physical scale. 
+
+Sliced W2. Given the sample size limit ( m = 100 ), we use sliced Wasserstein distance (Kolouri et al. 2019) to measure the distributional discrepancy using the generated samples and true data samples 
+
+SW 2( bX, X ) = 
+
+
+
+Eω
+
+W 22 (ω# bX, ω #X)1/2
+
+, (33) where ω is a random unit vector in Rd, ω# denotes the distribution of the projections ω⊤x, X = {x(i)}ni=1 denotes the real fields (the test split), and bX = {ˆx(j)}mj=1 the generated ensemble. The sliced-W2 is estimated with 256 directions drawn i.i.d. Gaussian and normalized to the unit sphere, and 128 evenly spaced quantiles per projection. 
+
+Radial log-spectrum L1. We compare generated and reference fields through their radially averaged power spectra, the standard spectral-fidelity check for generative field models (Durall, Keuper, and Keuper 2020; Lienen et al. 2024). For each channel c we take the squared magnitude of the 2D DFT of every sample and average it over the m samples, giving one power value per frequency mode k. We then reduce this to a 1D profile by averaging over direction, where all modes whose distance from the zero-frequency center rounds to the same integer r are averaged together, 
+
+bEc(r) = 1
+
+|Ar |
+
+X
+
+> k∈Ar
+
+1
+
+m
+
+> m
+
+X
+
+> j=1
+
+F ˆx(j) 
+
+> c
+
+(k) 2, Ar = {k : round( ∥k∥) = r}, (34) so that r indexes spatial frequency, in wavelengths across the domain. On the 128 × 128 grid this gives r = 0 , . . . , R with 
+
+R = 91 , the radius of the corner mode. Similarly, we compute Ec(r) from the n real test fields and report the mean absolute 
+
+difference of the log profiles over bins and channels, 
+
+Spectral( bX, X ) = 1
+
+C(R + 1) 
+
+> C
+
+X
+
+> c=1
+> R
+
+X
+
+> r=0
+
+log 10 bEc(r) − log 10 Ec(r) . (35) This is the log-spectrum distance of (Lienen et al. 2024) with L1 in place of L2 and a per-bin mean in place of the norm, so the reported value is the mean absolute log 10 discrepancy per radial bin. This measures the discrepancy of energy at each spatial scale between the generated samples and real data. 13 Table 4: Additional unconditional samplers on Poisson, not reported in the main text.                       
+
+> Sampler physics NFE Sliced-W2↓PDE resid ↓
+> ODE120 †–120 0.0532 13.66 ODE + ULA polish terminal 220 0.0408 10.33 ODE + MALA polish terminal 320 0.0409 7.17 Annealed + σ-sched gated 1752 0.0880 1.15
+
+PDE residual. The reported column is the ensemble mean of ∥R(ˆ x)∥2, with R = F(ˆ x)/N as in (29). 
+
+MMSE / SMSE. Let ¯ˆx, s ˆx be the per-pixel mean and standard-deviation fields over the m generated samples, and ¯x, s x the same over the n test fields. Then 
+
+MMSE = ∥¯ˆx − ¯x∥2
+
+CN 2 , SMSE = ∥sˆx − sx∥2
+
+CN 2 , (36) where C is the number of channels in the data. MMSE detects mean/bias error, SMSE detects spread mismatch. 
+
+OOD scores and AUROC. Two terms are computed independently of any weight: the learned prior read-off E = ∥x∥2 −
+
+2Φ( x, t max ) and the mean-square residual R. Their scales differ by orders of magnitude, so the reported total is scale-balanced, 
+
+Etot = E + 2 λbal R, λbal = std( E)2 std( R) , (37) so that both terms carry the same in-distribution spread and Etot flags a field if either term does. The fitted values are 
+
+λbal = 1 .729 ×10 11 (Poisson), 1.018 ×10 11 (Helmholtz), and 5.412 ×10 4 (Burgers). 
+
+OOD corruption tiers. We construct the out-of-distribution sets as follows. Gaussian draws N (0 , I ) directly in normalized space. For Noise s we add Gaussian noise with standard deviation s ∈ { 0.1, 0.5} times each channel’s own standard deviation, so the corruption is field-relative rather than absolute. For Blur we apply a separable Gaussian smoothing (kernel size 9, σ = 3 .0,reflect padding) to all channels with the same kernel; For Roll we cyclically shift the field by H/ 4 along both axes, and for 
+
+Channel shuffle we pair ai with uj , i̸ = j, which applies to the two-channel datasets only (Poisson and Helmholtz). Finally, 
+
+Cross-PDE uses the test fields of the other dataset (Poisson ↔Helmholtz). 
+
+Inverse-problem error. For a field F ∈ { a, u } with ground truth F ⋆ and ensemble mean ¯F over M = 16 draws, in physical units, 
+
+RE( F ) = ∥ ¯F − F ⋆∥∥F ⋆∥ , (38) reported as aRE for the recovered channel a and uRE for the observed channel u. Observations are 500 pixels of channel u
+
+drawn uniformly without replacement (fixed across methods and problems), corrupted by Gaussian noise with standard deviation 
+
+5.5×10 −4 (Poisson) or 5.6×10 −4 (Helmholtz), ≈ 2% of the field standard deviation. 
+
+Confidence intervals. All confidence intervals are computed from bootstrapped 2000 samples. The reference data is held fixed so the interval reflects generator variability only. For the inverse table the 16 posterior draws are resampled and the ensemble mean re-formed ( 5000 resamples). 
+
+## F Additional results 
+
+Access to the energy functions enables pure MCMC sampling either from the ODE samples or Gaussians. We include the results of two additional samplers in this section. 
+
+Energy-based refinement of ODE samples. We run MCMC refinement using the terminal time energy Etot (x, 1 − σmin )
+
+with chains initialized by the baseline ODE samples. We run 100 steps of ULA and MALA using the SNR-adaptive step size 
+
+η(x) = min  2(snr √D/ ∥ˆs(x)∥)2, c σ 2min 
+
+ with snr = 0 .1, c = 0 .5 and σmin = 10 −3.
+
+Energy annealing MCMC Independent of the ODE sampler, we use the time-dependent (noise-level dependent) energy functions to run annealed MCMC to generate samples from Gaussians. Starting from x ∼ N (0 , I ), we sweep the same geometric ladder of 120 noise levels used by the ODE sampler, σ = 1 → 10 −3, and take K = 8 Langevin steps at each level with the fixed step size δ = c σ 2, c = 0 .5, followed by a single Tweedie denoise. The physics weight is gated by noise level: 
+
+λ = 0 for σ ≥ 0.3, ramping linearly to λmax as σ falls to 0.05 and held there below. The steps are ULA for σ ≥ 0.3 and switched to MALA when σ < 0.3.14 Data                         
+
+> source asolution u
+> 3.18e-10 2.85e-10 6.63e-11
+> PDE residual
+> 1.57e-10
+> ODE (120)
+> 0.268 45.4 0.0787 8.32
+> EnergyPC-ULA
+> 2.11 8.67 1.43 8.09
+> EnergyPC-MALA
+> 0.214 10.6 0.06 6.2
+> ODE + ULA
+> 1.83 12.7 0.98 4.22
+> ODE + MALA
+> 0.268 20 0.0787 4.55
+> Annealed ( -gated)
+> 1.14 1.09 0.585 1.69
+
+Figure 5: Unconditional generation of Poisson equation data with various samplers. All energy-based samplers reduce the PDE residuals compared to the baseline flow ODE sampler. Table 5: Additional unconditional samplers on Burgers, not reported in the main text. 
+
+Sampler physics NFE Sliced-W2 ↓ PDE resid ↓
+
+ODE120 † – 120 0.0521 3.59 ODE + ULA polish terminal 220 0.0531 2.58 ODE + MALA polish terminal 320 0.0513 2.54 Annealed + σ-sched gated 1752 0.1928 7.73 
+
+15 Data 
+
+u
+
+0.000121 0.0004 0.000466 
+
+PDE residual 
+
+1.31e-05 
+
+ODE (120) 
+
+0.000188 0.000592 4.71e-05 0.000898 
+
+EnergyPC-ULA 
+
+0.000372 0.000416 3.18e-05 0.00079 
+
+EnergyPC-MALA 
+
+0.000284 0.000503 1.88e-05 0.000831 
+
+ODE + ULA 
+
+0.000265 0.000434 0.000102 0.000343 
+
+ODE + MALA 
+
+0.000265 0.000429 9.93e-05 0.000347 
+
+Annealed ( -gated) 
+
+0.000868 0.000607 0.000657 0.000835 Figure 6: Unconditional generation of Burgers equation data with various samplers. Energy-based samplers, except the energy annealing sampler, reduce the PDE residual compared to the ODE baseline sampler. 16
