@@ -6,29 +6,38 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-19
-- 运行时间：2026-08-19 19:30:11 UTC
+- 最新运行日期：2026-08-20
+- 运行时间：2026-08-20 20:45:47 UTC
 - 运行状态：成功
-- 本次总论文数：3
+- 本次总论文数：6
 - 精读区：1
-- 速读区：2
+- 速读区：5
 
 ### 今日简报（AI）
-今日精读1篇、速读2篇，聚焦物理场生成与PDE求解的机器学习新范式；最值得关注的是《Composing Flow-Matching Energies》提出的“物理已知+流匹配能量”框架，可在PDE场上实现生成、OOD检测与反演，评分高达9.0；另有路径积分统一生成模型及粗网格PDE校正/超分两项速读，建议普通读者优先通读精读论文的摘要与图表，再按兴趣选读其余两篇。
-- 详情：[/202608/19/README](/202608/19/README)
+今日精读一篇物理约束生成AI的全球台风预报论文，并速读若干生成模型相关研究。最值得关注的是Tianmu-TC（9.0/10），展示物理约束AI在热带气旋预报中的潜力；其次可留意对抗学习下的无分类器引导调度（7.0/10）。建议优先了解物理约束AI在天气预报中的应用，再关注生成模型引导技术的优化方向。
+- 详情：[/202608/20/README](/202608/20/README)
 
 ### 精读区论文标签
-1. [Composing Flow-Matching Energies with Known Physics: Generation, OOD Detection, and Inversion on PDE Fields](/202608/19/2608.18004v1-composing-flow-matching-energies-with-known-physics-generation-ood-detection-and-inversion-on-pde-fields)  
+1. [Tianmu-TC: Physics-constraints Generative Artificial Intelligence for Global Tropical Cyclone Forecasting](/202608/20/2608.18500v1-tianmu-tc-physics-constraints-generative-artificial-intelligence-for-global-tropical-cyclone-forecasting)  
    标签：评分：9.0/10、query:genmod-fluid
-   evidence：流匹配模型直接用于PDE/物理场，可覆盖流体控制方程
+   evidence：基于物理约束的生成式AI全球热带气旋预报框架，是生成模型在大气流体动力学中的直接应用
 
 ### 速读区论文标签
-1. [Unifying Generative Models with Path Integrals](/202608/19/2608.12438v1-unifying-generative-models-with-path-integrals)  
+1. [Adversarial Learning of Classifier-Free Guidance Schedules](/202608/20/2608.14038v1-adversarial-learning-of-classifier-free-guidance-schedules)  
    标签：评分：7.0/10、query:genmod-fluid
-   evidence：用路径积分统合流式、扩散、变分与对抗生成模型，与扩散和基于分数的生成方法直接相关
-2. [RECAST: A Machine-Learning Framework for Correction and Super-Resolution of Coarse-Grid PDE Solvers](/202608/19/2608.11572v1-recast-a-machine-learning-framework-for-correction-and-super-resolution-of-coarse-grid-pde-solvers)  
+   evidence：学习扩散模型的自适应无分类器引导调度，可迁移至基于扩散的流体模拟
+2. [NAE: Normalizing AutoEncoder](/202608/20/2608.12084v1-nae-normalizing-autoencoder)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：用于粗网格PDE求解器修正与超分辨率的机器学习框架，与流体动力学相关
+   evidence：归一化流自编码器（NAE）改进基于流的生成模型；领域无关方法可迁移至流体流场建模
+3. [Uncovering Hidden Leptonic Correlations with Flow Matching and Autoencoders](/202608/20/2608.15042v1-uncovering-hidden-leptonic-correlations-with-flow-matching-and-autoencoders)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：使用流匹配生成式AI生成物理解，该方法可迁移至流体流动生成。
+4. [Forward-Evolution Error Analysis and Adaptive Design for Matrix-Valued Diffusion Models](/202608/20/2608.15103v1-forward-evolution-error-analysis-and-adaptive-design-for-matrix-valued-diffusion-models)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：对矩阵值扩散模型进行理论分析，为基于扩散的生成建模提供误差界与设计原则
+5. [Revisiting Classifier-Free Guidance Methods in Latent Diffusion Models](/202608/20/2608.16786v1-revisiting-classifier-free-guidance-methods-in-latent-diffusion-models)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：重新评估潜在扩散模型中的无分类器引导方法；改进扩散模型技术可直接服务于流体流场模拟管道
 
 
 <div class="dpr-home-promo-card">

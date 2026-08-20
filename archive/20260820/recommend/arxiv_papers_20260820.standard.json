@@ -1,0 +1,248 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-20T20:40:45.250985+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [
+    {
+      "id": "2608.18500v1",
+      "source": "arxiv",
+      "title": "Tianmu-TC: Physics-constraints Generative Artificial Intelligence for Global Tropical Cyclone Forecasting",
+      "abstract": "Tropical cyclones (TCs) pose severe risks from strong winds and heavy rainfall. However, forecasting their track and intensity remains challenging due to chaotic atmosphere and the rapid amplification of initial condition errors, leading to growing forecast uncertainty. While numerical weather prediction (NWP) and deep learning models have made progress, they remain computationally demanding and often fail under complex meteorological scenarios. Here, we present Tianmu-TC, a physics-constraints generative framework for global TC forecasting. Trained on Western North Pacific data, Tianmu-TC leverages physics-constraints to generate controllable outputs with reduced uncertainty thus improving forecast reliability. Experiments show Tianmu-TC outperforms deterministic and ensemble meteorological artificial intelligence models and authoritative NWP systems such as ECMWF in global ocean basins, with significantly lower computational cost. We further show Tianmu-TC performs well in challenging scenarios such as data sparsity, anomaly tracks, rapid intensification and weakening. These findings suggest physics-constraints generative AI offers a promising approach for reliable, efficient global TC forecasting.",
+      "authors": [
+        "Shiqi Zhang",
+        "Pan Mu",
+        "Cheng Huang",
+        "Hanting Yan",
+        "Yuchao Zhu",
+        "Jinglin Zhang",
+        "Shengyong Chen",
+        "Shoujuan Shu",
+        "Cong Bai"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-08-19T03:46:13+00:00",
+      "link": "https://arxiv.org/pdf/2608.18500v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "physics-constrained generative AI framework for global tropical cyclone forecasting; direct application of generative models to atmospheric fluid dynamics",
+      "llm_evidence_cn": "基于物理约束的生成式AI全球热带气旋预报框架，是生成模型在大气流体动力学中的直接应用",
+      "llm_evidence": "基于物理约束的生成式AI全球热带气旋预报框架，是生成模型在大气流体动力学中的直接应用",
+      "canonical_evidence": "基于物理约束的生成式AI全球热带气旋预报框架，是生成模型在大气流体动力学中的直接应用",
+      "llm_tldr_en": "Tianmu-TC applies a physics-constrained generative AI framework to global tropical cyclone forecasting. It generates controllable outputs with reduced uncertainty, improving forecast reliability and efficiency for atmospheric fluid dynamics.",
+      "llm_tldr_cn": "热带气旋的路径和强度预报因大气的混沌特性而充满不确定性，数值预报和传统深度学习模型计算代价高且复杂天气下表现不足。Tianmu-TC 在生成式人工智能框架中引入物理约束，利用西北太平洋数据训练，可生成不确定性更低、更可控的预报输出，从而提升全球热带气旋预报的可靠性。实验结果表明该框架在保证精度的同时降低了计算负担。这项工作为生成模型在流体力学与气象灾害预警中的交叉应用提供了有力例证。",
+      "llm_tldr": "热带气旋的路径和强度预报因大气的混沌特性而充满不确定性，数值预报和传统深度学习模型计算代价高且复杂天气下表现不足。Tianmu-TC 在生成式人工智能框架中引入物理约束，利用西北太平洋数据训练，可生成不确定性更低、更可控的预报输出，从而提升全球热带气旋预报的可靠性。实验结果表明该框架在保证精度的同时降低了计算负担。这项工作为生成模型在流体力学与气象灾害预警中的交叉应用提供了有力例证。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative artificial intelligence in fluid mechanics",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.14038v1",
+      "source": "arxiv",
+      "title": "Adversarial Learning of Classifier-Free Guidance Schedules",
+      "abstract": "Modern text-to-image diffusion models rely on classifier-free guidance (CFG) to achieve high image fidelity and text alignment. However, CFG typically applies a static, global scale across all timesteps, samples, and conditions -- a choice that is generally suboptimal and can introduce artifacts, as different states may benefit from different levels of guidance. While time-varying schedules are known to improve quality, designing them by hand is non-trivial and application-dependent. In this paper, we learn the guidance schedule as a function of diffusion time, conditioning and the current noisy sample, in order to better align sampled images with the text prompt. We frame this as a density ratio estimation problem: a discriminator is trained to estimate the time-dependent log-density ratio between the true and guided marginal distributions, while a lightweight generator network predicts the optimal, state-dependent guidance scale. Empirically, our approach outperforms both heuristic CFG schedules and prior methods for learning dynamic guidance on text-to-image generation benchmarks.",
+      "authors": [
+        "Ashwini Pokle",
+        "Alexandre Galashov",
+        "Arnaud Doucet",
+        "Mauricio Delbracio",
+        "Valentin De Bortoli"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-08-14T07:30:36+00:00",
+      "link": "https://arxiv.org/pdf/2608.14038v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Learns adaptive classifier-free guidance schedules for diffusion models, transferable to diffusion-based fluid simulation",
+      "llm_evidence_cn": "学习扩散模型的自适应无分类器引导调度，可迁移至基于扩散的流体模拟",
+      "llm_evidence": "学习扩散模型的自适应无分类器引导调度，可迁移至基于扩散的流体模拟",
+      "canonical_evidence": "学习扩散模型的自适应无分类器引导调度，可迁移至基于扩散的流体模拟",
+      "llm_tldr_en": "A discriminator learns timestep- and sample-dependent classifier-free guidance schedules for diffusion models, improving image-text alignment and fidelity; transferable to conditional fluid flow generation.",
+      "llm_tldr_cn": "针对扩散模型引导调度难以手工设计的问题，提出用判别器以密度比估计方式学习随扩散时间、条件和样本变化的引导调度。该调度能动态调整引导强度，减少伪影并提升图像保真度。由于该方法与具体数据模态无关，可迁移到流体流动的扩散生成或条件模拟中。",
+      "llm_tldr": "针对扩散模型引导调度难以手工设计的问题，提出用判别器以密度比估计方式学习随扩散时间、条件和样本变化的引导调度。该调度能动态调整引导强度，减少伪影并提升图像保真度。由于该方法与具体数据模态无关，可迁移到流体流动的扩散生成或条件模拟中。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.12084v1",
+      "source": "arxiv",
+      "title": "NAE: Normalizing AutoEncoder",
+      "abstract": "We consider the setting of Normalizing flows with approximate inverses, an established paradigm spanning both full-dimensional ($d=D$) and bottleneck ($d<D$) settings, and group these models under the term flow autoencoders. We present a theoretical investigation into their training dynamics and prove that the proposed loss used by existing approaches is suboptimal; specifically, both encoder and decoder surrogates must be optimized in alignment with reconstruction loss. Guided by these insights, we propose Normalizing Autoencoder (NAE), which employs a novel conditional loss that aligns the surrogate loss gradient with that of reconstruction loss, directly improving upon the current standard. Extensive experiments across molecule generation, tabular data, and image benchmarks demonstrate that NAE achieves state of the art performance. Our work highlights the importance of loss alignment in flow autoencoders and establishes NAE as a powerful generative framework.",
+      "authors": [
+        "Muhammad Abdur Rafae",
+        "Niels Landwehr"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-08-12T14:07:09+00:00",
+      "link": "https://arxiv.org/pdf/2608.12084v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Normalizing flow autoencoder (NAE) improves flow-based generative models; domain-agnostic method transferable to fluid flow modeling",
+      "llm_evidence_cn": "归一化流自编码器（NAE）改进基于流的生成模型；领域无关方法可迁移至流体流场建模",
+      "llm_evidence": "归一化流自编码器（NAE）改进基于流的生成模型；领域无关方法可迁移至流体流场建模",
+      "canonical_evidence": "归一化流自编码器（NAE）改进基于流的生成模型；领域无关方法可迁移至流体流场建模",
+      "llm_tldr_en": "Proposes Normalizing Autoencoder (NAE), improving flow autoencoders by aligning surrogate loss gradients with reconstruction loss; validated on molecule, tabular, and image benchmarks. As a domain-agnostic probabilistic flow model, it is transferable to fluid flow generation.",
+      "llm_tldr_cn": "针对现有流自编码器训练中编码器与解码器代理损失未与重构损失对齐、导致生成质量次优的问题，提出归一化自编码器（NAE）。NAE采用新型条件损失，使代理损失梯度与重构损失梯度对齐，从而改善训练动态。在分子生成、表格数据与图像基准上的实验表明其优于现有方法。归一化流作为概率生成模型，为流体流场生成建模提供了可迁移的工具。",
+      "llm_tldr": "针对现有流自编码器训练中编码器与解码器代理损失未与重构损失对齐、导致生成质量次优的问题，提出归一化自编码器（NAE）。NAE采用新型条件损失，使代理损失梯度与重构损失梯度对齐，从而改善训练动态。在分子生成、表格数据与图像基准上的实验表明其优于现有方法。归一化流作为概率生成模型，为流体流场生成建模提供了可迁移的工具。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "probabilistic flow models for fluid dynamics",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.15042v1",
+      "source": "arxiv",
+      "title": "Uncovering Hidden Leptonic Correlations with Flow Matching and Autoencoders",
+      "abstract": "We perform a global search for values of the Yukawa matrices and Majorana masses in the Type-I seesaw mechanism. Using flow matching, which is a generative artificial intelligence (generative AI) method, we generate a broad set of solutions reproducing the experimentally measured values of the neutrino mass-squared differences and the mixing angles. Then, a machine learning method known as an autoencoder is applied to uncover non-trivial correlations among physical quantities in the lepton sector. Our analysis reveals new non-linear relations involving neutrino masses and CP phases. These findings may contribute to elucidating the origins of the mass hierarchies and mixing patterns among generation structure.",
+      "authors": [
+        "Haruto Kitagawa",
+        "Satsuki Nishimura",
+        "Hajime Otsuka"
+      ],
+      "primary_category": "hep-ph",
+      "categories": [
+        "hep-ph",
+        "cs.LG",
+        "hep-th"
+      ],
+      "published": "2026-08-15T05:04:52+00:00",
+      "link": "https://arxiv.org/pdf/2608.15042v1",
+      "tags": [
+        "keyword:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Uses flow matching (generative AI) to generate physical solutions, a method transferable to fluid flow generation.",
+      "llm_evidence_cn": "使用流匹配生成式AI生成物理解，该方法可迁移至流体流动生成。",
+      "llm_evidence": "使用流匹配生成式AI生成物理解，该方法可迁移至流体流动生成。",
+      "canonical_evidence": "使用流匹配生成式AI生成物理解，该方法可迁移至流体流动生成。",
+      "llm_tldr_en": "This paper uses flow matching, a generative AI method, to generate Yukawa and Majorana mass solutions consistent with neutrino oscillation data, then applies autoencoders to find new non-linear relations among masses and CP phases, demonstrating a transferable generative approach for physics parameter spaces.",
+      "llm_tldr_cn": "本文针对Type-I跷跷板机制中大规模参数搜索的困难，采用流匹配这一生成式人工智能方法生成符合中微子质量平方差和混合角实验值的汤川矩阵与Majorana质量解，随后用自编码器在轻子参量空间中挖掘隐含关联。分析得到中微子质量与CP相位之间的新非线性关系，为质量层级与混合结构起源提供了线索。这表明生成式流匹配可用于物理参数空间探索，并可迁移到流体建模。",
+      "llm_tldr": "本文针对Type-I跷跷板机制中大规模参数搜索的困难，采用流匹配这一生成式人工智能方法生成符合中微子质量平方差和混合角实验值的汤川矩阵与Majorana质量解，随后用自编码器在轻子参量空间中挖掘隐含关联。分析得到中微子质量与CP相位之间的新非线性关系，为质量层级与混合结构起源提供了线索。这表明生成式流匹配可用于物理参数空间探索，并可迁移到流体建模。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.15103v1",
+      "source": "arxiv",
+      "title": "Forward-Evolution Error Analysis and Adaptive Design for Matrix-Valued Diffusion Models",
+      "abstract": "Diffusion models learn to reverse a predefined corruption process, but sampling still requires a costly time discretization and depends on the chosen noise schedule. We study these two issues for variance-preserving diffusions with matrix-valued schedules. Our analysis transfers reverse-time discretization errors to the forward corruption law and treats two numerical schemes within a common framework. The first freezes the score and yields, through a matrix-sensitive local comparison and forward information dissipation, an ambient-dimensional step complexity with leading factor $d/\\varepsilon^2$ for KL accuracy $\\varepsilon^2$. The second keeps the known Gaussian drift exact and freezes the posterior mean. For data of metric-entropy dimension $k$, a forward Markov identity, an anisotropic covering estimate, and Stieltjes integration by parts give the corresponding factor $k\\log k/\\varepsilon^2$. In both cases, the proof identifies a local error, accumulates it through the forward evolution, and inserts the result into a common KL decomposition. The local errors further provide directional criteria for matrix schedules and an asymptotically optimal square-root adaptive grid. A high-dimensional Gaussian-mixture experiment illustrates the resulting schedule and grid improvements.",
+      "authors": [
+        "Tongyao Pang",
+        "Zuowei Shen",
+        "Ruitong Zhang"
+      ],
+      "primary_category": "math.ST",
+      "categories": [
+        "math.ST",
+        "cs.IT"
+      ],
+      "published": "2026-08-15T07:58:35+00:00",
+      "link": "https://arxiv.org/pdf/2608.15103v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Theoretical analysis of matrix-valued diffusion models, providing error bounds and design principles for diffusion-based generative modeling",
+      "llm_evidence_cn": "对矩阵值扩散模型进行理论分析，为基于扩散的生成建模提供误差界与设计原则",
+      "llm_evidence": "对矩阵值扩散模型进行理论分析，为基于扩散的生成建模提供误差界与设计原则",
+      "canonical_evidence": "对矩阵值扩散模型进行理论分析，为基于扩散的生成建模提供误差界与设计原则",
+      "llm_tldr_en": "This paper provides forward-evolution error analysis for matrix-valued diffusion models, deriving step complexity bounds and guiding adaptive schedule design; it improves theoretical foundations of diffusion-based generation, relevant to fluid flow simulation.",
+      "llm_tldr_cn": "针对矩阵值方差保持扩散模型，提出前向演化的误差分析框架，将逆向时间离散误差转换为前向损坏律。文中分析两种数值格式，给出环境维度步数复杂度上界，并基于信息耗散指导自适应噪声调度设计。这些理论结果有助于更稳定、高效地训练扩散模型，为流体流动模拟等生成任务提供理论支持。",
+      "llm_tldr": "针对矩阵值方差保持扩散模型，提出前向演化的误差分析框架，将逆向时间离散误差转换为前向损坏律。文中分析两种数值格式，给出环境维度步数复杂度上界，并基于信息耗散指导自适应噪声调度设计。这些理论结果有助于更稳定、高效地训练扩散模型，为流体流动模拟等生成任务提供理论支持。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.16786v1",
+      "source": "arxiv",
+      "title": "Revisiting Classifier-Free Guidance Methods in Latent Diffusion Models",
+      "abstract": "Inference-time quality-enhancement methods are an effective and widely adopted means of improving diffusion models without expensive retraining. We study a family of training-free techniques conceptually rooted in Classifier-Free Guidance (CFG), most of which were originally proposed on older U-Net diffusion models and validated using metrics that assess image quality in isolation, without accounting for compositional alignment or semantic correspondence between the generated image and its associated text prompt. We re-evaluate eight such methods on two open-weight rectified-flow transformers under a fixed per-model protocol and three compositional-alignment benchmarks. No method consistently improves on CFG across the measured criteria. APG obtains several nominal best scores, but the corresponding gains often remain within the estimated evaluation uncertainty. Attention-perturbation methods provide isolated gains on SD3.5 Medium and more frequent degradations on FLUX.2 [klein] 4B Base, while CFG remains a competitive lower-cost baseline.",
+      "authors": [
+        "Artem Sergievskii",
+        "Artyom Turevich",
+        "Sergey Kastryulin"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-17T16:40:54+00:00",
+      "link": "https://arxiv.org/pdf/2608.16786v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Revisits classifier-free guidance in latent diffusion models; advances diffusion model technology directly useful for fluid flow simulation pipelines",
+      "llm_evidence_cn": "重新评估潜在扩散模型中的无分类器引导方法；改进扩散模型技术可直接服务于流体流场模拟管道",
+      "llm_evidence": "重新评估潜在扩散模型中的无分类器引导方法；改进扩散模型技术可直接服务于流体流场模拟管道",
+      "canonical_evidence": "重新评估潜在扩散模型中的无分类器引导方法；改进扩散模型技术可直接服务于流体流场模拟管道",
+      "llm_tldr_en": "Systematically studies training-free classifier-free guidance variants for latent diffusion models on rectified-flow transformers, finding no consistent improvement over CFG across compositional-alignment benchmarks. The insights improve diffusion-based generation, which can inform fluid flow simulators.",
+      "llm_tldr_cn": "针对潜在扩散模型中无分类器引导（CFG）的多种训练免费改进方法缺乏统一评估的问题，在开放权重的修正流Transformer上系统比较了八种方法。实验使用三个组合对齐基准，发现没有方法在所有指标上一致优于标准CFG，APG具有部分优势。该结论为扩散模型推理增强提供参考，对流体流场生成的扩散建模具有方法借鉴价值。",
+      "llm_tldr": "针对潜在扩散模型中无分类器引导（CFG）的多种训练免费改进方法缺乏统一评估的问题，在开放权重的修正流Transformer上系统比较了八种方法。实验使用三个组合对齐基准，发现没有方法在所有指标上一致优于标准CFG，APG具有部分优势。该结论为扩散模型推理增强提供参考，对流体流场生成的扩散建模具有方法借鉴价值。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
