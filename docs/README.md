@@ -6,38 +6,48 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-20
-- 运行时间：2026-08-20 20:45:47 UTC
+- 最新运行日期：2026-08-21
+- 运行时间：2026-08-21 20:50:40 UTC
 - 运行状态：成功
-- 本次总论文数：6
-- 精读区：1
-- 速读区：5
+- 本次总论文数：9
+- 精读区：0
+- 速读区：9
 
 ### 今日简报（AI）
-今日精读一篇物理约束生成AI的全球台风预报论文，并速读若干生成模型相关研究。最值得关注的是Tianmu-TC（9.0/10），展示物理约束AI在热带气旋预报中的潜力；其次可留意对抗学习下的无分类器引导调度（7.0/10）。建议优先了解物理约束AI在天气预报中的应用，再关注生成模型引导技术的优化方向。
-- 详情：[/202608/20/README](/202608/20/README)
+今日速读9篇论文，未做精读，覆盖图像生成与扩散模型方向。最值得关注的是《Spatially-Grounded Flow Matching》与《GenRec》，均获7.0分，分别探讨结构化源分布生成与重建/生成的分工。建议从这两篇入手，后续安排精读并对比其与经典扩散方法的异同。
+- 详情：[/202608/21/README](/202608/21/README)
 
 ### 精读区论文标签
-1. [Tianmu-TC: Physics-constraints Generative Artificial Intelligence for Global Tropical Cyclone Forecasting](/202608/20/2608.18500v1-tianmu-tc-physics-constraints-generative-artificial-intelligence-for-global-tropical-cyclone-forecasting)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：基于物理约束的生成式AI全球热带气旋预报框架，是生成模型在大气流体动力学中的直接应用
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Adversarial Learning of Classifier-Free Guidance Schedules](/202608/20/2608.14038v1-adversarial-learning-of-classifier-free-guidance-schedules)  
+1. [Spatially-Grounded Flow Matching: Structured Source Distributions for Image Generation](/202608/21/2608.15452v1-spatially-grounded-flow-matching-structured-source-distributions-for-image-generation)  
    标签：评分：7.0/10、query:genmod-fluid
-   evidence：学习扩散模型的自适应无分类器引导调度，可迁移至基于扩散的流体模拟
-2. [NAE: Normalizing AutoEncoder](/202608/20/2608.12084v1-nae-normalizing-autoencoder)  
+   evidence：结构化源分布流匹配，可应用于流体流动代理建模
+2. [GenRec: Knowing Where to Reconstruct and Where to Generate](/202608/21/2608.17832v1-genrec-knowing-where-to-reconstruct-and-where-to-generate)  
+   标签：评分：7.0/10、query:genmod-fluid
+   evidence：用于视图合成的流匹配生成模型，方法可迁移至流体仿真
+3. [A Plug-in Interpretation of Conditioning in Score-Based Diffusion Models](/202608/21/2608.19504v1-a-plug-in-interpretation-of-conditioning-in-score-based-diffusion-models)  
+   标签：评分：7.0/10、query:genmod-fluid
+   evidence：基于分数的扩散模型条件化机制，是流体流场分数生成模型的核心方法
+4. [Continuous Adversarial MeanFlow Transfer](/202608/21/2608.19540v1-continuous-adversarial-meanflow-transfer)  
+   标签：评分：7.0/10、query:genmod-fluid
+   evidence：面向少步生成采样的连续对抗平均流迁移方法，可迁移到流场生成
+5. [RGBX-Next: Towards Realistic Generative Rendering from G-Buffers](/202608/21/2608.13929v1-rgbx-next-towards-realistic-generative-rendering-from-g-buffers)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：归一化流自编码器（NAE）改进基于流的生成模型；领域无关方法可迁移至流体流场建模
-3. [Uncovering Hidden Leptonic Correlations with Flow Matching and Autoencoders](/202608/20/2608.15042v1-uncovering-hidden-leptonic-correlations-with-flow-matching-and-autoencoders)  
+   evidence：扩散Transformer作为条件渲染器，对CFD生成模型有借鉴意义
+6. [Magnitude-Direction Decoupling for Fast Video Generation with Flow Matching Models](/202608/21/2608.17695v1-magnitude-direction-decoupling-for-fast-video-generation-with-flow-matching-models)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：使用流匹配生成式AI生成物理解，该方法可迁移至流体流动生成。
-4. [Forward-Evolution Error Analysis and Adaptive Design for Matrix-Valued Diffusion Models](/202608/20/2608.15103v1-forward-evolution-error-analysis-and-adaptive-design-for-matrix-valued-diffusion-models)  
+   evidence：用于视频生成的流匹配模型加速方法，可迁移至流体仿真
+7. [Ordered Diffusion Kernels](/202608/21/2608.18019v1-ordered-diffusion-kernels)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：对矩阵值扩散模型进行理论分析，为基于扩散的生成建模提供误差界与设计原则
-5. [Revisiting Classifier-Free Guidance Methods in Latent Diffusion Models](/202608/20/2608.16786v1-revisiting-classifier-free-guidance-methods-in-latent-diffusion-models)  
+   evidence：有序扩散核逼近SDE生成元，与基于分数的生成建模相关
+8. [Tensor Field Models](/202608/21/2608.18808v1-tensor-field-models)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：重新评估潜在扩散模型中的无分类器引导方法；改进扩散模型技术可直接服务于流体流场模拟管道
+   evidence：生成状态下流形上的抽象生成框架，可能用于条件物理场生成
+9. [Manifold Drift in Flow Preference Optimization: A Root Cause of Reward Hacking](/202608/21/2608.20011v1-manifold-drift-in-flow-preference-optimization-a-root-cause-of-reward-hacking)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：对流动匹配中流形漂移的理论分析，与基于流匹配的生成模型相关
 
 
 <div class="dpr-home-promo-card">

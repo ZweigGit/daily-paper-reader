@@ -1,0 +1,379 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-21T20:43:49.806963+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 9,
+    "quick_skim_target": 11,
+    "quick_selected": 9
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.15452v1",
+      "source": "arxiv",
+      "title": "Spatially-Grounded Flow Matching: Structured Source Distributions for Image Generation",
+      "abstract": "Current flow matching models learn to transport the source i.i.d. Gaussian noise into the target distribution of natural images, yet this source distribution carries no notion of spatial structure. Images however are fundamentally local since nearby pixels are strongly correlated. By sampling the noise independently, we hypothesize that models are implicitly encouraged to exploit less noisy neighbors as context during training, partially bypassing the need to properly learn the true local structure of images. The source distribution, in other words, works against the inductive bias of the image domain. To ameliorate this design discrepancy, we propose StructFlow which encodes spatial locality directly into the source by having the pixels within a small region share a common noise component. This structured source produces transport paths that are geometrically aligned with image regions - enabling properties that generic flow matching struggles to provide: fine-grained local editing that naturally respects boundaries, robust structure preservation, and smooth semantic interpolation between images. We show that these benefits also extend to large pre-trained models, demonstrating that StructFlow can even be incorporated through a lightweight post-training phase. Comprehensive experiments on multiple datasets, in unconditional, class and text-conditioned regimes, using different diffusion transformer architectures confirm that StructFlow not only offers competitive image generation quality, but also significantly improves localized controllable re-synthesis.",
+      "authors": [
+        "Arman Zarei",
+        "Mahdi M. Kalayeh"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-16T00:03:21+00:00",
+      "link": "https://arxiv.org/pdf/2608.15452v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "flow matching with structured source distributions, applicable to fluid flow surrogate modeling",
+      "llm_evidence_cn": "结构化源分布流匹配，可应用于流体流动代理建模",
+      "llm_evidence": "结构化源分布流匹配，可应用于流体流动代理建模",
+      "canonical_evidence": "结构化源分布流匹配，可应用于流体流动代理建模",
+      "llm_tldr_en": "Introduces StructFlow, encoding spatial locality into the source distribution of flow matching to improve image generation by providing structural inductive bias.",
+      "llm_tldr_cn": "针对流匹配模型中独立同分布高斯源分布缺乏空间结构、不利于学习图像局部相关性的问题，论文提出StructFlow，将空间局部性直接编码进源分布。通过让相邻像素共享结构化的初始噪声，模型更好地遵循图像域的内蕴偏差，无需依赖噪声邻居作为间接上下文。实验显示该方法在生成质量和训练稳定性上优于原始流匹配，为生成模型源分布设计提供了新方向。",
+      "llm_tldr": "针对流匹配模型中独立同分布高斯源分布缺乏空间结构、不利于学习图像局部相关性的问题，论文提出StructFlow，将空间局部性直接编码进源分布。通过让相邻像素共享结构化的初始噪声，模型更好地遵循图像域的内蕴偏差，无需依赖噪声邻居作为间接上下文。实验显示该方法在生成质量和训练稳定性上优于原始流匹配，为生成模型源分布设计提供了新方向。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching for fluid flow simulation",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.13929v1",
+      "source": "arxiv",
+      "title": "RGBX-Next: Towards Realistic Generative Rendering from G-Buffers",
+      "abstract": "Diffusion models have achieved impressive results in image, video, and streaming generation. However, compared to traditional 3D rendering, they still lack precise control over the generated output. We believe a viable path forward is to use generative models as learned renderers conditioned on traditionally rendered G-buffers. We introduce RGBX-Next, a unified generative framework for forward and inverse rendering, which allows estimating G-buffers from images, videos, and streams, and rendering realistic images, videos, and streams from G-buffers. Our key contribution is a general recipe for finetuning diffusion transformer (DiT) models into generative forward and inverse renderers. We show that the resulting models achieve high quality in both realistic generative rendering and intrinsic decomposition. We will make all our models publicly available. We believe that the design principles presented in this paper will benefit future research on controllable generative forward and inverse rendering.",
+      "authors": [
+        "Zheng Zeng",
+        "Marco Salvi",
+        "Lifan Wu",
+        "Jan Novák",
+        "Daqi Lin",
+        "Saeed Hadadan",
+        "Yichen Sheng",
+        "Robert Pottorff",
+        "Shiqiu Liu",
+        "Ravi Ramamoorthi",
+        "Ling-Qi Yan",
+        "Miloš Hašan"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.GR"
+      ],
+      "published": "2026-08-14T03:57:52+00:00",
+      "link": "https://arxiv.org/pdf/2608.13929v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "diffusion transformers as conditional renderers, potential for CFD generative models",
+      "llm_evidence_cn": "扩散Transformer作为条件渲染器，对CFD生成模型有借鉴意义",
+      "llm_evidence": "扩散Transformer作为条件渲染器，对CFD生成模型有借鉴意义",
+      "canonical_evidence": "扩散Transformer作为条件渲染器，对CFD生成模型有借鉴意义",
+      "llm_tldr_en": "Presents RGBX-Next, a unified generative framework fine-tuning diffusion transformers as forward and inverse renderers conditioned on G-buffers, achieving high-quality realistic rendering.",
+      "llm_tldr_cn": "针对扩散模型与传统渲染相比缺乏精确控制的问题，论文提出RGBX-Next，一个统一的生成式正/逆渲染框架。该框架通过将扩散Transformer微调为以G缓冲为条件的生成渲染器，既可以从图像/视频估计G缓冲，也可以从G缓冲渲染出真实感图像/视频。实验证明其在重建与生成质量上表现优异，为可控生成渲染提供了通用配方。",
+      "llm_tldr": "针对扩散模型与传统渲染相比缺乏精确控制的问题，论文提出RGBX-Next，一个统一的生成式正/逆渲染框架。该框架通过将扩散Transformer微调为以G缓冲为条件的生成渲染器，既可以从图像/视频估计G缓冲，也可以从G缓冲渲染出真实感图像/视频。实验证明其在重建与生成质量上表现优异，为可控生成渲染提供了通用配方。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.17832v1",
+      "source": "arxiv",
+      "title": "GenRec: Knowing Where to Reconstruct and Where to Generate",
+      "abstract": "Generative novel view synthesis from sparse input images is rarely all reconstruction or all generation: pixels visible in some source view have a unique correct value modulated only by view-dependent shading, while pixels in disocclusions or beyond the captured volume admit a distribution of plausible completions. Existing generative novel-view-synthesis methods conflate these regimes under a single uniform loss, blurring the line between geometric fidelity and creative hallucinations even when scene geometry is injected through warped point clouds or projected depth. We introduce GenRec, a multi-view flow matching model that builds the reconstruction--generation split directly into its architecture, supervision, and gradient flow. Guided by an observation mask derived from the source cameras and a monocular depth estimator, a flow matching backbone jointly denoises RGB and scene-coordinate maps across all target views, while a pixel-space refinement stage restores high-frequency detail on observed pixels; the same mask gates supervision so regression signals do not contaminate the generative prior. Across RealEstate10K, DL3DV-10K, and Mip-NeRF~360, in both single-view extrapolation and two-view interpolation, GenRec attains the best reconstruction fidelity in observed regions while also surpassing purely generative baselines on perceptual quality in unobserved ones, showing the effectiveness of our approach.",
+      "authors": [
+        "Ata Çelen",
+        "Jaewoo Jung",
+        "Federico Tombari",
+        "Marc Pollefeys",
+        "Sunghwan Hong",
+        "Michael Niemeyer",
+        "Daniel Barath"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-18T14:31:19+00:00",
+      "link": "https://arxiv.org/pdf/2608.17832v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "flow matching-based generative model for view synthesis, transferable to fluid simulation",
+      "llm_evidence_cn": "用于视图合成的流匹配生成模型，方法可迁移至流体仿真",
+      "llm_evidence": "用于视图合成的流匹配生成模型，方法可迁移至流体仿真",
+      "canonical_evidence": "用于视图合成的流匹配生成模型，方法可迁移至流体仿真",
+      "llm_tldr_en": "Introduces GenRec, a multi-view flow matching model that explicitly separates reconstruction and generation regions via observation masks, improving fidelity and plausible completion in novel view synthesis.",
+      "llm_tldr_cn": "针对生成式新视角合成将重建与生成混为一谈、导致保真与幻觉失衡的问题，论文提出GenRec，一种多视角流匹配模型。通过在架构、监督和梯度流中直接引入重建-生成划分，并由观测掩码引导，GenRec在可见像素上保持唯一正确值、在遮挡区学习合理补全分布。实验表明，该方法在几何保真与生成多样性之间取得更优平衡，为以重建为导向的生成式渲染提供了新思路。",
+      "llm_tldr": "针对生成式新视角合成将重建与生成混为一谈、导致保真与幻觉失衡的问题，论文提出GenRec，一种多视角流匹配模型。通过在架构、监督和梯度流中直接引入重建-生成划分，并由观测掩码引导，GenRec在可见像素上保持唯一正确值、在遮挡区学习合理补全分布。实验表明，该方法在几何保真与生成多样性之间取得更优平衡，为以重建为导向的生成式渲染提供了新思路。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.17695v1",
+      "source": "arxiv",
+      "title": "Magnitude-Direction Decoupling for Fast Video Generation with Flow Matching Models",
+      "abstract": "Flow matching models for video generation achieve impressive performance but suffer from high computational overhead due to iterative denoising. In fact, the original model is not necessary for all denoising steps, allowing some steps to use lightweight alternatives for faster sampling. However, directly using caching or lightweight models can deviate from the original denoising trajectory, resulting in suboptimal performance. Through empirical analysis, we find that lightweight models can robustly capture the magnitude components of the original model's output, while caching provides reliable directional guidance. Building on this insight, we propose the Magnitude-Direction Decoupling (MDD) method, which adaptively employs a direction-calibrated lightweight model as a substitute for the original model to accelerate inference and effectively correct deviations in the denoising trajectory. Moreover, MDD further reduces inference costs by reusing magnitude information under classifier-free guidance (CFG). As a result, MDD offers a more reliable and lightweight solution to accelerate sampling. Experiments show that MDD outperforms existing acceleration methods, delivering promising speedups (e.g., up to 2.95x on Wan2.1) while preserving high visual fidelity and content richness.",
+      "authors": [
+        "Haonan Xu",
+        "Feiyang Chen",
+        "Songkui Chen",
+        "Hongpeng Pan",
+        "Zhefeng Wang",
+        "Xinyu Duan",
+        "Baoxing Huai",
+        "Yang Yang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-18T12:12:21+00:00",
+      "link": "https://arxiv.org/pdf/2608.17695v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Flow matching model acceleration method for video generation, transferable to fluid flow simulation",
+      "llm_evidence_cn": "用于视频生成的流匹配模型加速方法，可迁移至流体仿真",
+      "llm_evidence": "用于视频生成的流匹配模型加速方法，可迁移至流体仿真",
+      "canonical_evidence": "用于视频生成的流匹配模型加速方法，可迁移至流体仿真",
+      "llm_tldr_en": "Proposes Magnitude-Direction Decoupling to speed up flow matching video generation by combining lightweight networks and caching; generic acceleration potentially useful for fluid flow matching.",
+      "llm_tldr_cn": "这一工作针对流匹配模型迭代去噪计算开销大的问题，提出幅度-方向解耦（MDD）方法，利用轻量网络捕捉幅度、缓存提供方向引导，从而在不偏离原去噪轨迹的前提下加速视频生成。虽然任务背景是视频生成，但其加速策略对流体仿真中的流匹配生成具有直接的方法借鉴意义，为解决流体流匹配采样效率问题提供了可行的通用技术路径。",
+      "llm_tldr": "这一工作针对流匹配模型迭代去噪计算开销大的问题，提出幅度-方向解耦（MDD）方法，利用轻量网络捕捉幅度、缓存提供方向引导，从而在不偏离原去噪轨迹的前提下加速视频生成。虽然任务背景是视频生成，但其加速策略对流体仿真中的流匹配生成具有直接的方法借鉴意义，为解决流体流匹配采样效率问题提供了可行的通用技术路径。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.19504v1",
+      "source": "arxiv",
+      "title": "A Plug-in Interpretation of Conditioning in Score-Based Diffusion Models",
+      "abstract": "We propose a conditioning mechanism for diffusion models based on multi-speed joint diffusion of the target and the condition. The mechanism learns an unconditional joint score network and enforces conditioning at inference via a plug-in correction term. The plug-in term separates the conditioning contribution from the learned unconditional dynamics, offering a transparent view of how the condition steers generation of the target distribution. Building on this, we derive explicit conditional reverse-time SDEs and approximate probability-flow ODEs, enabling principled and directly comparable conditional samplers. To reduce the induced ODE--SDE discrepancy, we introduce a log-Fokker--Planck residual regularization that improves ODE sampling quality. Experiments on conditional image generation tasks demonstrate competitive performance and support the effectiveness of the plug-in conditioning view. Additional ODE--SDE comparison experiments show that the log-Fokker--Planck residual regularization improves deterministic ODE sampling.",
+      "authors": [
+        "Libo Chen",
+        "Souvik Ghosh",
+        "Teo Deveney",
+        "Chris Budd",
+        "Vinay P. Namboodiri"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-19T23:45:05+00:00",
+      "link": "https://arxiv.org/pdf/2608.19504v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "score-based diffusion conditioning mechanism; core for score-based generative modeling of fluid flows",
+      "llm_evidence_cn": "基于分数的扩散模型条件化机制，是流体流场分数生成模型的核心方法",
+      "llm_evidence": "基于分数的扩散模型条件化机制，是流体流场分数生成模型的核心方法",
+      "canonical_evidence": "基于分数的扩散模型条件化机制，是流体流场分数生成模型的核心方法",
+      "llm_tldr_en": "Proposes a multi-speed joint diffusion conditioning mechanism with a plug-in correction term, separating condition influence from learned unconditional dynamics, and introduces log-Fokker-Planck regularization to improve ODE sampling.",
+      "llm_tldr_cn": "针对分数扩散模型的条件生成问题，该文提出一种基于多速率联合扩散的条件机制，在学习无条件联合分数网络后，通过插件式修正项在推断时施加条件。该修正项将条件对生成的影响从无条件动力学中分离，并提供显式的条件逆向SDE与近似概率流ODE。为降低ODE-SDE不一致性，引入log-Fokker-Planck残差正则化，提升ODE采样质量，为条件扩散模型提供了透明且可比较的采样框架。",
+      "llm_tldr": "针对分数扩散模型的条件生成问题，该文提出一种基于多速率联合扩散的条件机制，在学习无条件联合分数网络后，通过插件式修正项在推断时施加条件。该修正项将条件对生成的影响从无条件动力学中分离，并提供显式的条件逆向SDE与近似概率流ODE。为降低ODE-SDE不一致性，引入log-Fokker-Planck残差正则化，提升ODE采样质量，为条件扩散模型提供了透明且可比较的采样框架。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "score-based generative models for fluid flow",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.18019v1",
+      "source": "arxiv",
+      "title": "Ordered Diffusion Kernels",
+      "abstract": "We introduce Ordered Diffusion Kernels (ODKs), a novel class of local kernels that can approximate the infinitesimal generator of an arbitrary Itô Stochastic Differential Equation (SDE). ODKs are designed to be applied to data sampled from dynamical systems where little dynamical information is available a priori. The Laplacian of classical diffusion kernels approximates the Laplace-Beltrami operator on the underlying manifold; adjusting the normalisation introduces an advection term that depends on the sampling density; recently, TMDmap generalised this normalisation to target an arbitrary measure, but at the cost of coupling advection to diffusion. More general local kernels can learn arbitrary second-order elliptic operators but are formulated in terms of known velocity fields --- making the first step of any analysis a potentially ill-posed inference problem. To formulate ODK, we first relax the problem of potential estimation to the more tractable task of inferring an ordering of the data, which we represent through an ordering function. We prove ODK's Laplacian converges to the infinitesimal generator of a gradient-flow SDE with state-dependent isotropic diffusion, without coupling advection and diffusion. We provide various extensions of ODK to: arbitrary drifts via local ordering functions; anisotropic diffusions via a Strang splitting scheme; multiple ordering functions; and self-tuning bandwidths. In addition, we introduce two loss functions which exploit the structure of ODKs to solve a non-parametric inference problem. We validate this framework on synthetic data from deterministic and stochastic systems, demonstrating accurate recovery of operators, velocity fields, extrinsic curvature, and spatially dependent drift and diffusion coefficients.",
+      "authors": [
+        "Jack H. Soulsby",
+        "Andreas C. S. Jørgensen",
+        "Atiyo Ghosh",
+        "Vahid Shahrezaei"
+      ],
+      "primary_category": "math.NA",
+      "categories": [
+        "math.NA",
+        "math.DS"
+      ],
+      "published": "2026-08-18T17:12:17+00:00",
+      "link": "https://arxiv.org/pdf/2608.18019v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "ordered diffusion kernels approximate SDE generator, relevant to score-based generative modeling",
+      "llm_evidence_cn": "有序扩散核逼近SDE生成元，与基于分数的生成建模相关",
+      "llm_evidence": "有序扩散核逼近SDE生成元，与基于分数的生成建模相关",
+      "canonical_evidence": "有序扩散核逼近SDE生成元，与基于分数的生成建模相关",
+      "llm_tldr_en": "Introduces Ordered Diffusion Kernels, local kernels approximating the infinitesimal generator of arbitrary Ito SDEs for dynamical system data, overcoming limitations of classical diffusion kernels.",
+      "llm_tldr_cn": "针对从动力系统中学习动力学时古典扩散核只能逼近拉普拉斯-贝尔特拉米算子、且难以解耦平流与扩散的问题，论文提出有序扩散核（ODK）。ODK是一类局部核，可直接近似任意伊藤随机微分方程的无穷小生成元，并与数据采样的动力学信息先验无关。通过与TMDmap的比较，展示了ODK能克服平流-扩散耦合限制，对一般二阶椭圆算子也适用。该工作为随机动力系统的数据驱动建模提供了通用且可扩展的核工具。",
+      "llm_tldr": "针对从动力系统中学习动力学时古典扩散核只能逼近拉普拉斯-贝尔特拉米算子、且难以解耦平流与扩散的问题，论文提出有序扩散核（ODK）。ODK是一类局部核，可直接近似任意伊藤随机微分方程的无穷小生成元，并与数据采样的动力学信息先验无关。通过与TMDmap的比较，展示了ODK能克服平流-扩散耦合限制，对一般二阶椭圆算子也适用。该工作为随机动力系统的数据驱动建模提供了通用且可扩展的核工具。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "score-based generative models for fluid flow",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.19540v1",
+      "source": "arxiv",
+      "title": "Continuous Adversarial MeanFlow Transfer",
+      "abstract": "Training fast generators on new domains with limited data remains challenging for two reasons. First, adapting a pretrained diffusion or flow model to a new domain leaves its costly multi-step sampling unaddressed, and existing acceleration methods are tied to the source parameterization--$ε$, $x$, $v$, or $u$--leaving heterogeneous pretrained models with no common acceleration target. Second, while adversarial refinement is proven effective for few-step quality, it is formulated only for instantaneous-velocity flows, not for the finite-interval average velocities that MeanFlow (MF) models predict. We address both problems. We propose MeanFlow-Transfer, which maps heterogeneous source outputs into a shared velocity representation, uses it to initialize an MF generator from the source weights, and optimizes an MF objective on the target domain. This unifies adaptation and acceleration in a single training loop across a broad range of pretrained models. We then introduce Continuous Adversarial MeanFlow, a post-training stage that extends continuous adversarial flow models from instantaneous velocities to MF's finite-interval average velocities. CAMF contrasts changes in a learned potential between real and predicted interval endpoints, recovering fine detail that MF regression averages away, and reduces to the instantaneous criterion in the vanishing-interval limit. Adapting four ImageNet-based source models--DiT ($ε$), SiT ($v$), JiT ($x$), iMF ($u$)--to five target domains, MF-T with CAMF matches or exceeds the fine-tuned teacher in FID and FDD at up to $125\\times$ fewer Neural Function Evaluations (NFEs), while CAMF improves MF-T's few-step FID by $29\\%$ on average.",
+      "authors": [
+        "Yara Bahram",
+        "Zahra Dehghani",
+        "Mélodie Desbos",
+        "Eric Granger",
+        "Pablo Piantanida",
+        "Mohammadhadi Shateri"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.CV"
+      ],
+      "published": "2026-08-20T01:20:31+00:00",
+      "link": "https://arxiv.org/pdf/2608.19540v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "flow matching and adversarial refinement for few-step generative sampling; transferable to fluid flow generation",
+      "llm_evidence_cn": "面向少步生成采样的连续对抗平均流迁移方法，可迁移到流场生成",
+      "llm_evidence": "面向少步生成采样的连续对抗平均流迁移方法，可迁移到流场生成",
+      "canonical_evidence": "面向少步生成采样的连续对抗平均流迁移方法，可迁移到流场生成",
+      "llm_tldr_en": "Proposes MeanFlow-Transfer, mapping heterogeneous source outputs into a shared velocity representation and initializing a MeanFlow generator with adversarial refinement, enabling few-step generation on new domains from heterogeneous pretrained models.",
+      "llm_tldr_cn": "针对预训练扩散或流模型在有限数据新域上迁移时采样成本高的问题，该文提出MeanFlow-Transfer，将异构源模型的输出映射到统一的平均速度表示，并利用连续对抗精炼初始化一个MeanFlow生成器。该方法为异构预训练模型提供了公共的加速目标，实现了少步生成并显著降低采样代价，为流匹配生成模型的高效迁移与加速提供了新方案。",
+      "llm_tldr": "针对预训练扩散或流模型在有限数据新域上迁移时采样成本高的问题，该文提出MeanFlow-Transfer，将异构源模型的输出映射到统一的平均速度表示，并利用连续对抗精炼初始化一个MeanFlow生成器。该方法为异构预训练模型提供了公共的加速目标，实现了少步生成并显著降低采样代价，为流匹配生成模型的高效迁移与加速提供了新方案。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.18808v1",
+      "source": "arxiv",
+      "title": "Tensor Field Models",
+      "abstract": "This paper introduces Tensor Field Models (TFMs), realization-level Mathematical Structures in which a learned Operator maps a product of admissible component-section families to a prescribed family of time-dependent tangent sections on a Generative State Manifold. Analytic and dynamical restrictions are encoded through the choice of admissible families rather than imposed by the root definition. Constructed, component-separable, and Tensor Bundle TFMs provide structured refinements of this common object. In the conditional realizations considered here, a structured condition $c=(c_1,\\ldots,c_n)$ is mapped componentwise to a reusable collection $\\mathbf H_c=(H_{c_1}^{(1)},\\ldots,H_{c_n}^{(n)})$. In the architectures evaluated here, the component representations remain distinct and are combined only by the Field Operator to produce the generated Vector Field. All learned models are trained using Flow Matching. Experiments show that TFMs can improve performance and that amortized sampling enabled by reusable condition representations can accelerate generation.",
+      "authors": [
+        "Alexander Strunk",
+        "Roland Assam"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.DG"
+      ],
+      "published": "2026-08-19T11:07:21+00:00",
+      "link": "https://arxiv.org/pdf/2608.18808v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "abstract generative framework on manifolds; potentially useful for conditional physical field generation",
+      "llm_evidence_cn": "生成状态下流形上的抽象生成框架，可能用于条件物理场生成",
+      "llm_evidence": "生成状态下流形上的抽象生成框架，可能用于条件物理场生成",
+      "canonical_evidence": "生成状态下流形上的抽象生成框架，可能用于条件物理场生成",
+      "llm_tldr_en": "Introduces Tensor Field Models (TFMs), a mathematical framework where a learned operator maps component-section families to time-dependent tangent sections, providing structured refinements for conditional generation.",
+      "llm_tldr_cn": "该文提出张量场模型（TFM）这一数学框架，由学习算子将可容许截面族映射到生成状态流形上的时变切向量场，并通过构造化、分量可分与张量丛等变体来实现条件生成。该框架将解析与动力学约束编码在容许族中，为条件生成模型提供统一的结构化视角，可望用于物理场等复杂结构的生成任务。",
+      "llm_tldr": "该文提出张量场模型（TFM）这一数学框架，由学习算子将可容许截面族映射到生成状态流形上的时变切向量场，并通过构造化、分量可分与张量丛等变体来实现条件生成。该框架将解析与动力学约束编码在容许族中，为条件生成模型提供统一的结构化视角，可望用于物理场等复杂结构的生成任务。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.20011v1",
+      "source": "arxiv",
+      "title": "Manifold Drift in Flow Preference Optimization: A Root Cause of Reward Hacking",
+      "abstract": "Preference optimization is a standard alignment method for generative models, yet extending it to continuous-time dynamics remains non-trivial. In flow matching, reward-driven updates modify transport trajectories without an inherent constraint to the pretrained data manifold and can move terminal samples off the pretrained support. We formalize this failure mode as manifold drift. Theoretically, we show that optimal flow matching recovers the terminal data distribution, whereas a preference update leaves the pretrained manifold whenever its induced terminal displacement has a nonzero normal component. As a remedy, we propose ThermoDPO, a temperature-controlled objective that anchors pairwise preference optimization on preferred samples. Across temperature regimes, this objective connects rejection sampling fine-tuning and FlowDPO and controls a pointwise reconstruction-based surrogate for manifold distance. To counteract diminished signals at low temperatures, we further introduce a weighted variant, ThermoDPO-weighted. On the main toy benchmark, ThermoDPO-weighted attains a StrictScore of 0.899, compared with 0.629 for FlowDPO and 0.857 for FlowDPO+RFT. On SD3.5-M at CFG = 4.5, it improves OCR by 47.5% and the average of four metrics by 16.0%.",
+      "authors": [
+        "Yansen Han",
+        "Shengyi Liao",
+        "Yuanxing Zhang",
+        "Pengfei Wan",
+        "Tao Lin"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-08-20T13:25:24+00:00",
+      "link": "https://arxiv.org/pdf/2608.20011v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "theoretical analysis of flow matching drift; relevant to flow-matching-based generative models",
+      "llm_evidence_cn": "对流动匹配中流形漂移的理论分析，与基于流匹配的生成模型相关",
+      "llm_evidence": "对流动匹配中流形漂移的理论分析，与基于流匹配的生成模型相关",
+      "canonical_evidence": "对流动匹配中流形漂移的理论分析，与基于流匹配的生成模型相关",
+      "llm_tldr_en": "Formalizes manifold drift in flow matching preference optimization, showing reward updates move samples off the pretrained manifold; proposes ThermoDPO to anchor preferred samples and mitigate drift.",
+      "llm_tldr_cn": "在流匹配的偏好优化中，奖励驱动更新可能使生成样本偏离预训练数据流形，本文将此形式化为流形漂移，并证明当位移具有法向分量时必然发生。作为修复，提出温度控制的ThermoDPO目标，将成对偏好优化锚定在偏好样本附近。理论分析与实验表明该方法能有效抑制流形漂移与奖励黑客，为连续时间生成模型的稳定对齐提供了重要洞见。",
+      "llm_tldr": "在流匹配的偏好优化中，奖励驱动更新可能使生成样本偏离预训练数据流形，本文将此形式化为流形漂移，并证明当位移具有法向分量时必然发生。作为修复，提出温度控制的ThermoDPO目标，将成对偏好优化锚定在偏好样本附近。理论分析与实验表明该方法能有效抑制流形漂移与奖励黑客，为连续时间生成模型的稳定对齐提供了重要洞见。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
