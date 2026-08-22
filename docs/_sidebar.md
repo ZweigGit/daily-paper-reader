@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-08-22 <!--dpr-date:20260822-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/22/2608.20025v1-clast-context-aware-contrastive-vae-for-probabilistic-time-series-forecasting" data-sidebar-item="{&quot;title&quot;: &quot;CLaST: Context-aware Contrastive VAE for Probabilistic Time Series Forecasting&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.20025v1-clast-context-aware-contrastive-vae-for-probabilistic-time-series-forecasting&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;基于变分自编码器的深度生成式概率预测方法，可迁移至生成式流场建模&quot;}">CLaST: Context-aware Contrastive VAE for Probabilistic Time Series Forecasting</a>
   * 2026-08-21 <!--dpr-date:20260821-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/21/2608.15452v1-spatially-grounded-flow-matching-structured-source-distributions-for-image-generation" data-sidebar-item="{&quot;title&quot;: &quot;Spatially-Grounded Flow Matching: Structured Source Distributions for Image Generation&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.15452v1-spatially-grounded-flow-matching-structured-source-distributions-for-image-generation&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;结构化源分布流匹配，可应用于流体流动代理建模&quot;}">Spatially-Grounded Flow Matching: Structured Source Distributions for Image Generation</a>

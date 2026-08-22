@@ -1,0 +1,57 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-22T20:36:42.261172+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.20025v1",
+      "source": "arxiv",
+      "title": "CLaST: Context-aware Contrastive VAE for Probabilistic Time Series Forecasting",
+      "abstract": "Probabilistic forecasting models are widely used for time series forecasting in domains such as energy systems, finance, medicine, and transportation. In recent years, deep generative models have shown strong results on probabilistic forecasting, yet many conventional approaches struggle to capture internal temporal dependencies, leading to latent representations with limited expressive power. To address this limitation, we propose \\textit{CLaST}, a VAE framework for probabilistic multivariate time series forecasting. Unlike existing generative models, CLaST learns embeddings that preserve contextual similarity between observations through our contrastive loss function. Experiments across nine widely adopted benchmarks demonstrate that CLaST consistently surpasses strong baseline methods. In short-term forecasting tasks, our approach achieves improvements of up to $16.4\\%$ in CRPS and $14.4\\%$ in NMAE over the second-best method. Furthermore, in long-term prediction CLaST attains superior overall performance, exceeding the second-best method by up to $48.6\\%$ and $25.1\\%$ in CRPS and NMAE, respectively.",
+      "authors": [
+        "Alexander Marusov",
+        "Dmitry Anikin",
+        "Petr Sokerin",
+        "Vitaliy Pozdnyakov",
+        "Ilya Kuleshov",
+        "Alexey Zaytsev"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-08-20T13:34:01+00:00",
+      "link": "https://arxiv.org/pdf/2608.20025v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "VAE-based deep generative probabilistic forecasting transferable to generative fluid flow modeling",
+      "llm_evidence_cn": "基于变分自编码器的深度生成式概率预测方法，可迁移至生成式流场建模",
+      "llm_evidence": "基于变分自编码器的深度生成式概率预测方法，可迁移至生成式流场建模",
+      "canonical_evidence": "基于变分自编码器的深度生成式概率预测方法，可迁移至生成式流场建模",
+      "llm_tldr_en": "CLaST introduces a context-aware contrastive VAE for probabilistic multivariate time series forecasting, capturing temporal dependencies; the deep generative approach is transferable to fluid flow sequence modeling.",
+      "llm_tldr_cn": "针对概率时间序列预测中传统生成模型难以刻画内部时间依赖、潜表示表达能力受限的问题，论文提出CLaST框架，在变分自编码器中引入对比损失以保持观测之间的上下文相似性，学习更具表达力的潜表示。在九个基准数据集上的实验表明，该模型能有效提升概率预测性能。作为一种通用的深度生成式时间序列建模方法，它有望迁移到流体动力学中的流场时序模拟与预测任务。",
+      "llm_tldr": "针对概率时间序列预测中传统生成模型难以刻画内部时间依赖、潜表示表达能力受限的问题，论文提出CLaST框架，在变分自编码器中引入对比损失以保持观测之间的上下文相似性，学习更具表达力的潜表示。在九个基准数据集上的实验表明，该模型能有效提升概率预测性能。作为一种通用的深度生成式时间序列建模方法，它有望迁移到流体动力学中的流场时序模拟与预测任务。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

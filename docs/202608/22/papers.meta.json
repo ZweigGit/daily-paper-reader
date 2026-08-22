@@ -1,0 +1,24 @@
+{
+  "label": "2026-08-22",
+  "date": "2026-08-22",
+  "generated_at": "2026-08-22T20:37:19",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202608/22/2608.20025v1-clast-context-aware-contrastive-vae-for-probabilistic-time-series-forecasting",
+      "section": "quick",
+      "title_en": "CLaST: Context-aware Contrastive VAE for Probabilistic Time Series Forecasting",
+      "authors": "Alexander Marusov, Dmitry Anikin, Petr Sokerin, Vitaliy Pozdnyakov, Ilya Kuleshov, Alexey Zaytsev",
+      "date": "2026-08-20",
+      "pdf": "https://arxiv.org/pdf/2608.20025v1",
+      "score": "6.0",
+      "evidence": "基于变分自编码器的深度生成式概率预测方法，可迁移至生成式流场建模",
+      "tldr": "概率预测模型广泛应用于能源、金融等领域，但现有深度生成模型难以捕捉时间序列内部依赖，导致潜在表示表达能力有限。为此提出CLaST框架，在VAE中引入上下文感知对比损失，学习保留观测间相似性的嵌入。在九个基准上，短期预测CRPS和NMAE分别提升16.4%和14.4%，长期预测分别提升48.6%和25.1%，显著超越现有方法。该工作为多变量时间序列概率预测提供了新思路。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Probabilistic forecasting models are widely used for time series forecasting in domains such as energy systems, finance, medicine, and transportation. In recent years, deep generative models have shown strong results on probabilistic forecasting, yet many conventional approaches struggle to capture internal temporal dependencies, leading to latent representations with limited expressive power. To address this limitation, we propose \\textit{CLaST}, a VAE framework for probabilistic multivariate time series forecasting. Unlike existing generative models, CLaST learns embeddings that preserve contextual similarity between observations through our contrastive loss function. Experiments across nine widely adopted benchmarks demonstrate that CLaST consistently surpasses strong baseline methods. In short-term forecasting tasks, our approach achieves improvements of up to $16.4\\%$ in CRPS and $14.4\\%$ in NMAE over the second-best method. Furthermore, in long-term prediction CLaST attains superior overall performance, exceeding the second-best method by up to $48.6\\%$ and $25.1\\%$ in CRPS and NMAE, respectively.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
