@@ -1,0 +1,141 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-23T19:18:30.382684+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.17666v1",
+      "source": "arxiv",
+      "title": "Picard Proximal Monte Carlo for Parallel Bayesian Imaging with Score-Based Generative Priors",
+      "abstract": "Bayesian imaging inverse problems often require sampling from high-dimensional posterior distributions. While recent score-based and diffusion models provide expressive Bayesian priors, their sampling procedures remain inherently sequential and computationally expensive for large-scale imaging applications. We propose PiX-MC, a time-parallel posterior sampling framework based on proximal Langevin dynamics and Picard iteration. The proximal-likelihood formulation exploits the fact that many imaging likelihoods admit efficient, problem-specific proximal operators, while Picard refinement exposes parallelism across discretization nodes and naturally supports multi-GPU implementation. To further improve practical scalability and sampling performance, we develop multi-block and annealed variants of the proposed framework. We establish convergence guarantees under transparent assumptions, accommodating non-log-concave posteriors, imperfect learned score models, multi-block implementations, and annealing schedules. Experiments on a diverse collection of imaging inverse problems demonstrate that PiX-MC substantially reduces wall-clock time while preserving reconstruction quality. On a $512\\times512\\times80$ sparse-view computed tomography (CT) problem, annealed multi-block PiX-MC achieves up to a $50\\times$ runtime speedup over the standard Langevin sampler using eight GPUs.",
+      "authors": [
+        "Deliang Wei",
+        "Evan Bell",
+        "Wenhan Guo",
+        "Yifan Chen",
+        "Yu Sun"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-08-18T11:40:31+00:00",
+      "link": "https://arxiv.org/pdf/2608.17666v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "score-based generative priors in a sampling framework; relevant to score-based flow generation",
+      "llm_evidence_cn": "基于分数的生成先验用于贝叶斯成像采样，与分数生成建模相关",
+      "llm_evidence": "基于分数的生成先验用于贝叶斯成像采样，与分数生成建模相关",
+      "canonical_evidence": "基于分数的生成先验用于贝叶斯成像采样，与分数生成建模相关",
+      "llm_tldr_en": "PiX-MC is a time-parallel posterior sampling framework that uses score-based generative priors and proximal Langevin dynamics for Bayesian imaging, making sampling scalable. It demonstrates a practical use of score-based generative models.",
+      "llm_tldr_cn": "大规模贝叶斯成像后验采样通常因分数/扩散模型的高维顺序采样而代价高昂。本文提出PiX-MC，基于近端Langevin动力学与Picard迭代实现时间并行后验采样，并利用分数生成先验表达图像结构。实验表明该方法在多GPU下可扩展并获得高质量成像结果，展示了分数生成模型作为通用先验的价值。该方法为分数生成先验在大规模反问题中的实际部署提供了高效并行方案，对流体场反演等科学成像有启发。与直接生成流体样本的需求相比虽应用领域不同，但核心先验建模思想相通。",
+      "llm_tldr": "大规模贝叶斯成像后验采样通常因分数/扩散模型的高维顺序采样而代价高昂。本文提出PiX-MC，基于近端Langevin动力学与Picard迭代实现时间并行后验采样，并利用分数生成先验表达图像结构。实验表明该方法在多GPU下可扩展并获得高质量成像结果，展示了分数生成模型作为通用先验的价值。该方法为分数生成先验在大规模反问题中的实际部署提供了高效并行方案，对流体场反演等科学成像有启发。与直接生成流体样本的需求相比虽应用领域不同，但核心先验建模思想相通。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "score-based generative models for fluid flow",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.17973v1",
+      "source": "arxiv",
+      "title": "LinCa: Accelerating Diffusion Models via Learnable Decomposed Feature Caching",
+      "abstract": "Diffusion models have achieved remarkable success in image and video generation, yet the high computational cost of iterative sampling remains a critical bottleneck for practical deployment. Feature caching has emerged as a promising acceleration paradigm by reusing or predicting intermediate features across timesteps. However, existing training-free methods apply uniform prediction strategies that cannot adapt to the heterogeneous feature dynamics, causing significant quality degradation under high acceleration ratios. We propose LinCa, a feature caching framework based on learnable invertible networks. LinCa decomposes cached features into sub-components with distinct continuity properties via a lightweight invertible network and applies differentiated prediction orders matched to each component. The strict invertibility guarantees lossless reconstruction back to the original feature space, forming a unified Decompose-Predict-Reconstruct pipeline. By training separate predictors for different models and timestep segments, LinCa adapts to heterogeneous feature dynamics. Experiments on FLUX, Qwen-Image, and HunyuanVideo demonstrate that LinCa, with less than 0.2% additional parameters, significantly outperforms existing methods and maintains near-lossless quality at 5-7x speedup. Code: https://github.com/QHR69/LinCa",
+      "authors": [
+        "Jinshan Liu",
+        "Haoran Qin",
+        "Xiaobing Tu",
+        "Jiacheng Liu",
+        "Jiahui Hu",
+        "Zhengan Yan",
+        "Yukun Xie",
+        "Kerui Shen",
+        "Jinkui Ren",
+        "Yuqi Lin",
+        "Xiantao Zhang",
+        "Linfeng Zhang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-18T16:26:21+00:00",
+      "link": "https://arxiv.org/pdf/2608.17973v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Diffusion model acceleration via feature caching",
+      "llm_evidence_cn": "利用特征缓存加速扩散模型",
+      "llm_evidence": "利用特征缓存加速扩散模型",
+      "canonical_evidence": "利用特征缓存加速扩散模型",
+      "llm_tldr_en": "LinCa accelerates diffusion model sampling by decomposing cached features into sub-components with distinct continuity properties using a lightweight invertible network, reducing quality degradation under high acceleration ratios.",
+      "llm_tldr_cn": "扩散模型在图像和视频生成中性能优异，但迭代采样计算成本高，制约实际部署。现有训练无关的缓存加速方法采用统一预测策略，难以适应异构特征动态，导致高加速比下质量明显退化。本文提出LinCa，利用轻量可逆网络将缓存特征分解为连续性不同的子成分并施加微分同胚处理，实现高加速比下的质量保持。该方法为扩散模型的高效部署提供了一条可学习加速路径，可迁移至基于扩散的流体模拟等生成任务。",
+      "llm_tldr": "扩散模型在图像和视频生成中性能优异，但迭代采样计算成本高，制约实际部署。现有训练无关的缓存加速方法采用统一预测策略，难以适应异构特征动态，导致高加速比下质量明显退化。本文提出LinCa，利用轻量可逆网络将缓存特征分解为连续性不同的子成分并施加微分同胚处理，实现高加速比下的质量保持。该方法为扩散模型的高效部署提供了一条可学习加速路径，可迁移至基于扩散的流体模拟等生成任务。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.19965v1",
+      "source": "arxiv",
+      "title": "Flow Matching Meets 3D Curvilinear Structure Segmentation in Medical Imaging",
+      "abstract": "Segmentation of curvilinear anatomical structures in 3D medical images remains challenging due to complex topology, severe class imbalance, weak contrast, and large variations in structure morphology. While deep learning approaches for 3D curvilinear segmentation have been proposed, they are often tailored to specific anatomies or modalities, limiting generalization across clinical settings and leaving room for improvement. Recent generative models have shown the benefits of iterative prediction for structured segmentation tasks, yet diffusion-based methods suffer from computationally expensive sampling, hindering their use on high-resolution 3D volumes. We present 3D-CurvSegFlow, a flow matching-based model for 3D curvilinear structure segmentation. The model learns a continuous transformation from a simple source distribution to the target vascular representation, enabling progressive refinement of complex curvilinear geometries with efficient inference. We evaluate our method on Three public challenging datasets covering distinct anatomies and modalities: portal vein, cerebral vessel, and coronary arteries. Using a common architecture and training strategy across all tasks, our method outperforms general-purpose and vessel-specific approaches, with strong preservation of thin branches and vascular continuity. This work not only advances the state-of-the-art in 3D curvilinear segmentation but also opens new avenues for efficient, generalizable, and clinically applicable methods in medical image analysis.",
+      "authors": [
+        "Sidi Mohamed Sid'El Moctar",
+        "Nicolas Vitry",
+        "Hélène Bouvrais"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.LG",
+        "q-bio.QM"
+      ],
+      "published": "2026-08-20T12:35:27+00:00",
+      "link": "https://arxiv.org/pdf/2608.19965v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "flow matching generative model for 3D segmentation; transferable to fluid flow generation",
+      "llm_evidence_cn": "基于流匹配的生成模型用于三维分割，方法可迁移至流体生成",
+      "llm_evidence": "基于流匹配的生成模型用于三维分割，方法可迁移至流体生成",
+      "canonical_evidence": "基于流匹配的生成模型用于三维分割，方法可迁移至流体生成",
+      "llm_tldr_en": "The paper presents 3D-CurvSegFlow, a flow matching-based model for 3D curvilinear structure segmentation in medical imaging, addressing the computational cost of diffusion sampling. The flow matching approach is directly relevant to generative modeling of fluid flows.",
+      "llm_tldr_cn": "三维弯曲结构分割因拓扑复杂、类别不平衡、对比度低和高分辨率采样成本高而困难，且扩散模型推理昂贵。本文提出3D-CurvSegFlow，用流匹配替代扩散迭代，在三维医学影像上实现高效且准确的曲线结构分割。实验显示该流匹配生成模型在有限算力下取得良好分割性能，其高效生成思想可迁移到流体动力学中的流场生成与模拟。该方法为生成模型在高维结构化输出任务中的应用提供了实用范例。",
+      "llm_tldr": "三维弯曲结构分割因拓扑复杂、类别不平衡、对比度低和高分辨率采样成本高而困难，且扩散模型推理昂贵。本文提出3D-CurvSegFlow，用流匹配替代扩散迭代，在三维医学影像上实现高效且准确的曲线结构分割。实验显示该流匹配生成模型在有限算力下取得良好分割性能，其高效生成思想可迁移到流体动力学中的流场生成与模拟。该方法为生成模型在高维结构化输出任务中的应用提供了实用范例。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
