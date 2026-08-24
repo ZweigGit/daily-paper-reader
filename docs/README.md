@@ -6,30 +6,28 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-23
-- 运行时间：2026-08-23 19:21:44 UTC
+- 最新运行日期：2026-08-24
+- 运行时间：2026-08-24 19:23:03 UTC
 - 运行状态：成功
-- 本次总论文数：3
-- 精读区：0
-- 速读区：3
+- 本次总论文数：2
+- 精读区：1
+- 速读区：1
 
 ### 今日简报（AI）
-今日速读3篇论文，主题覆盖贝叶斯成像、扩散模型缓存加速与医学影像3D分割。值得关注扩散模型在医学图像分割中的流匹配应用，以及可学习特征缓存对推理加速的潜力。后续可优先调研扩散模型在医学影像上的高效推理与分割落地。
-- 详情：[/202608/23/README](/202608/23/README)
+今日精读1篇、速读1篇，合计处理2篇论文。  
+最值得关注的是8.0分的《Difficulty-Calibrated Interpolation Paths for Conditional Flow Matching》，聚焦条件流匹配的插值路径难度校准。  
+若对贝叶斯物理信息神经网络有兴趣，可接着浏览7.0分的污染物输运概率逆建模工作。
+- 详情：[/202608/24/README](/202608/24/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [Difficulty-Calibrated Interpolation Paths for Conditional Flow Matching](/202608/24/2608.21286v1-difficulty-calibrated-interpolation-paths-for-conditional-flow-matching)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：直接提出流匹配调度改进，是一种可迁移至流体模拟的生成模型方法
 
 ### 速读区论文标签
-1. [Picard Proximal Monte Carlo for Parallel Bayesian Imaging with Score-Based Generative Priors](/202608/23/2608.17666v1-picard-proximal-monte-carlo-for-parallel-bayesian-imaging-with-score-based-generative-priors)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：基于分数的生成先验用于贝叶斯成像采样，与分数生成建模相关
-2. [LinCa: Accelerating Diffusion Models via Learnable Decomposed Feature Caching](/202608/23/2608.17973v1-linca-accelerating-diffusion-models-via-learnable-decomposed-feature-caching)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：利用特征缓存加速扩散模型
-3. [Flow Matching Meets 3D Curvilinear Structure Segmentation in Medical Imaging](/202608/23/2608.19965v1-flow-matching-meets-3d-curvilinear-structure-segmentation-in-medical-imaging)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：基于流匹配的生成模型用于三维分割，方法可迁移至流体生成
+1. [Probabilistic Inverse Modeling of Contaminant Transport via a Conditioned-on-Design Bayesian Physics Informed Neural Network](/202608/24/2608.17591v1-probabilistic-inverse-modeling-of-contaminant-transport-via-a-conditioned-on-design-bayesian-physics-informed-neural-network)  
+   标签：评分：7.0/10、query:genmod-fluid
+   evidence：将概率贝叶斯物理信息神经网络应用于多孔介质污染物输运，属于流体动力学中的概率流模型
 
 
 <div class="dpr-home-promo-card">

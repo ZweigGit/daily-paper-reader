@@ -1,0 +1,92 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-24T19:20:45.452039+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2608.21286v1",
+      "source": "arxiv",
+      "title": "Difficulty-Calibrated Interpolation Paths for Conditional Flow Matching",
+      "abstract": "Conditional Flow Matching trains generative models by regressing a network onto the velocity of a prescribed noise-to-data interpolation path. The interpolation schedule that shapes this path is known to affect convergence and sample quality, yet it is invariably fixed in advance, independent of both the data and the model. We show that the regression difficulty of Conditional Flow Matching varies systematically along the path, and we propose Difficulty-Calibrated Flow Matching, which derives the schedule from the model itself: a short pilot run with the linear path records the per-time loss, and the schedule is set to the quantile function of this difficulty profile, so the trajectory lingers where the velocity is hardest to learn. The method has a single hyperparameter, leaves the training objective and its gradient equivalence intact, composes with classifier-free guidance, and adds about two percent training overhead. In controlled experiments on CIFAR-10, MNIST, and Fashion-MNIST with an identical compact U-Net, the calibrated path attains the best FID on CIFAR-10 at full sampling budget and clearly outperforms all fixed schedules in the large-batch, few-update regime, precisely the setting where compute is scarcest.",
+      "authors": [
+        "Airin Akter Tania",
+        "Md Raihan Khan"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-21T16:42:52+00:00",
+      "link": "https://arxiv.org/pdf/2608.21286v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Directly proposes a flow-matching schedule improvement; general generative model method applicable to fluid flow simulation",
+      "llm_evidence_cn": "直接提出流匹配调度改进，是一种可迁移至流体模拟的生成模型方法",
+      "llm_evidence": "直接提出流匹配调度改进，是一种可迁移至流体模拟的生成模型方法",
+      "canonical_evidence": "直接提出流匹配调度改进，是一种可迁移至流体模拟的生成模型方法",
+      "llm_tldr_en": "Conditional Flow Matching uses a fixed interpolation path. Difficulty-Calibrated Flow Matching derives the schedule from per-time training loss via a pilot run, allocating more steps where velocity is hardest to learn, improving convergence and sample quality for generative modeling.",
+      "llm_tldr_cn": "条件流匹配通常预设噪声到数据的插值路径，调度不随数据或模型调整。论文发现回归难度沿路径系统性变化，并提出难度校准流匹配：先用线性路径试运行记录各时刻损失，再将调度设为该难度分布的分位数函数，使轨迹在难以学习的区域停留更久。该方法在生成模型中加速收敛并提升样本质量，且可作为一种与领域无关的流匹配改进，适用于流体动力学等场景。",
+      "llm_tldr": "条件流匹配通常预设噪声到数据的插值路径，调度不随数据或模型调整。论文发现回归难度沿路径系统性变化，并提出难度校准流匹配：先用线性路径试运行记录各时刻损失，再将调度设为该难度分布的分位数函数，使轨迹在难以学习的区域停留更久。该方法在生成模型中加速收敛并提升样本质量，且可作为一种与领域无关的流匹配改进，适用于流体动力学等场景。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.17591v1",
+      "source": "arxiv",
+      "title": "Probabilistic Inverse Modeling of Contaminant Transport via a Conditioned-on-Design Bayesian Physics Informed Neural Network",
+      "abstract": "We address the inverse problem of reactive transport in heterogeneous porous media, where unknown model parameters must be inferred from sparse experimental observations. The problem is complicated by strong nonlinearities, spatial heterogeneity, and limited data availability. We propose a Conditioned-on-Design Bayesian Physics-Informed Neural Network (CoDe-BPINN), which combines a domain-decomposed PINN solver with a Bayesian inference network that learns the conditional distribution of model parameters given experimental design variables. The framework is trained by maximizing a physics-informed Evidence Lower Bound (ELBO), enabling simultaneous reconstruction of spatiotemporal concentration fields, probabilistic parameter estimation, and uncertainty quantification. We demonstrate the approach using laboratory experiments on contaminant transport through a multilayer porous column with an iodinated contrast medium. The model accurately reproduces breakthrough dynamics while revealing systematic parameter dependence on flow conditions. In particular, it identifies a nonlinear decrease in effective sorption capacity with increasing flow rate and porosity, consistent with kinetic limitations and reduced adsorbent mass. The Bayesian formulation also uncovers a strong negative correlation between sorption affinity and sorption capacity, quantifying the intrinsic non-identifiability of the inverse problem. CoDe-BPINN provides a robust framework for parameter inference and uncertainty quantification in data-scarce reactive transport problems.",
+      "authors": [
+        "Milad Panahi",
+        "Giovanni Michele Porta",
+        "Monica Riva",
+        "Alberto Guadagnini"
+      ],
+      "primary_category": "physics.comp-ph",
+      "categories": [
+        "physics.comp-ph",
+        "math.PR"
+      ],
+      "published": "2026-08-18T09:55:52+00:00",
+      "link": "https://arxiv.org/pdf/2608.17591v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "probabilistic Bayesian PINN for contaminant transport in porous media relates to probabilistic flow models in fluid dynamics",
+      "llm_evidence_cn": "将概率贝叶斯物理信息神经网络应用于多孔介质污染物输运，属于流体动力学中的概率流模型",
+      "llm_evidence": "将概率贝叶斯物理信息神经网络应用于多孔介质污染物输运，属于流体动力学中的概率流模型",
+      "canonical_evidence": "将概率贝叶斯物理信息神经网络应用于多孔介质污染物输运，属于流体动力学中的概率流模型",
+      "llm_tldr_en": "Proposes a Bayesian PINN that learns conditional parameter distributions from sparse data, enabling probabilistic reconstruction of contaminant transport in porous media, a probabilistic flow model for fluid dynamics.",
+      "llm_tldr_cn": "本文针对非均质多孔介质中反应性输运的逆问题，提出一种基于设计条件的贝叶斯物理信息神经网络（CoDe-BPINN）。该方法将区域分解的物理信息求解器与贝叶斯推断网络结合，学习模型参数在实验设计变量下的条件分布，并通过最大化物理约束的ELBO进行训练。实验结果显示，它能从稀疏观测中同时重建时空浓度场并提供不确定性量化，在处理强非线性和空间异质性时优于传统方法。作为一个概率流模型，该工作为流体动力学中的概率生成建模提供了有价值的参考。",
+      "llm_tldr": "本文针对非均质多孔介质中反应性输运的逆问题，提出一种基于设计条件的贝叶斯物理信息神经网络（CoDe-BPINN）。该方法将区域分解的物理信息求解器与贝叶斯推断网络结合，学习模型参数在实验设计变量下的条件分布，并通过最大化物理约束的ELBO进行训练。实验结果显示，它能从稀疏观测中同时重建时空浓度场并提供不确定性量化，在处理强非线性和空间异质性时优于传统方法。作为一个概率流模型，该工作为流体动力学中的概率生成建模提供了有价值的参考。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "probabilistic flow models for fluid dynamics",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

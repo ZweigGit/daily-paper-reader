@@ -1,0 +1,39 @@
+{
+  "label": "2026-08-24",
+  "date": "2026-08-24",
+  "generated_at": "2026-08-24T19:23:09",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202608/24/2608.21286v1-difficulty-calibrated-interpolation-paths-for-conditional-flow-matching",
+      "section": "deep",
+      "title_en": "Difficulty-Calibrated Interpolation Paths for Conditional Flow Matching",
+      "authors": "Airin Akter Tania, Md Raihan Khan",
+      "date": "2026-08-21",
+      "pdf": "https://arxiv.org/pdf/2608.21286v1",
+      "score": "8.0",
+      "evidence": "直接提出流匹配调度改进，是一种可迁移至流体模拟的生成模型方法",
+      "tldr": "条件流匹配训练生成模型依赖于预设的插值路径，但路径调度固定不变，与数据及模型无关，导致沿路径的回归难度变化未被利用。本文提出难度校准流匹配，先以线性路径短时间运行记录每个时间点的损失，再将损失分布的量化函数作为新调度，使轨迹在速度难以学习的区域停留更久，且保持原训练目标与梯度等价。在CIFAR-10、MNIST与Fashion-MNIST上，该校准路径以约2%的额外开销获得最佳FID，并显著优于所有固定调度，尤其在大批量少更新的计算稀缺场景。此方法展示了从模型自身推导训练路径的有效性。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Conditional Flow Matching trains generative models by regressing a network onto the velocity of a prescribed noise-to-data interpolation path. The interpolation schedule that shapes this path is known to affect convergence and sample quality, yet it is invariably fixed in advance, independent of both the data and the model. We show that the regression difficulty of Conditional Flow Matching varies systematically along the path, and we propose Difficulty-Calibrated Flow Matching, which derives the schedule from the model itself: a short pilot run with the linear path records the per-time loss, and the schedule is set to the quantile function of this difficulty profile, so the trajectory lingers where the velocity is hardest to learn. The method has a single hyperparameter, leaves the training objective and its gradient equivalence intact, composes with classifier-free guidance, and adds about two percent training overhead. In controlled experiments on CIFAR-10, MNIST, and Fashion-MNIST with an identical compact U-Net, the calibrated path attains the best FID on CIFAR-10 at full sampling budget and clearly outperforms all fixed schedules in the large-batch, few-update regime, precisely the setting where compute is scarcest.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/24/2608.17591v1-probabilistic-inverse-modeling-of-contaminant-transport-via-a-conditioned-on-design-bayesian-physics-informed-neural-network",
+      "section": "quick",
+      "title_en": "Probabilistic Inverse Modeling of Contaminant Transport via a Conditioned-on-Design Bayesian Physics Informed Neural Network",
+      "authors": "Milad Panahi, Giovanni Michele Porta, Monica Riva, Alberto Guadagnini",
+      "date": "2026-08-18",
+      "pdf": "https://arxiv.org/pdf/2608.17591v1",
+      "score": "7.0",
+      "evidence": "将概率贝叶斯物理信息神经网络应用于多孔介质污染物输运，属于流体动力学中的概率流模型",
+      "tldr": "针对多孔介质中反应性运移反演问题中强非线性、空间异质性和数据稀缺的挑战，提出了一种基于设计条件的贝叶斯物理信息神经网络（CoDe-BPINN）。该方法将区域分解的PINN求解器与贝叶斯推断网络结合，通过最大化物理信息ELBO实现浓度场重建、参数概率估计和不确定性量化。在层状柱体污染物运移实验中验证了有效性，准确再现穿透曲线，并揭示有效吸附容量随流速和孔隙度非线性降低，还量化了吸附亲和力与容量的负相关非可辨识性。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We address the inverse problem of reactive transport in heterogeneous porous media, where unknown model parameters must be inferred from sparse experimental observations. The problem is complicated by strong nonlinearities, spatial heterogeneity, and limited data availability. We propose a Conditioned-on-Design Bayesian Physics-Informed Neural Network (CoDe-BPINN), which combines a domain-decomposed PINN solver with a Bayesian inference network that learns the conditional distribution of model parameters given experimental design variables. The framework is trained by maximizing a physics-informed Evidence Lower Bound (ELBO), enabling simultaneous reconstruction of spatiotemporal concentration fields, probabilistic parameter estimation, and uncertainty quantification. We demonstrate the approach using laboratory experiments on contaminant transport through a multilayer porous column with an iodinated contrast medium. The model accurately reproduces breakthrough dynamics while revealing systematic parameter dependence on flow conditions. In particular, it identifies a nonlinear decrease in effective sorption capacity with increasing flow rate and porosity, consistent with kinetic limitations and reduced adsorbent mass. The Bayesian formulation also uncovers a strong negative correlation between sorption affinity and sorption capacity, quantifying the intrinsic non-identifiability of the inverse problem. CoDe-BPINN provides a robust framework for parameter inference and uncertainty quantification in data-scarce reactive transport problems.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
