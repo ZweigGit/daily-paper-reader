@@ -1,0 +1,1240 @@
+Title: A Query-Time Framework for Transient 2D Pore-Scale Flow Prediction and Generative Design
+
+URL Source: https://arxiv.org/pdf/2608.22235v1
+
+Published Time: Tue, 25 Aug 2026 00:58:49 GMT
+
+Number of Pages: 34
+
+Markdown Content:
+# Highlights 
+
+## A Query-Time Framework for Transient 2D Pore-Scale Flow Prediction and Generative Design 
+
+Yiming Wang, Jiale Zhu, Zhichen Ye, Yandong Lv, Shiqi Wang, Jinlong Liu, Yucheng Fan • 7,606-geometry benchmark resolves transient pore-scale flow at 30 logarithmic times. • Topology-aware CT-PoreFlow improves transient and terminal transport prediction. • GAN and diffusion designs are screened by the surrogate and verified with LBM. arXiv:2608.22235v1 [cs.LG] 23 Aug 2026 A Query-Time Framework for Transient 2D Pore-Scale Flow Prediction and Generative Design 
+
+## Yiming Wang a, Jiale Zhu a,∗, Zhichen Ye a, Yandong Lv b, Shiqi Wang c, Jinlong Liu d and Yucheng Fan e,∗
+
+> a
+
+School of Civil Engineering, The University of Sydney, Sydney, 2006, NSW, Australia 
+
+> b
+
+MOE Key Laboratory of Soft Soils and Geoenvironmental Engineering, Zhejiang University, Hangzhou, 310058, China 
+
+> c
+
+College of Civil Engineering and Architecture, Zhejiang University, Hangzhou, 310058, China 
+
+> d
+
+School of Civil Engineering, Southeast University, Nanjing, 211189, China 
+
+> e
+
+School of Civil and Environmental Engineering, UNSW Sydney, Sydney, 2052, NSW, Australia 
+
+A R T I C L E I N F O 
+
+Keywords :pore-scale flow lattice Boltzmann method transient surrogate inverse design porous media 
+
+A B S T R A C T 
+
+Pore-scale flow governs transport and permeability behaviour in porous media engineering applications, yet repeated lattice Boltzmann method (LBM) simulation across many geometries and design queries remains costly for repeated deployment. This study formulates transient pore-scale flow prediction as a geometry-conditioned query-time operator and introduces QSGS-Transient-7606, a benchmark of 7,606 two-dimensional porous structures each paired with 30 logarithmically sampled LBM states. The proposed continuous-time pore-scale flow surrogate model (CT-PoreFlow) integrates topology-aware geometry encoding, compressed spectral mix-ing, and log-time conditioning with a late-time flux-calibration objective. On unseen test geometries, CT-PoreFlow achieves a velocity relative 𝐿 2 of 0.2248 and a terminal permeability error of 12.81%. Frozen morphology and computed tomography image audits confirm reasonable cross-geometry robustness without fine-tuning. The surrogate is then embedded in an inverse design workflow, screening 9,216 generative adversarial network and diffusion candidates across 18 property targets prior to LBM verification. Guided GAN sampling attains 98.11% through-connectivity and 72.28% conditional design success, exceeding diffusion-based generation. The framework unifies transient flow prediction, transport-aware screening, and LBM-verified inverse design for porous media. 
+
+## 1. Introduction 
+
+Pore-scale flow governs the performance of a broad range of engineering systems in which fluid transport through a disordered solid matrix determines the macroscopic response of practical interest. In groundwater and contaminant transport, pore-scale retention and preferential migration influence breakthrough behaviour (Smith et al., 2008); in petroleum recovery, pore geometry and topology regulate displacement pathways and sweep efficiency (Ju et al., 2020). Similar pore-scale processes affect the evolution of permeability and transport pathways during geological CO 2 sequestration (Gao et al., 2017), while the microstructure of filtration membranes and porous flow-battery electrodes controls permeability and fluid or reactant transport (Li et al., 2020; Song et al., 2022). Across these applications, bulk porosity alone is insufficient to describe hydraulic behaviour because the connectivity, constrictions, and organisation of the accessible pore space determine how flow is distributed through the medium. This distinction is also relevant to geotechnical and mining systems in which bulk void fraction is constrained by solids inventory, density, strength, or treatment capacity, while pore connectivity and organisation remain adjustable. In heap leaching, compression, moisture, and fines agglomeration can reorganise the connected pore network and create low-permeability or plugged zones (Erskine et al., 2025). In cemented paste backfill, mixture proportion and curing modify pore size and interconnection, which are closely related to mechanical integrity (Huan et al., 2021). In permeable reactive barriers, corrosion products progressively occupy pore space and alter permeability, preferential flow, and contaminant residence time (Yang et al., 2021). Additively manufactured rock analogues provide a complementary route in which porosity and internal geometry can be controlled for repeatable structure–transport and structure–failure experiments (Zhang et al., 2026). 
+
+> ∗
+
+Corresponding authors. 
+
+jiale.zhu@sydney.edu.au (J. Zhu); yucheng.fan@student.unsw.edu.au (Y. Fan) 
+
+> ORCID
+
+(s): 0000-0001-5832-7020 (Y. Fan) 
+
+Wang et al.: Preprint submitted to Elsevier Page 1 of 33 Resolving this structure–transport relationship requires pore-scale flow simulation, which connects individual pores and throats to permeability, hydraulic tortuosity, preferential pathways, and transport localisation. The lattice Boltzmann method (LBM) is well suited to image-based porous media because collision and streaming are performed on a regular lattice and no-slip solid boundaries can be imposed directly on a voxelised geometry (He and Luo, 1997; Qian et al., 1992; Zou and He, 1997). Quartet structure generation set (QSGS) models complement this solver by producing controlled stochastic microstructures from core-placement and directional-growth parameters (Wang and Pan, 2007). Their combination enables systematic investigation of geometry-dependent transport. However, the main limitation of LBM in high-throughput pore-scale analysis is the cost of repeated iterative simulation. Each new geometry requires an independent solve, while transient analysis further requires the evolving flow field to be resolved over multiple time states before convergence. Data-driven surrogates can reduce this cost by learning the geometry-to-flow mapping and providing rapid predictions for new geometries and query times without repeating the full LBM solution. More broadly in computational mechanics, high-fidelity simulations have supported transferable impact-damage prediction and lightweight structural-capacity surrogates based on Kolmogorov–Arnold networks (Kong et al., 2026; Yu et al., 2026). Image-to-flow surrogates have reduced this cost for steady fields and scalar transport properties. Early data-driven studies mainly focused on learning steady pore-scale flow fields or effective transport properties from porous geometry. Takbiri-Borujeni et al. (2020) developed a fully convolutional surrogate that maps two-dimensional binary pore images to LBM-resolved velocity fields and then recovers permeability tensors from the predicted flow fields. Santos et al. (2020) later proposed PoreFlow-Net for three-dimensional digital rocks, where geometric descriptors extracted from the binary pore space were combined with a convolutional network to improve steady velocity-field prediction across structurally different porous samples. Wang et al. (2021) introduced the PhyFlow-HierCAE framework, embedding discretized Navier–Stokes and continuity information together with hierarchical regularisation to improve pore-fluid velocity and permeability prediction. To provide nonlocal transport information, Zhou et al. (2022) incorporated a computationally inexpensive coarse velocity field into a super-resolution network and showed improved fine-scale flow prediction, particularly for heterogeneous pore structures. Yu et al. (2023) further modified U-Net using dense skip connections and attention gates to capture multilevel flow features in porous media. In parallel, Wu et al. (2018) demonstrated that permeability can be predicted directly from porous images using convolutional neural networks. These studies established effective routes for steady field reconstruction and property prediction, but most formulations remain centred on converged flow states or scalar transport quantities rather than direct query-time reconstruction of the full transient pore-scale evolution. Addressing this gap means modelling the pre-steady evolution itself, which raises issues distinct from steady-state mapping. Transient pore-scale flow is more difficult to approximate than a converged steady state because pressure redistribution and velocity development occur simultaneously but not necessarily at the same rate. The evolution also depends strongly on pore connectivity. Geometries with similar porosity or local aperture may exhibit different relaxation behaviour when narrow throats, dead-end pores, or long inlet-to-outlet pathways are present. Recurrent models such as ConvLSTM can describe temporal evolution by propagating information from one state to the next (Kumar et al., 2025; Shi et al., 2015), but this sequential formulation is naturally tied to the temporal discretisation used during training. Other studies have instead sought direct surrogates for repeated transient or multi-query flow analysis. Pinheiro et al. (2026) compared reduced-order and fully convolutional models for evolving rock–fluid interaction and introduced grid-size-invariant surrogates that were trained on subdomains and evaluated on larger unseen domains. At the reservoir scale, Wen et al. (2022) combined Fourier layers with a U-Net branch in U-FNO to predict space–time pressure and saturation fields for three-dimensional multiphase CO 2–water flow. These studies demonstrate that time-dependent porous-flow responses can be learned without relying exclusively on conventional sequential simulation. The challenge becomes more demanding at the pore scale, where transient prediction must preserve both temporal evolution and the detailed influence of pore boundaries and connected transport pathways. Mesgarpour et al. (2023) combined high-fidelity flow simulation with physics-informed learning to predict transient three-dimensional flow through fibrous porous media, while Kim et al. (2026) introduced geometry and geodesic information into DeepONet to interpolate time-dependent pore-scale reactive transport. However, this formulation interpolates a concentration field under a velocity field that must already be supplied, rather than predicting the velocity and pressure response of a new geometry directly from rest. This leaves an open need for a non-sequential geometry-to-field formulation capable of representing transient pore-scale evolution efficiently across repeated time queries. Neural operators provide a suitable framework for this purpose because they learn mappings between input conditions and physical fields (Kovachki et al., 2023; Lu et al., 2021). Fourier-based operators further provide a mechanism for exchanging information over long spatial distances, which is useful when transport depends on   
+
+> Wang et al.: Preprint submitted to Elsevier Page 2 of 33
+
+connected pathways extending across the sample (Li et al., 2021; Song et al., 2025). For pore-scale flow, however, global information alone is insufficient. Narrow throats and no-slip boundaries require accurate local reconstruction, whereas permeability and hydraulic connectivity depend on the organisation of transport pathways across the entire domain. Therefore, an effective transient surrogate needs to combine local pore-scale resolution with global transport information while remaining efficient for repeated engineering queries. However, accurate forward prediction addresses only one side of the engineering problem. In many porous-media applications, the practical objective is not merely to evaluate a given geometry, but to identify pore structures that achieve prescribed transport properties. Recent studies have therefore begun to combine learned structure–property relations with generative or optimisation-based inverse design. For example, Nguyen et al. (2026) coupled a property-conditioned generative model with a surrogate predictor to design porous microstructures targeting porosity and permeability, while related approaches have used variational, flow-based, and diffusion models to explore property-guided microstructure generation. Generative learning has also supported engineering data augmentation; for example, CTGAN-generated samples have been coupled with stacked machine-learning models for recycled-concrete strength prediction (Liu et al., 2026). A remaining difficulty is that a generated geometry that matches a surrogate-predicted target may still be hydraulically invalid, disconnected, or inaccurate when returned to the original numerical solver. Consequently, there remains a need for an inverse-design workflow that links pore-scale field prediction to engineering transport quantities, uses the surrogate for efficient candidate screening, and retains the high-fidelity solver for final LBM verification. Hence, to address these research gaps, this study develops an integrated computational framework that connects transient pore-scale flow prediction with transport-oriented porous structure design. As shown in Fig. 1, a large-scale QSGS–LBM benchmark is first constructed to resolve the evolution of velocity and pressure fields from rest toward steady flow across thousands of statistically distinct porous geometries. Based on these data, continuous-time pore-scale flow surrogate model (CT-PoreFlow) is developed as a geometry-conditioned query-time surrogate that combines local pore information with global transport-path representation, allowing the flow state to be predicted directly at a requested time without sequentially advancing through the preceding states. The predicted fields are further used to recover engineering quantities including flow rate, permeability, and hydraulic tortuosity, so that model performance is evaluated in terms of both field fidelity and transport accuracy. Finally, the forward surrogate is embedded into an inverse design workflow in which candidate porous structures are generated by cGAN or diffusion model, screened according to their predicted transport response, and returned to the LBM solver for final LBM verification. Together, these developments establish a unified computational framework that connects transient pore-scale flow prediction with engineering transport analysis and inverse porous-structure design. This framework provides a foundation for computationally efficient and physics-verified inverse design of porous media with prescribed transport properties.   
+
+> Wang et al.: Preprint submitted to Elsevier Page 3 of 33
+
+Transport -Oriented 
+
+Geometry  Input      
+
+> Pore
+> mask Mp
+> Connected
+> pore Mc
+> Wall
+> distance De
+> In let graph
+> coordinate Din
+> Out let graph
+> coordinate Dout
+> Decoder Encoder
+
+CT-P ore Flow    
+
+> Velocity ux*,uy*
+> Pressure proxy p*
+> Speed + streamlines
+
+Property-Conditioned Candidate Generation 
+
+Transient  Flow  &
+
+Engineering  Outputs      
+
+> Target c †=
+> [φ,φc,d,log (1+k),τh]
+> Conditional GAN
+> Conditional diffusion
+> QSGS /library retrieval
+
+Screening & Physical Closure          
+
+> Topology audit
+> CT -PoreFlow
+> screening
+> LBM verification
+> Verified porous design
+> Verified properties
+> [φ,φc,d,k,τh]
+> Flow rate
+> Q
+> Permeability
+> k
+> Hydraulic
+> tortuosity τh
+> Query time τt
+> Log-time pore-flow evolution | u|
+> t0t5t11 t29 t19
+> Reuse
+
+Porous medium  Computed Tomography  y
+
+x
+
+z
+
+x
+
+z
+
+y
+
+2D S lice Figure 1: The computational framework. 
+
+## 2. Methodology 
+
+2.1. Pore-scale flow simulation 
+
+The pore-scale simulations are designed to resolve how fluid develops through a heterogeneous pore network and how the resulting local flow field gives rise to effective transport properties. A pressure difference is imposed across each porous structure, driving the fluid from rest toward a converged seepage state. During this process, the evolving velocity and pressure fields provide the basis for evaluating flow rate, permeability, and hydraulic tortuosity. The two-dimensional computational domain is a 100 × 100 lattice, Ω = {1 , … , 𝐻 } × {1 , … , 𝑊 } with 𝐻 = 𝑊 = 100 ,partitioned into pore and solid regions, 
+
+Ω = Ω 𝑝 ∪ Ω 𝑠 , Ω𝑝 ∩ Ω 𝑠 = ∅ . (1) The solid mask 𝑀 𝑠 equals one on Ω𝑠 and zero on Ω𝑝 ; the pore mask is 𝑀 𝑝 = 1 − 𝑀 𝑠 . These masks first define the numerical domain and boundary locations. Their later use as geometry channels does not change this physical meaning. At the continuum scale, the weakly compressible macroscopic response recovered by the LBM is described by mass conservation and momentum balance, 
+
+𝜕𝜌 𝜕𝑡 + ∇ ⋅ (𝜌 𝐮 ) = 0 , (2) 
+
+𝜌 
+
+( 𝜕 𝐮 
+
+𝜕𝑡 + 𝐮 ⋅ ∇𝐮 
+
+)
+
+= −∇ 𝑝 + 𝜇 ∇2𝐮 , (3) where 𝐮 = ( 𝑢 𝑥 , 𝑢 𝑦 ) is velocity, 𝑝 is pressure, 𝜌 is density, and 𝜇 is dynamic viscosity. The engineering problem is low-speed pressure-driven seepage imposed in the LBM through a small inlet–outlet lattice-density difference. Under the low-Mach operating regime enforced in this study, density fluctuations remain small and the recovered flow approaches 
+
+Wang et al.: Preprint submitted to Elsevier Page 4 of 33 the incompressible limit, 
+
+∇ ⋅ 𝐮 ≃ 0 . (4) In this study, the flow is solved using the D2Q9-BGK lattice Boltzmann formulation, where D2Q9 represents a two-dimensional lattice with nine discrete particle velocities, and the BGK collision operator relaxes the particle distributions toward local equilibrium through a single relaxation time (He and Luo, 1997; Qian et al., 1992). Under the low-Mach regime considered here, this formulation recovers the weakly compressible Navier–Stokes behaviour described by Eqs. 2–4. The local LBM fields are converted into engineering observables using fixed lattice definitions. Total and through-connected porosities are 
+
+𝜙 = |Ω𝑝 ||Ω| , (5) 
+
+𝜙 𝑐 = |Ω𝑐 ||Ω| , (6) where Ω𝑐 ⊆ Ω𝑝 is the four-neighbour pore region reachable from both the inlet and outlet. The inverse-design property vector also uses the code-defined dead-pore ratio 
+
+𝑑 = 1 − 𝜙 𝑐 
+
+𝜙 . (7) Flow is aligned with lattice axis 0. Let Γin and Γout denote the two open measurement rows. The LBM reference solver uses the fluid buffer rows immediately adjoining the core, whereas predicted-field evaluation uses the first and last stored sample rows. Both implementations sum streamwise velocity over their respective open nodes, 
+
+𝑄 in = ∑
+
+> 𝑗 ∈Γ in
+
+𝑢 𝑥 (𝑗 ), 𝑄 out = ∑
+
+> 𝑗 ∈Γ out
+
+𝑢 𝑥 (𝑗 ), 𝑄 = 𝑄 in + 𝑄 out 
+
+2 , (8) and defines the two-dimensional Darcy velocity by 
+
+𝑢 𝐷 = 𝑄 𝑊 . (9) With a positive streamwise pressure drop Δ𝑝 = 𝑝 in − 𝑝 out > 0, the Darcy relation is 
+
+𝑢 𝐷 = 𝑘 𝜇 ref 
+
+Δ𝑝 𝐻 , (10) and therefore 
+
+𝑘 = 𝜇 ref 𝐻𝑢 𝐷 
+
+Δ𝑝 . (11) The LBM reference solver evaluates this relation as 
+
+𝑘 LBM = 𝜇 ref 𝐻𝑢 𝐷 
+
+Δ𝑝 LBM 
+
+, 𝜇 ref = 𝜌 ref 𝜈, 𝜌 ref = 𝜌 Γin + 𝜌 Γout 
+
+2 . (12) Here Δ𝑝 LBM is measured on the two solver-side sample faces. For prediction–reference comparison, the same Darcy expression is applied to both tensors using the imposed lattice pressure difference Δ𝑝 0, as defined in Eq. 18 below, and the implemented approximation 𝜌 ref ≃ 1 . The two code paths are therefore reproducible without interrupting the engineering definition.   
+
+> Wang et al.: Preprint submitted to Elsevier Page 5 of 33
+
+Hydraulic tortuosity is calculated from the resolved terminal velocity field as 
+
+𝜏 ℎ =
+
+⟨| 𝐮 |⟩ Ω𝑝 
+
+|||⟨𝑢 𝑥 ⟩Ω𝑝 
+
+|||
+
+=
+
+∑𝐱 ∈Ω 𝑝 |𝐮 (𝐱 )||||∑𝐱 ∈Ω 𝑝 𝑢 𝑥 (𝐱 )|||
+
+. (13) The QSGS constructs statistically distinct binary microstructures while retaining direct control over phase fraction and directional growth (Wang and Pan, 2007). Target porosity is sampled in eight width-0.05 intervals spanning 0.30– 0.70. The solid-core probability and four axial growth probabilities are 0.01. The four diagonal probabilities are 0.03 except in the (+ 𝑥, −𝑦 ) direction, where the value is 0.05. A zero-padded 3 × 3 binary median filter is applied twice after growth. Each task is retried until the filtered porosity lies within its assigned interval and a pore component connects inlet to outlet. Connectivity is determined with four-neighbour labelling before any LBM solve. Isolated cavities remain part of the binary geometry, and cul-de-sac branches attached to a spanning component remain within that component. This preserves void storage and local pressure effects instead of replacing the generated structure with an idealized transport backbone. A candidate is accepted into the dataset only after the connectivity audit and the numerical quality-control criteria described below. As shown in Fig. 2, every geometry uses the same D2Q9-BGK configuration: 𝜌 in = 1 .00001 , 𝜌 out = 1 .0, relaxation time 𝜏 LBM = 1 .0, lattice kinematic viscosity 𝜈 = ( 𝜏 LBM − 0 .5)∕3 , five fluid buffer rows at each pressure boundary, and bounce-back on solid nodes. The pressure-driven seepage is imposed through density boundary conditions following standard lattice-BGK formulations (Qian et al., 1992; Zou and He, 1997). 𝑢 𝑥  𝑥, 𝑦, 𝑡  𝑢 𝑦  𝑥, 𝑦, 𝑡   
+
+> ρin =1.00001
+> 𝑝 𝑥, 𝑦, 𝑡
+> ρout =1.0
+> Figure 2: From pixel-resolved geometry to Darcy-scale transport.
+
+For population 𝑓 𝑖 with lattice velocity 𝐜 𝑖 , collision and streaming are 
+
+𝑓 𝑖 (𝐱 + 𝐜 𝑖 , 𝑡 + 1) = 𝑓 𝑖 (𝐱 , 𝑡 ) − 1
+
+𝜏 LBM 
+
+[𝑓 𝑖 (𝐱 , 𝑡 ) − 𝑓 eq  
+
+> 𝑖
+
+(𝐱 , 𝑡 )] . (14) The equilibrium distribution is 
+
+𝑓 eq  
+
+> 𝑖
+
+= 𝑤 𝑖 𝜌 
+
+[
+
+1 + 3 𝐜 𝑖 ⋅ 𝐮 + 92 (𝐜 𝑖 ⋅ 𝐮 )2 − 32 |𝐮 |2]
+
+, (15) where 𝑤 𝑖 = 4∕9 for the rest population, 1∕9 for the four axial directions, and 1∕36 for the four diagonals. Density and momentum are recovered from population moments, 
+
+𝜌 = ∑
+
+> 𝑖
+
+𝑓 𝑖 , 𝜌 𝐮 = ∑
+
+> 𝑖
+
+𝑓 𝑖 𝐜 𝑖 . (16)   
+
+> Wang et al.: Preprint submitted to Elsevier Page 6 of 33
+
+For D2Q9, the lattice pressure relation is 
+
+𝑝 = 𝑐 2 
+
+> 𝑠
+
+𝜌, 𝑐 2 
+
+> 𝑠
+
+= 13 , (17) and the imposed pressure difference is therefore 
+
+Δ𝑝 0 = 𝑐 2 
+
+> 𝑠
+
+(𝜌 in − 𝜌 out ) = 𝜌 in − 𝜌 out 
+
+3 . (18) For stored reference permeability, the high-fidelity solver instead measures Δ𝑝 LBM from the mean densities on the fluid rows adjacent to the sample, consistently with Eq. 12. The learning and visualisation target is the normalised density-based pressure proxy 
+
+𝑝 ∗ = 𝜌 − 𝜌 out 
+
+𝜌 in − 𝜌 out 
+
+. (19) The simulation starts from rest and is checked every 500 iterations. If 𝑛 denotes the current check and 𝑛 − 1 the preceding check, the implemented velocity residual is 
+
+𝑟 (𝑛 ) 
+
+> 𝑢
+
+=
+
+[∑𝐱 ∈Ω 𝑓 
+
+|||𝐮 (𝑛 )(𝐱 ) − 𝐮 (𝑛 −1) (𝐱 )|||
+
+> 2
+
+]1∕2 
+
+[∑𝐱 ∈Ω 𝑓 |𝐮 (𝑛 )(𝐱 )|2
+
+]1∕2 
+
++ 10 −30 
+
+, (20) where Ω𝑓 contains fluid nodes in the padded solver lattice. The reference-solver flux imbalance and permeability change are 
+
+𝑒 QC  
+
+> 𝑚
+
+= |𝑄 in − 𝑄 out |
+
+max( |𝑄 in |, |𝑄 out |, 𝜖 ) , (21) 
+
+𝑟 (𝑛 ) 
+
+> 𝑘
+
+= |𝑘 (𝑛 ) − 𝑘 (𝑛 −1) |
+
+max( |𝑘 (𝑛 )|, |𝑘 (𝑛 −1) |, 𝜖 ) . (22) Here 𝜖 is the floating-point machine epsilon used by the implementation. Weak-compressibility control is expressed by 
+
+Ma max =max Ω𝑓 |𝐮 |
+
+𝑐 𝑠 
+
+. (23) A realisation is retained only when 𝑟 𝑢 < 10 −4 , 𝑟 𝑘 < 10 −4 , 𝑒 QC  
+
+> 𝑚
+
+< 10 −3 , all states are finite, and Ma max < 0.10 . The solve is capped at 50,000 iterations. Thirty fields are requested on the logarithmic schedule specified in Section 2.2. When convergence occurs before a requested late time, the converged field is copied to the remaining storage positions and marked by a steady-fill indicator. 
+
+2.2. Dataset and Geometry Representation 
+
+QSGS-Transient-7606 contains 7,606 accepted geometries spanning porosity 0.30–0.70. Thirty states were stored on a logarithmically distributed schedule between iteration 0 and 50,000, giving 228,180 geometry–time records. The geometry-disjoint split contains 6,078 training, 764 validation, and 764 test structures. All static channels and all 30 states of a geometry remain in the same split, and normalisation statistics are calculated from training data only. The native pixel lattice is retained without contour smoothing. CT-PoreFlow represents each geometry by 
+
+𝐗 𝐺 = [ 𝑀 𝑝 , 𝑀 𝑐 , 𝐷 𝑒 , 𝐷 in , 𝐷 out ] ∈ ℝ5× 𝐻 ×𝑊 . (24) As shown in Fig. 3, 𝑀 𝑝 defines the fluid domain; 𝑀 𝑐 identifies the inlet–outlet through-connected region; the Euclidean distance transform 𝐷 𝑒 ∕𝐻 describes local aperture relative to the nearest solid boundary (Maurer et al., 2003); and 𝐷 in   
+
+> Wang et al.: Preprint submitted to Elsevier Page 7 of 33
+
+and 𝐷 out provide inlet- and outlet-referenced shortest-path positions on the four-neighbour pore graph. The graph distances are divided by max( 𝐻, 𝑊 ) = 100 and set to zero outside 𝑀 𝑐 . Values may exceed one when the connected path is longer than the sample width. Thus, the five channels encode local aperture, hydraulic connectivity, and global transport position. Multi-source breadth-first traversals start from all open inlet and outlet nodes. Their reachability intersection defines 𝑀 𝑐 , while directed shortest-path lengths give 𝐷 in and 𝐷 out . Attached cul-de-sac branches remain connected when reachable from both boundary traversals. All channels are deterministic functions of geometry and boundary orientation. ρin = 1.00001 ρout = 1.0                   
+
+> a Pore mask Mpunder left-to-right pressure driving
+> b Connected pore mask Mc
+> transport support and isolated pores
+> c Euclidean distance De/H
+> local aperture relative to lattice height
+> 0.00 0.02 0.04 0.06 0.08
+> De/H
+> d Inlet geodesic Din /H
+> upstream graph coordinate
+> 0.0 0.5 1.0 1.5 2.0
+> Din /H
+> e Outlet geodesic Dout /H
+> downstream graph coordinate
+> 0.0 0.5 1.0 1.5 2.0
+> Dout /H
+> f Halfway bounce-back pixel-scale no-slip wall treatment
+> red: incident population blue: reflected population
+
+Figure 3: Pixel-resolved geometry and transport-oriented topology representation. (a) Pore mask 𝑀 𝑝 under left-to-right pressure driving. (b) Connected-pore mask 𝑀 𝑐 : teal is through-connected pore space, orange is nonspanning pore space, and black is solid. (c) Euclidean wall distance 𝐷 𝑒 ∕𝐻 . (d,e) Inlet- and outlet-referenced four-neighbour geodesic distances. Panels (a–e) form 𝐗 𝐺 . (f) Halfway bounce-back at the same pixel-scale interface. 
+
+A single velocity scale 𝑠 𝑢 = 5 .024 × 10 −6 lattice units is estimated from the training split as the 99.5th percentile of a deterministic pore-speed subsample. Both components use the same scale, 
+
+𝑢 ∗ 
+
+> 𝑥
+
+= 𝑢 𝑥 
+
+𝑠 𝑢 
+
+, 𝑢 ∗ 
+
+> 𝑦
+
+= 𝑢 𝑦 
+
+𝑠 𝑢 
+
+, (25) while the normalised pressure proxy 𝑝 ∗ follows Eq. 19. Values above the velocity percentile are not clipped. A supervised item contains one 5 × 100 × 100 static geometry tensor, one scalar query time, and one 3 × 100 × 100 
+
+target [𝑢 ∗
+
+> 𝑥
+
+, 𝑢 ∗
+
+> 𝑦
+
+, 𝑝 ∗]. Stored target values in solid regions are zero. 
+
+Wang et al.: Preprint submitted to Elsevier Page 8 of 33 2.3. Transient Pore-Flow Surrogate model 
+
+To capture the transient pore-scale response directly from geometry and query time, we develop the CT-PoreFlow surrogate. As illustrated in Fig. 4, CT-PoreFlow follows a local–global encoder–decoder architecture in which transport-oriented geometry features are first encoded at multiple spatial scales, global pore-network information is mixed at the compressed representation, and time-conditioned decoding reconstructs the requested velocity and pressure fields. Only after the reference problem and data representation have been defined is the geometry-to-field operator introduced. For geometry 𝐺 and requested LBM iteration 𝑡 ,̂
+
+𝐘 (𝐺, 𝑡 ) = 𝜃 
+
+(𝐗 𝐺 , 𝜏 𝑡 
+
+) , 𝐘 = [ 𝑢 ∗
+
+> 𝑥
+
+, 𝑢 ∗
+
+> 𝑦
+
+, 𝑝 ∗], (26) with logarithmic query coordinate 
+
+𝜏 𝑡 = log(1 + 𝑡 )log(1 + 𝑡 max ) , 𝑡 max = 50 ,000 . (27) The surrogate is evaluated directly at a requested time; it does not recursively advance the preceding prediction. The logarithmic coordinate allocates more resolution to the densely sampled early transient while retaining the terminal state at 𝜏 𝑡 = 1 .
+
+2.3.1. GeometryResBlock Encoder 
+
+The GeometryResBlock encoder contains residual stages of widths 𝐶 , 2𝐶 , 4𝐶 , and 8𝐶 , followed by a 16 𝐶 
+
+bottleneck, with 𝐶 = 24 . Each GeometryResBlock uses two 3 × 3 convolutions, Group Normalisation (Wu and He, 2018), SiLU activations, and a 1 × 1 residual projection when the channel width changes. The AvgPool operation maps 
+
+100 × 100 to 50 × 50 , 25 × 25 , 12 × 12 , and 6 × 6 . Same-scale tensors are retained for decoder skips following the local-detail principle of U-Net (Ronneberger et al., 2015). Because the encoder depends only on 𝐗 𝐺 , its representation can be reused for multiple time queries. 
+
+2.3.2. FNOBlock and Log-Time Conditioning 
+
+At the 6 × 6 bottleneck, the FNOBlock implements compressed spectral mixing across the full sample. A real two-dimensional FFT is multiplied by learned complex weights for three retained modes in each direction, then returned to physical space. A parallel 1 × 1 convolution provides local channel mixing. Their normalised sum is activated and added residually, 
+
+𝑧 ′ = 𝑧 + 𝜎 [GN ( −1 (𝑊 𝑘  (𝑧 )) + 𝑊 0𝑧 )] . (28) The FNOBlock (Li et al., 2021) acts only on the compressed representation, while wall and throat detail remains available through convolutional skips. As an implementation note, the FFT is evaluated in FP32 within otherwise mixed-precision training. The scalar 𝜏 𝑡 is embedded into 96 dimensions using sine and cosine functions at exponentially spaced frequencies from 1 to 10 −4 , followed by two linear layers and SiLU activation (Tancik et al., 2020). Each TimeResBlock maps the embedding to feature-wise scale and shift parameters (Perez et al., 2018), 
+
+ℎ′ = ℎ ⊙ [1 + 𝛾 (𝜏 𝑡 )] + 𝛽 (𝜏 𝑡 ). (29) This introduces time dependence without appending a spatially constant time image at every resolution. 
+
+2.3.3. Pore field reconstruction 
+
+Four bilinear Upsample stages match the encoder resolutions, concatenate the corresponding skip tensors, and reconstruct local velocity and density-proxy fields with TimeResBlocks. Time modulation from Eq. 29 is applied at every decoder scale. A final Conv1 ×1 output head produces three channels, followed by the hard pore mask, ̂
+
+𝐘 (𝐺, 𝑡 ) = 𝑀 𝑝 ⊙ 𝐷 (𝐸 (𝐗 𝐺 ), 𝜏 𝑡 
+
+) . (30)   
+
+> Wang et al.: Preprint submitted to Elsevier Page 9 of 33
+
+FNOBlock 
+
+AvgPool 
+
+TimeResBlock 
+
+concat 
+
+concat 
+
+concat 
+
+concat 
+
+Upsample 
+
+> C=24
+
+GeometryResBlock 
+
+CT - PoreFlow 
+
+Conv1×1 
+
+> C=48
+> C=96
+> C=192
+> C=384
+
+Time embedding  
+
+> C=24
+> C=48
+> C=96
+> C=192
+> Conv 3×3 Input
+> GN
+> silu
+> Conv 3×3
+> GN ×scale
+> shift
+> silu
+> Output
+> Linear
+> split
+> time
+
+TimeResBlock  
+
+> Conv 3×3 Input
+> GN
+> silu
+> Conv 3×3
+> GN silu
+> Conv 1×1
+> Output
+
+GeometryResBlock  
+
+> FFT Input
+> fhigh
+> flow
+> Split
+> weight bottom
+> weight top
+> IFFT Output
+> silu
+> Conv 1×1
+> gelu
+
+FNOBlock CT-PoreFlow Figure 4: CT-PoreFlow computational graph. 
+
+The reconstructed fields are trained to preserve local numerical detail and remain useful for Darcy-scale transport evaluation. For sample 𝑖 , lattice node 𝑥 , target channel 𝑐 , and sample weight 𝑤 𝑖 , the pore-masked Smooth L1 data term is 
+
+data =
+
+∑𝑖,𝑥,𝑐 𝑤 𝑖 𝑀 𝑝 (𝑥 ) SmoothL1( ̂ 𝑌 𝑖,𝑐 (𝑥 ) − 𝑌 𝑖,𝑐 (𝑥 )) 
+
+∑𝑖,𝑥,𝑐 𝑤 𝑖 𝑀 𝑝 (𝑥 ) . (31) Smooth L1 retains quadratic behaviour near zero while limiting the effect of large residuals (Huber, 1964). The gradient term compares first differences only when both adjacent nodes are fluid, 
+
+grad = 12
+
+(‖Δ𝑥 ̂ 𝑌 − Δ 𝑥 𝑌 ‖1,Ω𝑝 + ‖Δ𝑦 ̂ 𝑌 − Δ 𝑦 𝑌 ‖1,Ω𝑝 
+
+)
+
+. (32) Edge masking prevents the intentional discontinuity at the hard pore mask from being treated as a prediction error and preserves gradients around narrow pore throats. For boundary 𝑏 ∈ {in , out} , let 𝑞 𝑏 (𝑌 ) be the sum of normalised 𝑢 ∗ 
+
+> 𝑥
+
+over boundary pore nodes. With 𝑠 𝑖 =max( |[𝑞 in (𝑌 𝑖 ) + 𝑞 out (𝑌 𝑖 )]∕2 |, 0.05) , the flux-calibration term is 
+
+f lux =
+
+∑𝑖 𝜏 4
+
+> 𝑖
+> 12
+
+∑𝑏 SmoothL1 𝛽 =0 .1
+
+( 𝑞 𝑏 (̂ 𝑌 𝑖 )− 𝑞 𝑏 (𝑌 𝑖 )
+
+> 𝑠 𝑖
+
+)∑𝑖 𝜏 4
+
+> 𝑖
+
+. (33) The time weight emphasizes developed flow, and the scale floor prevents unstable relative penalties near rest. The total objective is 
+
+ = data + 0 .05 grad + 0 .002 f lux . (34) Thus, data controls normalised field fidelity, grad preserves local pore/throat gradients, and f lux calibrates a late-time Darcy-relevant boundary quantity. 
+
+Wang et al.: Preprint submitted to Elsevier Page 10 of 33 2.4. Training and validation 
+
+Training and checkpoint selection were kept common wherever the model formulation permitted. AdamW (Loshchilov and Hutter, 2019), cosine learning-rate decay (Loshchilov and Hutter, 2017), automatic mixed precision, and gradient-norm clipping at 1.0 were used. Validation uses 256 validation geometries, randomly selected without replacement from the validation split, evaluated at indices {0 , 5, 10 , 15 , 20 , 25 , 29} .All baseline models received the same five-channel geometry tensor. Time-U-Net is a convolutional encoder– decoder with sinusoidal time modulation. Time-FNO concatenates these channels with normalised 𝑥 and 𝑦 coordinates and a time plane. It uses width 48, 16 modes per direction, and four spectral blocks. DeepONet combines a convolutional geometry branch with an (𝑥, 𝑦, 𝜏 𝑡 ) trunk and 64 basis functions per output channel (Lu et al., 2021).The remaining controlled configurations are named by the altered component: Without directed geodesic channels, Without FNOBlock, Linear time coordinate, Field loss only, and Terminal-anchored steady-residual decoder. CT-PoreFlow’s own decoder (Eq. 30) evaluated before flux calibration is applied, denoted the Direct transient decoder, is also reported to separate the effect of f lux from the decoder formulation itself. Evaluation considered field fidelity together with engineering transport recovery. Pore-masked MAE and RMSE are reported for 𝑢 ∗
+
+> 𝑥
+
+, 𝑢 ∗
+
+> 𝑦
+
+, and 𝑝 ∗, along with two-component velocity relative 𝐿 2 and physical speed MAE after inverse scaling. Velocity relative 𝐿 2 is defined only when the pore-restricted target norm exceeds 10 −6 ; the zero initial field contributes to absolute error and is excluded from this relative metric. These measures are accompanied by 𝑄 , 𝑢 𝐷 ,
+
+𝑘 eval , and 𝜏 ℎ as defined in Section 2.1. Because 𝐻 , 𝜈 , and Δ𝑝 are fixed, 𝑘 eval is a constant multiple of 𝑄 and their relative errors are not treated as independent gains. For predicted-field reporting, mass imbalance uses the symmetric diagnostic 
+
+𝑒 eval  
+
+> 𝑚
+
+=
+
+⎧⎪⎨⎪⎩|𝑄 in − 𝑄 out | 
+
+> 12
+
+(|𝑄 in | + |𝑄 out |) , 12 (|𝑄 in | + |𝑄 out |) > 𝜖 eval ,
+
+NaN , otherwise ,𝜖 eval = 10 −12 . (35) This is a validity test rather than a training regularizer, and is distinct from the max-denominator acceptance gate 
+
+𝑒 QC  
+
+> 𝑚
+
+in Eq. 21. At exact rest the reference flux scale is zero, so the value is stored as NaN and excluded from finite-value aggregates; reported comparisons use the terminal state. Divergence is the mean absolute centred-difference divergence on interior nodes whose four axial neighbours are fluid. Exact masking guarantees zero solid-node velocity by construction. Same-time relative flux, terminal permeability, and hydraulic-tortuosity errors are likewise retained only when their reference denominators exceed 10 −12 ; reported flux and permeability comparisons use the terminal state. Dynamic metrics are aggregated within each geometry, and terminal metrics contribute one paired value per geometry, giving 𝑛 = 764 . Confidence intervals use 10,000 paired geometry-level bootstrap resamples (Efron, 1979); comparisons use two-sided Wilcoxon signed-rank tests, matched rank-biserial effects, and Holm–Bonferroni correction at 𝛼 = 0.05 (Holm, 1979). Errors are stratified by total porosity, connected porosity, dead-pore ratio, hydraulic tortuosity, and LBM convergence iteration. Two additional audits examined temporal interpolation and morphology transfer. The principal experiment trains on all 30 stored times. A separate interpolation audit trains dedicated CT-PoreFlow and Time-U-Net models on 20 indices and evaluates the absent indices {2 , 4, 7, 9, 12 , 14 , 17 , 19 , 22 , 27} on all test geometries. Off-grid visualisation queries have no LBM labels and are not used as accuracy evidence. Model-only latency is measured after warm-up with synchronized CUDA events; end-to-end latency additionally includes loading and preprocessing. Numerical tensors are exported before rendering, and all displayed speeds use training-derived scales rather than per-model RGB normalisation. Morphology out-of-distribution (OOD) testing was conducted using two complementary datasets: rule-based synthetic geometries and pore structures extracted from real computed tomography images. All models were frozen during OOD evaluation, and no fine-tuning, recalibration, or OOD-specific parameter optimisation was performed. Following He et al. (2024), the rule-based OOD dataset contains 24 geometries comprising circular arrays, snowflake obstacles, tree-like obstacles, and staggered baffles. Each family contains two porosity levels and three seeded replicates. These geometries were generated independently of the QSGS procedure used to construct the training dataset. The computed tomography-derived OOD dataset contains eight supplied binary two-dimensional slices from one segmented computed tomography volume. In the source images, white denotes pore and black denotes solid. The   
+
+> Wang et al.: Preprint submitted to Elsevier Page 11 of 33
+
+200 × 200 masks were mapped to the fixed 100 × 100 model lattice by non-overlapping 2 × 2 area averaging with a pore threshold of 0.5; no topology repair was applied. Array orientation was then mapped so that solver axis 0 and every displayed field follow the prescribed left-to-right pressure gradient. Each mask underwent the same connected-pore, Euclidean-distance, and directed-geodesic preprocessing as the training data, followed by a terminal D2Q9-BGK LBM reference solve. The terminal metric is 
+
+𝑒 𝑇 = ‖[̂ 𝐮 𝑇 − 𝐮 𝑇 ] ⊙ 𝑀 𝑝 ‖2
+
+‖𝐮 𝑇 ⊙ 𝑀 𝑝 ‖2
+
+, ‖𝐮 𝑇 ⊙ 𝑀 𝑝 ‖2 > 10 −12 . (36) This audit isolates morphology shift and does not establish real-rock, three-dimensional, parameter, or boundary-condition generalisation. 
+
+2.5. Porous structure inverse design 
+
+Inverse design is treated as deployment of the forward computational surrogate. A property target defines a search condition, candidate generators propose binary geometries, exact topology audits reject invalid structures, CT-PoreFlow screens connected candidates, and the LBM solver verifies the selected designs. Here, the conditional GAN and diffusion models are treated as alternative candidate-generation strategies. The property vector characterising any structure 𝐺 is 
+
+𝐜 (𝐺 ) = [ 𝜙, 𝜙 𝑐 , 𝑑, log(1 + 𝑘 ), 𝜏 ℎ], (37) and a design target specifies a desired vector 𝐜 † in the same space. During screening, morphological components (𝜙, 𝜙 𝑐 , 𝑑 ) are calculated exactly from the candidate mask, while terminal 𝑘 and 𝜏 ℎ are obtained from the surrogate; this mixed predicted estimate is denoted ̂ 𝐜 (𝐺 ). Candidate–target mismatch is 
+
+𝐷 (𝐺, 𝐜 †) = 
+
+‖‖‖‖‖
+
+𝐰 ⊙̂ 𝐜 (𝐺 ) − 𝐜 †
+
+𝐬 tr 
+
+‖‖‖‖‖2
+
+, 𝐰 = [1 , 0.7, 0.7, 2, 1] , (38) where 𝐬 tr contains training-split standard deviations. Eighteen targets are constructed from three training porosity quartiles, three local permeability quartiles, and two local tortuosity quartiles without test labels. Success@20 requires |Δ𝜙 | ≤ 0.03 , permeability error at most 20%, and tortuosity error at most 10%. For the generative-design experiment, QC-conditional Success@20 is calculated over candidates that pass the original LBM quality-control criteria. Candidates that fail to converge or fail numerical quality control are excluded from this conditional rate but remain represented in the reported QC-pass denominator. The finite-library comparison gives each method the same 764 unseen structures. Random-QSGS draws 50 candidates per target, morphology-only retrieval uses the first three distance terms, learned screens use predicted terminal fields, and an LBM oracle uses test labels only as a nondeployable attainable bound. For generative search, the conditional GAN and conditional diffusion model are trained on the same 6078 training geometries and standardized property conditions. Both convert their continuous outputs to binary masks by zero thresholding; no connectivity repair, QSGS projection, or morphology filter is applied. Each generator produces 256 masks for each of the 18 targets (4608 masks per generator), giving 9216 raw generated structures in total across the conditional GAN and conditional diffusion model. Exact morphology and through-connectivity are evaluated for every mask, and diversity uses unique-mask rate plus 2048 seeded pairwise Hamming comparisons per target. CT-PoreFlow predicts terminal 𝑘 and 𝜏 ℎ only for connected candidates. Six lowest-distance candidates and six disjoint uniformly sampled controls per method and target are assigned to LBM verification when the valid pool permits. Nonconvergence remains a failure in the assigned denominator, and target errors are calculated only for runs that pass the original residual, permeability-change, mass-balance, and Mach-number criteria. The separate non-generative closed loop uses a fresh seeded pool of 120 QSGS structures whose identifiers are absent from all learning splits. CT-PoreFlow ranks three representative targets, and one guided and one uniformly sampled candidate per target are rerun with the D2Q9-BGK solver. In every design experiment, the surrogate performs screening; the final engineering property label is supplied only by the D2Q9-BGK LBM solver.   
+
+> Wang et al.: Preprint submitted to Elsevier Page 12 of 33
+
+## 3. Results and Validation 
+
+3.1. Prediction performance 
+
+QSGS-Transient-7606 covers a broad range of transport responses within the fixed two-dimensional QSGS–LBM setting. A total of 1,000 structures were requested in each of eight prescribed porosity intervals, yielding 649, 957, 1,000, 1,000, 1,000, 1,000, 1,000, and 1,000 accepted geometries, respectively. All 394 exhausted generation tasks occurred in the two lowest-porosity intervals and are retained in the audit manifests. Across the 7,606 accepted geometries, lattice permeability ranges from 0.0125 to 5.1442, with a median of 0.3552, while velocity-based hydraulic tortuosity ranges from 1.0366 to 2.2727, with a median of 1.2679. Fig. 5 presents representative terminal LBM states across the eight porosity intervals. Within each interval, the displayed held-out geometry was selected near the multivariate median of total porosity, connected porosity, logarithmic permeability, and hydraulic tortuosity. The common pressure and velocity scales reveal that geometries with comparable total porosity can distribute flow through substantially different connected throats, resulting in distinct permeability and tortuosity. Thus, total porosity alone does not uniquely determine pore-scale transport within the present numerical regime.   
+
+> Wang et al.: Preprint submitted to Elsevier Page 13 of 33
+
+a     
+
+> geometry pressure p*speed |u|
+
+b     
+
+> geometry pressure p*speed |u|
+
+c     
+
+> geometry pressure p*speed |u|
+
+d     
+
+> geometry pressure p*speed |u|
+
+e     
+
+> geometry pressure p*speed |u|
+
+f     
+
+> geometry pressure p*speed |u|
+
+g     
+
+> geometry pressure p*speed |u|
+
+h          
+
+> geometry pressure p*speed |u|
+> 0.0 0.2 0.4 0.6 0.8 1.0
+
+Normalized pressure p *     
+
+> 012345
+
+Speed ( 10 −6 lattice units)                                                             
+
+> ϕbin 0.30-0.35 | ϕ= 0.313 ,k= 0.123 ,τh= 1.17 ϕbin 0.35-0.40 | ϕ= 0.370 ,k= 0.134 ,τh= 1.35
+> ϕbin 0.40-0.45 | ϕ= 0.423 ,k= 0.196 ,τh= 1.24 ϕbin 0.45-0.50 | ϕ= 0.474 ,k= 0.279 ,τh= 1.34
+> ϕbin 0.50-0.55 | ϕ= 0.528 ,k= 0.351 ,τh= 1.23 ϕbin 0.55-0.60 | ϕ= 0.578 ,k= 0.670 ,τh= 1.25
+> ϕbin 0.60-0.65 | ϕ= 0.622 ,k= 1.005 ,τh= 1.25 ϕbin 0.65-0.70 | ϕ= 0.682 ,k= 1.398 ,τh= 1.23
+
+Figure 5: Representative terminal LBM states across the prescribed porosity intervals. 
+
+The observed within-interval variability further confirms that similar void fractions may correspond to different hydraulic-conductance and flow-path-complexity regimes. All 7,606 retained simulations satisfy the prescribed velocity-residual, permeability-change, mass-balance, and Mach-number criteria, and only one accepted realisation reaches the maximum limit of 50,000 iterations. These results characterise the numerical diversity and quality of the benchmark, but should not be interpreted as a constitutive relation beyond the fixed two-dimensional QSGS–LBM configuration. The overall predictive comparison was conducted on the same 764 unseen geometries and all 30 stored time states for each model, resulting in 22,920 geometry–time records per model. Table 1 reports the aggregate field errors, terminal engineering-property errors, mass-balance diagnostics, and model-only inference latency. Time-U-Net serves as the principal controlled comparator, while Time-FNO and DeepONet are included as broader architectural references. CT-PoreFlow achieved a velocity relative 𝐿 2 error of 0.2248, a normalised-pressure MAE of 0.01430, and a lattice-speed MAE of 3.965 × 10 −8 . The corresponding Time-U-Net values were 0.2439, 0.01647, and 4.406 × 
+
+Wang et al.: Preprint submitted to Elsevier Page 14 of 33 Table 1 
+
+Overall held-out field and engineering transport accuracy. Field metrics use 22,920 geometry–time records, whereas transport metrics use the terminal states of 764 unseen geometries.                                       
+
+> Method Rel. 𝐿 2MAE 𝑝 ∗Speed MAE 𝑘 error 𝜏 ℎerror Mass balance ms/frame Time-U-Net 0.2439 0.0165 4.41 × 10 −8 14.99% 7.81% 0.0974 1.01 Time-FNO 0.4092 0.0304 7.39 × 10 −8 46.97% 17.09% 0.4558 0.79 DeepONet 0.8494 0.0833 1.98 × 10 −7 109.82% 148.25% 0.8935 0.54 CT-PoreFlow 0.2248 0.0143 𝟑 .𝟗𝟕 ×𝟏𝟎 −𝟖 12.81% 5.10% 0.0839 1.32
+
+10 −8 , representing reductions of 7.85%, 13.19%, and 10.00%, respectively. CT-PoreFlow also reduced the terminal permeability error from 14.99% to 12.81%, the hydraulic-tortuosity error from 7.81% to 5.10%, and the mass-balance error from 0.0974 to 0.0839. All six geometry-paired field and transport comparisons favoured CT-PoreFlow after Holm correction. For velocity prediction, the adjusted 𝑝 -value was 9.66 × 10 −46 , with a matched rank-biserial effect size of 0.598. DeepONet retained the lowest model-only inference latency at 0.54 ms frame −1 , compared with 1.32 ms frame −1 for CT-PoreFlow. The results therefore support improved aggregate field and transport accuracy relative to Time-U-Net under the principal controlled comparison, rather than universal superiority over every architecture or evaluation metric. 
+
+3.2. Transient and engineering transport accuracy 
+
+The time-resolved errors in Fig. 6 reveal three characteristic stages in the development of pore-scale flow. At early times, the velocity magnitude remains close to zero, so the denominator of the relative 𝐿 2 metric becomes highly sensitive to small absolute deviations. Relative velocity error should therefore be interpreted together with the absolute speed error in this regime. During the transitional stage, the pressure field is established while the velocity field reorganises along the connected pore network, producing the most pronounced redistribution of active flow pathways. At late times, transport becomes localised within persistent connected throats and the prediction errors approach their terminal values. CT-PoreFlow exhibits lower aggregate errors than Time-U-Net across these stages, although it does not outperform the baseline at every individual stored time. 0 10 10 2 10 3 5 × 10 4  
+
+> LBM iteration
+> 0.0 0.2 0.4 0.6 0.8 1.0
+> Velocity relative  L2
+> early transition late
+
+a      
+
+> 010 10 210 35 × 10 4
+> LBM iteration
+> 0.00 0.05 0.10 0.15
+> Normalized pressure MAE  early transition late
+
+b   
+
+> Time-U-Net Time-FNO DeepONet CT-PoreFlow
+
+Figure 6: Time-resolved velocity relative 𝐿 2 and normalised-pressure MAE on 764 held-out geometries. 
+
+The predicted velocity and pressure fields are treated as complete numerical states from which flux, permeability, hydraulic tortuosity, divergence, and mass balance are recomputed. Permeability is therefore inferred from the reconstructed flow field rather than generated by an independent scalar-output head. Fig. 7 tracks the evolution of these physical diagnostics. At the terminal state, CT-PoreFlow achieves a permeability error of 12.81%, a hydraulic-tortuosity error of 5.10%, and a mass-balance error of 0.0839, compared with 14.99%, 7.81%, and 0.0974 for Time-U-Net, respectively. The complete four-model comparison is summarised together with the field-level metrics in Table 1. 
+
+Wang et al.: Preprint submitted to Elsevier Page 15 of 33 Exact pore masking enforces zero velocity within solid nodes for all models. However, the remaining divergence and inlet–outlet mass-balance errors demonstrate that geometric masking alone does not guarantee satisfaction of the continuity constraint. 0 10 10 2
+
+> 10 3
+> 5 × 10 4
+> 10 −2
+> 10 −1
+> 10 0
+> 10 1
+
+a Mean-flux error / terminal flux   
+
+> 010 10 2
+> 10 3
+> 5 × 10 4
+> 0246
+
+b Divergence L1 (×10 −8 )  
+
+> 010 10 2
+> 10 3
+> 5 × 10 4
+> 10 −3
+> 10 −2
+> 10 −1
+> 10 0
+> 10 1
+
+c Tortuosity relative error    
+
+> Time-U-Net Time-FNO DeepONet CT-PoreFlow
+
+Figure 7: Waterfall physical diagnostics: (a) terminal-flux-normalised mean-flux error, (b) interior divergence, and (c) hydraulic-tortuosity relative error. 
+
+The terminal calibration results in Fig. 8 further show that engineering-property errors are strongly property dependent. Permeability is well calibrated for the two most accurate field surrogates, with 𝑅 2 = 0 .988 for CT-PoreFlow and 𝑅 2 = 0 .983 for Time-U-Net. Hydraulic tortuosity is considerably more difficult to recover. Long-tail prediction failures produce negative coefficients of determination for all four models: 𝑅 2 = −0 .731 for CT-PoreFlow, −2 .200 for Time-U-Net, −10 .558 for Time-FNO, and −8294 .222 for DeepONet. For CT-PoreFlow, the negative tortuosity 𝑅 2 coexists with a low median absolute percentage error of 2.1%. This combination indicates that the model provides accurate tortuosity estimates for most geometries but exhibits substantial errors for a small number of extreme cases. Because 𝑅 2 is highly sensitive to these long-tail failures, whereas the median percentage error is not, both metrics are required to characterise performance adequately. Such adverse cases are important in pore-scale transport because local errors in dominant path length or flow-channel organisation may remain concealed by aggregate field metrics or median statistics. The observed calibration spread therefore supports the use of tortuosity predictions for relative candidate ranking rather than direct property assignment. 
+
+Wang et al.: Preprint submitted to Elsevier Page 16 of 33 0.0 0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0 
+
+LBM reference 
+
+01234
+
+> Prediction
+
+a Time-U-Net: Terminal permeability 
+
+> R2=0.983 RMSE=0.0818 MAE=0.0533 MdAPE=9.4%
+
+1.2 1.4 1.6 1.8 
+
+LBM reference 
+
+10 0
+
+10 1
+
+10 2
+
+> Prediction
+
+b Time-U-Net: Hydraulic tortuosity 
+
+> R2=-2.200 RMSE=0.229 MAE=0.102 MdAPE=3.0%
+
+0.0 0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0 
+
+LBM reference 
+
+01234
+
+> Prediction
+
+c Time-FNO: Terminal permeability 
+
+> R2=0.913 RMSE=0.186 MAE=0.129 MdAPE=23.2%
+
+1.2 1.4 1.6 1.8 
+
+LBM reference 
+
+10 0
+
+10 1
+
+10 2
+
+> Prediction
+
+d Time-FNO: Hydraulic tortuosity 
+
+> R2=-10.558 RMSE=0.435 MAE=0.223 MdAPE=7.4%
+
+0.0 0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0 
+
+LBM reference 
+
+01234
+
+> Prediction
+
+e DeepONet: Terminal permeability 
+
+> R2=0.665 RMSE=0.365 MAE=0.26 MdAPE=51.6%
+
+1.2 1.4 1.6 1.8 
+
+LBM reference 
+
+10 0
+
+10 1
+
+10 2
+
+> Prediction
+
+f DeepONet: Hydraulic tortuosity 
+
+> R2=-8294.222 RMSE=11.7 MAE=2.06 MdAPE=19.6%
+
+0.0 0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0 
+
+LBM reference 
+
+01234
+
+> Prediction
+
+g CT-PoreFlow: Terminal permeability 
+
+> R2=0.988 RMSE=0.0695 MAE=0.0438 MdAPE=7.4%
+
+1.2 1.4 1.6 1.8 
+
+LBM reference 
+
+10 0
+
+10 1
+
+10 2
+
+> Prediction
+
+h CT-PoreFlow: Hydraulic tortuosity 
+
+> R2=-0.731 RMSE=0.168 MAE=0.0684 MdAPE=2.1%
+
+0.0 0.2 0.4 0.6 0.8 1.0 
+
+> Increasing normalized point density
+
+Figure 8: Terminal permeability and hydraulic-tortuosity calibration for 764 paired held-out geometries. 
+
+These results demonstrate that field-level and transport-level model rankings are not interchangeable. The Direct transient decoder, evaluated before late-time flux calibration, yields the lowest aggregate field error, whereas CT-PoreFlow provides the lowest terminal transport error after calibration. Minimising the average discrepancy in the reconstructed velocity and pressure fields therefore does not necessarily minimise the error in Darcy-scale transport quantities. CT-PoreFlow is therefore interpreted as a transport-oriented Pareto solution rather than the optimum under every individual metric. 
+
+Wang et al.: Preprint submitted to Elsevier Page 17 of 33 Table 2                        
+
+> Comparison of CT-PoreFlow decoder and flux-calibration configurations, with Time-U-Net included as a reference baseline. Prediction and loss configuration Rel. 𝐿 2velocity MAE 𝑝 ∗Flux error Parameters (M) Terminal-anchored steady-residual decoder 0.2435 0.0161 54.76% 12.12 Direct transient decoder 0.2138 0.0138 18.79% 10.21 CT-PoreFlow 0.2248 0.0143 12.81% 10.21 Time-U-Net 0.2439 0.0165 14.99% 8.70
+
+Within the benchmark, total porosity does not uniquely determine permeability, as evidenced by the substantial within-interval spread in transport properties. Connected porosity is more directly related to hydraulic conductance, exhibiting a Spearman rank correlation of 𝜌 = 0 .80 with lattice permeability. In contrast, the dead-pore ratio, 1− 𝜙 𝑐 ∕𝜙 ,has a negative correlation of 𝜌 = −0 .72 , consistent with the reduction in hydraulically active pore volume as the nonspanning pore fraction increases. These relationships distinguish total void fraction from effective transport support, although they should not be interpreted as universal constitutive laws beyond the present QSGS–LBM configuration. Hydraulic tortuosity captures a distinct aspect of pore-network organisation. Its global rank correlation with connected porosity is approximately zero, indicating that a large connected pore volume does not necessarily correspond to a short or direct transport pathway. The 7,606 accepted structures therefore span multiple regimes, including low-conductance/long-path, high-conductance/long-path, and high-conductance/short-path configurations. Permeability and hydraulic tortuosity consequently provide complementary descriptions of hydraulic conductance and path complexity. This separation also defines the appropriate property space for the subsequent inverse-design analysis. Retaining both permeability and hydraulic tortuosity prevents structures with comparable conductance but substantially different internal pathway organisation from being treated as equivalent. 
+
+3.3. Model robustness and generalisation 
+
+The principal benchmark evaluates model performance on unseen QSGS geometries at the time states represented in the training schedule. To examine robustness beyond this setting, three complementary analyses were conducted: component ablation, prediction at excluded time indices, and transfer to geometries outside the QSGS training distribution. A spatial failure analysis was further performed to identify the local flow features responsible for the aggregate errors. The ablation experiments isolate the contributions of the geometry representation, global information exchange, temporal conditioning, decoder formulation, and transport-oriented loss. Removing the directed geodesic channels, 
+
+𝐷 in and 𝐷 out , while retaining all other CT-PoreFlow components decreases the aggregate velocity error by 0.79%. Thus, although these channels encode inlet- and outlet-referenced transport positions that cannot be represented by the Euclidean distance transform alone, they do not provide a uniform improvement in aggregate field accuracy under the present configuration. By contrast, global information exchange has a pronounced effect. Removing the FNOBlock increases the velocity error by 26.78%, representing the largest major degradation among the component-removal experiments. This result supports the use of compressed spectral mixing for communicating information across spatially separated regions of the connected pore network, although it does not imply that all topology-related inputs are equally beneficial. The temporal and transport formulations introduce a different set of trade-offs. Before flux calibration, the Direct transient decoder reduces the velocity error by 12.19% and the terminal flux error by 65.68% relative to the Terminal-anchored steady-residual decoder. Replacing logarithmic time conditioning with a linear time coordinate increases the velocity error by 14.40%, while using the field loss alone increases it by 11.71%. Late-time flux calibration subsequently trades a modest increase in aggregate field error for improved terminal transport recovery. The unseen-time audit evaluates 10 stored time indices that were excluded from both training and validation. On these LBM states, CT-PoreFlow obtained a velocity relative 𝐿 2 error of 0.3267, a pressure MAE of 0.01977, and a speed MAE of 6.40×10 −8 . The corresponding Time-U-Net values were 0.3224, 0.01950, and 6.06×10 −8 , respectively. CT-PoreFlow therefore did not outperform the baseline in this experiment. The query-time formulation permits direct evaluation at an arbitrary requested time without recursively advancing through previous predicted states. However, this computational capability should be distinguished from interpolation accuracy. The excluded-time results do not demonstrate superior interpolation between the stored training states, while   
+
+> Wang et al.: Preprint submitted to Elsevier Page 18 of 33
+
+off-grid animation queries lack direct LBM references and remain qualitative. Neither analysis provides evidence of temporal extrapolation beyond the simulated time range. Morphological transfer was first evaluated using 24 rule-based geometries from four families absent from the QSGS training distribution: circular arrays, snowflake obstacles, tree-like obstacles, and staggered baffles. Each family contains two porosity levels and three seeded replicates at each level. The mean terminal velocity relative 𝐿 2 errors over the four families are 0.3084 for Time-FNO, 0.3183 for CT-PoreFlow, 0.3997 for Time-U-Net, and 0.8233 for DeepONet. Time-FNO therefore achieves the lowest overall error, while CT-PoreFlow remains approximately 20.4% lower than Time-U-Net. The result supports competitive morphology transfer but not universal superiority of CT-PoreFlow across all out-of-distribution settings. The upper part of Fig. 9 compares the reconstructed terminal fields for the unfamiliar rule-based geometries. Under a common physical speed scale, Time-U-Net, Time-FNO, and CT-PoreFlow preserve the principal LBM transport channels, whereas DeepONet smooths or suppresses several constriction-driven jets. For CT-PoreFlow, the remaining discrepancies are spatially concentrated near narrow throats, obstacle tips, and inlet–outlet transitions rather than being uniformly distributed throughout the pore space. The lower part of the figure extends the analysis to image-derived CT masks using the same left-to-right pressure forcing and the frozen CT-PoreFlow checkpoint.             
+
+> Wang et al.: Preprint submitted to Elsevier Page 19 of 33 Slice 033 φ=0.503
+> Pore mask LBM speed
+> CT-PoreFlow speed
+> Vector error |û−u|
+> Slice 127 φ=0.700
+> 033 046 070 086 094 127 151 199
+> Computed tomography slice index
+> 0.0 0.1 0.2 0.3 0.4 0.5 mean rel. L₂ = 0.268 mean pressure MAE = 0.0241
+> c All 8 computed tomography slices: field error
+> LBM CT-PoreFlow 10 −2
+> 10 −1
+> 10 0
+> 10 1
+> 10 2
+> 16.18 s 2.73 ms
+> d A4000 wall time (s) median ratio: 5,888×
+> 0.0 0.5 1.0 1.5 2.0 2.5
+> Speed |u| (×10⁻⁶ lattice units)
+> 0.0 0.2 0.4
+> Vector error (×10⁻⁶ lattice units)
+
+b Computed tomography-derived OOD                  
+
+> Circular arrays φ=0.546
+> flow
+> Geometry LBM Time-U-Net Error Time-FNO Error DeepONet Error CT-PoreFlow Error
+> Snowflakes φ=0.567
+> flow
+> Tree obstacles φ=0.654
+> flow
+> Staggered baffles φ=0.574
+> flow
+> 01234
+> Speed |u| (×10⁻⁶ lattice units)
+> 01234
+> Vector-error magnitude |û−u| (×10⁻⁶ lattice units)
+> a
+
+Figure 9: Terminal morphology OOD validation. (a) Rule-based families absent from QSGS training. (b) Image-derived OOD examples from the minimum- and maximum-porosity computed tomography slices, selected before viewing prediction errors. (c) Terminal velocity relative 𝐿 2 for every QC-passing computed tomography slice. (d) Same-node RTX A4000 wall time for the LBM terminal solve and synchronized model-only inference. 
+
+All eight computed tomography slices contained a connected left-to-right pore pathway and satisfied the LBM convergence and mass-balance criteria. Without fine-tuning, the terminal velocity relative 𝐿 2 error ranges from 0.1886 to 0.4778, with a mean of 0.2677 and a median of 0.2298. The mean normalised-pressure MAE is 0.02410. Slice 033 exhibits the largest field error and the lowest connected pore fraction, 0.512, whereas the velocity errors for the remaining seven slices range from 0.1886 to 0.3253. This relationship is descriptive because all eight slices are correlated observations obtained from a single segmented volume. On the same RTX A4000 node, the median terminal LBM solution time is 16.18 s per slice, compared with 2.73 ms for synchronized model-only inference, corresponding to a median ratio of 5,888× . The mean times are 30.54 s and 2.80 ms, respectively, because the least-connected slice reaches the 50,000-iteration limit. These values compare one terminal LBM simulation with one frozen-network evaluation and represent implementation-level timing measurements rather than modifications to the underlying physical model. Fig. 10 resolves the overall result by morphology family. CT-PoreFlow achieves the lowest error for circular arrays, snowflake obstacles, and tree-like obstacles. Time-FNO performs substantially better for staggered baffles, with errors 
+
+Wang et al.: Preprint submitted to Elsevier Page 20 of 33 of 0.3476 and 0.5348 for Time-FNO and CT-PoreFlow, respectively. The family-dependent ranking indicates that transfer performance depends not only on porosity or connectivity, but also on the spatial organisation of the pore and obstacle networks. Circular arrays Snowflakes Tree obstacles Staggered baffles Overall mean 
+
+> Rule-based OOD morphology family
+> 0.0 0.2 0.4 0.6 0.8 1.0
+> Terminal relative  L2 velocity error
+> 0.31 0.35 0.27 0.67 0.40 0.25 0.39 0.25 0.35 0.31 0.79 0.82 0.74 0.94 0.82 0.20 0.30 0.24 0.53 0.32
+
+⋆⋆ ⋆⋆ ⋆   
+
+> Lower is better
+> Time-U-Net Time-FNO DeepONet CT-PoreFlow
+
+Figure 10: Frozen-model performance on the rule-based morphology OOD set. 
+
+To identify the local origins of the aggregate errors, Fig. 11 examines a high-tortuosity geometry, the geometry with the highest joint error, and the cases showing the strongest relative advantages of CT-PoreFlow and Time-U-Net. Each geometry is evaluated at four stored time states. For the high-tortuosity geometry, both surrogates recover the dominant connected pathway as the flow develops, while the principal discrepancies occur near the upper inlet region and the downstream high-speed throat. In the highest joint-error case, both models identify the main vertical pathway, but errors in its width and velocity magnitude persist into the developed state. The two model-advantage cases further demonstrate that prediction differences are predominantly local: one model may reconstruct a boundary-driven jet or narrow constriction more accurately even when both models recover the same large-scale connected support. The early-time fields also illustrate the limitations of relative error near rest. Weak motion initially develops near the driven boundaries before propagating through the spanning pore network. Small absolute differences can therefore generate large relative errors while the reference velocity norm remains small. At later times, prediction quality depends more directly on pathway localisation, including whether the dominant throat is reconstructed, whether spurious flow develops in dead-end pores, and whether a localised jet is broadened or suppressed. For each geometry–time combination, the LBM, Time-U-Net, and CT-PoreFlow panels use a common velocity scale. The scale is allowed to vary between geometries and time states to make weak early-time motion visible; colour intensity should therefore not be compared quantitatively across the complete montage. The visual analysis identifies the spatial origin of the numerical errors but does not replace the tensor-based evaluation. 
+
+Wang et al.: Preprint submitted to Elsevier Page 21 of 33 LBM             
+
+> a High tortuosity Iteration 5 Iteration 70 Iteration 1,544 Iteration 50,000
+> LBM
+> b Hard case Iteration 5 Iteration 70 Iteration 1,544 Iteration 50,000
+> Time-U-Net
+> Time-U-Net
+> CT-PoreFlow
+> CT-PoreFlow
+> LBM
+> c CT advantage Iteration 5 Iteration 70 Iteration 1,544 Iteration 50,000
+> LBM
+> d U-Net advantage Iteration 5 Iteration 70 Iteration 1,544 Iteration 50,000
+> Time-U-Net
+> Time-U-Net
+> CT-PoreFlow
+> CT-PoreFlow
+> Transient predictions for challenging and model-disagreement cases
+
+Figure 11: Transient comparison for high tortuosity, the highest joint-error case, and the strongest CT-PoreFlow and Time-U-Net advantage cases. 
+
+The combined robustness analyses lead to three principal observations. First, independent query-time evaluation avoids recurrent error propagation (Kumar et al., 2025; Shi et al., 2015), but does not by itself guarantee superior interpolation at unseen time indices. Second, architectural priors provide nonuniform benefits. Directed geodesic channels encode boundary-referenced graph positions that are absent from the Euclidean distance transform, whereas the FNOBlock supports long-range communication through compressed spectral mixing. Although related geodesic augmentation has improved transient reactive-transport prediction (Kim et al., 2026), the present momentum-relaxation problem does not show a uniform aggregate-field benefit from the directed channels. The FNOBlock, by contrast, provides the clearest architectural contribution. Geometries with restricted connected support, substantial dead-pore volume, low permeability, or long transport paths can remain difficult even when their total porosity is not unusual. This behaviour is consistent with pore-scale interpretations of hydraulic tortuosity (Matyka et al., 2008) and supports reporting connected porosity and dead-pore ratio alongside total porosity. Finally, visual plausibility should not be used as a substitute for physical diagnostics. A single training-derived speed limit is applied across samples, time states, references, and predictions so that colour retains a consistent lattice-velocity interpretation. Exact masking eliminates velocity leakage into solid nodes, but it does not enforce divergence-free flow or inlet–outlet mass conservation. These quantities must therefore be evaluated explicitly from the numerical fields. 
+
+Wang et al.: Preprint submitted to Elsevier Page 22 of 33 4. Surrogate-Assisted Inverse Design and LBM Verification 
+
+Section 3 established the field and transport accuracy of CT-PoreFlow on unseen geometries. The following analyses evaluate its performance in three increasingly demanding design settings: ranking within a held-out library, screening a fresh QSGS pool, and property-conditioned generation followed by high-fidelity verification. 
+
+4.1. Surrogate-guided targeted search 
+
+The finite-library experiment provides a controlled assessment of surrogate-based candidate ranking rather than a complete inverse-design demonstration. As defined in Section 2.5, 18 target property conditions were evaluated against a common library of 764 unseen geometries. The candidates selected by each method were subsequently assessed using their LBM-labelled properties. The resulting calibration and target-distance distributions are presented in Fig. 12, while the corresponding quantitative results are summarised in Table 3. CT-PoreFlow achieved a mean LBM-verified target distance of 0.386, a permeability target error of 11.44%, a hydraulic-tortuosity target error of 2.80%, and a Success@20 rate of 83.33%. Time-U-Net obtained a mean distance of 0.537 and a Success@20 rate of 77.78%, whereas the Direct transient decoder obtained 0.700 and 55.56%, respectively. By comparison, the random-QSGS reference, based on 50 independent draws per target, produced a mean distance of 1.618 and a Success@20 rate of 7.67%. An important contrast is observed between field-level and design-level performance. Although the Direct transient decoder yields a lower aggregate field error than CT-PoreFlow in Section 3, its candidate-ranking accuracy is substantially poorer. This result demonstrates that reducing pixel-averaged field error does not necessarily improve the ranking of geometries according to engineering transport objectives. The LBM-oracle, which uses the true test labels, provides a nondeployable upper bound with a mean distance of 0.262. The remaining difference between CT-PoreFlow (𝐷 = 0 .386 ) and the oracle ( 𝐷 = 0 .262 ) reflects both surrogate-ranking error and the finite coverage of the candidate library.    
+
+> Wang et al.: Preprint submitted to Elsevier Page 23 of 33 10 −1 10 0
+> Target permeability
+> 10 −1
+> 10 0
+> LBM-verified permeability
+
+a Permeability calibration    
+
+> 1.2 1.4 1.6 1.8
+> Target hydraulic tortuosity
+> 1.0 1.2 1.4 1.6 1.8 2.0
+> LBM-verified tortuosity
+
+b Tortuosity calibration 
+
+> Random QSGS Morphology only Time-U-Net CT-PoreFlow Direct transient decoder LBM oracle 012345
+> Verified standardized target distance
+
+c Target-distance distributions      
+
+> 020 40 60 80 100
+> Success within 20% target tolerance
+> Random QSGS Morphology only Time-U-Net CT-PoreFlow Direct transient decoder LBM oracle
+> 8% 6% 78% 83% 56% 100%
+
+d Closed-loop target success 
+
+> Random QSGS Morphology only Time-U-Net CT-PoreFlow Direct transient decoder LBM oracle
+
+Figure 12: Controlled inverse retrieval in the held-out LBM library. (a,b) Requested versus LBM-verified permeability and hydraulic tortuosity, with equality lines, tolerance bands, the full random-QSGS cloud, and deterministic selections from the learned and ablated methods. (c) Violin, box, and sample-point summaries of the complete target-distance distributions. (d) Success@20. 
+
+The finite-library experiment evaluates ranking performance within a fixed candidate set. A more stringent physical round-trip test was therefore performed using a newly generated pool of 120 QSGS structures whose identifiers were absent from the training, validation, and test splits. Three representative design objectives were considered: high permeability, low hydraulic tortuosity, and a joint-transport target. For each objective, CT-PoreFlow ranked the fresh candidates and selected one guided structure, while one additional structure was sampled as a random control. All six candidates were then recomputed using the D2Q9-BGK solver. Across the three paired targets, surrogate-guided selection reduced the mean LBM-verified target distance from 1.494 to 0.335, corresponding to a descriptive reduction of 77.59%. Because the experiment contains only 𝑛 = 3 
+
+paired targets, no formal significance test is reported. All six LBM simulations satisfied the original convergence, velocity-residual, permeability-change, mass-balance, and Mach-number acceptance criteria. The benefit of guided screening varied across the three objectives. For the high-permeability target, the verified distance decreased from 2.054 for the random candidate to 0.390 for the guided candidate. For the joint-transport target, the corresponding reduction was from 1.391 to 0.277. For the low-𝜏 ℎ target, guided screening reduced the verified distance from 1.038 to 0.337; however, the resulting permeability remained 17.31% above the requested value. This residual mismatch illustrates the coupled nature of the transport objectives, because permeability and tortuosity depend on the same connected pathways and cannot necessarily be optimised independently. 
+
+Wang et al.: Preprint submitted to Elsevier Page 24 of 33 Table 3 
+
+Controlled surrogate-ranking benchmark over 18 property targets and 764 unseen geometries. 
+
+Method Selections Mean 𝐷 𝑘 target error 𝜏 ℎ target error Success@20 (%) Random-QSGS 900 1.618 64.79% 8.84% 7.67 Morphology-only 18 2.626 87.22% 16.82% 5.56 Time-U-Net 18 0.537 13.04% 4.33% 77.78 CT-PoreFlow 18 0.386 11.44% 2.80% 83.33 
+
+Direct transient decoder 18 0.700 18.03% 6.04% 55.56 LBM-oracle 18 0.262 7.30% 1.54% 100.00 
+
+Note: Random-QSGS is a random-search reference based on 50 independent draws per target. The LBM-oracle is a nondeployable attainable bound constructed from the true test labels. 
+
+Fig. 13 presents the corresponding pore geometries, surrogate-predicted terminal fields, and LBM-verified responses. The agreement between the selected candidates and their high-fidelity recomputations illustrates the potential value of the surrogate for reducing the candidate-search space High Permeability 
+
+> Target
+> ϕ=0.511
+> k=0.567
+> τh=1.310
+
+Generated pore geometry Surrogate terminal speed 
+
+> k=0.546
+> τh=1.281
+
+LBM-verified speed 
+
+Joint Transport 
+
+> Target
+> ϕ=0.511
+> k=0.567
+> τh=1.222
+
+Generated pore geometry Surrogate terminal speed 
+
+> k=0.556
+> τh=1.248
+
+LBM-verified speed 
+
+Low Tortuosity 
+
+> Target
+> ϕ=0.511
+> k=0.338
+> τh=1.222
+
+Generated pore geometry Surrogate terminal speed 
+
+> k=0.396
+> τh=1.249
+
+LBM-verified speed 012345
+
+> Speed (lattice units); global scale 0-5e-06
+> 1e−6
+
+Figure 13: LBM-verified fresh-QSGS guided designs. 
+
+4.2. Property-conditioned generative design and LBM verification 
+
+The property-conditioned design experiment evaluates whether prescribed engineering targets can be translated into candidate pore populations that simultaneously exhibit hydraulic validity, target fidelity, and structural diversity. Under the protocol defined in Section 2.5, the conditional GAN and conditional diffusion model each generated 4,608 
+
+Wang et al.: Preprint submitted to Elsevier Page 25 of 33 binary masks across the same 18 target conditions, resulting in 9,216 candidates in total. Candidate quality was first assessed through exact topology analysis and surrogate-based transport screening, after which selected candidates were returned to the D2Q9-BGK solver for LBM verification. The two generators exhibited markedly different validity–diversity–fidelity characteristics. The conditional GAN achieved a mean through-connectivity of 98.11%, compared with 55.36% for conditional diffusion. As shown in Fig. 14, the reduced connectivity of the diffusion model was concentrated primarily in the low-porosity target group rather than being uniform across all target conditions. At the surrogate-screening level, the conditional GAN obtained a mean proxy distance of 1.136 and a best proxy distance of 0.268, whereas conditional diffusion obtained 3.144 and 0.827, respectively. Structural diversity showed the opposite trend. The mean pairwise Hamming distance was 0.127 for the conditional GAN and 0.425 for conditional diffusion, while both generators produced 100% unique thresholded masks. Thus, diffusion explored a broader binary morphology space, whereas the conditional GAN generated a narrower but more hydraulically connected and target-compatible candidate population under the present implementation and sampling budget. Generation and surrogate screening required 54.75 ms per conditional-GAN candidate and 193.87 ms per conditional-diffusion candidate. Low ϕ Mid ϕ High ϕ Overall 025 50 75 100 125    
+
+> Hydraulic validity (%)
+> 99.9 94.5 100.0 98.1 6.4 61.2 98.4 55.4
+> higher is better
+
+a Through-connected structures         
+
+> Low ϕMid ϕHigh ϕOverall 0.0 0.5 1.0 1.5
+> Best surrogate distance
+> 0.34 0.24 0.22 0.27 0.81 0.40 1.28 0.83
+> lower is better
+
+b Best attainable target distance        
+
+> Low ϕMid ϕHigh ϕOverall 0.0 0.2 0.4 0.6
+> Pairwise Hamming distance
+> 0.10 0.18 0.10 0.13 0.45 0.48 0.35 0.43
+> higher is better
+
+c Binary structural diversity           
+
+> Low ϕMid ϕHigh ϕOverall 0246
+> Mean surrogate distance
+> 1.02 1.37 1.02 1.14 2.06 2.39 4.98 3.14
+> lower is better
+
+d Population target fidelity  
+
+> cGAN Diffusion
+
+Figure 14: Property-conditioned candidate quality across low-, middle-, and high-porosity specifications. Grouped bars compare the conditional GAN and conditional diffusion model in terms of (a) through-connectivity, (b) best attainable surrogate target distance, (c) pairwise binary Hamming diversity, and (d) mean surrogate target distance. 
+
+These screening-level metrics characterise the quality of the generated candidate populations but do not establish physical design success. In particular, uniqueness and Hamming diversity quantify morphological variation without guaranteeing inlet–outlet connectivity, numerical convergence, or agreement with the requested transport properties. The LBM solver accepted 101 of 108 surrogate-guided conditional-GAN candidates, 101 of 108 randomly selected conditional-GAN candidates, 108 of 108 guided conditional-diffusion candidates, and 104 of 105 random conditional-diffusion candidates. Acceptance required satisfaction of the original convergence, velocity-residual, permeability-change, mass-balance, and Mach-number criteria. Rejected simulations remain included in the assigned-candidate denominator reported by the QC-pass metric, but are excluded from the property-error and Success@20 summaries. The corresponding mean LBM runtimes were 19.70, 20.55, 12.92, and 13.49 s, respectively. 
+
+Wang et al.: Preprint submitted to Elsevier Page 26 of 33 Table 4  
+
+> LBM verification of surrogate-selected and random generated candidates. Mean 𝐷 , property errors, and Success@20 are candidate-level summaries over QC-passing runs. QC pass reports accepted over assigned candidates; rejected runs remain in this QC denominator but are excluded from the property-error and Success@20 summaries.
+
+Generator Selection QC pass Mean 𝐷 𝑘 error (%) 𝜏 ℎ error (%) Success@20 (%) Conditional GAN Guided 101/108 0.481 19.16 3.42 72.28 
+
+Conditional GAN Random 101/108 1.160 58.20 6.13 22.77 Conditional diffusion Guided 108/108 1.202 32.28 5.69 10.19 Conditional diffusion Random 104/105 3.233 190.31 10.33 0.96 
+
+Table 4 reports candidate-level statistics over QC-passing simulations. For paired statistical inference, the results were first aggregated within each of the 18 target conditions. For the conditional GAN, surrogate-guided selection reduced the target-level mean verified distance from 1.168 for random selection to 0.508, corresponding to a paired reduction of 0.659. The 95% bootstrap confidence interval was [0 .549 , 0.765] , and the exact sign-flip test gave 
+
+𝑝 = 7 .63 × 10 −6 . For conditional diffusion, the target-level mean distance decreased from 3.180 to 1.202, giving a paired reduction of 1.978 with a 95% bootstrap confidence interval of [1 .375 , 2.619] and an exact sign-flip value of 
+
+𝑝 = 1 .53 × 10 −5 . All 18 target conditions retained at least one QC-passing candidate under both guided and random selection for each generator. The candidate-level results provide the same overall ranking. Surrogate-guided conditional-GAN selection achieved a mean verified distance of 0.481 and a Success@20 rate of 72.28%, compared with 1.160 and 22.77% for random GAN selection. Guided conditional diffusion reduced the mean verified distance from 3.233 to 1.202 and increased Success@20 from 0.96% to 10.19%. These results demonstrate that surrogate screening improves candidate selection for both generators, although the final performance remains strongly dependent on the validity and target compatibility of the underlying generated population. The independent surrogate-to-LBM comparison in Fig. 15 includes all 414 QC-passing generated candidates. Permeability exhibits close agreement between the surrogate and LBM results, with 𝑅 2 = 0 .960 , RMSE = 0 .086 log units, and MAE = 0 .054 log units. Hydraulic tortuosity is less tightly calibrated, with 𝑅 2 = 0 .449 , RMSE = 0 .102 ,and MAE = 0 .046 . This difference is consistent with the greater sensitivity of tortuosity to local pathway organisation and long-tail geometric cases.   
+
+> Wang et al.: Preprint submitted to Elsevier Page 27 of 33
+
+GAN guided GAN random Diff. guided Diff. random 
+
+a Permeability round trip 
+
+10 −1 
+
+10 0  
+
+> LBM permeability
+> −0.2 0.0 0.2
+> Residuals
+> QC-passing candidates
+> R2=0.960 RMSE=0.086 log units MAE=0.054 log units
+> n=414
+
+10 −1 10 0
+
+Surrogate permeability 
+
+−0.25 0.00 0.25 
+
+> log 10  (LBM/surrogate)
+
+b Tortuosity round trip 
+
+1.0 1.2 1.4 1.6 1.8 2.0 2.2 2.4   
+
+> LBM tortuosity
+> −0.2 0.0 0.2
+> Residuals
+> QC-passing candidates
+> R2=0.449 RMSE=0.102 MAE=0.046
+> n=414
+
+1.00 1.25 1.50 1.75 2.00 2.25 2.50 
+
+Surrogate tortuosity 
+
+−0.2 0.0 0.2 
+
+> LBM - surrogate
+
+Figure 15: Surrogate-to-LBM round-trip calibration for the 414 QC-passing generated candidates. 
+
+Fig. 16 presents representative QC-passing guided designs across the low-, middle-, and high-porosity target groups. Together with Table 4 and Fig. 15, these examples connect the aggregate verification statistics to the corresponding generated geometries, surrogate-predicted flow patterns, and LBM-resolved responses. 
+
+Wang et al.: Preprint submitted to Elsevier Page 28 of 33 Conditional GAN P1-KH-TL     
+
+> Target k=0.249 Target τh=1.203 LBM k=0.229 LBM τh=1.191
+> D=0.139
+
+Generated pore mask CT-PoreFlow predicted streamlines LBM speed 
+
+LBM pressure p *
+
+Conditional diffusion P1-KH-TL     
+
+> Target k=0.249 Target τh=1.203 LBM k=0.123 LBM τh=1.268
+> D=0.955
+
+Conditional GAN P2-KM-TL     
+
+> Target k=0.356 Target τh=1.236 LBM k=0.376 LBM τh=1.305
+> D=0.598
+
+Conditional diffusion P2-KM-TL     
+
+> Target k=0.356 Target τh=1.236 LBM k=0.420 LBM τh=1.296
+> D=0.660
+
+Conditional GAN P3-KH-TL     
+
+> Target k=1.137 Target τh=1.216 LBM k=1.099 LBM τh=1.249
+> D=0.274
+
+Conditional diffusion P3-KH-TL       
+
+> Target k=1.137 Target τh=1.216 LBM k=1.227 LBM τh=1.313
+> D=1.354
+> 024
+
+Speed (lattice units; shared scale) 1e−6   
+
+> 0.0 0.5 1.0
+
+Normalized pressure Figure 16: Representative QC-passing guided designs at low, middle, and high target porosity. 
+
+Unlike a scalar property regressor, CT-PoreFlow reconstructs a complete flow state from which permeability, hydraulic tortuosity, flux balance, and spatially localised prediction errors can be evaluated simultaneously. The finite-library benchmark isolates surrogate-ranking error under a fixed level of candidate-set coverage through comparison with the LBM oracle. The fresh-QSGS experiment provides a more stringent solver-based validation by applying the surrogate to previously unseen candidates and subsequently recomputing the selected structures with LBM. Guided screening improved the verified target agreement for all three examined conditions. However, the remaining permeability overshoot for the low-tortuosity target illustrates the coupling between permeability and 
+
+Wang et al.: Preprint submitted to Elsevier Page 29 of 33 hydraulic tortuosity, both of which are governed by the organisation of the connected flow pathways. Consequently, matching one transport property does not necessarily yield a simultaneous optimum in the other. The comparison between the two conditional generators further reveals a trade-off among morphological diversity, hydraulic validity, and target fidelity. Conditional diffusion generated a broader range of binary morphologies but produced fewer through-connected and target-compatible structures, whereas the conditional GAN generated a less diverse population with substantially higher hydraulic validity and closer agreement with the prescribed transport conditions. Morphological novelty should therefore not be interpreted as engineering utility. Including disconnected candidates, failed simulations, random-selection controls, and computational costs provides a conservative assessment of generative-design performance. 
+
+## 5. Limitations and future work 
+
+Several limitations define the current scope of this study. First, the benchmark is restricted to two-dimensional QSGS geometries with fixed growth probabilities, lattice resolution, fluid properties, pressure gradient, and flow orientation. Connectivity and convergence filtering also under-represented the lowest-porosity regimes, where 394 generation tasks exhausted the retry limit. Future datasets should therefore include balanced near-percolation samples, alternative morphology-generation rules, variable fluid and forcing parameters, and three-dimensional pore structures. Second, the present validation does not establish universal temporal or morphological generalisation. The main models were trained using one optimisation seed, while the out-of-distribution evaluation was limited to 24 rule-based geometries and eight correlated slices from a single segmented computed tomography volume. Moreover, the directed geodesic channels depend on a prescribed inlet–outlet orientation, and the unseen-time results do not demonstrate temporal extrapolation. Further assessment should include repeated training seeds, independent multi-volume CT datasets, boundary-aware geometry representations, and parameter-conditioned models evaluated under variable hydraulic conditions. Third, the inverse-design results are confined to the training-supported property range and use one seed and one binarisation threshold for each generator without topology repair. Consequently, morphological diversity and surrogate-level target matching do not guarantee hydraulic validity, manufacturability, or engineering performance. Future work should incorporate topology-constrained generation, multi-objective mechanical and transport requirements, three-dimensional LBM verification, and experimental testing of fabricated structures. Until such validation is completed, the generated geometries should be regarded as digitally screened design candidates rather than directly constructible porous-media configurations. 
+
+## 6. Conclusions 
+
+This study developed a unified and LBM-verified framework that reformulates transient pore-scale flow analysis from a sequence of repeated numerical simulations into a reusable query-time prediction and inverse design problem. The framework integrates the QSGS-Transient-7606 benchmark, the topology- and transport-aware CT-PoreFlow surrogate, engineering-property recovery, property-conditioned candidate generation, and final LBM verification. The main conclusions are as follows. 1. CT-PoreFlow accurately predicts transient velocity and pressure fields on unseen porous geometries, achieving a velocity relative 𝐿 2 error of 0.2248 and a terminal permeability error of 12.81%, improving on Time-U-Net across all paired field and transport metrics under the principal comparison. More importantly, the results show that lower aggregate field error does not necessarily imply better engineering-property recovery. The Direct transient decoder attains the lowest field error before flux calibration, whereas the late-time flux-calibration objective in CT-PoreFlow sacrifices a modest amount of field accuracy to substantially improve terminal flux, permeability, and mass-balance recovery. 2. Total porosity alone is insufficient to characterise pore-scale transport. Connected porosity is strongly associated with permeability, whereas dead-pore volume reduces the hydraulically active pore space. Hydraulic tortuosity is largely independent of connected porosity, indicating that conductance and flow-path complexity represent complementary structural dimensions that should be considered jointly, rather than inferred from porosity alone, when designing or screening porous structures. 3. CT-PoreFlow provides an effective instrument for inverse-design screening, achieving an LBM-verified Suc-cess@20 rate of 83.33% in finite-library retrieval and 72.28% for guided conditional-GAN designs, both of   
+
+> Wang et al.: Preprint submitted to Elsevier Page 30 of 33
+
+which exceed their respective random and morphology-only controls. Comparison with the conditional diffusion model shows that greater morphological diversity does not translate into higher connectivity or target fidelity, so diversity and design utility must be reported as separate criteria. Overall, the proposed framework provides an efficient and physically accountable link between pore geometry, transient flow evolution, and transport-oriented porous-structure design. These conclusions are established within a fixed two-dimensional QSGS-LBM regime at constant resolution, viscosity, pressure gradient, and boundary orientation, and the image-derived audit reflects a single segmented computed tomography volume rather than an independent multi-sample dataset. Future work should extend the framework to three-dimensional geometries, variable physical conditions, and experimental validation. 
+
+## Acknowledgements 
+
+The last author acknowledges the financial support provided by the China Scholarship Council. 
+
+## CRediT authorship contribution statement 
+
+Yiming Wang: Methodology, Software, Formal analysis, Data curation, Writing – original draft, Visualization. 
+
+Jiale Zhu: Conceptualization, Methodology, Supervision, Writing – review & editing. Zhichen Ye: Software, Investigation, Validation, Data curation. Yandong Lv: Investigation, Resources. Shiqi Wang: Investigation, Formal analysis. Jinlong Liu: Resources, Validation. Yucheng Fan: Conceptualization, Methodology, Software, Formal analysis, Visualization, Writing – review & editing. 
+
+## Declaration of competing interest 
+
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper. 
+
+## Data availability 
+
+The dataset could be found in https://huggingface.co/JonathanWWW/CT-PoreFlow and the code could be found in https://github.com/wangyiming2/CT-PoreFlow. 
+
+## References 
+
+Efron, B., 1979. Bootstrap methods: Another look at the jackknife. The Annals of Statistics 7, 1–26. doi: 10.1214/aos/1176344552 .Erskine, A.N., Jin, J., Lin, C.L., Wang, S., 2025. Effect of compression and moisture on fluid flow through packed particle beds of crushed ore studied by high-resolution x-ray computed tomography and the lattice boltzmann method. Mining, Metallurgy & Exploration 42, 2557–2568. doi: 10.1007/s42461-025-01296-z .Gao, J., Xing, H., Tian, Z., Pearce, J.K., Sedek, M., Golding, S.D., Rudolph, V., 2017. Reactive transport in porous media for CO2 sequestration: Pore scale modeling using the lattice boltzmann method. Computers & Geosciences 98, 9–20. doi: 10.1016/j.cageo.2016.09.008 .He, X., Luo, L.S., 1997. Theory of the lattice boltzmann method: From the boltzmann equation to the lattice boltzmann equation. Physical Review E 56, 6811–6817. doi: 10.1103/PhysRevE.56.6811 .He, Y., Tan, Y., Yang, M., Wang, Y., Xu, Y., Yuan, J., Li, X., Chen, W., Kang, G., 2024. Accurate prediction of discontinuous crack paths in random porous media via a generative deep learning model. Proceedings of the National Academy of Sciences 121, e2413462121. doi: 10.1073/pnas.2413462121 .Holm, S., 1979. A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics 6, 65–70. URL: https://www.jstor. org/stable/4615733 .Huan, C., Zhu, C., Liu, L., Wang, M., Zhao, Y., Zhang, B., Zhang, X., 2021. Pore structure characteristics and its effect on mechanical performance of cemented paste backfill. Frontiers in Materials 8, 700917. doi: 10.3389/fmats.2021.700917 .Huber, P.J., 1964. Robust estimation of a location parameter. The Annals of Mathematical Statistics 35, 73–101. doi: 10.1214/aoms/1177703732 .Ju, Y., Gong, W., Chang, W., Sun, M., 2020. Effects of pore characteristics on water-oil two-phase displacement in non-homogeneous pore structures: A pore-scale lattice boltzmann model considering various fluid density ratios. International Journal of Engineering Science 154, 103343. doi: 10.1016/j.ijengsci.2020.103343 .Kim, Y., Kim, H.r., Jung, H., 2026. Prt-deeponet: Geometry-aware neural operator for efficient prediction of pore-scale concentration fields. Computers & Geosciences 208, 106098. doi: 10.1016/j.cageo.2025.106098 .
+
+Wang et al.: Preprint submitted to Elsevier Page 31 of 33 Kong, X., Fan, Y., Liu, J., Xi, M., Zhang, Y., Yu, Y., 2026. Lightweight Kolmogorov–Arnold network with dual-objective optimization for axial capacity prediction of square coal gangue concrete-filled steel tube stub columns based on finite element simulation. Engineering Applications of Artificial Intelligence 176, 114843. doi: 10.1016/j.engappai.2026.114843 .Kovachki, N., Li, Z., Liu, B., Azizzadenesheli, K., Bhattacharya, K., Stuart, A., Anandkumar, A., 2023. Neural operator: Learning maps between function spaces with applications to pdes. Journal of Machine Learning Research 24, 1–97. URL: https://www.jmlr.org/papers/v24/ 21-1524.html .Kumar, I., Tripathi, B.K., Singh, A., 2025. Velocity field prediction for digital porous media using attention-based deep convolutional recurrent neural network. Chemical Engineering Science 314, 121825. doi: 10.1016/j.ces.2025.121825 .Li, M., Bevilacqua, N., Zhu, L., Leng, W., Duan, K., Xiao, L., Zeis, R., Sui, P.C., 2020. Mesoscopic modeling and characterization of the porous electrodes for vanadium redox flow batteries. Journal of Energy Storage 32, 101782. doi: 10.1016/j.est.2020.101782 .Li, Z., Kovachki, N., Azizzadenesheli, K., Liu, B., Bhattacharya, K., Stuart, A., Anandkumar, A., 2021. Fourier neural operator for parametric partial differential equations, in: International Conference on Learning Representations. URL: https://openreview.net/forum?id= c8P9NQVtmnO .Liu, J., Wang, S., Chen, K., Wang, K., Fan, Y., Wang, Q., 2026. Synthetic data augmentation and integrated prediction framework for low-carbon recycled concrete: Leveraging CTGAN and multiple ML models stacking. Journal of Cleaner Production 543, 147599. doi: 10.1016/j. jclepro.2026.147599 .Loshchilov, I., Hutter, F., 2017. Sgdr: Stochastic gradient descent with warm restarts, in: International Conference on Learning Representations. URL: https://openreview.net/forum?id=Skq89Scxx .Loshchilov, I., Hutter, F., 2019. Decoupled weight decay regularization, in: International Conference on Learning Representations. URL: 
+
+https://openreview.net/forum?id=Bkg6RiCqY7 .Lu, L., Jin, P., Pang, G., Zhang, Z., Karniadakis, G.E., 2021. Learning nonlinear operators via deeponet based on the universal approximation theorem of operators. Nature Machine Intelligence 3, 218–229. doi: 10.1038/s42256-021-00302-5 .Matyka, M., Khalili, A., Koza, Z., 2008. Tortuosity-porosity relation in porous media flow. Physical Review E 78, 026306. doi: 10.1103/ PhysRevE.78.026306 .Maurer, C.R., Qi, R., Raghavan, V., 2003. A linear time algorithm for computing exact euclidean distance transforms of binary images in arbitrary dimensions. IEEE Transactions on Pattern Analysis and Machine Intelligence 25, 265–270. doi: 10.1109/TPAMI.2003.1177156 .Mesgarpour, M., Habib, R., Shadloo, M.S., Karimi, N., 2023. A combination of large eddy simulation and physics-informed machine learning to predict pore-scale flow behaviours in fibrous porous media: A case study of transient flow passing through a surgical mask. Engineering Analysis with Boundary Elements 149, 52–70. doi: 10.1016/j.enganabound.2023.01.010 .Nguyen, P.T., Heider, Y., Kochmann, D.M., Aldakheel, F., 2026. Deep learning-aided inverse design of porous metamaterials. Computer Methods in Applied Mechanics and Engineering 449, 118499. doi: 10.1016/j.cma.2025.118499 .Perez, E., Strub, F., de Vries, H., Dumoulin, V., Courville, A.C., 2018. FiLM: Visual reasoning with a general conditioning layer, in: Proceedings of the AAAI Conference on Artificial Intelligence, pp. 3942–3951. doi: 10.1609/aaai.v32i1.11671 .Pinheiro, N.C., Guo, D., Menke, H.P., Joshi, A.C., Heaney, C.E., Elsheikh, A.H., Pain, C.C., 2026. Surrogate models for rock–fluid interaction: a grid-size-invariant approach. Engineering with Computers 42, 131. doi: 10.1007/s00366-026-02353-x .Qian, Y.H., D’Humières, D., Lallemand, P., 1992. Lattice BGK models for Navier–Stokes equation. Europhysics Letters (EPL) 17, 479–484. doi: 10.1209/0295-5075/17/6/001 .Ronneberger, O., Fischer, P., Brox, T., 2015. U-Net: Convolutional networks for biomedical image segmentation, in: Medical Image Computing and Computer-Assisted Intervention – MICCAI 2015, Springer, Cham. pp. 234–241. doi: 10.1007/978-3-319-24574-4_28 .Santos, J.E., Xu, D., Jo, H., Landry, C.J., Prodanović, M., Pyrcz, M.J., 2020. Poreflow-net: A 3d convolutional neural network to predict fluid flow through porous media. Advances in Water Resources 138, 103539. doi: 10.1016/j.advwatres.2020.103539 .Shi, X., Chen, Z., Wang, H., Yeung, D.Y., Wong, W.k., Woo, W.c., 2015. Convolutional LSTM network: A machine learning approach for precipitation nowcasting, in: Advances in Neural Information Processing Systems, pp. 802–810. URL: https://proceedings.neurips. cc/paper/2015/hash/07563a3fe3bbe7e3ba84431ad9d055af-Abstract.html .Smith, J., Gao, B., Funabashi, H., Tran, T.N., Luo, D., Ahner, B.A., Steenhuis, T.S., Hay, A.G., Walter, M.T., 2008. Pore-scale quantification of colloid transport in saturated porous media. Environmental Science & Technology 42, 517–523. doi: 10.1021/es070736x .Song, S., Mukerji, T., Zhang, D., 2025. Physics-informed multi-grid neural operator: Theory and an application to porous flow simulation. Journal of Computational Physics 520, 113438. doi: 10.1016/j.jcp.2024.113438 .Song, S., Rong, L., Dong, K., Liu, X., Le-Clech, P., Shen, Y., 2022. Pore-scale numerical study of intrinsic permeability for fluid flow through asymmetric ceramic microfiltration membranes. Journal of Membrane Science 642, 119920. doi: 10.1016/j.memsci.2021.119920 .Takbiri-Borujeni, A., Kazemi, H., Nasrabadi, N., 2020. A data-driven surrogate to image-based flow simulations in porous media. Computers & Fluids 201, 104475. doi: 10.1016/j.compfluid.2020.104475 .Tancik, M., Srinivasan, P.P., Mildenhall, B., Fridovich-Keil, S., Raghavan, N., Singhal, U., Ramamoorthi, R., Barron, J.T., Ng, R., 2020. Fourier features let networks learn high frequency functions in low dimensional domains, in: Advances in Neural Information Processing Systems, pp. 7537–7547. URL: https://papers.neurips.cc/paper/2020/hash/55053683268957697aa39fba6f231c68-Abstract.html .Wang, K., Chen, Y., Mehana, M., Lubbers, N., Bennett, K.C., Kang, Q., Viswanathan, H.S., Germann, T.C., 2021. A physics-informed and hierarchically regularized data-driven model for predicting fluid flow through porous media. Journal of Computational Physics 443, 110526. doi: 10.1016/j.jcp.2021.110526 .Wang, M., Pan, N., 2007. Numerical analyses of effective dielectric constant of multiphase microporous media. Journal of Applied Physics 101, 114102. doi: 10.1063/1.2743738 .Wen, G., Li, Z., Azizzadenesheli, K., Anandkumar, A., Benson, S.M., 2022. U-fno: An enhanced fourier neural operator-based deep-learning model for multiphase flow. Advances in Water Resources 163, 104180. doi: 10.1016/j.advwatres.2022.104180 .
+
+Wang et al.: Preprint submitted to Elsevier Page 32 of 33 Wu, J., Yin, X., Xiao, H., 2018. Seeing permeability from images: Fast prediction with convolutional neural networks. Science Bulletin 63, 1215–1222. doi: 10.1016/j.scib.2018.08.006 .Wu, Y., He, K., 2018. Group normalization, in: Computer Vision – ECCV 2018, Springer, Cham. pp. 3–19. doi: 10.1007/978-3-030-01261-8_1 .Yang, H., Hu, R., Ruppert, H., Noubactep, C., 2021. Modeling porosity loss in Fe0-based permeable reactive barriers with faraday’s law. Scientific Reports 11, 16998. doi: 10.1038/s41598-021-96599-8 .Yu, X., Li, J., Liu, J., Li, Y., Chen, A., Zhang, Y., Chang, H., 2026. Cross-scenario impact damage prediction in concrete using peridynamics-trained Kolmogorov–Arnold networks with transfer learning. International Journal of Impact Engineering 215, 105764. doi: 10.1016/j.ijimpeng. 2026.105764 .Yu, Y., Chen, S., Wei, H., 2023. Modified unet with attention gate and dense skip connection for flow field information prediction with porous media. Flow Measurement and Instrumentation 89, 102300. doi: 10.1016/j.flowmeasinst.2022.102300 .Zhang, Z., Sainoki, A., Jiang, L., Gang, M., Wu, X., 2026. Evaluating the microstructure and mechanical behavior of 3d-printed rock analog and natural sandstone via real-time x-ray computed tomography. Rock Mechanics and Rock Engineering doi: 10.1007/s00603-026-05594-w .Zhou, X.H., McClure, J.E., Chen, C., Xiao, H., 2022. Neural network-based pore flow field prediction in porous media using super resolution. Physical Review Fluids 7, 074302. doi: 10.1103/PhysRevFluids.7.074302 .Zou, Q., He, X., 1997. On pressure and velocity boundary conditions for the lattice boltzmann bgk model. Physics of Fluids 9, 1591–1598. doi: 10.1063/1.869307 .
+
+Wang et al.: Preprint submitted to Elsevier Page 33 of 33

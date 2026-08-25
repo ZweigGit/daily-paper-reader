@@ -6,28 +6,31 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-24
-- 运行时间：2026-08-24 19:23:03 UTC
+- 最新运行日期：2026-08-25
+- 运行时间：2026-08-25 20:41:18 UTC
 - 运行状态：成功
-- 本次总论文数：2
-- 精读区：1
+- 本次总论文数：3
+- 精读区：2
 - 速读区：1
 
 ### 今日简报（AI）
-今日精读1篇、速读1篇，合计处理2篇论文。  
-最值得关注的是8.0分的《Difficulty-Calibrated Interpolation Paths for Conditional Flow Matching》，聚焦条件流匹配的插值路径难度校准。  
-若对贝叶斯物理信息神经网络有兴趣，可接着浏览7.0分的污染物输运概率逆建模工作。
-- 详情：[/202608/24/README](/202608/24/README)
+今日精读2篇、速读1篇，聚焦随机动力学生成建模、孔隙尺度流动预测与高维混沌数据同化。  
+最值得关注的是满分基准StocBench（随机动力学生成建模）及8分孔隙流动查询时预测框架，二者均指向生成式模型在物理模拟中的前沿应用。  
+建议普通读者优先了解StocBench如何评估生成模型对随机动力学建模的可靠性，并可延伸关注其与流动预测结合的潜力。
+- 详情：[/202608/25/README](/202608/25/README)
 
 ### 精读区论文标签
-1. [Difficulty-Calibrated Interpolation Paths for Conditional Flow Matching](/202608/24/2608.21286v1-difficulty-calibrated-interpolation-paths-for-conditional-flow-matching)  
+1. [StocBench: A Benchmark for Generative Modeling of Stochastic Dynamics](/202608/25/2608.22309v1-stocbench-a-benchmark-for-generative-modeling-of-stochastic-dynamics)  
+   标签：评分：10.0/10、query:genmod-fluid
+   evidence：针对随机流体流动的生成模型基准，评测流匹配与扩散方法在Kolmogorov流上的表现
+2. [A Query-Time Framework for Transient 2D Pore-Scale Flow Prediction and Generative Design](/202608/25/2608.22235v1-a-query-time-framework-for-transient-2d-pore-scale-flow-prediction-and-generative-design)  
    标签：评分：8.0/10、query:genmod-fluid
-   evidence：直接提出流匹配调度改进，是一种可迁移至流体模拟的生成模型方法
+   evidence：直接针对孔隙尺度流动预测建立查询时代理模型并用于生成式设计，契合流体动力学的生成模型应用
 
 ### 速读区论文标签
-1. [Probabilistic Inverse Modeling of Contaminant Transport via a Conditioned-on-Design Bayesian Physics Informed Neural Network](/202608/24/2608.17591v1-probabilistic-inverse-modeling-of-contaminant-transport-via-a-conditioned-on-design-bayesian-physics-informed-neural-network)  
+1. [A score-based particle flow filter for non-Gaussian data assimilation in high-dimensional chaotic systems](/202608/25/2608.22454v1-a-score-based-particle-flow-filter-for-non-gaussian-data-assimilation-in-high-dimensional-chaotic-systems)  
    标签：评分：7.0/10、query:genmod-fluid
-   evidence：将概率贝叶斯物理信息神经网络应用于多孔介质污染物输运，属于流体动力学中的概率流模型
+   evidence：使用去噪分数匹配和基于分数的生成建模处理混沌系统数据同化，直接支持基于分数的流体流建模
 
 
 <div class="dpr-home-promo-card">

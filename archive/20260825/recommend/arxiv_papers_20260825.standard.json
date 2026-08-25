@@ -1,0 +1,131 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-25T20:37:07.003561+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2608.22309v1",
+      "source": "arxiv",
+      "title": "StocBench: A Benchmark for Generative Modeling of Stochastic Dynamics",
+      "abstract": "We benchmark transport-based generative models as well as distillation-based few-step methods for the probabilistic forecasting of stochastic fluid flows, with a particular focus on performance under limited inference budgets. All methods are evaluated on a two-dimensional Kolmogorov flow with stochastic forcing. We measure one-step distributional accuracy against large simulated reference ensembles and assess whether the invariant measure is preserved during autoregressive rollouts via the enstrophy spectrum. On the stochastic task, flow matching achieves the most accurate one-step conditional distribution at high inference budgets, while the second-order exponential integrator DPM-2 is strongest at very low NFE. Few-step distillation methods are competitive with the multi-step methods and preserve the enstrophy spectrum particularly well. A deterministic control task, in which the forcing over the prediction interval is observed, separates aleatoric from epistemic uncertainty. Model performance does not translate between the two settings: the distilled models are competitive on the stochastic task but least accurate on the control task. While stochastic diffusion samplers such as DDPM better preserve the enstrophy spectrum during rollouts in the stochastic setting, deterministic samplers such as DDIM and DPM-2 show better spectral preservation in the deterministic setting.",
+      "authors": [
+        "Sebastian Pfister",
+        "Benjamin Holzschuh",
+        "Nils Thuerey"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-08-23T09:19:01+00:00",
+      "link": "https://arxiv.org/pdf/2608.22309v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Benchmark of generative models for stochastic fluid flows, evaluating flow matching and diffusion methods on Kolmogorov flow",
+      "llm_evidence_cn": "针对随机流体流动的生成模型基准，评测流匹配与扩散方法在Kolmogorov流上的表现",
+      "llm_evidence": "针对随机流体流动的生成模型基准，评测流匹配与扩散方法在Kolmogorov流上的表现",
+      "canonical_evidence": "针对随机流体流动的生成模型基准，评测流匹配与扩散方法在Kolmogorov流上的表现",
+      "llm_tldr_en": "StocBench benchmarks transport-based generative and distillation methods for probabilistic forecasting of stochastic fluid flows on 2D Kolmogorov flow, finding flow matching best at high inference budgets and DPM-2 at low NFE.",
+      "llm_tldr_cn": "该文针对随机流体流动的概率预测提出基准StocBench，用于评估流匹配、扩散等传输类生成模型及蒸馏式少步方法。所有方法在带随机强迫的二维Kolmogorov流上测试，衡量一步分布准确性与自回归滚动中不变测度的保持。结果表明高推理预算下流匹配表现最优，低NFE下二阶指数积分器DPM-2最强，为生成模型在流体力学中的应用提供系统比较。",
+      "llm_tldr": "该文针对随机流体流动的概率预测提出基准StocBench，用于评估流匹配、扩散等传输类生成模型及蒸馏式少步方法。所有方法在带随机强迫的二维Kolmogorov流上测试，衡量一步分布准确性与自回归滚动中不变测度的保持。结果表明高推理预算下流匹配表现最优，低NFE下二阶指数积分器DPM-2最强，为生成模型在流体力学中的应用提供系统比较。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.22235v1",
+      "source": "arxiv",
+      "title": "A Query-Time Framework for Transient 2D Pore-Scale Flow Prediction and Generative Design",
+      "abstract": "Pore-scale flow governs transport and permeability behaviour in porous media engineering applications, yet repeated lattice Boltzmann method (LBM) simulation across many geometries and design queries remains costly for repeated deployment. This study formulates transient pore-scale flow prediction as a geometry-conditioned query-time operator and introduces QSGS-Transient-7606, a benchmark of 7,606 two-dimensional porous structures each paired with 30 logarithmically sampled LBM states. The proposed continuous-time pore-scale flow surrogate model (CT-PoreFlow) integrates topology-aware geometry encoding, compressed spectral mixing, and log-time conditioning with a late-time flux-calibration objective. On unseen test geometries, CT-PoreFlow achieves a velocity relative L2 of 0.2248 and a terminal permeability error of 12.81%. Frozen morphology and computed tomography image audits confirm reasonable cross-geometry robustness without fine-tuning. The surrogate is then embedded in an inverse design workflow, screening 9,216 generative adversarial network and diffusion candidates across 18 property targets prior to LBM verification. Guided GAN sampling attains 98.11% through-connectivity and 72.28% conditional design success, exceeding diffusion-based generation. The framework unifies transient flow prediction, transport-aware screening, and LBM-verified inverse design for porous media.",
+      "authors": [
+        "Yiming Wang",
+        "Jiale Zhu",
+        "Zhichen Ye",
+        "Yandong Lv",
+        "Shiqi Wang",
+        "Jinlong Liu",
+        "Yucheng Fan"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-08-23T06:13:10+00:00",
+      "link": "https://arxiv.org/pdf/2608.22235v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Directly addresses pore-scale flow prediction with a query-time surrogate and generative design, fitting generative models for fluid dynamics",
+      "llm_evidence_cn": "直接针对孔隙尺度流动预测建立查询时代理模型并用于生成式设计，契合流体动力学的生成模型应用",
+      "llm_evidence": "直接针对孔隙尺度流动预测建立查询时代理模型并用于生成式设计，契合流体动力学的生成模型应用",
+      "canonical_evidence": "直接针对孔隙尺度流动预测建立查询时代理模型并用于生成式设计，契合流体动力学的生成模型应用",
+      "llm_tldr_en": "Formulates transient pore-scale flow prediction as a geometry-conditioned query-time operator, introduces a 7,606-structure benchmark, and proposes CT-PoreFlow, a continuous-time surrogate with topology-aware encoding and log-time conditioning, enabling fast flow prediction and generative design on unseen geometries.",
+      "llm_tldr_cn": "针对孔隙尺度流动反复LBM仿真成本高的问题，本文将瞬态流动预测建模为几何条件查询时算子，并提出QSGS-Transient-7606基准。提出的CT-PoreFlow结合拓扑感知几何编码、压缩谱混合与对数时间条件，配合后期通量校准，在未见几何上实现快速预测。该框架支持生成式设计，为孔隙介质流动的实时查询与设计优化提供了高效工具。",
+      "llm_tldr": "针对孔隙尺度流动反复LBM仿真成本高的问题，本文将瞬态流动预测建模为几何条件查询时算子，并提出QSGS-Transient-7606基准。提出的CT-PoreFlow结合拓扑感知几何编码、压缩谱混合与对数时间条件，配合后期通量校准，在未见几何上实现快速预测。该框架支持生成式设计，为孔隙介质流动的实时查询与设计优化提供了高效工具。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.22454v1",
+      "source": "arxiv",
+      "title": "A score-based particle flow filter for non-Gaussian data assimilation in high-dimensional chaotic systems",
+      "abstract": "Current particle flow filters rely on Gaussian prior assumptions that fail to capture the non-Gaussian attractor structure of chaotic systems. This study proposes a Score-based Particle Flow Filter (Score-PFF) that replaces the parametric prior gradient with a neural network-learned score function via denoising score matching. This enables flexible characterization of multimodal, skewed, and complex prior distributions in chaotic dynamics. Pure prior adjustment experiments demonstrate correct gradient directions toward the attractor (26.9%-29.0% error reduction over Gaussian priors). Under linear observations, Score-PFF significantly outperforms both Gaussian PFF and EAKF (Cohen's d = 1.03 and 1.40), preserving non-Gaussian structure that EAKF progressively Gaussianizes. Under nonlinear observation operators, Score-PFF maintains robust performance with up to 60% RMSE reduction in strongly non-Gaussian regimes. On the 1000-dimensional Lorenz-96 system, Score-PFF achieves 49.5% RMSE reduction over PFF while reducing per-assimilation cost by replacing SVD-based covariance inversion with neural network inference. Score-PFF establishes a computationally tractable, non-Gaussian data assimilation framework suitable for high-dimensional geophysical systems.",
+      "authors": [
+        "Zheqi Shen",
+        "Youmin Tang",
+        "Yuewei Fang"
+      ],
+      "primary_category": "physics.ao-ph",
+      "categories": [
+        "physics.ao-ph"
+      ],
+      "published": "2026-08-23T15:08:02+00:00",
+      "link": "https://arxiv.org/pdf/2608.22454v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Uses denoising score matching and score-based generative modeling for data assimilation in high-dimensional chaotic systems, directly supporting score-based fluid flow modeling",
+      "llm_evidence_cn": "使用去噪分数匹配和基于分数的生成建模处理混沌系统数据同化，直接支持基于分数的流体流建模",
+      "llm_evidence": "使用去噪分数匹配和基于分数的生成建模处理混沌系统数据同化，直接支持基于分数的流体流建模",
+      "canonical_evidence": "使用去噪分数匹配和基于分数的生成建模处理混沌系统数据同化，直接支持基于分数的流体流建模",
+      "llm_tldr_en": "Proposes Score-PFF, replacing Gaussian prior gradients with denoising-score-matching neural score functions for particle flow filtering in high-dimensional chaos. It outperforms Gaussian PFF and EAKF while preserving non-Gaussian attractor structure, directly relevant to score-based generative models in fluid dynamics.",
+      "llm_tldr_cn": "现有粒子流滤波依赖高斯先验，难以刻画混沌系统的非高斯吸引子结构。本文提出基于分数的粒子流滤波器(Score-PFF)，用去噪分数匹配训练神经网络学习先验分布分数替代参数化先验梯度，从而灵活表征多模态、偏斜等复杂分布。实验显示先验调整误差较高斯先验降低26.9%-29.0%，在线性观测下显著优于高斯PFF和EAKF(Cohen's d=1.03与1.40)。该方法为高维流体/混沌数据同化提供了基于分数的生成式建模新途径。",
+      "llm_tldr": "现有粒子流滤波依赖高斯先验，难以刻画混沌系统的非高斯吸引子结构。本文提出基于分数的粒子流滤波器(Score-PFF)，用去噪分数匹配训练神经网络学习先验分布分数替代参数化先验梯度，从而灵活表征多模态、偏斜等复杂分布。实验显示先验调整误差较高斯先验降低26.9%-29.0%，在线性观测下显著优于高斯PFF和EAKF(Cohen's d=1.03与1.40)。该方法为高维流体/混沌数据同化提供了基于分数的生成式建模新途径。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "score-based generative models for fluid flow",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
