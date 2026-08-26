@@ -1,0 +1,54 @@
+{
+  "label": "2026-08-26",
+  "date": "2026-08-26",
+  "generated_at": "2026-08-26T20:32:07",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202608/26/2608.24056v1-physicsbench-a-unified-leaderboard-for-generative-and-predictive-models-in-engineering-design-and-simulation",
+      "section": "deep",
+      "title_en": "PhysicsBench: A Unified Leaderboard for Generative and Predictive Models in Engineering Design and Simulation",
+      "authors": "Sang Won Lee, Hyogu Jeong, Namwoo Kang",
+      "date": "2026-08-25",
+      "pdf": "https://arxiv.org/pdf/2608.24056v1",
+      "score": "8.0",
+      "evidence": "针对工程设计与仿真（含CFD）中生成与预测AI模型的统一基准",
+      "tldr": "工程设计和仿真中，生成与预测AI模型评估各自为政，规模与指标不一。PhysicsBench提出统一标准流程，覆盖7类任务、66个模型，并以BenchRank去偏排序。结果显示大规模学术表现难以预测小数据排名，7任务中6个最优模型随数据规模改变。该基准将'最优'从自我宣称转为公开可验证的模型选择基础。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Generative and predictive artificial intelligence models are increasingly used to generate geometry and to predict physical fields and scalar quantities in engineering design and simulation. Yet these models are typically evaluated in isolation, on academic datasets at unconstrained scales, with inconsistent metrics and procedures. We present PhysicsBench, a unified benchmark and leaderboard that evaluates generative and predictive models under one standardized procedure. PhysicsBench spans seven generation and prediction tasks across 1D, 2D, and 3D domains and ranks 66 models on nine datasets, comprising industrial-scale CAD/CFD/FEA simulations and public references, expanded into 28 configurations. One procedure and ranking apply to both families, each ranked within its own tasks. Evaluation spans realistic, limited data scales from S to XL rather than the unlimited training sets common in academic benchmarks. A common metric suite captures geometric fidelity with distributional distances, physical-field and scalar accuracy, and engineering-specific field- and shape-validity. BenchRank debiases correlated metrics and ranks by PageRank over a head-to-head dominance graph, so every reported quality metric is also ranked, with computational cost in a separate efficiency view. Across tasks, an architecture's large-scale academic standing weakly predicts its small-data ranking. The top model changes with data scale in six of the seven tasks, and no model leads more than one task. PhysicsBench turns \"state-of-the-art\" from a self-reported claim into an openly published foundation for model selection.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/26/2608.18808v1-tensor-field-models",
+      "section": "quick",
+      "title_en": "Tensor Field Models",
+      "authors": "Alexander Strunk, Roland Assam",
+      "date": "2026-08-19",
+      "pdf": "https://arxiv.org/pdf/2608.18808v1",
+      "score": "6.0",
+      "evidence": "面向张量场的生成框架，可迁移于流体流场",
+      "tldr": "针对生成时间相关张量场的数学建模需求，本文提出张量场模型（TFM）：由学习算子将可容许的截面族映射到生成状态流形上的时间相关切空间，并通过构造的、分量可分解和张量丛TFM提供结构化变体。该方法以条件分量映射生成可复用集合，为物理场（如流体速度场、压力场）的生成建模提供通用数学框架，但尚未在流体动力学中进行实验验证。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "This paper introduces Tensor Field Models (TFMs), realization-level Mathematical Structures in which a learned Operator maps a product of admissible component-section families to a prescribed family of time-dependent tangent sections on a Generative State Manifold. Analytic and dynamical restrictions are encoded through the choice of admissible families rather than imposed by the root definition. Constructed, component-separable, and Tensor Bundle TFMs provide structured refinements of this common object. In the conditional realizations considered here, a structured condition $c=(c_1,\\ldots,c_n)$ is mapped componentwise to a reusable collection $\\mathbf H_c=(H_{c_1}^{(1)},\\ldots,H_{c_n}^{(n)})$. In the architectures evaluated here, the component representations remain distinct and are combined only by the Field Operator to produce the generated Vector Field. All learned models are trained using Flow Matching. Experiments show that TFMs can improve performance and that amortized sampling enabled by reusable condition representations can accelerate generation.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/26/2608.23696v1-renormalization-group-flow-matching-for-scalable-local-generative-modeling",
+      "section": "quick",
+      "title_en": "Renormalization Group Flow Matching for Scalable Local Generative Modeling",
+      "authors": "Kanta Masuki, Yuto Ashida",
+      "date": "2026-08-24",
+      "pdf": "https://arxiv.org/pdf/2608.23696v1",
+      "score": "6.0",
+      "evidence": "重正化群流匹配生成框架，流匹配方法可应用于流体流场生成",
+      "tldr": "生成模型面临全局连贯与计算效率的权衡，局部模型难以捕获长程相关。受重正化群启发，提出RGFM框架，以精确RG流为概率路径，从长波到短波渐进生成数据。利用准局域性和尺度分离，证明局部速度场可近似概率流，计算成本近线性。实验显示RGFM能恢复远超感受野的长程相关，在FFHQ上生成质量显著优于局部流匹配。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Despite their remarkable success in modeling complex data, generative models face a fundamental tradeoff. Global approaches can capture full structural coherence but suffer from high computational costs, while local models are efficient but often fail to reproduce long-range correlations and global coherence. The renormalization group (RG) bridges this gap by seamlessly connecting spatial structures across different length scales, retaining quasi-local descriptions at each step while preserving long-range correlations. We introduce renormalization group flow matching (RGFM), a generative framework that systematically structures data generation across different spatial scales. By using an exact RG flow as the probability path, RGFM progressively generates data from long- to short-wavelength structures. To reconcile scalability with global structure, we exploit two key properties of the RG: quasi-locality and scale separation. We rigorously show that the RGFM probability flow can be accurately approximated by local velocity fields acting over a spatial range $O(Λ^{-1}[\\ln L+\\ln(1/\\varepsilon)])$ for RG wavenumber scale $Λ$, linear system size $L$, and prescribed error tolerance $\\varepsilon$. This property enables local generative modeling with patches of size $O(\\ln L)$ and a computational cost that scales nearly linearly with the system volume. We numerically demonstrate that local RGFM reproduces long-range correlations far beyond its receptive field in representative one-dimensional distributions, while conventional local flow matching exhibits substantial errors at long distances. On FFHQ images, RGFM yields far more coherent and higher-quality samples than local flow matching at 64x64 and 256x256. Our results establish RG-guided probability flows as a promising route toward scalable generative modeling that captures long-range structure using only local computation.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

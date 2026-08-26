@@ -1,0 +1,129 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-26T20:26:27.195618+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2608.24056v1",
+      "source": "arxiv",
+      "title": "PhysicsBench: A Unified Leaderboard for Generative and Predictive Models in Engineering Design and Simulation",
+      "abstract": "Generative and predictive artificial intelligence models are increasingly used to generate geometry and to predict physical fields and scalar quantities in engineering design and simulation. Yet these models are typically evaluated in isolation, on academic datasets at unconstrained scales, with inconsistent metrics and procedures. We present PhysicsBench, a unified benchmark and leaderboard that evaluates generative and predictive models under one standardized procedure. PhysicsBench spans seven generation and prediction tasks across 1D, 2D, and 3D domains and ranks 66 models on nine datasets, comprising industrial-scale CAD/CFD/FEA simulations and public references, expanded into 28 configurations. One procedure and ranking apply to both families, each ranked within its own tasks. Evaluation spans realistic, limited data scales from S to XL rather than the unlimited training sets common in academic benchmarks. A common metric suite captures geometric fidelity with distributional distances, physical-field and scalar accuracy, and engineering-specific field- and shape-validity. BenchRank debiases correlated metrics and ranks by PageRank over a head-to-head dominance graph, so every reported quality metric is also ranked, with computational cost in a separate efficiency view. Across tasks, an architecture's large-scale academic standing weakly predicts its small-data ranking. The top model changes with data scale in six of the seven tasks, and no model leads more than one task. PhysicsBench turns \"state-of-the-art\" from a self-reported claim into an openly published foundation for model selection.",
+      "authors": [
+        "Sang Won Lee",
+        "Hyogu Jeong",
+        "Namwoo Kang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.CE"
+      ],
+      "published": "2026-08-25T04:32:18+00:00",
+      "link": "https://arxiv.org/pdf/2608.24056v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "benchmark for generative and predictive AI models on engineering design and simulation, including CFD",
+      "llm_evidence_cn": "针对工程设计与仿真（含CFD）中生成与预测AI模型的统一基准",
+      "llm_evidence": "针对工程设计与仿真（含CFD）中生成与预测AI模型的统一基准",
+      "canonical_evidence": "针对工程设计与仿真（含CFD）中生成与预测AI模型的统一基准",
+      "llm_tldr_en": "PhysicsBench is a unified benchmark and leaderboard for generative and predictive AI models in engineering design and simulation, spanning seven 1D/2D/3D tasks and ranking 66 models on nine industrial CAD/CFD/FEA datasets under standardized procedures.",
+      "llm_tldr_cn": "工程设计与仿真中的生成与预测模型评估常在不同数据集和指标上进行，难以横向比较。PhysicsBench构建了统一基准与排行榜，覆盖1D/2D/3D共七类生成与预测任务，并在九个数据集（含工业级CAD/CFD/FEA仿真）上标准化评测66个模型。该基准为物理仿真场景的生成模型选型提供了可复现的比较流程，是生成式流体力学研究的重要基础设施。",
+      "llm_tldr": "工程设计与仿真中的生成与预测模型评估常在不同数据集和指标上进行，难以横向比较。PhysicsBench构建了统一基准与排行榜，覆盖1D/2D/3D共七类生成与预测任务，并在九个数据集（含工业级CAD/CFD/FEA仿真）上标准化评测66个模型。该基准为物理仿真场景的生成模型选型提供了可复现的比较流程，是生成式流体力学研究的重要基础设施。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.18808v1",
+      "source": "arxiv",
+      "title": "Tensor Field Models",
+      "abstract": "This paper introduces Tensor Field Models (TFMs), realization-level Mathematical Structures in which a learned Operator maps a product of admissible component-section families to a prescribed family of time-dependent tangent sections on a Generative State Manifold. Analytic and dynamical restrictions are encoded through the choice of admissible families rather than imposed by the root definition. Constructed, component-separable, and Tensor Bundle TFMs provide structured refinements of this common object. In the conditional realizations considered here, a structured condition $c=(c_1,\\ldots,c_n)$ is mapped componentwise to a reusable collection $\\mathbf H_c=(H_{c_1}^{(1)},\\ldots,H_{c_n}^{(n)})$. In the architectures evaluated here, the component representations remain distinct and are combined only by the Field Operator to produce the generated Vector Field. All learned models are trained using Flow Matching. Experiments show that TFMs can improve performance and that amortized sampling enabled by reusable condition representations can accelerate generation.",
+      "authors": [
+        "Alexander Strunk",
+        "Roland Assam"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.DG"
+      ],
+      "published": "2026-08-19T11:07:21+00:00",
+      "link": "https://arxiv.org/pdf/2608.18808v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Generative framework for tensor fields, potentially transferable to fluid flow fields",
+      "llm_evidence_cn": "面向张量场的生成框架，可迁移于流体流场",
+      "llm_evidence": "面向张量场的生成框架，可迁移于流体流场",
+      "canonical_evidence": "面向张量场的生成框架，可迁移于流体流场",
+      "llm_tldr_en": "Tensor Field Models map component-wise conditions to reusable collections via a learned operator on a generative state manifold, offering structured refinements for generating time-dependent tensor fields; a general mathematical framework for field generation.",
+      "llm_tldr_cn": "针对生成时间相关张量场的数学建模需求，本文提出张量场模型（TFM）：由学习算子将可容许的截面族映射到生成状态流形上的时间相关切空间，并通过构造的、分量可分解和张量丛TFM提供结构化变体。该方法以条件分量映射生成可复用集合，为物理场（如流体速度场、压力场）的生成建模提供通用数学框架，但尚未在流体动力学中进行实验验证。",
+      "llm_tldr": "针对生成时间相关张量场的数学建模需求，本文提出张量场模型（TFM）：由学习算子将可容许的截面族映射到生成状态流形上的时间相关切空间，并通过构造的、分量可分解和张量丛TFM提供结构化变体。该方法以条件分量映射生成可复用集合，为物理场（如流体速度场、压力场）的生成建模提供通用数学框架，但尚未在流体动力学中进行实验验证。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.23696v1",
+      "source": "arxiv",
+      "title": "Renormalization Group Flow Matching for Scalable Local Generative Modeling",
+      "abstract": "Despite their remarkable success in modeling complex data, generative models face a fundamental tradeoff. Global approaches can capture full structural coherence but suffer from high computational costs, while local models are efficient but often fail to reproduce long-range correlations and global coherence. The renormalization group (RG) bridges this gap by seamlessly connecting spatial structures across different length scales, retaining quasi-local descriptions at each step while preserving long-range correlations. We introduce renormalization group flow matching (RGFM), a generative framework that systematically structures data generation across different spatial scales. By using an exact RG flow as the probability path, RGFM progressively generates data from long- to short-wavelength structures. To reconcile scalability with global structure, we exploit two key properties of the RG: quasi-locality and scale separation. We rigorously show that the RGFM probability flow can be accurately approximated by local velocity fields acting over a spatial range $O(Λ^{-1}[\\ln L+\\ln(1/\\varepsilon)])$ for RG wavenumber scale $Λ$, linear system size $L$, and prescribed error tolerance $\\varepsilon$. This property enables local generative modeling with patches of size $O(\\ln L)$ and a computational cost that scales nearly linearly with the system volume. We numerically demonstrate that local RGFM reproduces long-range correlations far beyond its receptive field in representative one-dimensional distributions, while conventional local flow matching exhibits substantial errors at long distances. On FFHQ images, RGFM yields far more coherent and higher-quality samples than local flow matching at 64x64 and 256x256. Our results establish RG-guided probability flows as a promising route toward scalable generative modeling that captures long-range structure using only local computation.",
+      "authors": [
+        "Kanta Masuki",
+        "Yuto Ashida"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cond-mat.stat-mech"
+      ],
+      "published": "2026-08-24T18:00:04+00:00",
+      "link": "https://arxiv.org/pdf/2608.23696v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Renormalization group flow matching generative framework; flow matching method directly relevant to fluid flow generation with adaptation",
+      "llm_evidence_cn": "重正化群流匹配生成框架，流匹配方法可应用于流体流场生成",
+      "llm_evidence": "重正化群流匹配生成框架，流匹配方法可应用于流体流场生成",
+      "canonical_evidence": "重正化群流匹配生成框架，流匹配方法可应用于流体流场生成",
+      "llm_tldr_en": "This paper introduces renormalization group flow matching (RGFM), a generative framework that structures data generation across spatial scales using an exact RG flow as the probability path. It addresses the tradeoff between global coherence and local efficiency. The flow matching approach can be adapted for fluid flow simulation and generative modeling of turbulent fields.",
+      "llm_tldr_cn": "本文提出重正化群流匹配（RGFM），一种可扩展的局部生成建模框架。它利用精确的重正化群流作为概率路径，在不同空间尺度上系统组织数据生成，从而在保留长程相关性的同时保持准局部描述与计算效率。该方法弥合了全局生成与局部生成的权衡，并为流体动力学中的多尺度流场生成提供了新的流匹配建模思路。",
+      "llm_tldr": "本文提出重正化群流匹配（RGFM），一种可扩展的局部生成建模框架。它利用精确的重正化群流作为概率路径，在不同空间尺度上系统组织数据生成，从而在保留长程相关性的同时保持准局部描述与计算效率。该方法弥合了全局生成与局部生成的权衡，并为流体动力学中的多尺度流场生成提供了新的流匹配建模思路。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

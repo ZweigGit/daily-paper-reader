@@ -6,31 +6,31 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-25
-- 运行时间：2026-08-25 20:41:18 UTC
+- 最新运行日期：2026-08-26
+- 运行时间：2026-08-26 20:32:00 UTC
 - 运行状态：成功
 - 本次总论文数：3
-- 精读区：2
-- 速读区：1
+- 精读区：1
+- 速读区：2
 
 ### 今日简报（AI）
-今日精读2篇、速读1篇，聚焦随机动力学生成建模、孔隙尺度流动预测与高维混沌数据同化。  
-最值得关注的是满分基准StocBench（随机动力学生成建模）及8分孔隙流动查询时预测框架，二者均指向生成式模型在物理模拟中的前沿应用。  
-建议普通读者优先了解StocBench如何评估生成模型对随机动力学建模的可靠性，并可延伸关注其与流动预测结合的潜力。
-- 详情：[/202608/25/README](/202608/25/README)
+今日精读1篇高潜论文，另速读2篇，共覆盖3项AI+工程/物理研究。  
+最值得关注的是《PhysicsBench》（8.0/10），为生成式与预测式模型在工程设计与仿真中提供统一评测基准，方向明确且实用。  
+若你关注AI辅助设计，建议优先参考该基准的评估框架，再看《Tensor Field Models》和《Renormalization Group Flow Matching》补充几何与生成建模视角。
+- 详情：[/202608/26/README](/202608/26/README)
 
 ### 精读区论文标签
-1. [StocBench: A Benchmark for Generative Modeling of Stochastic Dynamics](/202608/25/2608.22309v1-stocbench-a-benchmark-for-generative-modeling-of-stochastic-dynamics)  
-   标签：评分：10.0/10、query:genmod-fluid
-   evidence：针对随机流体流动的生成模型基准，评测流匹配与扩散方法在Kolmogorov流上的表现
-2. [A Query-Time Framework for Transient 2D Pore-Scale Flow Prediction and Generative Design](/202608/25/2608.22235v1-a-query-time-framework-for-transient-2d-pore-scale-flow-prediction-and-generative-design)  
+1. [PhysicsBench: A Unified Leaderboard for Generative and Predictive Models in Engineering Design and Simulation](/202608/26/2608.24056v1-physicsbench-a-unified-leaderboard-for-generative-and-predictive-models-in-engineering-design-and-simulation)  
    标签：评分：8.0/10、query:genmod-fluid
-   evidence：直接针对孔隙尺度流动预测建立查询时代理模型并用于生成式设计，契合流体动力学的生成模型应用
+   evidence：针对工程设计与仿真（含CFD）中生成与预测AI模型的统一基准
 
 ### 速读区论文标签
-1. [A score-based particle flow filter for non-Gaussian data assimilation in high-dimensional chaotic systems](/202608/25/2608.22454v1-a-score-based-particle-flow-filter-for-non-gaussian-data-assimilation-in-high-dimensional-chaotic-systems)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：使用去噪分数匹配和基于分数的生成建模处理混沌系统数据同化，直接支持基于分数的流体流建模
+1. [Tensor Field Models](/202608/26/2608.18808v1-tensor-field-models)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：面向张量场的生成框架，可迁移于流体流场
+2. [Renormalization Group Flow Matching for Scalable Local Generative Modeling](/202608/26/2608.23696v1-renormalization-group-flow-matching-for-scalable-local-generative-modeling)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：重正化群流匹配生成框架，流匹配方法可应用于流体流场生成
 
 
 <div class="dpr-home-promo-card">
