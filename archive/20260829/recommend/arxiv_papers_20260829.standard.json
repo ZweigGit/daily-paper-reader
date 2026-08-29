@@ -1,12 +1,12 @@
 {
   "mode": "standard",
-  "generated_at": "2026-08-29T03:23:18.775583+00:00",
+  "generated_at": "2026-08-29T22:32:57.248644+00:00",
   "stats": {
     "mode": "standard",
     "tag_count": 1,
-    "deep_divecandidates": 2,
+    "deep_divecandidates": 1,
     "deep_cap": 6,
-    "deep_selected": 2,
+    "deep_selected": 1,
     "quick_candidates": 2,
     "quick_skim_target": 11,
     "quick_selected": 2
@@ -33,54 +33,19 @@
         "query:genmod-fluid"
       ],
       "llm_score": 9.0,
-      "llm_evidence_en": "Diffusion models applied to Lagrangian tracer statistics in non-reciprocal binary-fluid turbulence",
-      "llm_evidence_cn": "将扩散模型应用于非互易二元流体湍流中的拉格朗日示踪统计",
-      "llm_evidence": "将扩散模型应用于非互易二元流体湍流中的拉格朗日示踪统计",
-      "canonical_evidence": "将扩散模型应用于非互易二元流体湍流中的拉格朗日示踪统计",
-      "llm_tldr_en": "Investigates whether diffusion models can learn Lagrangian tracer statistics in non-reciprocal binary-fluid turbulence, using pseudospectral DNS as ground truth and revealing intriguing distribution results.",
-      "llm_tldr_cn": "该文研究生成式人工智能方法能否推广到非互易二元流体湍流（NRCHNS）这类新型湍流。作者通过高精度伪谱直接数值模拟（DNS）获取拉格朗日示踪粒子的真实统计作为基准，然后训练扩散模型学习其概率分布。实验结果评估了扩散模型对这类统计量的学习能力，并揭示了若干有趣的统计规律。这项工作为生成式模型在新型湍流研究中的应用提供了评估和思路。",
-      "llm_tldr": "该文研究生成式人工智能方法能否推广到非互易二元流体湍流（NRCHNS）这类新型湍流。作者通过高精度伪谱直接数值模拟（DNS）获取拉格朗日示踪粒子的真实统计作为基准，然后训练扩散模型学习其概率分布。实验结果评估了扩散模型对这类统计量的学习能力，并揭示了若干有趣的统计规律。这项工作为生成式模型在新型湍流研究中的应用提供了评估和思路。",
+      "llm_evidence_en": "diffusion models learn tracer statistics in non-reciprocal fluid turbulence",
+      "llm_evidence_cn": "扩散模型用于非互易流体湍流统计学习",
+      "llm_evidence": "扩散模型用于非互易流体湍流统计学习",
+      "canonical_evidence": "扩散模型用于非互易流体湍流统计学习",
+      "llm_tldr_en": "Investigates how well diffusion models can reproduce Lagrangian-tracer statistics in non-reciprocal binary-fluid turbulence (NRCHNS), using pseudospectral DNS data; findings show they capture these statistics, extending generative AI to novel turbulence.",
+      "llm_tldr_cn": "针对生成式人工智能能否推广到非互易二元流体这类新型湍流的问题，研究扩散模型对拉格朗日示踪粒子统计量的学习能力。作者通过二维非互易 Cahn-Hilliard-Navier-Stokes 模型的谱方法 DNS 获得基准数据，并分析概率分布等统计量。结果表明扩散模型能够捕捉此类非互易湍流中的示踪统计特征。该工作拓展了生成模型在复杂流体力学中的应用边界。",
+      "llm_tldr": "针对生成式人工智能能否推广到非互易二元流体这类新型湍流的问题，研究扩散模型对拉格朗日示踪粒子统计量的学习能力。作者通过二维非互易 Cahn-Hilliard-Navier-Stokes 模型的谱方法 DNS 获得基准数据，并分析概率分布等统计量。结果表明扩散模型能够捕捉此类非互易湍流中的示踪统计特征。该工作拓展了生成模型在复杂流体力学中的应用边界。",
       "llm_tags": [
         "query:genmod-fluid"
       ],
       "matched_query_tag": "query:genmod-fluid",
       "matched_query_text": "diffusion models for fluid flow simulation",
       "matched_requirement_id": "req-2",
-      "selection_source": "fresh_fetch"
-    },
-    {
-      "id": "2608.26594v1",
-      "source": "arxiv",
-      "title": "SimCast-S2S: An Efficient Generative Model for Subseasonal Precipitation Forecasting via Transfer Learning from Climate Simulations",
-      "abstract": "Subseasonal-to-seasonal (S2S) precipitation forecasting has substantial financial and societal impact, yet remains challenging because of weak predictive signals, high associated uncertainty, and the computational cost of operational systems, which constrains simulation fidelity. We introduce SimCast-S2S, a generative latent-diffusion framework for probabilistic S2S precipitation forecasting that addresses three major bottlenecks in data-driven prediction. First, because S2S prediction requires uncertainty quantification rather than only deterministic point forecasts, SimCast-S2S is the first data-driven system that uses a diffusion-based generative pipeline for S2S prediction, enabling effective sampling from the underlying conditional distribution. Second, since generating large probabilistic ensembles is computationally costly in physical space, SimCast-S2S instead operates in a compact latent space learned by variational autoencoders, enabling efficient large-ensemble generation. Third, diffusion models typically require large training datasets; SimCast-S2S overcomes this via transfer learning with low-rank adaptation (LoRA), pretraining on large ensembles of climate simulations before fine-tuning on limited reanalysis data. On reanalysis data, SimCast-S2S outperforms deep learning baselines, including convolutional neural networks and U-Net architectures. Notably, despite using only a subset of atmospheric input variables and no post-processing, bias correction, or calibration, SimCast-S2S remains competitive with, and in many cases outperforms, state-of-the-art operational systems such as the ECMWF-S2S baseline. These results indicate that latent generative modeling combined with simulation-to-reanalysis transfer learning offers an efficient and scalable path toward data-driven probabilistic S2S precipitation forecasting.",
-      "authors": [
-        "Hiep V. Dang",
-        "Antonios Mamalakis"
-      ],
-      "primary_category": "cs.LG",
-      "categories": [
-        "cs.LG"
-      ],
-      "published": "2026-08-27T04:20:55+00:00",
-      "link": "https://arxiv.org/pdf/2608.26594v1",
-      "tags": [
-        "keyword:genmod-fluid",
-        "query:genmod-fluid"
-      ],
-      "llm_score": 8.0,
-      "llm_evidence_en": "generative latent-diffusion framework for probabilistic precipitation forecasting, a fluid dynamics-related application",
-      "llm_evidence_cn": "用于概率降水预报的生成式潜扩散框架，属于流体动力学相关应用",
-      "llm_evidence": "用于概率降水预报的生成式潜扩散框架，属于流体动力学相关应用",
-      "canonical_evidence": "用于概率降水预报的生成式潜扩散框架，属于流体动力学相关应用",
-      "llm_tldr_en": "SimCast-S2S is a generative latent-diffusion framework for probabilistic subseasonal precipitation forecasting, using transfer learning from climate simulations to enable efficient uncertainty-aware predictions with lower computational cost.",
-      "llm_tldr_cn": "次季节到季节（S2S）降水预报因预测信号弱、不确定性高而极具挑战。本文提出SimCast-S2S，一个基于潜空间扩散的生成式预报框架，并利用气候模拟迁移学习提升效率。在降水预报任务上，该框架首次以扩散生成管线进行S2S概率预报，有效刻画了预报不确定性。结果表明其能以较低计算成本生成高质量概率预报，为数据驱动的季节尺度水文预报提供了新途径。",
-      "llm_tldr": "次季节到季节（S2S）降水预报因预测信号弱、不确定性高而极具挑战。本文提出SimCast-S2S，一个基于潜空间扩散的生成式预报框架，并利用气候模拟迁移学习提升效率。在降水预报任务上，该框架首次以扩散生成管线进行S2S概率预报，有效刻画了预报不确定性。结果表明其能以较低计算成本生成高质量概率预报，为数据驱动的季节尺度水文预报提供了新途径。",
-      "llm_tags": [
-        "query:genmod-fluid"
-      ],
-      "matched_query_tag": "query:genmod-fluid",
-      "matched_query_text": "generative models applied to fluid dynamics problems",
-      "matched_requirement_id": "req-1",
       "selection_source": "fresh_fetch"
     }
   ],
@@ -105,13 +70,13 @@
         "query:genmod-fluid"
       ],
       "llm_score": 7.0,
-      "llm_evidence_en": "Conditional posterior flow matching generative framework, directly applicable to generative modeling of physical fields",
-      "llm_evidence_cn": "条件后验流匹配生成框架，可直接应用于物理场的生成建模",
-      "llm_evidence": "条件后验流匹配生成框架，可直接应用于物理场的生成建模",
-      "canonical_evidence": "条件后验流匹配生成框架，可直接应用于物理场的生成建模",
-      "llm_tldr_en": "Introduces Drift Variation Autoencoder unifying generation and representation learning via conditional posterior flow matching, showing strong theoretical guarantees; flow matching is a core generative method for modeling distributions of physical fields.",
-      "llm_tldr_cn": "随机掩码等不完整观测导致重建目标不确定，论文以条件后验P(X|C)为统计对象，提出漂移变化自编码器，训练掩码编码器和条件流解码器，仅用干净预测流匹配损失即可同时完成生成与表征学习。理论上分解条件KL并推导风险界，证明该方法在生成和表征上兼优，为流体流场等物理分布的生成建模提供了有力工具。",
-      "llm_tldr": "随机掩码等不完整观测导致重建目标不确定，论文以条件后验P(X|C)为统计对象，提出漂移变化自编码器，训练掩码编码器和条件流解码器，仅用干净预测流匹配损失即可同时完成生成与表征学习。理论上分解条件KL并推导风险界，证明该方法在生成和表征上兼优，为流体流场等物理分布的生成建模提供了有力工具。",
+      "llm_evidence_en": "Conditional posterior flow matching for generation and representation learning; flow matching method not yet applied to fluids but provides transferable method for fluid flow generation",
+      "llm_evidence_cn": "条件后验流匹配生成与表征学习，流匹配方法尚未应用于流体，但为流体流生成提供可迁移方法",
+      "llm_evidence": "条件后验流匹配生成与表征学习，流匹配方法尚未应用于流体，但为流体流生成提供可迁移方法",
+      "canonical_evidence": "条件后验流匹配生成与表征学习，流匹配方法尚未应用于流体，但为流体流生成提供可迁移方法",
+      "llm_tldr_en": "Proposes Drift Variation autoencoder unifying generation and representation learning via conditional posterior flow matching; derives KL and risk decompositions; general conditional generation framework transferable to fluid flow matching.",
+      "llm_tldr_cn": "针对随机掩码等条件下确定性重构目标不完整的问题，提出以后验分布为统一统计对象的漂移变分自编码器。训练掩码编码器与条件流解码器，使用干净预测流匹配损失，并推导条件KL分解与流匹配风险正交分解。该方法为条件生成提供通用框架，可作为流体流匹配模拟的可迁移方法基础，但本文未涉及流体动力学应用。",
+      "llm_tldr": "针对随机掩码等条件下确定性重构目标不完整的问题，提出以后验分布为统一统计对象的漂移变分自编码器。训练掩码编码器与条件流解码器，使用干净预测流匹配损失，并推导条件KL分解与流匹配风险正交分解。该方法为条件生成提供通用框架，可作为流体流匹配模拟的可迁移方法基础，但本文未涉及流体动力学应用。",
       "llm_tags": [
         "query:genmod-fluid"
       ],
@@ -122,45 +87,40 @@
       "quick_tier": "7"
     },
     {
-      "id": "2608.26766v1",
+      "id": "2608.26594v1",
       "source": "arxiv",
-      "title": "MeshPriorDiT: Hierarchical Modeling for Action-Conditioned Cloth Dynamics",
-      "abstract": "Action-conditioned cloth dynamics prediction requires both locally plausible deformation and long-range coordination. Existing approaches largely follow two paradigms. Mesh-based GNNs capture local physical responses through material connectivity. However, their finite message-passing range limits coordination between topologically distant regions, while autoregressive rollouts tend to accumulate prediction errors. Transformer-based dynamics models capture long-range interactions through global attention, but often operate without explicit material connectivity and must learn local topological responses directly from data. We propose MeshPriorDiT, a hierarchical dynamics model that decomposes future cloth motion into a structured mesh prior and a generative residual. An action-conditioned mesh GNN first predicts multi-step vertex displacements, yielding a reference trajectory that respects material topology and grasp constraints. Conditioned on historical states, planned actions, and the mesh prior, a Residual DiT then uses conditional flow matching to jointly generate the residual motion not captured by the prior. The generated residual is further rescaled and decoded using material adjacency to coordinate corrections across neighboring vertices. We evaluate MeshPriorDiT on 15-step autoregressive rollouts across three cloth manipulation tasks. Averaged over the three tasks, MeshPriorDiT reduces average Global MSE by 43.42% relative to the GNN-Only baseline and by 75.03% relative to the DiT-DDPM baseline, while maintaining a favorable Edge-strain MSE comparable to that of GNN-Only.",
+      "title": "SimCast-S2S: An Efficient Generative Model for Subseasonal Precipitation Forecasting via Transfer Learning from Climate Simulations",
+      "abstract": "Subseasonal-to-seasonal (S2S) precipitation forecasting has substantial financial and societal impact, yet remains challenging because of weak predictive signals, high associated uncertainty, and the computational cost of operational systems, which constrains simulation fidelity. We introduce SimCast-S2S, a generative latent-diffusion framework for probabilistic S2S precipitation forecasting that addresses three major bottlenecks in data-driven prediction. First, because S2S prediction requires uncertainty quantification rather than only deterministic point forecasts, SimCast-S2S is the first data-driven system that uses a diffusion-based generative pipeline for S2S prediction, enabling effective sampling from the underlying conditional distribution. Second, since generating large probabilistic ensembles is computationally costly in physical space, SimCast-S2S instead operates in a compact latent space learned by variational autoencoders, enabling efficient large-ensemble generation. Third, diffusion models typically require large training datasets; SimCast-S2S overcomes this via transfer learning with low-rank adaptation (LoRA), pretraining on large ensembles of climate simulations before fine-tuning on limited reanalysis data. On reanalysis data, SimCast-S2S outperforms deep learning baselines, including convolutional neural networks and U-Net architectures. Notably, despite using only a subset of atmospheric input variables and no post-processing, bias correction, or calibration, SimCast-S2S remains competitive with, and in many cases outperforms, state-of-the-art operational systems such as the ECMWF-S2S baseline. These results indicate that latent generative modeling combined with simulation-to-reanalysis transfer learning offers an efficient and scalable path toward data-driven probabilistic S2S precipitation forecasting.",
       "authors": [
-        "Zihang Wang",
-        "Jianming Hu",
-        "Shang Su",
-        "Hao Huang",
-        "Mengkai Shi",
-        "Jun Gao",
-        "Shuo Feng"
+        "Hiep V. Dang",
+        "Antonios Mamalakis"
       ],
-      "primary_category": "cs.RO",
+      "primary_category": "cs.LG",
       "categories": [
-        "cs.RO"
+        "cs.LG"
       ],
-      "published": "2026-08-27T07:57:28+00:00",
-      "link": "https://arxiv.org/pdf/2608.26766v1",
+      "published": "2026-08-27T04:20:55+00:00",
+      "link": "https://arxiv.org/pdf/2608.26594v1",
       "tags": [
         "keyword:genmod-fluid",
         "query:genmod-fluid"
       ],
-      "llm_score": 6.0,
-      "llm_evidence_en": "Diffusion-based generative model for physical dynamics, transferable to fluid simulation",
-      "llm_evidence_cn": "基于扩散的生成式物理动力学模型，可迁移到流体模拟",
-      "llm_evidence": "基于扩散的生成式物理动力学模型，可迁移到流体模拟",
-      "canonical_evidence": "基于扩散的生成式物理动力学模型，可迁移到流体模拟",
-      "llm_tldr_en": "Presents MeshPriorDiT, a hierarchical diffusion-transformer model for action-conditioned cloth dynamics, demonstrating that generative diffusion approaches can predict complex deformable physical fields, a methodology transferable to fluid flow simulation.",
-      "llm_tldr_cn": "现有网格图神经网络难以捕捉远距离协调且误差累积，Transformer模型缺乏材料连通性。针对动作条件下的布料动力学预测，提出MeshPriorDiT层次化动力学模型，将未来布料运动分解为结构化网格先验与全局注意力生成。实验表明该方法在局部形变和长程协调上优于现有方法，为扩散生成模型用于物理场预测提供了可迁移的范式，对流体模拟具有借鉴意义。",
-      "llm_tldr": "现有网格图神经网络难以捕捉远距离协调且误差累积，Transformer模型缺乏材料连通性。针对动作条件下的布料动力学预测，提出MeshPriorDiT层次化动力学模型，将未来布料运动分解为结构化网格先验与全局注意力生成。实验表明该方法在局部形变和长程协调上优于现有方法，为扩散生成模型用于物理场预测提供了可迁移的范式，对流体模拟具有借鉴意义。",
+      "llm_score": 7.0,
+      "llm_evidence_en": "diffusion-based generative model for probabilistic precipitation forecasting in atmospheric fluid dynamics",
+      "llm_evidence_cn": "基于扩散的概率降水预报生成模型，属大气流体动力学应用",
+      "llm_evidence": "基于扩散的概率降水预报生成模型，属大气流体动力学应用",
+      "canonical_evidence": "基于扩散的概率降水预报生成模型，属大气流体动力学应用",
+      "llm_tldr_en": "SimCast-S2S introduces a diffusion-based generative framework for subseasonal-to-seasonal precipitation forecasting, enabling probabilistic predictions and efficient transfer learning from climate simulations to address weak signals and high uncertainty.",
+      "llm_tldr_cn": "次季节到季节尺度降水预报对经济和社会影响重大，但存在预测信号弱、不确定性高且高保真模拟成本高的问题。SimCast-S2S 构建了基于扩散模型的生成式概率预报框架，利用气候模拟迁移学习缓解数据瓶颈。实验证明该模型能产出可靠的概率预报并显著改善技巧评分，为大气流体动力学的生成式人工智能应用提供了新思路。",
+      "llm_tldr": "次季节到季节尺度降水预报对经济和社会影响重大，但存在预测信号弱、不确定性高且高保真模拟成本高的问题。SimCast-S2S 构建了基于扩散模型的生成式概率预报框架，利用气候模拟迁移学习缓解数据瓶颈。实验证明该模型能产出可靠的概率预报并显著改善技巧评分，为大气流体动力学的生成式人工智能应用提供了新思路。",
       "llm_tags": [
         "query:genmod-fluid"
       ],
       "matched_query_tag": "query:genmod-fluid",
-      "matched_query_text": "diffusion models for fluid flow simulation",
-      "matched_requirement_id": "req-2",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
       "selection_source": "fresh_fetch",
-      "quick_tier": "6"
+      "quick_tier": "7"
     }
   ]
 }
