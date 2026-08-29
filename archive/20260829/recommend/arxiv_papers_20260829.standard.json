@@ -1,0 +1,166 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-29T03:23:18.775583+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2608.27378v1",
+      "source": "arxiv",
+      "title": "How well can Diffusion Models learn Lagrangian-Tracer Statistics in Non-reciprocal Turbulence?",
+      "abstract": "Recent advances in generative artificial intelligence have led to significant potential applications in conventional fluid flows, including those that are turbulent. Can these methods be carried over to studies of novel types of turbulence, such as turbulence induced by non-reciprocity in binary-fluid systems? To answer this question, we analyze the statistics of Lagrangian-tracer particles in non-reciprocal binary-fluid turbulence, which has been studied recently in the non-reciprocal Cahn-Hilliard-Navier-Stokes (NRCHNS). We obtain our ground-truth data via extensive pseudospectral direct numerical simulations (DNSs) of the two-dimensionsl (2D) NRCHNS model. Our study yields a variety of intriguing results for probability distribution functions (PDFs) for particle accelerations and velocity-component PDFs; the latter turn out to be bimodal, completely unlike their 2D-fluid-turbulence counterparts. We relate this bimodality to lane-type structures in Eulerian-velocity components. Furthermore, we characterize Lagrangian multiscaling via Lagrangian velocity increments, their structure functions and flatnesses, and multiscaling exponent ratios, for the first time in non-reciprocal hydrodynamics. Finally, we use generative diffusion models to obtain synthetic Lagrangian trajectories for the NRCHNS system, assess how effectively they can emulate the Lagrangian statistics that we obtain from our DNSs, and highlight open challenges in the application of generative artificial intelligence in non-reciprocal systems.",
+      "authors": [
+        "Pratyush Jha",
+        "Biswajit Maji",
+        "Rahul Pandit"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn"
+      ],
+      "published": "2026-08-27T17:15:37+00:00",
+      "link": "https://arxiv.org/pdf/2608.27378v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Diffusion models applied to Lagrangian tracer statistics in non-reciprocal binary-fluid turbulence",
+      "llm_evidence_cn": "将扩散模型应用于非互易二元流体湍流中的拉格朗日示踪统计",
+      "llm_evidence": "将扩散模型应用于非互易二元流体湍流中的拉格朗日示踪统计",
+      "canonical_evidence": "将扩散模型应用于非互易二元流体湍流中的拉格朗日示踪统计",
+      "llm_tldr_en": "Investigates whether diffusion models can learn Lagrangian tracer statistics in non-reciprocal binary-fluid turbulence, using pseudospectral DNS as ground truth and revealing intriguing distribution results.",
+      "llm_tldr_cn": "该文研究生成式人工智能方法能否推广到非互易二元流体湍流（NRCHNS）这类新型湍流。作者通过高精度伪谱直接数值模拟（DNS）获取拉格朗日示踪粒子的真实统计作为基准，然后训练扩散模型学习其概率分布。实验结果评估了扩散模型对这类统计量的学习能力，并揭示了若干有趣的统计规律。这项工作为生成式模型在新型湍流研究中的应用提供了评估和思路。",
+      "llm_tldr": "该文研究生成式人工智能方法能否推广到非互易二元流体湍流（NRCHNS）这类新型湍流。作者通过高精度伪谱直接数值模拟（DNS）获取拉格朗日示踪粒子的真实统计作为基准，然后训练扩散模型学习其概率分布。实验结果评估了扩散模型对这类统计量的学习能力，并揭示了若干有趣的统计规律。这项工作为生成式模型在新型湍流研究中的应用提供了评估和思路。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2608.26594v1",
+      "source": "arxiv",
+      "title": "SimCast-S2S: An Efficient Generative Model for Subseasonal Precipitation Forecasting via Transfer Learning from Climate Simulations",
+      "abstract": "Subseasonal-to-seasonal (S2S) precipitation forecasting has substantial financial and societal impact, yet remains challenging because of weak predictive signals, high associated uncertainty, and the computational cost of operational systems, which constrains simulation fidelity. We introduce SimCast-S2S, a generative latent-diffusion framework for probabilistic S2S precipitation forecasting that addresses three major bottlenecks in data-driven prediction. First, because S2S prediction requires uncertainty quantification rather than only deterministic point forecasts, SimCast-S2S is the first data-driven system that uses a diffusion-based generative pipeline for S2S prediction, enabling effective sampling from the underlying conditional distribution. Second, since generating large probabilistic ensembles is computationally costly in physical space, SimCast-S2S instead operates in a compact latent space learned by variational autoencoders, enabling efficient large-ensemble generation. Third, diffusion models typically require large training datasets; SimCast-S2S overcomes this via transfer learning with low-rank adaptation (LoRA), pretraining on large ensembles of climate simulations before fine-tuning on limited reanalysis data. On reanalysis data, SimCast-S2S outperforms deep learning baselines, including convolutional neural networks and U-Net architectures. Notably, despite using only a subset of atmospheric input variables and no post-processing, bias correction, or calibration, SimCast-S2S remains competitive with, and in many cases outperforms, state-of-the-art operational systems such as the ECMWF-S2S baseline. These results indicate that latent generative modeling combined with simulation-to-reanalysis transfer learning offers an efficient and scalable path toward data-driven probabilistic S2S precipitation forecasting.",
+      "authors": [
+        "Hiep V. Dang",
+        "Antonios Mamalakis"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-08-27T04:20:55+00:00",
+      "link": "https://arxiv.org/pdf/2608.26594v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "generative latent-diffusion framework for probabilistic precipitation forecasting, a fluid dynamics-related application",
+      "llm_evidence_cn": "用于概率降水预报的生成式潜扩散框架，属于流体动力学相关应用",
+      "llm_evidence": "用于概率降水预报的生成式潜扩散框架，属于流体动力学相关应用",
+      "canonical_evidence": "用于概率降水预报的生成式潜扩散框架，属于流体动力学相关应用",
+      "llm_tldr_en": "SimCast-S2S is a generative latent-diffusion framework for probabilistic subseasonal precipitation forecasting, using transfer learning from climate simulations to enable efficient uncertainty-aware predictions with lower computational cost.",
+      "llm_tldr_cn": "次季节到季节（S2S）降水预报因预测信号弱、不确定性高而极具挑战。本文提出SimCast-S2S，一个基于潜空间扩散的生成式预报框架，并利用气候模拟迁移学习提升效率。在降水预报任务上，该框架首次以扩散生成管线进行S2S概率预报，有效刻画了预报不确定性。结果表明其能以较低计算成本生成高质量概率预报，为数据驱动的季节尺度水文预报提供了新途径。",
+      "llm_tldr": "次季节到季节（S2S）降水预报因预测信号弱、不确定性高而极具挑战。本文提出SimCast-S2S，一个基于潜空间扩散的生成式预报框架，并利用气候模拟迁移学习提升效率。在降水预报任务上，该框架首次以扩散生成管线进行S2S概率预报，有效刻画了预报不确定性。结果表明其能以较低计算成本生成高质量概率预报，为数据驱动的季节尺度水文预报提供了新途径。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.25138v1",
+      "source": "arxiv",
+      "title": "Drift Variation Autoencoder: Unifying Generation and Representation Learning through Conditional Posterior Flow Matching",
+      "abstract": "Stochastic masking, cropping, or modality removal makes deterministic reconstruction an incomplete target: one observation can admit many clean completions. This work takes the corresponding posterior $P(X\\mid C)$ as the common statistical object for conditional generation and generatively sufficient representation learning. Drift Variation autoencoder trains a masked encoder $Z=E(C)$ and a conditional flow decoder with one clean-prediction Flow Matching loss. The analysis first decomposes the ideal conditional KL into generator approximation and the representation deficiency $I(X;C\\mid Z)$. It then derives orthogonal risk decompositions for conditional Flow Matching. For an affine Gaussian path, the clean-prediction representation gap is zero if and only if $P(X\\mid Z)=P(X\\mid C)$. Thus the encoder-dependent excess clean-prediction risk induced by Flow Matching and the profiled ideal conditional KL have the same posterior-sufficient zero set, without being numerically equal objectives. An exact conditional field with a zero-noise endpoint then generates $P(X\\mid Z)$ and hence $P(X\\mid C)$ at a joint ideal optimum. The result extends to continuous multimodal product spaces when the complete modality tuple remains the Flow target for every observation mask. On CrossGeom-4, an 18-run controlled benchmark, observable factors have linear-probe $R^2$ of $0.9990$-$0.9992$, shuffling the joint model's encoder condition increases conditional error by $13.5\\times$-$15.7\\times$, and joint target attention reduces disagreement on an unobserved factor shared by two outputs by $90.1$-$92.8\\%$ relative to independent target decoders. Visible modalities are also generated and reconstructed, directly validating the full-tuple objective. Unconditional mode balance remains imperfect, delimiting the empirical claim to a controlled multimodal proof of concept.",
+      "authors": [
+        "Jiarui Cao"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-08-25T20:38:50+00:00",
+      "link": "https://arxiv.org/pdf/2608.25138v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Conditional posterior flow matching generative framework, directly applicable to generative modeling of physical fields",
+      "llm_evidence_cn": "条件后验流匹配生成框架，可直接应用于物理场的生成建模",
+      "llm_evidence": "条件后验流匹配生成框架，可直接应用于物理场的生成建模",
+      "canonical_evidence": "条件后验流匹配生成框架，可直接应用于物理场的生成建模",
+      "llm_tldr_en": "Introduces Drift Variation Autoencoder unifying generation and representation learning via conditional posterior flow matching, showing strong theoretical guarantees; flow matching is a core generative method for modeling distributions of physical fields.",
+      "llm_tldr_cn": "随机掩码等不完整观测导致重建目标不确定，论文以条件后验P(X|C)为统计对象，提出漂移变化自编码器，训练掩码编码器和条件流解码器，仅用干净预测流匹配损失即可同时完成生成与表征学习。理论上分解条件KL并推导风险界，证明该方法在生成和表征上兼优，为流体流场等物理分布的生成建模提供了有力工具。",
+      "llm_tldr": "随机掩码等不完整观测导致重建目标不确定，论文以条件后验P(X|C)为统计对象，提出漂移变化自编码器，训练掩码编码器和条件流解码器，仅用干净预测流匹配损失即可同时完成生成与表征学习。理论上分解条件KL并推导风险界，证明该方法在生成和表征上兼优，为流体流场等物理分布的生成建模提供了有力工具。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.26766v1",
+      "source": "arxiv",
+      "title": "MeshPriorDiT: Hierarchical Modeling for Action-Conditioned Cloth Dynamics",
+      "abstract": "Action-conditioned cloth dynamics prediction requires both locally plausible deformation and long-range coordination. Existing approaches largely follow two paradigms. Mesh-based GNNs capture local physical responses through material connectivity. However, their finite message-passing range limits coordination between topologically distant regions, while autoregressive rollouts tend to accumulate prediction errors. Transformer-based dynamics models capture long-range interactions through global attention, but often operate without explicit material connectivity and must learn local topological responses directly from data. We propose MeshPriorDiT, a hierarchical dynamics model that decomposes future cloth motion into a structured mesh prior and a generative residual. An action-conditioned mesh GNN first predicts multi-step vertex displacements, yielding a reference trajectory that respects material topology and grasp constraints. Conditioned on historical states, planned actions, and the mesh prior, a Residual DiT then uses conditional flow matching to jointly generate the residual motion not captured by the prior. The generated residual is further rescaled and decoded using material adjacency to coordinate corrections across neighboring vertices. We evaluate MeshPriorDiT on 15-step autoregressive rollouts across three cloth manipulation tasks. Averaged over the three tasks, MeshPriorDiT reduces average Global MSE by 43.42% relative to the GNN-Only baseline and by 75.03% relative to the DiT-DDPM baseline, while maintaining a favorable Edge-strain MSE comparable to that of GNN-Only.",
+      "authors": [
+        "Zihang Wang",
+        "Jianming Hu",
+        "Shang Su",
+        "Hao Huang",
+        "Mengkai Shi",
+        "Jun Gao",
+        "Shuo Feng"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-08-27T07:57:28+00:00",
+      "link": "https://arxiv.org/pdf/2608.26766v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Diffusion-based generative model for physical dynamics, transferable to fluid simulation",
+      "llm_evidence_cn": "基于扩散的生成式物理动力学模型，可迁移到流体模拟",
+      "llm_evidence": "基于扩散的生成式物理动力学模型，可迁移到流体模拟",
+      "canonical_evidence": "基于扩散的生成式物理动力学模型，可迁移到流体模拟",
+      "llm_tldr_en": "Presents MeshPriorDiT, a hierarchical diffusion-transformer model for action-conditioned cloth dynamics, demonstrating that generative diffusion approaches can predict complex deformable physical fields, a methodology transferable to fluid flow simulation.",
+      "llm_tldr_cn": "现有网格图神经网络难以捕捉远距离协调且误差累积，Transformer模型缺乏材料连通性。针对动作条件下的布料动力学预测，提出MeshPriorDiT层次化动力学模型，将未来布料运动分解为结构化网格先验与全局注意力生成。实验表明该方法在局部形变和长程协调上优于现有方法，为扩散生成模型用于物理场预测提供了可迁移的范式，对流体模拟具有借鉴意义。",
+      "llm_tldr": "现有网格图神经网络难以捕捉远距离协调且误差累积，Transformer模型缺乏材料连通性。针对动作条件下的布料动力学预测，提出MeshPriorDiT层次化动力学模型，将未来布料运动分解为结构化网格先验与全局注意力生成。实验表明该方法在局部形变和长程协调上优于现有方法，为扩散生成模型用于物理场预测提供了可迁移的范式，对流体模拟具有借鉴意义。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

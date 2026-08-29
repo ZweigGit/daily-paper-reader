@@ -6,35 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-28
-- 运行时间：2026-08-28 03:47:37 UTC
+- 最新运行日期：2026-08-29
+- 运行时间：2026-08-29 03:28:06 UTC
 - 运行状态：成功
-- 本次总论文数：5
-- 精读区：3
+- 本次总论文数：4
+- 精读区：2
 - 速读区：2
 
 ### 今日简报（AI）
-今日精读聚焦物理信息生成模型，重点评估Flow Matching与扩散模型在稀薄流代理建模中的效果。最值得关注的是两篇9分工作：物理引导的神经场自动解码器实现参数化流场高效生成，以及自增强扩散引导提升物理信息生成的精度。下一步可结合速读中的稀疏传感回溯生成与无教师蒸馏策略，探索轻量化物理场生成方向。
-- 详情：[/202608/28/README](/202608/28/README)
+今日共读4篇论文，精读2篇、速读2篇，聚焦生成模型在物理模拟与气候预测中的应用。最值得关注的是《How well can Diffusion Models learn Lagrangian-Tracer Statistics in Non-reciprocal Turbulence?》（9.0/10），揭示扩散模型学习湍流统计的能力，以及《SimCast-S2S》（8.0/10）用迁移学习提升次季节降水预测。建议优先精读这两篇高分论文，可深入理解生成模型在复杂物理场景中的效用与局限。
+- 详情：[/202608/29/README](/202608/29/README)
 
 ### 精读区论文标签
-1. [Physics-Guided Generative Surrogates for Parametric Rarefied Flows with Neural-Field Auto-Decoders: A Pipeline-Level Study of Flow Matching and Diffusion](/202608/28/2608.25454v1-physics-guided-generative-surrogates-for-parametric-rarefied-flows-with-neural-field-auto-decoders-a-pipeline-level-study-of-flow-matching-and-diffusion)  
+1. [How well can Diffusion Models learn Lagrangian-Tracer Statistics in Non-reciprocal Turbulence?](/202608/29/2608.27378v1-how-well-can-diffusion-models-learn-lagrangian-tracer-statistics-in-non-reciprocal-turbulence)  
    标签：评分：9.0/10、query:genmod-fluid
-   evidence：基于流匹配与扩散的稀薄流条件潜在生成框架
-2. [Self-Augmented Diffusion Guidance for Physics-Informed Generation](/202608/28/2608.26748v1-self-augmented-diffusion-guidance-for-physics-informed-generation)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：面向流体动力学时空信号生成的物理信息扩散引导方法
-3. [Climate Physics Dynamic Matching](/202608/28/2608.26907v1-climate-physics-dynamic-matching)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：结合物理先验的生成式流匹配与扩散框架用于天气预报
+   evidence：将扩散模型应用于非互易二元流体湍流中的拉格朗日示踪统计
+2. [SimCast-S2S: An Efficient Generative Model for Subseasonal Precipitation Forecasting via Transfer Learning from Climate Simulations](/202608/29/2608.26594v1-simcast-s2s-an-efficient-generative-model-for-subseasonal-precipitation-forecasting-via-transfer-learning-from-climate-simulations)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：用于概率降水预报的生成式潜扩散框架，属于流体动力学相关应用
 
 ### 速读区论文标签
-1. [TRACE: Retrospective Streaming Generation of Physical Fields under Sparse Structured Sensing](/202608/28/2608.26219v1-trace-retrospective-streaming-generation-of-physical-fields-under-sparse-structured-sensing)  
+1. [Drift Variation Autoencoder: Unifying Generation and Representation Learning through Conditional Posterior Flow Matching](/202608/29/2608.25138v1-drift-variation-autoencoder-unifying-generation-and-representation-learning-through-conditional-posterior-flow-matching)  
    标签：评分：7.0/10、query:genmod-fluid
-   evidence：利用生成模型从稀疏测量重建物理场，适用于流体场重建
-2. [Self-OPD: On-Policy Distillation for Flow Matching Models without Teacher](/202608/28/2608.26872v1-self-opd-on-policy-distillation-for-flow-matching-models-without-teacher)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：面向流匹配模型的无教师蒸馏方法，可迁移至高效流体生成
+   evidence：条件后验流匹配生成框架，可直接应用于物理场的生成建模
+2. [MeshPriorDiT: Hierarchical Modeling for Action-Conditioned Cloth Dynamics](/202608/29/2608.26766v1-meshpriordit-hierarchical-modeling-for-action-conditioned-cloth-dynamics)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：基于扩散的生成式物理动力学模型，可迁移到流体模拟
 
 
 <div class="dpr-home-promo-card">

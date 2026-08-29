@@ -1,0 +1,69 @@
+{
+  "label": "2026-08-29",
+  "date": "2026-08-29",
+  "generated_at": "2026-08-29T03:28:11",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202608/29/2608.27378v1-how-well-can-diffusion-models-learn-lagrangian-tracer-statistics-in-non-reciprocal-turbulence",
+      "section": "deep",
+      "title_en": "How well can Diffusion Models learn Lagrangian-Tracer Statistics in Non-reciprocal Turbulence?",
+      "authors": "Pratyush Jha, Biswajit Maji, Rahul Pandit",
+      "date": "2026-08-27",
+      "pdf": "https://arxiv.org/pdf/2608.27378v1",
+      "score": "9.0",
+      "evidence": "将扩散模型应用于非互易二元流体湍流中的拉格朗日示踪统计",
+      "tldr": "生成式AI在常规湍流中已有潜力，但在非互易湍流中表现未知。本文通过二维非互易Cahn-Hilliard-Navier-Stokes模型的谱方法直接数值模拟，获得拉格朗日示踪粒子统计的基准数据，发现速度分量概率密度函数呈双峰结构，源于欧拉速度的带状结构。首次表征了非互易流体动力学的拉格朗日多尺度标度律，并评估扩散模型生成合成轨迹的能力，揭示生成式AI在此类系统中的挑战。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Recent advances in generative artificial intelligence have led to significant potential applications in conventional fluid flows, including those that are turbulent. Can these methods be carried over to studies of novel types of turbulence, such as turbulence induced by non-reciprocity in binary-fluid systems? To answer this question, we analyze the statistics of Lagrangian-tracer particles in non-reciprocal binary-fluid turbulence, which has been studied recently in the non-reciprocal Cahn-Hilliard-Navier-Stokes (NRCHNS). We obtain our ground-truth data via extensive pseudospectral direct numerical simulations (DNSs) of the two-dimensionsl (2D) NRCHNS model. Our study yields a variety of intriguing results for probability distribution functions (PDFs) for particle accelerations and velocity-component PDFs; the latter turn out to be bimodal, completely unlike their 2D-fluid-turbulence counterparts. We relate this bimodality to lane-type structures in Eulerian-velocity components. Furthermore, we characterize Lagrangian multiscaling via Lagrangian velocity increments, their structure functions and flatnesses, and multiscaling exponent ratios, for the first time in non-reciprocal hydrodynamics. Finally, we use generative diffusion models to obtain synthetic Lagrangian trajectories for the NRCHNS system, assess how effectively they can emulate the Lagrangian statistics that we obtain from our DNSs, and highlight open challenges in the application of generative artificial intelligence in non-reciprocal systems.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/29/2608.26594v1-simcast-s2s-an-efficient-generative-model-for-subseasonal-precipitation-forecasting-via-transfer-learning-from-climate-simulations",
+      "section": "deep",
+      "title_en": "SimCast-S2S: An Efficient Generative Model for Subseasonal Precipitation Forecasting via Transfer Learning from Climate Simulations",
+      "authors": "Hiep V. Dang, Antonios Mamalakis",
+      "date": "2026-08-27",
+      "pdf": "https://arxiv.org/pdf/2608.26594v1",
+      "score": "8.0",
+      "evidence": "用于概率降水预报的生成式潜扩散框架，属于流体动力学相关应用",
+      "tldr": "次季节降水预报对金融和社会影响重大，但信号弱、不确定性高且计算成本昂贵。现有数据驱动方法多为确定性点预报，难以量化不确定性。SimCast-S2S采用潜扩散生成框架，在变分自编码器压缩的潜空间中高效生成大集合样本，并通过LoRA迁移学习从气候模拟预训练后微调于再分析数据。在测试中，它超越CNN与U-Net等深度基线，且无需后处理就能与ECMWF-S2S业务系统竞争。这项工作展示了生成式潜建模与模拟-再分析迁移学习相结合的高效可扩展路径。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Subseasonal-to-seasonal (S2S) precipitation forecasting has substantial financial and societal impact, yet remains challenging because of weak predictive signals, high associated uncertainty, and the computational cost of operational systems, which constrains simulation fidelity. We introduce SimCast-S2S, a generative latent-diffusion framework for probabilistic S2S precipitation forecasting that addresses three major bottlenecks in data-driven prediction. First, because S2S prediction requires uncertainty quantification rather than only deterministic point forecasts, SimCast-S2S is the first data-driven system that uses a diffusion-based generative pipeline for S2S prediction, enabling effective sampling from the underlying conditional distribution. Second, since generating large probabilistic ensembles is computationally costly in physical space, SimCast-S2S instead operates in a compact latent space learned by variational autoencoders, enabling efficient large-ensemble generation. Third, diffusion models typically require large training datasets; SimCast-S2S overcomes this via transfer learning with low-rank adaptation (LoRA), pretraining on large ensembles of climate simulations before fine-tuning on limited reanalysis data. On reanalysis data, SimCast-S2S outperforms deep learning baselines, including convolutional neural networks and U-Net architectures. Notably, despite using only a subset of atmospheric input variables and no post-processing, bias correction, or calibration, SimCast-S2S remains competitive with, and in many cases outperforms, state-of-the-art operational systems such as the ECMWF-S2S baseline. These results indicate that latent generative modeling combined with simulation-to-reanalysis transfer learning offers an efficient and scalable path toward data-driven probabilistic S2S precipitation forecasting.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/29/2608.25138v1-drift-variation-autoencoder-unifying-generation-and-representation-learning-through-conditional-posterior-flow-matching",
+      "section": "quick",
+      "title_en": "Drift Variation Autoencoder: Unifying Generation and Representation Learning through Conditional Posterior Flow Matching",
+      "authors": "Jiarui Cao",
+      "date": "2026-08-25",
+      "pdf": "https://arxiv.org/pdf/2608.25138v1",
+      "score": "7.0",
+      "evidence": "条件后验流匹配生成框架，可直接应用于物理场的生成建模",
+      "tldr": "随机掩码、裁剪或模态缺失使确定性重建目标不完整，同一观测可有多种合理补全。本文提出Drift Variation自编码器，将条件后验P(X|C)作为生成与表征学习的统一对象，训练掩码编码器和条件流解码器，使用干净预测的Flow Matching损失。理论证明干净预测表示间隙为零当且仅当P(X|Z)=P(X|C)，理想条件KL与流匹配风险的零集一致。在CrossGeom-4基准上，可观测因子线性探针R²达0.9990-0.9992，混淆编码器使条件误差增大13.5-15.7倍，联合目标注意力降低未观测因子分歧90%以上。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Stochastic masking, cropping, or modality removal makes deterministic reconstruction an incomplete target: one observation can admit many clean completions. This work takes the corresponding posterior $P(X\\mid C)$ as the common statistical object for conditional generation and generatively sufficient representation learning. Drift Variation autoencoder trains a masked encoder $Z=E(C)$ and a conditional flow decoder with one clean-prediction Flow Matching loss. The analysis first decomposes the ideal conditional KL into generator approximation and the representation deficiency $I(X;C\\mid Z)$. It then derives orthogonal risk decompositions for conditional Flow Matching. For an affine Gaussian path, the clean-prediction representation gap is zero if and only if $P(X\\mid Z)=P(X\\mid C)$. Thus the encoder-dependent excess clean-prediction risk induced by Flow Matching and the profiled ideal conditional KL have the same posterior-sufficient zero set, without being numerically equal objectives. An exact conditional field with a zero-noise endpoint then generates $P(X\\mid Z)$ and hence $P(X\\mid C)$ at a joint ideal optimum. The result extends to continuous multimodal product spaces when the complete modality tuple remains the Flow target for every observation mask. On CrossGeom-4, an 18-run controlled benchmark, observable factors have linear-probe $R^2$ of $0.9990$-$0.9992$, shuffling the joint model's encoder condition increases conditional error by $13.5\\times$-$15.7\\times$, and joint target attention reduces disagreement on an unobserved factor shared by two outputs by $90.1$-$92.8\\%$ relative to independent target decoders. Visible modalities are also generated and reconstructed, directly validating the full-tuple objective. Unconditional mode balance remains imperfect, delimiting the empirical claim to a controlled multimodal proof of concept.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/29/2608.26766v1-meshpriordit-hierarchical-modeling-for-action-conditioned-cloth-dynamics",
+      "section": "quick",
+      "title_en": "MeshPriorDiT: Hierarchical Modeling for Action-Conditioned Cloth Dynamics",
+      "authors": "Zihang Wang, Jianming Hu, Shang Su, Hao Huang, Mengkai Shi, Jun Gao, Shuo Feng",
+      "date": "2026-08-27",
+      "pdf": "https://arxiv.org/pdf/2608.26766v1",
+      "score": "6.0",
+      "evidence": "基于扩散的生成式物理动力学模型，可迁移到流体模拟",
+      "tldr": "布料动力学预测需兼顾局部形变与长程协调。现有网格GNN受消息传递范围限制难以协调远距离区域且滚动误差累积；Transformer全局注意力缺乏显式拓扑先验。为此提出MeshPriorDiT分层模型：先由动作条件网格GNN生成多步网格先验轨迹，再由Residual DiT以条件流匹配生成残差，并用邻接矩阵协调修正。在三个布料操作任务15步自回归中，平均全局MSE较GNN-Only降43.42%，较DiT-DDPM降75.03%，同时保持应变误差竞争力。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Action-conditioned cloth dynamics prediction requires both locally plausible deformation and long-range coordination. Existing approaches largely follow two paradigms. Mesh-based GNNs capture local physical responses through material connectivity. However, their finite message-passing range limits coordination between topologically distant regions, while autoregressive rollouts tend to accumulate prediction errors. Transformer-based dynamics models capture long-range interactions through global attention, but often operate without explicit material connectivity and must learn local topological responses directly from data. We propose MeshPriorDiT, a hierarchical dynamics model that decomposes future cloth motion into a structured mesh prior and a generative residual. An action-conditioned mesh GNN first predicts multi-step vertex displacements, yielding a reference trajectory that respects material topology and grasp constraints. Conditioned on historical states, planned actions, and the mesh prior, a Residual DiT then uses conditional flow matching to jointly generate the residual motion not captured by the prior. The generated residual is further rescaled and decoded using material adjacency to coordinate corrections across neighboring vertices. We evaluate MeshPriorDiT on 15-step autoregressive rollouts across three cloth manipulation tasks. Averaged over the three tasks, MeshPriorDiT reduces average Global MSE by 43.42% relative to the GNN-Only baseline and by 75.03% relative to the DiT-DDPM baseline, while maintaining a favorable Edge-strain MSE comparable to that of GNN-Only.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
