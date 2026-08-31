@@ -1,0 +1,1404 @@
+Title: Linear and Nonlinear Latent-Space Reduced-Order Models for the Rayleigh–Taylor Instability
+
+URL Source: https://arxiv.org/pdf/2608.26783v1
+
+Published Time: Fri, 28 Aug 2026 00:49:26 GMT
+
+Number of Pages: 36
+
+Markdown Content:
+# Linear and Nonlinear Latent-Space Reduced-Order Models for the Rayleigh–Taylor Instability 
+
+# Téo Granger 1,2, Balu Nadiga 3, Benoît-Joseph Gréa 1,2∗
+
+# ,Antoine Briard 1,2, Paul Creusy 1,2
+
+> 1
+
+CEA, DAM, DIF, F-91297 Arpajon, France 
+
+> 2
+
+Université Paris-Saclay, CEA, LMCE, F-91680 Bruyères-le-Châtel, France 
+
+> 3
+
+Los Alamos National Laboratory, Los Alamos, NM, USA 
+
+# August 28, 2026 
+
+Abstract 
+
+We use a large database of direct numerical simulations to investigate the transition of the Rayleigh–Taylor instability to turbulence and its evolution toward a late-time self-similar regime. In addition to tracking the growth of the mixing layer through the mean heavy-fluid concentration profile, we analyze one-dimensional profiles of turbulent kinetic energy and dissipation, two key quantities in classical turbulent-mixing models. We con-sider two reduced-order modeling strategies that differ in where nonlinearity is introduced: either in the construction of the latent space or in the description of its temporal evolution. The first method uses a linear encoder–decoder obtained using Proper Orthogonal Decom-position (POD), with nonlinear reduced dynamics learned by a physics-informed neural network (PINN). The second uses a nonlinear encoder–decoder learned by an autoencoder, while constraining the latent dynamics to remain linear and satisfy physical constraints. Both approaches achieve satisfactory performance in reconstructing, interpolating, and extrapolating the dynamics of the Rayleigh–Taylor instability. 
+
+Keywords: Rayleigh–Taylor instability, Turbulence, Reduced-order modeling, POD, PINNs, LaSDI, Autoencoder. 
+
+# 1 Introduction 
+
+The Rayleigh–Taylor instability (RTI) [Rayleigh, 1882, Taylor, 1950], which develops when a heavier fluid lies above a lighter fluid in a gravitational field, is an efficient mechanism for converting potential energy into turbulent mixing [Zhou, 2017a,b]. In the context of inertial confinement fusion (ICF), this instability develops at the interface between the ablator and the fuel, leading to mixing that causes additional cooling and weakens fusion reactions [Lindl, 1995, Betti and Hurricane, 2016, Remington et al., 2019, Zhou et al., 2025]. 
+
+> ∗
+
+Corresponding author: benoit-joseph.grea@cea.fr 
+
+1arXiv:2608.26783v1 [physics.flu-dyn] 27 Aug 2026 Direct numerical simulations of turbulent mixing flows remain scarce and costly in many applications, including the Rayleigh–Taylor instability, despite ongoing advances in computa-tional resources. This forces the engineering community, and in particular researchers devel-oping predictive models for ICF, to rely on more computationally efficient approaches, such as Reynolds-Averaged Navier–Stokes (RANS) models. Developing a consistent RANS model for turbulent flows driven by RTI remains a formidable task, not only because the large scales of RTI are highly anisotropic, but also because the flow is strongly unsteady, transitioning from a laminar to a turbulent regime while retaining some memory of the initial conditions. These features challenge classical RANS assumptions, such as spectral equilibrium within the turbulent cascade or the Boussinesq approximation for the Reynolds stress tensor. This motivates the development of surrogate and reduced-order mod-els (ROMs) capable of extracting the essential dynamics from high-fidelity simulations while remaining computationally affordable. Beyond their use as computational accelerators, reduced-order and surrogate models have become essential tools for the analysis and modeling of complex fluid systems. Their low computational cost enables large-scale parameter explorations, uncertainty quantification, flow control, and optimization studies that would be prohibitively expensive with high-fidelity simu-lations alone [Noack et al., 2011]. In turbulence modeling, surrogates also provide a convenient framework for data assimilation, model calibration, and the development of improved closure models by disentangling parametric and structural modeling errors [Creusy et al., 2026]. Such applications have motivated the development of reduced representations capable of accurately reproducing the essential dynamics of high-dimensional systems while remaining computation-ally tractable. Many nonlinear dynamical systems encountered in fluid mechanics involve an extremely large number of degrees of freedom. Nevertheless, their evolution is often effectively confined to a low-dimensional manifold. Reduced-order models exploit this property by seeking compact representations that retain the essential features of the underlying high-dimensional dynamics while drastically reducing the computational complexity. The construction of an efficient ROM therefore relies on two fundamental ingredients: the identification of a suitable low-dimensional representation of the flow structures and the development of an accurate model for the dynamics evolving on this reduced manifold. Modal decomposition techniques provide a natural framework to address the first of these challenges. By separating spatial and temporal dependencies, they represent the flow field as a superposition of modes weighted by time-dependent amplitudes. Such approaches have become central tools in fluid mechanics for identifying coherent structures, analyzing nonlinear dynamics, and constructing low-dimensional models [Taira et al., 2017]. Among them, the Proper Orthogonal Decomposition (POD), introduced through the method of snapshots by Sirovich [Sirovich, 1987] and extensively reviewed by Berkooz et al. [Berkooz et al., 1993], remains one of the most widely used reduction techniques owing to its optimality in representing a dataset with a low-dimensional linear basis. The second challenge consists in modeling the evolution of the reduced variables. A classical strategy relies on Galerkin projection of the governing equations onto the POD basis, yielding a dynamical system for the modal amplitudes. However, the accuracy of such models relies on the adequacy of the reduced basis to describe the underlying dynamics. Additional modeling strategies may therefore be required, as illustrated by Noack et al. [2003], who introduced a shift mode to improve the representation of transient dynamics in the periodic cylinder wake by accounting for the displacement between the steady solution and the averaged flow. Despite their success, classical POD-Galerkin models suffer from several well-known limita-tions. First, the POD basis is constructed from a specific ensemble of snapshots and therefore 2defines a reduced space associated with a particular dynamical regime and set of physical pa-rameters. As a consequence, the POD eigenspace itself may change when control parameters are varied, reducing the predictive capability of the resulting ROM. This lack of robustness away from the reference configuration was already emphasized by [Deane et al., 1991]. Such a dependence on the training conditions becomes particularly restrictive for parametric studies, where the objective is to interpolate or extrapolate the system dynamics over a broad range of physical parameters. Second, the assumption that a fixed set of modes can efficiently represent the flow becomes questionable for transport-dominated phenomena [Rowley and Marsden, 2000]. Because the spatial modes are fixed, advected or moving coherent structures often require a large number of modes to be represented accurately, thereby reducing the efficiency of linear modal decom-positions. This issue has motivated the development of alternative nonlinear representations and machine-learning-based mappings capable of representing transport-dominated flows more efficiently [Kim et al., 2020]. Third, the truncation of the governing equations introduces unresolved interactions between retained and discarded modes, raising important closure and stability issues. The long-time behavior of truncated POD-Galerkin models remains a challenging issue, as emphasized in [Ma and Karniadakis, 2002]. More generally, accurately reproducing the energy transfer between resolved and unresolved scales remains one of the major challenges of projection-based ROMs and requires suitable closure strategies [Callaham et al., 2023]. Recent advances in machine learning have opened new perspectives for overcoming these lim-itations by learning reduced representations and reduced dynamics directly from data [Brunton et al., 2020]. Deep-learning-based approaches have been proposed to improve closure modeling and long-time predictive capabilities of reduced-order models. For example, the Complemented Deep Reduced-Order Model (CD-ROM) combines projection-based techniques with neural net-works to represent unresolved dynamics and improve predictive robustness [Menier et al., 2023]. Similarly, physics-informed neural networks [Raissi et al., 2019] have recently been employed to construct surrogate models that enforce governing equations and physical constraints while maintaining low computational costs [Thévenin et al., 2025b, Volk et al., 2025]. Machine learning has also enabled the development of nonlinear latent representations through autoencoders. From a theoretical perspective, linear autoencoders are closely related to POD and recover the same optimal subspace under appropriate assumptions [Bourlard and Kamp, 1988, Bourlard and Kabil, 2022, Bousquet et al., 2026]. More generally, autoencoders may be interpreted as nonlinear extensions of POD in which the data are projected onto a non-linear manifold rather than onto a linear subspace [Bousquet et al., 2025]. Such embeddings provide an accurate framework for representing strongly nonlinear dynamics [Champion et al., 2019, Messenger et al., 2025]. Combined with latent-space dynamics identification techniques (LasDI), they further enable the construction of parametric surrogate models by learning the evolution equations directly in the nonlinear latent space [Bonneville et al., 2024, Farenga et al., 2025]. The combination of encoders with dynamical systems identification has led to a new gen-eration of reduced-order models. Neural networks have been employed to correct truncation errors within POD subspaces while simultaneously learning additional latent dynamics [Lepage et al., 2025]. More generally, the Koopman operator framework [Koopman, 1931, Koopman and v. Neumann, 1932], provides a powerful perspective by seeking approximately linear representa-tions of nonlinear dynamics in appropriately chosen observables. Recent works have combined autoencoders and Koopman theory to identify finite-dimensional latent spaces in which nonlin-ear systems evolve approximately linearly [Lusch et al., 2018]. Similarly, [Champion et al., 2019] proposed to identify governing ordinary differential equations directly in the latent space of an autoencoder, although the resulting dynamics are not parameterized with respect to physical 3control parameters. Finally, recent developments in scientific machine learning increasingly blur the distinction between purely physics-based and purely data-driven approaches [Vinuesa et al., 2026]. Hybrid strategies that combine physical knowledge with data-driven representations offer promising avenues to construct compact, interpretable, and robust surrogates for complex dynamical sys-tems. The present work uses this hybrid approach. We compare two reduced-order modeling strategies for the evolution of the one-dimensional profiles of a Rayleigh–Taylor flow that tran-sitions to turbulence. Both strategies share the same overall pipeline: an encoding-decoding step that reduces the profiles to a low-dimensional representation, followed by a model of the temporal evolution of that representation. They differ in which of the two stages is allowed to be nonlinear. The first strategy encodes and decodes the profiles linearly, through a Proper Orthogonal Decomposition basis. It then learns nonlinear reduced dynamics with a physics-informed neural network (PINN). The second strategy reverses this choice. The profiles are encoded and decoded nonlinearly, by an autoencoder. The reduced-order dynamics are instead constrained to remain linear, and to satisfy physics-informed constraints. Modeling dynamics in a reduced-order latent space has been standard practice for many decades. This approach is now commonly referred to as Latent Space Dynamics Identification (LaSDI), [Bonneville et al., 2024, Farenga et al., 2025]. Under this terminology, both strategies we consider can be seen as particular realizations of LaSDI. 
+
+# 2 DNS dataset for the Rayleigh-Taylor instability 
+
+In this section, we describe the theoretical framework underlying the RT database, define the key quantities that we aim to reproduce, and provide insight into the physical phenomena observed in the simulations. The dataset comprises 484 direct numerical simulations spanning a broad range of initial interface perturbations, as introduced by Thévenin et al. [2025b], Thévenin and Gréa [2025]. The simulations were performed on a grid of 1024 2 ×2048 points using the in-house pseudo-spectral code STRATOSPEC [Gréa and Briard, 2019, Briard et al., 2020, 2025a,b]. 
+
+# 2.1 Governing equations and nondimensionalization 
+
+The present study is conducted within the Boussinesq approximation, which is valid for a small Atwood number A ≪ 1, where A quantifies the relative density contrast between the two fluids. The flow is described by the velocity field U (x, t ) = ( Ux, U y, U z )T and the heavy-fluid concentration field C(x, t ). Under these assumptions, their evolution is governed by the incom-pressible Navier–Stokes and advection–diffusion equations: 
+
+∂iUi = 0 , (1a) 
+
+∂tUi + Uj ∂j Ui = −∂iP − 2Agδ iz C + ν ∂ jj Ui, (1b) 
+
+∂tC + Ui∂iC = κ ∂ jj C, (1c) where repeated indices are summed over and δiz denotes the Kronecker delta. Equation (1a) enforces incompressibility; Eq. (1b) expresses momentum conservation; and Eq. (1c) governs the advection–diffusion of the concentration field. Here, P denotes the reduced pressure, g is the magnitude of the gravitational acceleration directed downward along the z-axis, and ν and 
+
+κ are the constant kinematic viscosity and molecular diffusivity, respectively. In all simulations, 
+
+ν = κ, corresponding to a Schmidt number Sc = ν/κ = 1 .4Physical quantities are rendered dimensionless using the characteristic length ℓc and time 
+
+tc, constructed from the kinematic viscosity ν and the reduced acceleration Ag:
+
+ℓc =
+
+ ν2
+
+Ag
+
+1/3
+
+, tc =
+
+ ν
+
+(Ag)2
+
+1/3
+
+. (2) Hereafter, the quantities are considered dimensionless. This nondimensionalization is partic-ularly important because the surrogate models presented in this work are intended to predict physical quantities across a broad range of conditions, thereby promoting generalizability. 
+
+# 2.2 Initial setup 
+
+A complete description of the initial setup used in the simulations is provided by Thévenin et al. [2025b,a]. The heavy fluid is initially placed above the lighter fluid along the vertical 
+
+z-direction, with the two fluids separated by a diffuse interface. The initial velocity field is zero, and the interface is subjected to a random perturbation. The two-dimensional spectrum of this perturbation is characterized by its mean wavenumber, spectral bandwidth, and mean amplitude. The initial condition can therefore be summarized by four dimensionless parameters: the initial Reynolds number R, which characterizes the mean wavelength of the perturbation and the buoyancy strength; the normalized spectral bandwidth B; the mean interface steepness 
+
+S; and the normalized thickness D of the unperturbed diffuse interface. 
+
+# 2.3 Mean fields and turbulent 1D quantities 
+
+In the RT simulations, the flow is statistically homogeneous within each horizontal x–y plane. The instantaneous concentration and velocity fields can therefore be decomposed into their Reynolds averages and corresponding fluctuations as 
+
+C(x, t ) = C(z, t ) + c(x, t ), (3a) 
+
+Ui(x, t ) = U i(z, t ) + ui(x, t ). (3b) Here, C(z, t ) and U i(z, t ) denote averages over the horizontal (x, y ) plane, whereas c(x, t ) and 
+
+ui(x, t ) denote the corresponding fluctuations. For the present configuration, the mean velocity vanishes, such that U i(z, t ) = 0 .At this stage, it is useful to introduce the width of the RT mixing zone, denoted by L, which is the primary quantity to be reproduced from the dataset. Following Andrews and Spalding [1990], this width is defined in terms of the mean concentration profile as 
+
+L(t) = 6 
+
+Z ∞−∞ 
+
+C(z, t )1 − C(z, t ) dz. (4) The prefactor 6 ensures that L coincides with the geometrical thickness of a piecewise-linear mean concentration profile, as is commonly observed in turbulent mixing layers. Accordingly, the profiles of turbulent kinetic energy and its dissipation rate are defined as 
+
+k(z, t ) = 12uiui, (5a) 
+
+ε(z, t ) = ν∂ j ui ∂j ui. (5b) In addition to the mean concentration, turbulent kinetic-energy, and dissipation profiles, which are the main quantities of interest in this study, we introduce the vertical component of the turbulent kinetic energy, defined by 
+
+k∥(z, t ) = 12u2 
+
+> z
+
+. (6) 5The vertical turbulent mass flux and concentration variance are defined by 
+
+F(z, t ) = uz c, (7) 
+
+b(z, t ) = c2. (8) These additional quantities are used to enforce the physical consistency of the reduced-order models. 
+
+# 2.4 Spatially integrated quantities (0D) 
+
+In addition to the one-dimensional profiles, spatially integrated quantities are considered through-out this work. These zero-dimensional observables provide a compact description of the global evolution of the instability. For a generic profile q(z, t ), we define 
+
+Q(t) = 1
+
+L(t)
+
+Z ∞−∞ 
+
+q(z, t ) d z. (9) The zero-dimensional turbulent kinetic energy, dissipation rate, and mass flux are denoted by 
+
+K, E, and F , respectively. 
+
+# 2.5 Phenomenology of the RT dynamics 
+
+The evolution of a Rayleigh–Taylor mixing layer proceeds through several distinct regimes: the linear regime, the weakly nonlinear regime, the transition to turbulence, and, at late times, the self-similar regime [Sharp, 1984]. These regimes have been extensively studied; see, in par-ticular, Thévenin and Gréa [2025], who proposed a simple phenomenological model describing their evolution. In this section, we first present the evolution of the zero and one-dimensional quantities and then discuss the late-time scaling laws that underpin the analysis developed throughout this manuscript. 
+
+2.5.1 Example of trajectory 0D/1D dynamics 
+
+Figure 1 illustrates the temporal evolution of the one-dimensional profiles of the mean concen-tration, turbulent kinetic energy and its dissipation rate, together with their zero-dimensional counterparts. These quantities form the basis of most Reynolds-averaged Navier–Stokes (RANS) turbulence models. As the initial multimode perturbation grows, dominant spikes and bubbles develop and subsequently undergo secondary instabilities, ultimately triggering the transition to turbulence. This process is marked by a peak in the dissipation rate, also referred to as an enstrophy blow-up, which reflects a transient imbalance in the transfer of energy across scales. Notably, this phenomenology is highly sensitive to the initial conditions, which are characterized here by the parameters R, B, S, and D.Capturing the dependence of these trajectories on the initial conditions is, therefore, one of the primary objectives of the surrogate model. At late times, the Rayleigh–Taylor mixing layer enters a self-similar regime, whose characteristic scaling laws are examined in greater detail below. 6−1000 0 1000 
+
+## x
+
+> −2000 02000
+
+## z
+
+# t=148.8  
+
+> 01
+
+# C (1D)  
+
+> 0100
+
+# k (1D)  
+
+> 02
+
+# ε (1D)   
+
+> 0.00.51.0
+
+## Π
+
+> 0.00.51.01.52.0
+> F r
+
+# Phase-space  
+
+> 0100
+
+## t 
+
+> 0.51.01.5
+> ×10 3
+
+# L 
+
+> 0100
+
+## t
+
+> 020 40 60
+
+# K (0D)  
+
+> 0100
+
+## t
+
+> 0.00.51.0
+
+# E (0D) 
+
+> 01
+
+## C
+
+> 020 40 60 80 100 120 140
+
+## t?Figure 1: Evolution of a representative Rayleigh–Taylor trajectory with initial-condition pa-rameters R = 25 .2, B = 1 .2, S = 3 .0, and D = 3 .0, from the initial development of the mixing layer to the turbulent regime. The upper-left panel shows a two-dimensional vertical slice of the instantaneous concentration field at t = 148 .8, while the remaining upper panels show the temporal evolution of the one-dimensional mean-concentration, turbulent kinetic-energy, and dissipation profiles. The lower-left panel represents the same trajectory in the (Π , F r ) phase space, with Π and F r defined in Eqs. (23) and (22), respectively. The remaining lower panels show the temporal evolution of the mixing length L, zero-dimensional turbulent kinetic energy 
+
+K, and dissipation E. Colors indicate the dimensionless time t.
+
+2.5.2 Self-similar scaling 
+
+The late-time self-similar regime of Rayleigh–Taylor mixing, which can be anticipated from dimensional analysis [Youngs, 1984], is characterized by a quadratic growth of the mixing-layer width: 
+
+L(t) ∼ 
+
+> t→+∞
+
+2α∞ (t − t∞)2 , (10) where α∞ ≈ 0.02 is the asymptotic self-similar growth coefficient, which has been shown to exhibit universal behavior in our database [Thévenin and Gréa, 2025]. By contrast, t∞ denotes the virtual origin of the self-similar solution. Because it is closely related to the transition to turbulence, t∞ remains strongly dependent on the initial conditions. It follows directly that the growth velocity of the mixing layer scales linearly with the shifted time: 
+
+˙L(t) ∼ 
+
+> t→+∞
+
+4α∞ (t − t∞) . (11) 7Introducing the self-similar coordinate 
+
+ξ = zL(t), (12) and appropriately rescaling the various one-dimensional profiles, the resulting quantities are expected to become independent of time and to collapse, at sufficiently late times, onto corre-sponding self-similar profiles f (ξ) (see also Ristorcelli and Clark [2004]). More precisely, 
+
+ek(ξ, t ) = k(ξL (t), t )
+
+L(t) −−−→ 
+
+> t→∞
+
+fk(ξ), (13a) 
+
+eε(ξ, t ) = ε(ξL (t), t )
+
+pL(t) −−−→ 
+
+> t→∞
+
+fε(ξ), (13b) 
+
+eF(ξ, t ) = F(ξL (t), t )
+
+pL(t) −−−→ 
+
+> t→∞
+
+fF (ξ), (13c) 
+
+eC(ξ, t ) = C(ξL (t), t ) −−−→ 
+
+> t→∞
+
+fC (ξ), (13d) 
+
+eb(ξ, t ) = b(ξL (t), t ) −−−→ 
+
+> t→∞
+
+fb(ξ). (13e) In Fig. 2, we show the collapse of the one-dimensional self-similar profiles obtained from a similar trajectory previously depicted in Fig. 1. As expected, the mean concentration profile, 
+
+eC, approaches a nearly piecewise-linear shape, whereas the other turbulent quantities converge toward approximately parabolic profiles. 0.00.51.0
+
+˜C  
+
+> 0.00.51.0×10 −1
+
+˜k  
+
+> 0.00.51.0×10 −1
+
+˜ε    
+
+> −0.50.00.5
+> ξ
+> 012×10 −1
+
+˜b   
+
+> −0.50.00.5
+> ξ
+> 0.02.55.07.5
+> ×10 −2
+
+˜k‖   
+
+> −0.50.00.5
+> ξ
+> 0.00.51.01.5
+> ×10 −1
+
+− ˜F
+
+> 020 40 60 80 100
+
+t?
+
+## R=24.4, B=0.2, S=0.9, D=0.8 
+
+Figure 2: Evolution of the self-similar profiles for a representative trajectory. The late-time profiles, shown in red, approach their asymptotic self-similar shapes. During the transition to turbulence, near the peak of dissipation, more complex profile shapes may emerge. Localized vortical structures generated by secondary instabilities dur-ing the breakup of bubbles and spikes can produce bumps or flattened regions in the one-dimensional profiles near the centerline of the mixing zone. These structural variations are also intended to be captured by the surrogate models. 83 POD-based surrogate modeling framework 
+
+This first strategy places nonlinearity in the temporal dynamics rather than in the profile representation. The one-dimensional fields, expressed using the self-similar scaling defined in Eq. (13), are projected onto a truncated Proper Orthogonal Decomposition (POD) basis. This constitutes a linear encoding–decoding step: both the reduction of the profiles to modal amplitudes and their reconstruction are linear operations. The evolution of these amplitudes as functions of time and the initial-condition parameters is then learned by a physics-informed neural network (PINN), which provides an explicitly nonlinear model of the reduced dynamics. 
+
+# 3.1 Physics-regulated POD 
+
+We employ the POD to construct a reduced representation of the self-similar profiles defined in Eq. (13). A generic transformed quantity is represented in an r-dimensional modal space as 
+
+eQ(ξ, t ) ≈
+
+> r
+
+X
+
+> i=1
+
+ϕ eQi (ξ)a eQi (t), (14) where ϕ eQi are the spatial modes and a eQi their associated temporal amplitudes. Because the dominant temporal scaling has already been removed, eQ approaches the stationary profile 
+
+fQ(ξ) in the self-similar regime and the corresponding modal amplitudes remain bounded at late times. The POD identifies the set of modes {ϕ eQi }ri=1 that provides the optimal orthogonal basis for a quantity with the norm induced by the inner product 
+
+⟨f, g ⟩ =
+
+Z
+
+> Ω
+
+f (ξ) · g(ξ) dξ, (15) which is defined on the spatial domain Ω = [ −0.85 , 0.85] for profiles f and g. We approximate this integral using a Simpson quadrature, yielding a weighted sum on the discrete approxima-tions of f and g using 201 points. The POD modes are computed using the method of snapshots combined with singular value decomposition (SVD) [Sirovich, 1987]. This decomposition provides the optimal rank-r
+
+approximation of the snapshot matrix in the L2 sense [Eckart and Young, 1936]. The objective is to identify modes that efficiently represent the complete ensemble of initial conditions considered in the database, rather than a single trajectory. Because the different quantities exhibit distinct spatial structures and symmetries, a common basis would provide no clear reduction advantage and would compromise the optimal rank-r approximation obtained for each field separately. We therefore construct an independent POD basis for each quantity, thereby improving reconstruction accuracy for a fixed number of retained modes. To this end, a snapshot matrix is constructed independently for each rescaled quantity expressed self-similarly from 10,000 profiles uniformly sampled over the trajectories and time steps of the training set. These matrices represent approximately 10% of the available profiles for each quantity. 
+
+Self-similar representation 
+
+The POD is performed on the rescaled quantities eC, ek, ek∥, − eF, eε, and eb. The transforma-tions defined in Eq. (13) map the expanding physical profiles onto the fixed coordinate ξ and remove their known growth with the mixing length; ek∥ is scaled in the same manner as ek.This formulation prevents late-time snapshots from dominating the POD solely because of their larger physical magnitude. More importantly, the transformed profiles become time 9independent in the asymptotic self-similar regime. The POD modes can therefore separate the stationary late-time structure from the transient deformations associated with the instability development and transition to turbulence. 
+
+Symmetry 
+
+Under the weak-density-contrast approximation, the Rayleigh–Taylor instability is statisti-cally symmetric about ξ = 0 . Accordingly, ek, ek∥, − eF, eε, and eb are treated as even quantities, whereas eC is treated as odd. Because individual DNS realizations do not satisfy these symme-tries exactly, each snapshot is replaced by its appropriate symmetric component before applying the POD. This preprocessing reduces the effective number of degrees of freedom and guarantees that every profile reconstructed from the POD basis satisfies the required symmetry, thereby pre-venting spurious asymmetric predictions and preserving physical consistency. 
+
+Realizability 
+
+Some of the self-similar quantities are positive because they are defined from squared fluc-tuations ( ek, ek∥, eε, and eb). Their low-rank reconstruction should therefore preserve realizability, although a standard POD expansion provides no such guarantee. To retain a linear SVD-based encoding while enforcing non-negativity after reconstruction, the POD is applied to the square root of these quantities. The resulting representations are 
+
+eQ(ξ, t ) ≈
+
+
+
+> r
+
+X
+
+> i=1
+
+ϕ eQi (ξ) a eQi (t)
+
+!2
+
+, if eQ ∈
+
+nek, ek∥, eε, eb
+
+o
+
+,
+
+> r
+
+X
+
+> i=1
+
+ϕ eQi (ξ) a eQi (t), if eQ ∈
+
+n eC, − eF
+
+o
+
+.
+
+(16) The square-root transformation is applied directly to the sampled self-similar snapshots be-fore the SVD. One POD basis is thus obtained for each of 
+
+pek,
+
+qek∥, √eε,
+
+peb, eC, and − eF.No temporal or ensemble mean profile is subtracted before the decomposition. In self-similar variables, the late-time state is stationary but nonzero. Removing the mean would therefore eliminate a substantial part of the asymptotic profile that the ROM is intended to reproduce. Retaining it allows the leading POD mode to represent the stationary self-similar structure, while the higher-order modes describe transient departures from that state. 
+
+# 3.2 Identification of self-similar and transitional modes 
+
+The POD framework introduced in the previous section forms the basis of the reduced-order model employed to predict the profile evolution as a function of the initial conditions. To determine an appropriate truncation rank, a modal analysis of the training database is first performed. The POD is computed from randomly selected self-similar snapshots of the training set. For each quantity, the amplitude associated with the leading mode ϕ eQ 
+
+> 1
+
+approaches a nonzero asymptotic value once the self-similar regime is reached, while the amplitudes of the higher-order modes decay. Consequently, the leading mode provides a direct modal representation of the stationary self-similar profile: up to a multiplicative factor given by its asymptotic amplitude, 
+
+ϕ eQ 
+
+> 1
+
+captures the asymptotic profile shape (see Appendix A.1.2). All POD modes are presented in Appendix A.1, Fig. 10, while the temporal amplitudes of the first two modes for all quantities are shown in Fig. 11. 10 The temporal amplitudes associated with the leading modes also provide a direct represen-tation of the corresponding zero-dimensional quantities obtained by spatial averaging of the profiles. Consistently with the usual interpretation of POD decompositions, the first mode captures the dominant average structure of the dataset. Indeed, its temporal amplitude times the mixing layer width L(t)a eQ 
+
+> 1
+
+(t) closely follows the evolution of the corresponding spatially averaged 0D quantity (see Appendix A.1.1), with relative errors around 1% over the entire dataset (about 0.1% mean error using all modes). The secondary modes, ϕ eQ
+
+> 2≤i≤5
+
+, display more complex spatial structures, characterized by localized extrema near the boundaries of the mixing layer. Their temporal amplitudes indicate that they are predominantly active during the early stages of the instability ( t < 60 ), while they become negligible compared with the leading mode at later times. Moreover, their am-plitudes tend to zero in the turbulent regime, suggesting that they play only a minor role in the asymptotic dynamics. A plausible physical interpretation is that these modes capture the initialization phase and the transition towards fully developed turbulence. The higher-order modes, ϕ eQi> 5, exhibit increasingly oscillatory structures that resemble Fourier modes. Their amplitudes remain small throughout the simulations and do not ex-hibit any clear dependence on the initial conditions (R, B, S, D). Furthermore, they do not admit an obvious physical interpretation and primarily capture high-frequency fluctuations as-sociated with the stochastic nature of the trajectories, such as phase differences between the initially imposed perturbation modes. Based on this modal analysis, five modes are retained for ek, ek∥, eε, eb, and − eF, whereas four modes are sufficient for the mean concentration ˜C. This selection provides a compromise between compactness, physical interpretability, and reconstruction accuracy. The resulting truncation error is evaluated on the test set in Appendix A.2.5, Fig. 13, where it is compared with the complete POD–PINN error. 
+
+Summary 
+
+To summarize, the construction of the POD modes for each quantity proceeds as follows (also illustrated in Fig. 3): 1. Randomly draw 10,000 profiles of a given quantity, uniformly sampled across trajectories and time steps, to form the snapshot matrix. 2. Express all snapshots in their self-similar form: eC, ek, ek∥, − eF, eε, and eb; see Eq. (13). 3. Apply a square-root transformation to ek, ek∥, eε, and eb to ensure non-negative reconstruc-tions. 4. Enforce the statistical symmetry of the profiles: retain the even component of the turbu-lent quantities and the odd component of eC.5. Perform the singular value decomposition of the snapshot matrix. The POD modes ϕ eQi
+
+are the columns of the matrix U.6. Six sets of POD modes are obtained, one for each quantity. 7. Retain 5 modes for ek, ek∥, − eF, eε, and eb, and 4 modes for eC.11 Figure 3: Construction of the POD basis for the self-similar turbulent kinetic energy ek. Each physical snapshot is mapped onto the fixed self-similar coordinate ξ and normalized by the corresponding mixing length L. A pointwise square-root transformation is then applied before the SVD to ensure a non-negative reconstruction after squaring. In the self-similar regime, the transformed profiles become stationary and remain bounded. 
+
+# 3.3 Physics-informed surrogate model in reduced space 
+
+To exploit the reduced-order representation defined in Eq. (16) and generate profile predictions from arbitrary initial conditions, a surrogate model is required to map the initial parameters 
+
+(R, B, S, D) to the corresponding temporal POD amplitudes. This mapping is highly nonlinear, in contrast with the linear encoding-decoding step relating the profiles to their POD amplitudes. Constructing an explicit analytical relation between the initial conditions and the POD coefficients remains challenging. Moreover, the problem is intrinsically non-unique. The four non-dimensional parameters provide a statistical characterization of the initial perturbation but do not contain information about the phase distribution of the individual perturbation modes. Therefore, different initial perturbations characterized by identical values of (R, B, S, D) may, in principle, lead to different instantaneous evolutions. The surrogate model must therefore learn the dominant statistical trends of the dynamics rather than reproduce the exact trajectory associated with a fully specified initial condition. To address this challenge, a physics-informed neural network (PINN) framework [Raissi et al., 2019] is introduced to learn the evolution of the POD amplitudes from the initial con-ditions. By combining data-driven learning with physical constraints, the proposed approach provides a complete parametric reduced-order model. Rather than explicitly integrating a trun-cated Galerkin system, the reduced dynamics are directly approximated by the neural network while remaining constrained by the governing equations projected onto the POD basis. This strategy naturally accommodates variations of the initial-condition parameters while largely circumventing the closure problem inherent to projection-based ROMs, since the unresolved modal interactions are learned implicitly rather than modeled explicitly. As a result, it also alleviates many of the stability issues commonly encountered in truncated Galerkin systems, while preserving the physical structure provided by the reduced governing equations. 
+
+Model architecture and preprocessing strategies 
+
+The proposed PINN is designed to predict the temporal evolution of the reduced-order variables from the initial conditions at a given time. The network inputs consist of the four 12 non-dimensional parameters characterizing the initial perturbation and time: 
+
+x = ( R, B, S, D, t )T . (17) It outputs the mixing-layer width and the POD amplitudes associated with each quantity of interest: 
+
+y =
+
+
+
+L, {aeki }5
+
+> i=1
+
+, {aek∥ 
+
+> i
+
+}5
+
+> i=1
+
+, {aeεi }5
+
+> i=1
+
+, {a eF 
+
+> i
+
+}5
+
+> i=1
+
+, {aebi }5
+
+> i=1
+
+, {a eCi }4
+
+> i=1
+
+T
+
+. (18) Therefore, x ∈ R5 and y ∈ R30 . The prediction of the mixing-layer width is essential to reconstruct the physical profiles Q(z, t ) rather than their self-similar representation eQ(ξ, t ).Moreover, L cannot be recovered from the concentration field expressed in self-similar co-ordinates. For this reason, the dimensionless mixing-layer width is explicitly predicted by the network. The time derivative of the mixing-layer width, ˙L, is not included as an independent output variable, since it is obtained directly from the predicted L through automatic differentiation. Several preprocessing strategies and architectural choices are introduced to ease the opti-mization process. These choices aim at reducing the dynamic range of the variables, exploiting the self-similar properties of the flow, and incorporating physical prior knowledge into the model, see Appendix A.2. The PINN architecture is based on a multilayer perceptron composed of three hidden layers with 32 neurons each, resulting in 3294 trainable parameters. The training procedure consists of two successive optimization stages. First, the ADAM optimizer, a first-order stochastic gradient-based method, is employed for 200 epochs to obtain a robust initialization of the network parameters. The training is then continued using the Self-Scaled Broyden method, Urbán et al. [2025]. Compared with first-order optimization methods, this quasi-Newton approach exploits information on the local curvature of the loss landscape through an approximate inverse Hessian update. The residual-based attention strategy Anag-nostopoulos et al. [2024], is also employed to adaptively manage the collocation points, see Appendix A.2.4. 
+
+Construction of the loss function 
+
+In the physics-informed learning framework, the network parameters are optimized by min-imizing a composite loss function combining data-driven and physics-informed based contribu-tions: 
+
+L = LData + LP I . (19) The supervised contribution LData measures errors with respect to the DNS quantities projected onto the POD basis, its detailed formulation is given in Appendix A.2. Here, we focus on 
+
+LP I , which imposes physical constraints directly on the predicted mixing length and modal amplitudes. The physics-informed contribution comprises three terms: 
+
+LP I = L ˙L> 0 + Lk0D + LC1D , (20) These terms respectively constrain the mixing-layer growth, the global turbulent kinetic-energy balance, and the local mean-concentration balance. The latter two introduce physical couplings between several retained amplitudes and therefore complement the pointwise DNS supervision. The first constraint enforces the monotonic growth of the mixing layer. Since the accelera-tion considered in the present RTI configuration remains permanently destabilizing, the mixing layer is expected to continuously expand and therefore satisfy ˙L > 0.The second constraint enforces the zero-dimensional turbulent kinetic-energy balance, whose terms can be expressed directly from the retained POD amplitudes. Because truncation leaves 13 unresolved modal contributions, the associated residual is denoted rpod  
+
+> k
+
+for DNS-projected am-plitudes and rpinn  
+
+> k
+
+for PINN predictions. Rather than introducing an explicit closure model, rpinn  
+
+> k
+
+is evaluated and minimized using only the retained modes. The PINN thereby adjusts their dynamics to compensate for unre-solved modal contributions, implicitly learning an effective closure while preserving the global energy balance. The final physical constraint enforces the one-dimensional advection–diffusion balance, cou-pling the mean concentration to the turbulent mass flux, expressed in self-similar coordinates through their retained POD representations. Unlike the previous global constraints, this local relation explicitly involves the POD spatial modes and their derivatives. It therefore promotes consistency between the temporal evolution and the underlying spatial dynamics. Further details on the loss function formulations are provided in Appendix A.2. All technical aspects of the PINN implementation presented in this work are developed within the PyTorch 
+
+framework [Paszke et al., 2019] using an in-house library. 
+
+# 4 Autoencoder-based surrogate modeling framework 
+
+The PINN introduced in Sec. 3 maps the initial-condition parameters and time directly to the quantities of interest. Because the predicted state is not fed back into the model, this approach does not define a temporal propagator and therefore does not provide a framework for analyzing dynamical stability. It is a solution map that maps the set of parameters and a given time to the quantities of interest at that time and that set of parameters. The present framework instead adopts an explicit dynamical-system formulation. The high-dimensional spatiotemporal trajectories are first mapped to a low-dimensional latent space using a nonlinear autoencoder learned directly from the data. Unlike the POD amplitudes of Sec. 3, the resulting latent coordinates are not assigned an explicit physical interpretation. Their temporal evolution is then constrained to be linear and is governed by a single generator A. This construction defines a dynamical system in latent space for which stability analysis is well posed. As with the POD–PINN surrogate, training incorporates the physics-informed constraints detailed in Sec. 4.1. Thus, the two frameworks differ primarily in the placement of nonlinearity and in their use of either a static solution map or an explicit dynamical evolution model. 
+
+# 4.1 Autoencoder with linear latent dynamics 
+
+The rescaled one-dimensional profiles, Eq.(13), used as inputs, y(ξ, t ) ∈ Rnt×nc×nξ , stack nt time steps of nc channels {ek, eε, eC, eF, ek∥,eb} on the nξ-point self-similar grid ξ. A transformer-based encoder E maps each high-dimensional spatiotemporal trajectory y(ξ, t ) to a low-dimensional latent space trajectory z(t) ∈ Rnt×d, with d ≪ ncnξ, and a decoder D of mirrored architecture reconstructs by = D(z). Unlike a standard autoencoder, the latent trajectory is constrained to enforce linear evolution of the trajectory in the low dimensional latent space, 
+
+˙z(t) = A z(t), A ∈ Rd×d, (21) so that, for every training trajectory, the operator A is obtained by least-square regression of the finite-difference latent derivatives ˙z(tk) onto the encoded states z(tk). The encoder-decoder and this per-trajectory identification of A are trained jointly so that D(z) reconstructs y and 
+
+E(D(z)) is consistent with z. As with the POD-PINN surrogate, training is further regularized with soft physical constraints evaluated on the decoded predictions by: the zero-dimensional 14 kinetic-energy budget Eq. (37), and the mean-concentration advection-diffusion constraint of Eq. (43), evaluated on the decoded eC and eF channels. 
+
+Figure 4: Schematic of the LasDI surrogate. The encoder maps the observed high-dimensional trajectory y(ξ, t ) onto a low-dimensional latent space with linear evolution ˙z = Az, from which the decoder reconstructs or predicts ey(ξ, t ), by(ξ, t ). The lower box represents the parametric surrogate of Sec. 4.2: the physical parameters p are mapped to the pair ( bA, bz0) used to integrate the latent dynamics, and to the mixing length width L. The encoder and decoder are further conditioned by the parameter vector p.
+
+# 4.2 Parametric prediction of the latent dynamics and mixing length 
+
+Because A and the initial latent state z0 are identified independently for each training trajectory, they can themselves be treated as target quantities of a parametric surrogate, analogous to the role the PINN plays for the POD basis in Sec. 3. A network Pz maps the physical parameters 
+
+p = ( R, B, S, D) directly to ( bA(p), bz0(p)) , from which the latent trajectory is obtained by integrating Eq. (21), applied stepwise as bzk+1 = exp( bA ∆t) bzk. Decoding bz(t) then yields a full prediction of the profiles for any p, including parameter combinations absent from the training set, without requiring an encoded reference trajectory. A second, independent network PL maps the parameters and time to the mixing length and its growth rate, PL(p, t ) = ( bL, ∂ t bL), playing the same role as the mixing-length output of the PINN in Sec. 3. These predictions are used in implementing the zero-dimensional kinetic-energy budget Eq. (37), and to rescale the self-similar profiles. In its conditional variant, the encoder and decoder are additionally conditioned by (p, bL, ∂ t bL, ∆t) as indicated in Fig. 4. Here, we only present results from the conditional variant since it performs slightly better (2-3% less relative error). Given the temporal characteristics of the data, we anticipated being able to fit models with latent space dimension of up to about eight. As such, we considered latent space dimensions of 2, 4, and 8. Results are presented here for latent space dimension of 4; results with latent space dimension of 2 and 8 were only slightly worse. 
+
+# 5 Comparison of the reduced-order models 
+
+This section compares the POD–PINN and LaSDI reduced-order models against the DNS reference data. The analysis considers their predictions of the one-dimensional profiles and associated zero-dimensional quantities, both within and beyond the temporal range covered by the simulations, and evaluates their consistency with the physical constraints considered in this study. 15 5.1 Profile dynamics for a representative trajectory 01
+
+˜C
+
+> DNS LaSDI POD-PINN
+> 05
+
+×10 −2 ˜k 
+
+> 02
+
+×10 −2 ˜ε
+
+> 0105
+
+×10 −2
+
+> 05
+
+×10 −2  
+
+> −0.50.00.5
+
+ξ  
+
+> 01
+> −0.50.00.5
+
+ξ
+
+> 0.02.5
+
+×10 −2  
+
+> −0.50.00.5
+
+ξ 
+
+> 05
+
+×10 −2  
+
+> 0100 200
+
+t
+
+> 01000 2000
+
+L  
+
+> 0100 200
+
+t
+
+> 050 100
+
+K (0D)   
+
+> 0100 200
+
+t
+
+> 01
+
+E (0D) 
+
+> t = 5 t = 20 t = 50  t = 5 t = 20 t = 50  t = 5 t = 20 t = 50
+
+## R=24.4, B=0.2, S=0.9, D=0.8 
+
+Figure 5: Comparison of DNS, LaSDI, and POD-PINN predictions for a test simulation. The columns correspond to the mean concentration eC, turbulent kinetic energy ek, and dissipation rate eε. The first three rows show instantaneous profiles at selected times t = 5 , 20 , and 50 .The last row displays the evolution of the associated zero-dimensional quantities, including temporal extrapolation beyond the DNS time horizon. The DNS data are available up to 
+
+t = 105 , whereas both surrogate models are evaluated at later times. The vertical dashed lines and colored frames identify the times selected for the instantaneous profile comparisons. Figure 5 shows that both reduced-order models reproduce the DNS profiles throughout the transition toward turbulence. The mean concentration profiles are nearly indistinguishable from the reference at all three selected times. At t = 20 , LaSDI and POD-PINN also recover the more complex transient structures of the turbulent kinetic energy and dissipation profiles, including the locations of the local extrema and the nonuniform plateaus. The smoother profiles observed at t = 50 are likewise captured by both models. The remaining differences primarily concern the profile amplitudes. At t = 5 , LaSDI slightly underestimates the maximum turbulent kinetic energy and, more noticeably, the dissipation peak, whereas POD-PINN remains closer to the DNS. At t = 20 , both models exhibit modest deviations across the turbulent plateaus but preserve their overall structure. At t = 50 , the agreement remains close. Unlike POD–PINN, whose reconstructions remain confined to the symmetric or antisymmet-ric subspaces imposed during construction of the POD bases, LaSDI does not enforce reflection symmetry and can therefore represent asymmetric profile components present in individual realizations. 16 The zero-dimensional quantities confirm the similar accuracy of the two models over the DNS time interval. Beyond the DNS time horizon, the predictions retain the same qualitative trends but gradually separate, with POD-PINN yielding slightly larger late-time values than LaSDI. In particular, the extrapolated integrated dissipation appears to depart from the theoretically expected linear late-time growth. The comparison therefore indicates comparable interpolation performance, while the increasing differences and loss of the expected asymptotic scaling reflect the greater uncertainty associated with temporal extrapolation. −0.50.00.5
+
+ξ
+
+> DNS
+
+˜C ˜k ˜ε
+
+> −0.50.00.5
+
+ξ   
+
+> LaSDI
+> 020 40 60
+
+t
+
+> −0.50.00.5
+
+ξ   
+
+> POD-PINN
+> 020 40 60
+
+t 0 20 40 60 
+
+t
+
+> 0.01.22.43.64.86.07.28.49.6
+
+×10 −1
+
+> 0.01.22.43.64.86.07.28.49.6
+
+×10 −2
+
+> 0.01.22.43.64.86.07.28.49.6
+
+×10 −2
+
+## R=24.4, B=0.2, S=0.9, D=0.8 
+
+Figure 6: Comparison of DNS, LaSDI, and POD-PINN predictions for a test simulation. The columns correspond to the self-similar mean concentration eC (13d), turbulent kinetic energy 
+
+ek (13a), and dissipation rate eε (13b). Each panel represents a space–time matrix obtained by stacking the self-similar one-dimensional profiles at successive times, thereby illustrating the temporal evolution of the fields as a function of the normalized coordinate ξ. The rows correspond to the DNS reference solution, the LaSDI surrogate, and the POD-PINN surrogate, respectively. Only the transition-to-turbulence regime is shown. The dashed lines indicate the times selected for the instantaneous profile comparisons in Fig. 5. The space–time representations in Fig. 6 complement the instantaneous comparisons of Fig. 5 by showing how the profile shapes develop throughout the transition to turbulence. For this trajectory, the DNS fields exhibit pronounced spatial structures during the transient regime, including secondary lobes in the self-similar turbulent kinetic energy and dissipation profiles around t = 20 . Both reduced-order models reproduce the location, persistence, and subsequent attenuation of these structures. The agreement demonstrates that LaSDI and POD-PINN capture not only the global growth of the instability but also the nontrivial spatial dynamics associated with the transition. Such complex transient profiles are observed in particular for trajectories characterized by R ≈ 25 and S ≈ 1. These parameters correspond to an initial interface perturbation dominated by relatively low wavenumbers and having a small initial amplitude, respectively, so that the interface is initially close to a flat configuration. Under these conditions, large coherent structures develop rapidly and accelerate away from the initial interface, accumulating kinetic energy. Their localized transport of kinetic energy and dissipation produces the secondary 17 extrema, or bumps, visible in the one-dimensional profiles during the transition to turbulence regime. As the instability evolves, secondary Kelvin–Helmholtz-type instabilities develop along the shear layers surrounding these structures, promoting the generation of smaller scales and accelerating the transition toward turbulence (around t = 50 ). This progressive cascade of spatial scales gradually smooths the profiles and leads to the parabolic self-similar shapes characteristic of the asymptotic regime. The ability of both ROMs to recover these features is therefore an important result, since they arise from strongly transient and spatially localized dynamics rather than from the smoother late-time self-similar evolution. 
+
+# 5.2 Comparison across initial perturbations 
+
+Figure 7 compares the zero-dimensional predictions of the two reduced-order models for three representative simulations from the test set. The red trajectory corresponds to the inertial configuration considered in Figs. 5 and 6, the cyan trajectory represents an intermediate regime, and the purple trajectory corresponds to a diffusion-dominated configuration. Additional comparisons between the surrogate models and the DNS are provided in Ap-pendix B for trajectories with moderate or low initial Reynolds number R, whose early-time evolution is primarily diffusion-dominated. This selection illustrates the good performance of the ROMs across markedly different transition dynamics. 012       
+
+> ×10 3L
+> DNS LaSDI POD-PINN
+> 050 100
+> K
+> 01
+> E
+> 012
+> ×10 3
+> 050 100
+> 01
+> 0100 200
+> t
+> 0.00.51.0
+> ×10 3
+> 0100 200
+> t
+> 025 50
+> 0100 200
+> t
+> 0.00.51.0
+
+(a) Temporal evolution of the zero-dimensional quantities 
+
+K, E, and L obtained from the DNS database and the two surrogate models. 0.0 0.2 0.4 0.6 0.8 1.0Π = 12 K/L   
+
+> 0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00
+> F r  = E√L/K
+> DNS LaSDI POD-PINN
+> 0.40.50.60.70.80.91.0
+
+(b) Evolution of the trajectories in the 
+
+(Π , F r ) phase space. 
+
+Figure 7: Comparison between three representative trajectories from the test set, comparing the DNS data with the surrogate predictions. The temporal evolution of the main zero-dimensional quantities is shown together with the corresponding trajectories in the (Π , F r ) phase space. The red, cyan, and purple curves correspond to inertial, intermediate, and diffusive trajectories, respectively. Two dimensionless quantities are used to characterize the trajectories in the phase-space representation. The turbulent Froude number is defined here as 
+
+F r = E√LK , (22) 18 and compares the turbulent frequency, E/K , with the characteristic stratification frequency, 
+
+1/√L. The energy ratio 
+
+Π = 12 KL (23) measures the fraction of the available potential energy converted into turbulent kinetic energy. Its derivation from the total-energy balance is detailed in Appendix C. This quantity is bounded by 0 ≤ Π ≤ 1: the upper limit corresponds to a complete conversion of the available potential energy into turbulent kinetic energy in the absence of dissipation, whereas Π = 0 corresponds to the absence of kinetic-energy production from the available potential-energy reservoir. Figure 7a shows that both models reproduce the main temporal trends of the integrated kinetic energy, dissipation, and mixing length for the three regimes. Their relative performance nevertheless depends on the initial condition and on the predicted quantity. These results indicate that neither reduced representation is uniformly superior across all dynamical regimes, especially for dissipation, which is particularly sensitive to the rapid development of small scales. The trajectories in the (Π , F r ) phase space, shown in Fig. 7b, provide a more compact view of the predicted dynamics. LaSDI has greater difficulty reproducing the initial part of the trajectories, where both dimensionless quantities vary rapidly. For the diffusion-dominated simulation, however, the LaSDI trajectory follows the DNS reference more closely in the phase-space than the POD-PINN prediction. In this phase space, the stable fixed point represents the self-similar state, in which both Π and F r are expected to become constant. The two ROMs preserve this attracting structure. However, the DNS trajectories do not extend sufficiently far into the self-similar regime to identify the reference fixed-point coordinates accurately. The differences between the limiting coordinates predicted by the two models should therefore be interpreted cautiously. 19 5.3 Test-set accuracy and physical consistency 15 75 135 
+
+> 0510 15 20
+> Relat .Err % POD-PINN: 1.69% LaSDI: 1.62%
+
+## C  
+
+> 15 75 135
+> 0510 15 20
+> POD-PINN: 5.01% LaSDI: 5.20%
+
+## k  
+
+> 15 75 135
+> 0510 15 20
+> POD-PINN: 5.41% LaSDI: 4.86%
+
+## ε  
+
+> 15 75 135
+
+t
+
+> 0510 15 20
+> Relat .Err % POD-PINN: 0.81% LaSDI: 1.18%
+
+## L  
+
+> 15 75 135
+
+t
+
+> 0510 15 20
+> POD-PINN: 3.21% LaSDI: 3.06%
+
+## K  
+
+> 15 75 135
+
+t
+
+> 0510 15 20
+> POD-PINN: 3.41% LaSDI: 2.54%
+
+## E
+
+POD-PINN LaSDI POD-PINN LaSDI POD-PINN LaSDI POD-PINN LaSDI POD-PINN LaSDI POD-PINN LaSDI 
+
+Figure 8: Temporal distributions of the relative errors of the POD–PINN (green) and LaSDI (orange) predictions with respect to the DNS over the test set. Each violin contains one mean error per trajectory and time interval. For the one-dimensional profiles C, k, and ε, the pointwise relative error is first averaged over ξ ∈ [−0.5, 0.5] and then over the snapshots in the interval; restricting the spatial domain avoids divergences near the profile boundaries. For the zero-dimensional quantities L, K, and E, the relative error is evaluated directly from the corresponding scalar time series. The values displayed in each panel are the mean errors over the complete test set. Figure 8 compares the two reduced-order models only at times for which DNS reference data are available. The POD-PINN and LaSDI error distributions largely overlap for both the one-dimensional profiles and the associated zero-dimensional quantities, indicating comparable accuracy at the data-supported points. The mean errors are nearly identical for C, k, and K,and remain of the same order for the other quantities. The larger errors in the earliest time interval mainly arise from predictions at t < 2, for which imperfect surrogate initialization is particularly pronounced in diffusion-dominated trajectories. The modest differences depend on the predicted quantity rather than revealing a system-atic advantage of either model. POD-PINN yields a lower mean error for the mixing length 
+
+L, whereas LaSDI is slightly more accurate for the dissipation profile ε and its integrated counterpart E. The distributions generally broaden and shift toward larger errors with time, particularly for the turbulent quantities, but substantial overlap remains between the two mod-els across the temporal intervals. The latest distributions must nevertheless be interpreted with caution because the DNS trajectories do not all reach the same final time. The number of simulations contributing to each temporal bin therefore decreases with time, making the last intervals less statistically representative and more sensitive to individual trajectories. Moreover, because the errors are 20 evaluated only where DNS data exist, this figure assesses interpolation and reconstruction accuracy rather than long-time extrapolation. 16 47 77 108 139 169 200 
+
+## t
+
+> 10 −7
+> 10 −6
+> 10 −5
+> 10 −4
+> 10 −3
+> 10 −2
+> 10 −1
+> Abs.Residual
+> POD-PINN: 1.43e-03 LaSDI: 2.49e-02
+
+## POD-PINN LaSDI 
+
+Figure 9: Temporal distributions, on a logarithmic scale, of the absolute residual of the zero-dimensional turbulent kinetic-energy equation (37) for the POD–PINN and LaSDI predictions associated with unseen initial conditions {R, B, S, D} from the test set. For both models, the residual is evaluated directly from the predicted quantities. The values displayed in the lower-right corner are the mean residuals over the complete test set and time interval. The zero-dimensional turbulent kinetic-energy balance (37) is imposed as a soft physical constraint during the training of both reduced-order models. Figure 9 therefore evaluates how well this constraint generalizes to unseen initial conditions and to times extending beyond the DNS data. Because its residual can be computed directly from the surrogate predictions without requiring a DNS reference, it provides a diagnostic of the internal consistency and physical coherence of the extrapolated quantities. POD–PINN yields systematically smaller residuals than LaSDI over all temporal intervals, including the extrapolation regime. The mean absolute residual is 1.43 × 10 −3 for POD–PINN and 2.49 × 10 −2 for LaSDI, corresponding to a difference of approximately one order of magni-tude. This separation indicates that the POD–PINN predictions remain more accurately cou-pled through the global kinetic-energy balance, even when evaluated beyond the data-supported time interval, suggesting more robust extrapolation capabilities. The residuals of both models remain bounded and exhibit no systematic late-time drift, showing that neither ROM loses the constrained energy-balance structure during extrapolation. LaSDI thus retains qualitative consistency with the equation, while POD–PINN satisfies it substantially more accurately and uniformly. 
+
+# 6 Conclusion 
+
+This work compares two physics-guided parametric ROMs for Rayleigh–Taylor mixing across the transition to turbulence and the self-similar regime. POD–PINN combines an interpretable linear spatial decomposition with nonlinear neural-network dynamics, whereas LaSDI con-structs a nonlinear latent representation governed by a linear evolution law. Their comparison therefore isolates a central modeling trade-off: whether complexity should be carried by the reduced representation or by the dynamics evolving within it. For the POD–PINN approach, the separation between spatial modes and temporal ampli-tudes preserves one of the main advantages of classical modal decompositions. The leading 21 POD modes can be directly associated with the global evolution and self-similar structure of the profiles, whereas the secondary modes describe the transient corrections associated with the development of coherent structures and the transition to turbulence. Symmetry, realizability, and self-similar scaling are introduced directly into the construction of the reduced represen-tation, providing physically meaningful coordinates and facilitating the interpretation of the reconstructed fields. This spatial interpretability is obtained at the cost of a less interpretable temporal model. Unlike a classical POD–Galerkin formulation, the evolution of the modal amplitudes is not governed by an explicit low-dimensional system whose individual interaction terms can be analyzed directly, but by a neural network. The resulting closure is therefore implicit. In contrast to the static solution map approach of POD-PINN, the second approach adopts a dynamical evolution model. Next, motivated by the observation that the temporal extent of observed trajectories in spatially extended dynamical systems is typically much too short, the second approach focuses simultaneously on keeping the latent space dimension very low and the dynamics simple. Limiting dynamics to be linear then requires the coordinate transformation step to be nonlinear to be able to limit the latent space dimension to be very low. The present results show that a latent dimension of only 4 (with minor degradation in performance at 2) is sufficient to obtain an efficient representation of the considered profiles while retaining linear latent dynamics. To reiterate, we find it surprising that strongly nonlinear and transient regimes can be reasonably well represented by linear dynamics in a very low dimensional latent space. Although the latent coordinates do not admit the direct physical interpretation of POD modes, the linear evolution law offers another route toward interpretability. In particular, classical dynamical-systems tools can be applied to the identified latent operator. The analysis of its eigenvalues and eigenvectors could reveal characteristic time scales, stability properties, bifurcation, dominant latent directions and the fixed points associated with the self-similar regime. Establishing explicit links between these latent structures and physical observables therefore constitutes a promising perspective. Overall, the results demonstrate that the choice between linear and nonlinear reduced rep-resentations should not be based solely on reconstruction accuracy. POD–PINN is particularly suitable when physically identifiable spatial structures and explicit control over conservation properties are required. LaSDI is especially attractive when strong a priori assumptions about the relevant physics are unavailable: beyond providing a compact representation and efficient long-time integration, its learned latent structure and linear dynamics can serve as a data-driven discovery tool for formulating hypotheses about the underlying organization of the dynamics. We experimented further with the second approach to see if prediction accuracy could be further improved by allowing for nonlinearity in the dynamics. This seemed to suggest that obtaining significant improvements over comparable accuracy of the two approaches presented may not be possible. As such, we speculate that nonlinearity in one of the two steps—coordinate transformation and latent-space dynamics/solution map—may be sufficient. This reinforces and reiterates our view that the two approaches are complementary rather than competing. Future work could combine their respective strengths, for example by introducing explicit physical observables into the LaSDI latent space, analyzing the spectrum of its latent dynamics matrix, or replacing the black-box temporal component of POD–PINN with a partially interpretable learned dynamical system. Such developments would contribute to reduced-order models that are simultaneously compact, predictive, physically consistent, and informative for the analysis and modeling of turbulent Rayleigh–Taylor mixing. 22 A Linear encoding-decoding based surrogate 
+
+# A.1 POD details 
+
+This appendix provides additional details on the POD representation introduced in Section 3. It first establishes the relation between the modal amplitudes and the zero-dimensional quantities, then clarifies the connection between the leading POD modes and the self-similar profiles, and finally separates the error associated with the truncated spatial basis from that introduced by the PINN prediction of the modal amplitudes. 
+
+Figure 10: First five POD modes of the self-similar profiles eC, eb, − eF, eε, ek, and ek∥. Non-negative quantities are decomposed through their square roots. Five modes are retained for each quantity, except for eC, for which four are used. 
+
+A.1.1 Zero-dimensional quantities 
+
+The zero-dimensional quantities defined in Eq. (9) can be evaluated directly from the reduced coordinates, without reconstructing the profiles on the spatial grid. 
+
+eQ ek ek∥ eε eb − eF
+
+Q0D(t) L(t)
+
+> r=5
+
+X
+
+> i=1
+
+
+
+aeki
+
+2
+
+L(t)
+
+> r=5
+
+X
+
+> i=1
+
+
+
+aek∥
+
+> i
+
+2 pL(t)
+
+> r=5
+
+X
+
+> i=1
+
+ aeεi
+
+2 r=5 X
+
+> i=1
+
+
+
+aebi
+
+2 pL(t)
+
+> r=5
+
+X
+
+> i=1
+
+m eF 
+
+> i
+
+a eF
+
+> i
+
+(24) 23 For the positive quantities represented through their square roots, orthonormality eliminates the cross terms in the spatial integral. The spatial moment of the ith mass-flux mode is defined as 
+
+m eF 
+
+> i
+
+=
+
+Z
+
+> Ω
+
+ϕ eF 
+
+> i
+
+(ξ) dξ. (25) where Ω = [ −0.85 , 0.85] . This interval is wider than the nominal mixing-layer region [−0.5, 0.5] 
+
+because the turbulent profiles develop diffuse tails that extend beyond its boundaries. Retaining these tails improves the accuracy of both the modal representation and the spatially integrated quantities. Figure 10 presents the first five modes obtained after applying the symmetry and realiz-ability transformations described in Section 3. The leading modes are smooth and reproduce the dominant spatial support of the mixing layer. The secondary modes contain an increasing number of extrema and progressively finer spatial scales, consistently with their role in rep-resenting transient profile deformations. Five modes are retained for all quantities except the mean concentration, for which the first four modes are sufficient; its fifth mode is nevertheless displayed for comparison. 
+
+Figure 11: DNS-projected temporal amplitudes of the first POD mode (left) and second POD mode (right) for all modeled quantities. Each curve corresponds to one trajectory and is colored according to R. The dashed segments represent the final 25% of each trajectory, which are excluded from the training of the PINN and reserved for temporal-extrapolation assessment. 
+
+A.1.2 Asymptotic interpretation of the leading POD modes 
+
+Because the POD is performed directly on the self-similar quantities, higher-order amplitudes decay toward zero. The leading amplitude approaches a constant, γQ, and the asymptotic profile is governed by the first mode. For all non-negative quantities represented through their 24 square roots, 
+
+lim 
+
+> t→∞
+
+qeQ(ξ, t ) ≈ ϕ eQ 
+
+> 1
+
+(ξ) γ eQ =
+
+q
+
+fQ(ξ),γ eQ = lim  
+
+> t→∞
+
+a eQ 
+
+> 1
+
+(t), eQ ∈
+
+nek, ek∥, eε, eb
+
+o
+
+.
+
+(26) For the mean concentration and the modeled negative mass flux, which are decomposed without the square-root transformation, the relation remains linear: 
+
+lim 
+
+> t→∞
+
+eQ(ξ, t ) ≈ ϕ eQ 
+
+> 1
+
+(ξ) γ eQ = fQ(ξ)
+
+γ eQ = lim  
+
+> t→∞
+
+a eQ 
+
+> 1
+
+(t), eQ ∈
+
+n eC, − eF
+
+o
+
+.
+
+(27) The leading POD mode is therefore directly proportional to the asymptotic self-similar profile for eC and − eF, and to its square root for the positive quantities. 
+
+# A.2 PINN implementation details 
+
+This appendix complements the POD–PINN presentation in Sec. 3 by collecting the implemen-tation details omitted from the main text. It describes the input and output preprocessing, the complete loss function, the construction of the physical residuals, the collocation-point strategy, and the reconstruction-error assessment. 
+
+A.2.1 Preprocessing and output parametrization 
+
+For both POD–PINN and LaSDI, only the first 75% of the temporal samples from each training trajectory are used for model fitting, while the final 25% are withheld to assess temporal-extrapolation capabilities, as illustrated in Fig. 11. The four initial-condition parameters are logarithmically transformed, while the dimension-less time is left unchanged: 
+
+xlog = (log( R), log( B), log( S), log( D), t )T . (28) All outputs, including L, are subsequently normalized to [0 , 1] . A squared Softplus trans-formation is applied to the L output to promote its expected quadratic late-time growth, see Eq.(10). Softplus activations are also used in the hidden layers because their smoothness facil-itates derivative evaluation by automatic differentiation. 
+
+A.2.2 Data-driven loss function 
+
+Terms of the loss function are constructed from mean-squared-error (MSE). For two tensors ˆy
+
+and y of identical shape, the MSE is defined as 
+
+MSE(ˆ y, y) = 1
+
+n
+
+> n
+
+X
+
+> j=1
+
+(ˆ yj − yj )2 , (29) where n is the total number of elements in each tensor and j indexes their flattened entries. The data-driven loss is then written as the weighted sum of four contributions: 
+
+LData = LL + LL0 + L ˙L + Lpod . (30) The initial value L0 = L(t = 0) is penalized separately to prevent it from being under-weighted relative to the remaining time samples: 
+
+LL = λLMSE( ˆLt̸=0 , L t̸=0 ), λL = 5 , (31) 25 LL0 = λL0 MSE( ˆL0, L 0), λL0 = 50 . (32) The expansion-rate term compares the derivative obtained by automatic differentiation with the DNS reference: 
+
+L ˙L = λ ˙LMSE( ∂t ˆL, ˙L), λ ˙L = 15 × 10 2. (33) The modal term uniformly weights the npod = 29 rescaled POD amplitudes; energy-based weighting was also tested but did not improve the prediction accuracy: 
+
+Lpod = λpod 
+
+1
+
+npod 
+
+X
+
+> eQ
+
+MSE 
+
+
+
+ˆa eQi , a eQi
+
+
+
+, npod = 29 , λpod = 0 .5. (34) Figure 12 shows that the learned errors follow the modal hierarchy, with the leading modes predicted most accurately. 
+
+Figure 12: Mean squared error of each POD amplitude for each quantity during the training of the PINN on the training set. The red dashed line indicates the epoch at which the PINN achieves its best performance on the validation set. The blue dashed line at 200 epochs marks the switch of the optimizer from Adam to SSBroyden. 
+
+A.2.3 Physics-informed loss function 
+
+The physics-informed contribution used during training is 
+
+LP I = L ˙L> 0 + Lk0D + LC1D , (35) Negative predicted values of ∂t ˆL are penalized by 
+
+L ˙L> 0 = λ ˙L> 0 MSE 
+
+
+
+0, min 
+
+
+
+0, ∂ t ˆL
+
+ 
+
+, λ ˙L> 0 = 10 6. (36) The spatially integrated balance of kinetic energy is 
+
+dtK + ˙LLK + 2 F + E = 0 . (37) 26 Substitution of the retained POD expansions (24), gives 
+
+Ld taek2 
+
+> i
+
++ 2 aek2 
+
+> i
+
+˙L − 2m eF 
+
+> i
+
+a eF
+
+> i
+
+√L + aeε2
+
+> i
+
+√L = rk, (38) where mF 
+
+> i
+
+is the spatial integral of mode i and repeated indices are summed. The truncation residual is denoted rpod  
+
+> k
+
+for DNS-projected amplitudes and rpinn  
+
+> k
+
+for PINN predictions. Only the latter is minimized: 
+
+Lk0D = λk0D MSE 
+
+
+
+0, r pinn 
+
+> k
+
+
+
+, λk0D = 0 .5. (39) This formulation lets the learned retained-mode dynamics accounts implicitly for unresolved contributions, without fitting the DNS residual outside the available sampling points. The governing advection–diffusion equation is 
+
+∂tC(z, t ) + ∂z F(z, t ) − ∂zz C(z, t ) = 0 . (40) In the self-similar formulation, 
+
+∂t eC(ξ, t ) − ξ ˙LL∂ξ eC(ξ, t ) + 1
+
+√L∂ξ eF(ξ, t ) − 1
+
+L2 ∂ξξ eC(ξ, t ) = 0 . (41) Substitution of the retained POD expansions yields 
+
+ϕ eCi dta eCi − ξ ˙LLa eCi dξϕ eCi − a eF
+
+> i
+
+√Ldξϕ eF 
+
+> i
+
+− a eCi
+
+L2 dξξ ϕ eCi = rC (ξ, t ), (42) where the explicit dependence on (ξ, t ) is omitted. The corresponding loss is 
+
+LC1D = λC1D MSE 
+
+
+
+0, r pinn 
+
+> C
+
+
+
+, λC1D = 10 2. (43) Because rpinn  
+
+> C
+
+explicitly involves the POD modes and their spatial derivatives, this term con-strains both the modal dynamics and the reconstructed profile shapes while providing an im-plicit closure for discarded modes. 
+
+A.2.4 Collocation points and residual-based attention 
+
+The physical residuals are evaluated at collocation points, which require no reference DNS values and can therefore extend beyond the available trajectories. To provide extrapolation constraints without sampling unphysical configurations, these points are generated by Latin Hypercube Sampling [Stein, 1987] within 
+
+t ∈ [1 , 200] , R ∈ [0 .2, 35] , B ∈ [0 .01 , 1.7] , S ∈ [0 .5, 10] , D ∈ [0 .7, 20] . (44) This domain covers both the DNS database and neighboring unexplored regions. During train-ing, Residual-Based Attention [Anagnostopoulos et al., 2024] adaptively increases the weight of points with large physical residuals, thereby concentrating the optimization on the most difficult temporal and parametric regimes. 
+
+A.2.5 Reconstruction accuracy 
+
+Finally, Fig. 13 separates the error caused by POD truncation from that introduced by the learned temporal dynamics. The POD–DNS reconstruction uses amplitudes obtained by pro-jecting the DNS profiles onto the truncated basis and therefore isolates the spatial-representation 27 error. The POD–PINN reconstruction instead uses the predicted amplitudes, so that the dif-ference between the two distributions measures the additional error introduced by the neural network. 15 75 135 
+
+0510 15 20 
+
+> Relat .Err % POD-PINN: 1.69% POD-DNS: 1.39%
+
+## C
+
+15 75 135 
+
+0510 15 20 POD-PINN: 5.01% POD-DNS: 2.76% 
+
+## k
+
+15 75 135 
+
+0510 15 20 POD-PINN: 5.41% POD-DNS: 2.79% 
+
+## ε
+
+15 75 135 
+
+t
+
+0510 15 20 
+
+> Relat .Err % POD-PINN: 6.12% POD-DNS: 3.91%
+
+## b
+
+15 75 135 
+
+t
+
+0510 15 20 POD-PINN: 5.67% POD-DNS: 3.41% 
+
+## k‖
+
+15 75 135 
+
+t
+
+0510 15 20 POD-PINN: 5.71% POD-DNS: 3.15% 
+
+## −F 
+
+POD-PINN POD-DNS POD-PINN POD-DNS POD-PINN POD-DNS POD-PINN POD-DNS POD-PINN POD-DNS POD-PINN POD-DNS 
+
+Figure 13: Temporal distributions of the mean relative profile-reconstruction errors with re-spect to the DNS for the POD–PINN surrogate (green) and the direct POD reconstruction using DNS-projected amplitudes (purple). For each test trajectory and time interval, the rel-ative error is averaged first over ξ ∈ [−0.5, 0.5] and then over the snapshots contained in that interval; the resulting trajectory-wise errors form the violin distributions. Restricting the spa-tial interval avoids artificially large relative errors near profile boundaries where the reference values approach zero. Because the DNS trajectories do not all reach the same final time, the latest intervals contain fewer samples. The values displayed in each panel are the mean errors over the complete test set. The direct POD reconstruction provides the lower-error baseline for all quantities, as ex-pected, while the POD–PINN distributions follow the same temporal trends with an additional contribution from the predicted amplitudes. The errors generally increase and broaden with time, but the mean POD–PINN error over the complete test set remains between approxi-mately 2% and 6% , depending on the quantity. The concentration profile is reconstructed most accurately, whereas the square-root-transformed turbulent quantities are more sensitive to errors in the predicted amplitudes after transformation back to physical space. Overall, the selected basis remains sufficiently compact to preserve physical interpretability while providing an accurate representation for the surrogate model. 
+
+# B Additional ROM comparisons 
+
+In this section, we provide two additional comparisons between the DNS and surrogate-model predictions for representative test cases shown in the phase diagram of Fig. 7. For the diffusion-28 dominated trajectory with initial Reynolds number R = 2 .4, selected one-dimensional profiles of the mean concentration eC, kinetic energy ek, and dissipation eε are presented in Fig. 14. The corresponding space–time evolution is shown in Fig. 15. Similarly, Fig. 16 presents the one-dimensional profiles and corresponding zero-dimensional quantities for a representative trajectory with an intermediate Reynolds number of R = 9 , while Fig. 17 shows the associated space–time evolution. 
+
+# C Total Energy conservation 
+
+Under the Boussinesq approximation, the dimensionless density field, normalized by the average of the pure-fluid densities, is related to the heavy-fluid concentration field by 
+
+ρ(x, t ) = 1 + 2 A
+
+
+
+C(x, t ) − 12
+
+
+
+. (45) Assuming that the mean concentration profile is piecewise linear, the variation in potential energy relative to the initial condition, ∆Ep, can then be estimated as [Cook et al., 2004] 
+
+∆Ep(t) = 1
+
+V
+
+Z
+
+> V
+
+[ρ(x, t ) − ρ(x, 0)] z dx = − 112 L(t), (46) where V denotes the fluid volume (again quantities are non dimensionalized). Thus, the mag-nitude of the potential energy released into the system increases as the mixing layer grows. The total-energy balance can then be written as 
+
+ddt + ˙LL
+
+!
+
+(K + ∆ Ep) = −E, (47) Substituting Eq. (46) into Eq. (47) gives 
+
+dK dt + ˙LLK − ˙L
+
+6 + E = 0 . (48) The ratio of turbulent kinetic energy to the magnitude of the released potential energy is then defined as 
+
+Π = K
+
+|∆Ep| = 12 KL . (49) This dimensionless ratio is physically bounded between 0 and 1: 
+
+0 ≤ Π ≤ 1. (50) 29 01
+
+˜C
+
+> DNS LaSDI POD-PINN
+> 02
+
+×10 −3 ˜k
+
+> 05
+
+×10 −3 ˜ε
+
+> 0105
+
+×10 −3
+
+> 05
+
+×10 −3  
+
+> −0.50.00.5
+
+ξ  
+
+> 01
+> −0.50.00.5
+
+ξ
+
+> 05
+
+×10 −2  
+
+> −0.50.00.5
+
+ξ
+
+> 05
+
+×10 −2  
+
+> 0100 200
+
+t
+
+> 01000
+
+L  
+
+> 0100 200
+
+t
+
+> 050
+
+K (0D)   
+
+> 0100 200
+
+t
+
+> 01
+
+E (0D) 
+
+> t = 5 t = 20 t = 50  t = 5 t = 20 t = 50  t = 5 t = 20 t = 50
+
+R=2.4, B=0.4, S=3.2, D=23.9 Figure 14: Detailed comparison of the DNS, LaSDI, and POD-PINN predictions for the repre-sentative diffusion-dominated trajectory shown in purple in Fig. 7. Instantaneous profiles are shown together with the evolution of the corresponding zero-dimensional quantities. −0.50.00.5
+
+ξ
+
+> DNS
+
+˜C ˜k ˜ε
+
+> −0.50.00.5
+
+ξ   
+
+> LaSDI
+> 020 40 60
+
+t
+
+> −0.50.00.5
+
+ξ   
+
+> POD-PINN
+> 020 40 60
+
+t 0 20 40 60 
+
+t
+
+> 0.01.22.43.64.86.07.28.49.6
+
+×10 −1
+
+> 0.00.81.62.43.24.04.85.6
+
+×10 −2
+
+> 0.00.81.62.43.24.04.85.66.4
+
+×10 −2
+
+R=2.4, B=0.4, S=3.2, D=23.9 
+
+Figure 15: Space–time evolution of the self-similar profiles for the representative diffusion-dominated trajectory shown in purple in Fig. 7, comparing the DNS reference with the LaSDI and POD-PINN predictions during the transition to turbulence. 30 01
+
+˜C 
+
+> DNS LaSDI POD-PINN
+> 05
+
+×10 −2 ˜k 
+
+> 05
+
+×10 −2 ˜ε 
+
+> 0105
+
+×10 −2
+
+> 05
+
+×10 −2  
+
+> −0.50.00.5
+
+ξ  
+
+> 01
+> −0.50.00.5
+
+ξ
+
+> 0.02.5
+
+×10 −2  
+
+> −0.50.00.5
+
+ξ
+
+> 0.02.5
+
+×10 −2  
+
+> 0100 200
+
+t
+
+> 01000 2000
+
+L  
+
+> 0100 200
+
+t 
+
+> 050 100
+
+K (0D)   
+
+> 0100 200
+
+t
+
+> 01
+
+E (0D) 
+
+> t = 5 t = 20 t = 50  t = 5 t = 20 t = 50  t = 5 t = 20 t = 50
+
+R=9.0, B=0.3, S=3.3, D=1.6 Figure 16: Detailed comparison of the DNS, LaSDI, and POD-PINN predictions for the rep-resentative intermediate trajectory shown in cyan in Fig. 7. Instantaneous profiles are shown together with the evolution of the corresponding zero-dimensional quantities. −0.50.00.5
+
+ξ
+
+> DNS
+
+˜C ˜k ˜ε
+
+> −0.50.00.5
+
+ξ   
+
+> LaSDI
+> 020 40 60
+
+t
+
+> −0.50.00.5
+
+ξ   
+
+> POD-PINN
+> 020 40 60
+
+t 0 20 40 60 
+
+t
+
+> 0.01.22.43.64.86.07.28.49.6
+
+×10 −1
+
+> 0.00.81.62.43.24.04.85.66.4
+
+×10 −2
+
+> 0.01.22.43.64.86.07.28.49.6
+
+×10 −2
+
+R=9.0, B=0.3, S=3.3, D=1.6 
+
+Figure 17: Space–time evolution of the self-similar profiles for the representative intermediate trajectory shown in cyan in Fig. 7, comparing the DNS reference with the LaSDI and POD-PINN predictions during the transition to turbulence. 31 References 
+
+Sokratis J. Anagnostopoulos, Juan Diego Toscano, Nikolaos Stergiopulos, and George Em Kar-niadakis. Residual-based attention in physics-informed neural networks. Computer Methods in Applied Mechanics and Engineering , 421:116805, 2024. ISSN 0045-7825. doi: https: //doi.org/10.1016/j.cma.2024.116805. URL https://www.sciencedirect.com/science/ article/pii/S0045782524000616 .M. J. Andrews and D. B. Spalding. A simple experiment to investigate two-dimensional mixing by rayleigh–taylor instability. Physics of Fluids A: Fluid Dynamics , 2(6):922–927, 06 1990. ISSN 0899-8213. doi: 10.1063/1.857652. URL https://doi.org/10.1063/1.857652 .G. Berkooz, P. Holmes, and J. L. Lumley. The proper orthogonal decomposition in the analysis of turbulent flows. Annual Review of Fluid Mechanics , 25:539–575, 1993. doi: 10.1146/annurev.fl.25.010193.002543. URL https://doi.org/10.1146/annurev.fl.25. 010193.002543 .R. Betti and O. A. Hurricane. Inertial-confinement fusion with lasers. Nature Physics , 12(5): 435–448, May 2016. ISSN 1745-2481. doi: 10.1038/nphys3736. URL https://www.nature. com/articles/nphys3736 .Christophe Bonneville, Xiaolong He, April Tran, Jun Sur Park, William Fries, Daniel A. Mes-senger, Siu Wun Cheung, Yeonjong Shin, David M. Bortz, Debojyoti Ghosh, Jiun-Shyan Chen, Jonathan Belof, and Youngsoo Choi. A comprehensive review of latent space dynam-ics identification algorithms for intrusive and non-intrusive reduced-order-modeling, 2024. URL https://arxiv.org/abs/2403.10748 .Hervé Bourlard and Selen Hande Kabil. Autoencoders reloaded. Biological Cybernetics , 116 (4):389–406, 2022. ISSN 1432-0770. doi: 10.1007/s00422-022-00937-6. URL https://doi. org/10.1007/s00422-022-00937-6 .Hervé Bourlard and Yves Kamp. Auto-association by multilayer perceptrons and singular value decomposition. Biological Cybernetics , 59(4):291–294, 1988. ISSN 1432-0770. doi: 10.1007/BF00332918. URL https://doi.org/10.1007/BF00332918 .Rémi Bousquet, Alex Faucheu, Laurent Dumas, Caroline Nore, and Didier Lucor. Polynomial autoencoders with quantifiable errors for nonlinear fluid flow reconstruction. Research Square ,June 2026. doi: 10.21203/rs.3.rs-10008570/v1. URL https://doi.org/10.21203/rs.3. rs-10008570/v1 . Preprint. Rémi Bousquet, Caroline Nore, and Didier Lucor. Autoencoders latent space interpretabil-ity in the light of proper orthogonal decomposition: Machine learning of periodically forced fluid flows. Computer Physics Communications , 315:109728, 2025. ISSN 0010-4655. doi: https://doi.org/10.1016/j.cpc.2025.109728. URL https://www.sciencedirect.com/ science/article/pii/S0010465525002309 .A. Briard, L. Gostiaux, and B.-J. Gréa. The turbulent Faraday instability in miscible fluids. 
+
+Journal of Fluid Mechanics , 883:A57, 2020. doi: 10.1017/jfm.2019.920. Antoine Briard, Benoit-Joseph Grea, Ludomir Oteski, Olivier Soulard, Jerome Griffond, Se-bastien Thevenin, and Luminita Danaila. Poisson solvers for strongly stratified turbulent flows. Computers & Fluids , page 106741, 2025a. 32 Antoine Briard, Benoit-Joseph Gréa, and Olivier Soulard. Quasi-self-similarity of the horizontal magnetic rayleigh–taylor instability. Journal of Fluid Mechanics , 1023:A20, 2025b. Steven L. Brunton, Bernd R. Noack, and Petros Koumoutsakos. Machine learning for fluid mechanics. Annual Review of Fluid Mechanics , 52(Volume 52, 2020):477–508, 2020. ISSN 1545-4479. doi: https://doi.org/10.1146/annurev-fluid-010719-060214. URL https://www. annualreviews.org/content/journals/10.1146/annurev-fluid-010719-060214 .Jared L. Callaham, Jean-Christophe Loiseau, and Steven L. Brunton. Multiscale model reduction for incompressible flows. Journal of Fluid Mechanics , 973:A3, 2023. doi: 10.1017/jfm.2023.510. Kathleen Champion, Bethany Lusch, J. Nathan Kutz, and Steven L. Brunton. Data-driven discovery of coordinates and governing equations. Proceedings of the National Academy of Sciences , 116(45):22445–22451, 2019. doi: 10.1073/pnas.1906995116. URL https://www. pnas.org/doi/abs/10.1073/pnas.1906995116 .Andrew W. Cook, William Cabot, and Paul L. Miller. The mixing transition in rayleigh–taylor instability. Journal of Fluid Mechanics , 511:333–362, 2004. doi: 10.1017/S0022112004009681. Paul Creusy, Benoît-Joseph Gréa, Antoine Briard, and Téo Granger. Learning turbulence clo-sures with physics-informed neural networks for the rayleigh-taylor transition to turbulence, 2026. URL https://arxiv.org/abs/2607.07020 .A. E. Deane, I. G. Kevrekidis, G. E. Karniadakis, and S. A. Orszag. Low-dimensional models for complex geometry flows: Application to grooved channels and circular cylinders. Physics of Fluids A: Fluid Dynamics , 3(10):2337–2354, 10 1991. ISSN 0899-8213. doi: 10.1063/1.857881. URL https://doi.org/10.1063/1.857881 .Carl Eckart and Gale Young. The approximation of one matrix by another of lower rank. 
+
+Psychometrika , 1(3):211–218, 1936. doi: 10.1007/BF02288367. URL https://doi.org/10. 1007/BF02288367 .Nicola Farenga, Stefania Fresca, Simone Brivio, and Andrea Manzoni. On latent dynamics learning in nonlinear reduced order modeling. Neural Networks , 185:107146, 2025. B.-J. Gréa and A. Briard. Frozen waves in turbulent mixing layers. Phys. Rev. Fluids , 4: 064608, Jun 2019. doi: 10.1103/PhysRevFluids.4.064608. URL https://link.aps.org/ doi/10.1103/PhysRevFluids.4.064608 .Youngkyu Kim, Youngsoo Choi, David Widemann, and Tarek Zohdi. Efficient nonlinear man-ifold reduced order model, 2020. URL https://arxiv.org/abs/2011.07727 .B. O. Koopman. Hamiltonian systems and transformation in hilbert space. Proceedings of the National Academy of Sciences , 17(5):315–318, 1931. doi: 10.1073/pnas.17.5.315. URL 
+
+https://www.pnas.org/doi/abs/10.1073/pnas.17.5.315 .B. O. Koopman and J. v. Neumann. Dynamical systems of continuous spectra. Proceedings of the National Academy of Sciences , 18(3):255–263, 1932. doi: 10.1073/pnas.18.3.255. URL 
+
+https://www.pnas.org/doi/abs/10.1073/pnas.18.3.255 .Nicolas Lepage, Samir Beneddine, Camilla Fiorini, Iraj Mortazavi, Denis Sipp, and Nico-las Thome. Hybrid autoencoder/galerkin approach for nonlinear reduced order modelling. 
+
+Computers & Fluids , 302:106811, 2025. ISSN 0045-7930. doi: https://doi.org/10.1016/ j.compfluid.2025.106811. URL https://www.sciencedirect.com/science/article/pii/ S0045793025002713 .33 John Lindl. Development of the indirect-drive approach to inertial confinement fusion and the target physics basis for ignition and gain. Physics of Plasmas , 2(11):3933–4024, November 1995. ISSN 1070-664X, 1089-7674. doi: 10.1063/1.871025. URL https://pubs.aip.org/ pop/article/2/11/3933/261855/Development-of-the-indirect-drive-approach-to .Bethany Lusch, J. Nathan Kutz, and Steven L. Brunton. Deep learning for universal linear em-beddings of nonlinear dynamics. Nature Communications , 9(1):4950, 2018. ISSN 2041-1723. doi: 10.1038/s41467-018-07210-0. URL https://doi.org/10.1038/s41467-018-07210-0 .Xia Ma and George Em Karniadakis. A low-dimensional model for simulating three-dimensional cylinder flow. Journal of Fluid Mechanics , 458:181–190, 2002. doi: 10.1017/ S0022112002007991. Emmanuel Menier, Michele Alessandro Bucci, Mouadh Yagoubi, Lionel Mathelin, and Marc Schoenauer. Cd-rom: Complemented deep - reduced order model. Computer Methods in Applied Mechanics and Engineering , 410:115985, 2023. ISSN 0045-7825. doi: https: //doi.org/10.1016/j.cma.2023.115985. URL https://www.sciencedirect.com/science/ article/pii/S0045782523001081 .Daniel Messenger, Daniel Serino, Balu Nadiga, and Marc Klasky. Revealing low-dimensional structure in 2d richtmyer-meshkov instabilities via parametric reduced-order modeling, 2025. URL https://arxiv.org/abs/2510.16197 .Bernd R. Noack, Konstantin Afanasiev, Marek Morzyński, Gilead Tadmor, and Frank Thiele. A hierarchy of low-dimensional models for the transient and post-transient cylinder wake. 
+
+Journal of Fluid Mechanics , 497:335–363, 2003. doi: 10.1017/S0022112003006694. B.R. Noack, M. Morzynski, and G. Tadmor. Reduced-Order Modelling for Flow Control .Springer, 2011. Adam Paszke, Sam Gross, Francisco Massa, Adam Lerer, James Bradbury, Gregory Chanan, Trevor Killeen, Zeming Lin, Natalia Gimelshein, Luca Antiga, Alban Desmaison, Andreas Köpf, Edward Yang, Zach DeVito, Martin Raison, Alykhan Tejani, Sasank Chilamkurthy, Benoit Steiner, Lu Fang, Junjie Bai, and Soumith Chintala. Pytorch: An imperative style, high-performance deep learning library, 2019. URL https://arxiv.org/abs/1912.01703 .M. Raissi, P. Perdikaris, and G.E. Karniadakis. Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations. Journal of Computational Physics , 378:686–707, 2019. ISSN 0021-9991. doi: https://doi.org/10.1016/j.jcp.2018.10.045. URL https://www.sciencedirect. com/science/article/pii/S0021999118307125 .John William Strutt Rayleigh. Investigation of the character of the equilibrium of an incom-pressible heavy fluid of variable density. Proceedings of the London Mathematical Society , 6 (2):170–177, 1882. doi: 10.1112/plms/s1-14.1.170. Bruce A. Remington, Hye-Sook Park, Daniel T. Casey, Robert M. Cavallo, Daniel S. Clark, Channing M. Huntington, Dan H. Kalantar, Carolyn C. Kuranz, Aaron R. Miles, Sab-rina R. Nagel, Kumar S. Raman, Christoper E. Wehrenberg, and Vladimir A. Smalyuk. Rayleigh–Taylor instabilities in high-energy density settings on the National Ignition Fa-cility. Proceedings of the National Academy of Sciences , 116(37):18233–18238, Septem-ber 2019. ISSN 0027-8424, 1091-6490. doi: 10.1073/pnas.1717236115. URL https: //pnas.org/doi/10.1073/pnas.1717236115 .34 J. R. Ristorcelli and T. T. Clark. Rayleigh–taylor turbulence: Self-similar analysis and di-rect numerical simulations. Journal of Fluid Mechanics , 507:213–253, 2004. doi: 10.1017/ S0022112004008286. Clarence W. Rowley and Jerrold E. Marsden. Reconstruction equations and the karhunen–loève expansion for systems with symmetry. Physica D: Nonlinear Phenomena , 142(1):1–19, 2000. ISSN 0167-2789. doi: https://doi.org/10.1016/S0167-2789(00)00042-7. URL https://www. sciencedirect.com/science/article/pii/S0167278900000427 .David H. Sharp. An overview of Rayleigh-Taylor instability. Physica D: Nonlinear Phenomena ,12(1):3–18, July 1984. ISSN 0167-2789. doi: 10.1016/0167-2789(84)90510-4. URL https: //www.sciencedirect.com/science/article/pii/0167278984905104 .Lawrence Sirovich. Turbulence and the dynamics of coherent structures part i: Coherent structures. Quarterly of Applied Mathematics , 45(3):561–571, 1987. URL http://www. jstor.org/stable/43637457 .Michael Stein. Large sample properties of simulations using latin hypercube sampling. 
+
+Technometrics , 29(2):143 – 151, 1987. doi: 10.1080/00401706.1987.10488205. URL 
+
+https://www.scopus.com/inward/record.uri?eid=2-s2.0-0023349730&doi=10.1080% 2f00401706.1987.10488205&partnerID=40&md5=408daac3d97138595c7e8b0a301cf314 .Cited by: 2163. Kunihiko Taira, Steven L. Brunton, Scott T. M. Dawson, Clarence W. Rowley, Tim Colo-nius, Beverley J. McKeon, Oliver T. Schmidt, Stanislav Gordeyev, Vassilios Theofilis, and Lawrence S. Ukeiley. Modal analysis of fluid flows: An overview. AIAA Journal , 55(12): 4013–4041, 2017. doi: 10.2514/1.J056060. URL https://doi.org/10.2514/1.J056060 .Geoffrey Ingram Taylor. The instability of liquid surfaces when accelerated in a direction perpendicular to their planes. i. Proceedings of the Royal Society of London. Series A , pages 192–196, 1950. Sébastien Thévenin and Benoît-Joseph Gréa. Modeling late-time sensitivity to initial conditions in boussinesq rayleigh–taylor turbulence. Physica D: Nonlinear Phenomena , 483:134947, 2025. ISSN 0167-2789. doi: https://doi.org/10.1016/j.physd.2025.134947. URL https: //www.sciencedirect.com/science/article/pii/S0167278925004245 .Sébastien Thévenin, Benoît-Joseph Gréa, Gilles Kluth, and Antoine Briard. Database of di-rect numerical simulations of rayleigh–taylor turbulence at low density contrast: 0d volume-averaged quantities, 2025a. URL https://doi.org/10.57745/VTM1PN .Sébastien Thévenin, Benoît-Joseph Gréa, Gilles Kluth, and Balasubramanya T. Nadiga. Lever-aging initial conditions memory for modelling rayleigh–taylor turbulence. Journal of Fluid Mechanics , 1009:A17, 2025b. doi: 10.1017/jfm.2025.209. URL https://doi.org/10.1017/ jfm.2025.209 .Jorge F. Urbán, Petros Stefanou, and José A. Pons. Unveiling the optimization process of physics-informed neural networks: How accurate and competitive can pinns be? Journal of Computational Physics , 523:113656, 2025. doi: 10.1016/j.jcp.2024.113656. URL https: //doi.org/10.1016/j.jcp.2024.113656 .Ricardo Vinuesa, Paola Cinnella, Jean Rabault, Hossein Azizpour, Stefan Bauer, Bingni W. Brunton, Arne Elofsson, Elias Jarlebring, Hedvig Kjellström, Stefano Markidis, David Mar-levi, Javier García-Martínez, and Steven L. Brunton. Decoding complexity through ma-chine learning is redefining scientific discovery. Communications Physics , 9(1):168, 2026. 35 ISSN 2399-3650. doi: 10.1038/s42005-026-02676-7. URL https://doi.org/10.1038/ s42005-026-02676-7 .Marie-Christine Volk, Anne Sergent, Didier Lucor, Michael Mommert, Christian Bauer, and Claus Wagner. A pinn methodology for temperature field reconstruction in the piv mea-surement plane: Case of rayleigh–bénard convection. International Communications in Heat and Mass Transfer , 167:109284, 2025. ISSN 0735-1933. doi: https://doi.org/10. 1016/j.icheatmasstransfer.2025.109284. URL https://www.sciencedirect.com/science/ article/pii/S0735193325007109 .David L. Youngs. Numerical simulation of turbulent mixing by rayleigh–taylor instability. 
+
+Physica D: Nonlinear Phenomena , 12(1):32–44, 1984. doi: 10.1016/0167-2789(84)90512-8. URL https://doi.org/10.1016/0167-2789(84)90512-8 .Ye Zhou. Rayleigh–taylor and richtmyer–meshkov instability induced flow, turbulence, and mixing. i. Physics Reports , 720-722:1–136, 2017a. ISSN 0370-1573. doi: https://doi.org/ 10.1016/j.physrep.2017.07.008. URL https://www.sciencedirect.com/science/article/ pii/S0370157317302958 . Rayleigh–Taylor and Richtmyer–Meshkov instability induced flow, turbulence, and mixing. I. Ye Zhou. Rayleigh–taylor and richtmyer–meshkov instability induced flow, turbulence, and mixing. ii. Physics Reports , 723-725:1–160, 2017b. ISSN 0370-1573. doi: https://doi.org/ 10.1016/j.physrep.2017.07.008. URL https://www.sciencedirect.com/science/article/ pii/S0370157317302958 . Rayleigh–Taylor and Richtmyer–Meshkov instability induced flow, turbulence, and mixing. II. Ye Zhou, James D. Sadler, and Omar A. Hurricane. Instabilities and Mixing in Inertial Confinement Fusion. Annual Review of Fluid Mechanics , 57(1):197–225, January 2025. ISSN 0066-4189, 1545-4479. doi: 10.1146/annurev-fluid-022824-110008. URL https://www. annualreviews.org/content/journals/10.1146/annurev-fluid-022824-110008 .36
