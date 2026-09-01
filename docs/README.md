@@ -6,38 +6,31 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-31
-- 运行时间：2026-08-31 23:24:54 UTC
+- 最新运行日期：2026-09-01
+- 运行时间：2026-09-01 23:03:28 UTC
 - 运行状态：成功
-- 本次总论文数：5
+- 本次总论文数：2
 - 精读区：0
-- 速读区：5
+- 速读区：2
 
 ### 今日简报（AI）
-今日速读5篇论文，聚焦天气集合预报、湍流降阶模型与等变图生成。  
-最值得关注的是扩散蒸馏技术，能以更低成本生成高效天气预报集合（7.0分）。  
-建议普通读者优先了解该方向，兼顾Rayleigh-Taylor不稳定性建模的潜在应用。
-- 详情：[/202608/31/README](/202608/31/README)
+今日速读2篇扩散模型相关论文，聚焦训练理论与PDE求解应用。
+
+最值得关注：扩散模型在高维懒训练下的泛化与过拟合分析，以及扩散语言模型作为PDE求解器的新尝试。
+
+建议快速浏览这两篇6分论文，若时间有限可优先看泛化性结论。
+- 详情：[/202609/01/README](/202609/01/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Diffusion Distillation for Efficient Weather Ensembles](/202608/31/2608.27728v1-diffusion-distillation-for-efficient-weather-ensembles)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：高效天气集合的扩散模型蒸馏，生成式扩散与大气预报结合
-2. [Linear and Nonlinear Latent-Space Reduced-Order Models for the Rayleigh--Taylor Instability](/202608/31/2608.26783v1-linear-and-nonlinear-latent-space-reduced-order-models-for-the-rayleigh--taylor-instability)  
+1. [Generalization, memorization, and overfitting for diffusion models trained in the lazy high-dimensional regime](/202609/01/2608.23938v1-generalization-memorization-and-overfitting-for-diffusion-models-trained-in-the-lazy-high-dimensional-regime)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：针对瑞利-泰勒不稳定性的潜空间降阶模型，连接机器学习和流体力学，为生成式建模提供方法基础。
-3. [Gromov-Monge Flow Matching for Equivariant Graph Generation](/202608/31/2608.26961v1-gromov-monge-flow-matching-for-equivariant-graph-generation)  
+   evidence：关于分数生成模型的理论，对流体流动的分数生成模型有参考意义。
+2. [DiffPDE: Masked Diffusion Language Models as PDE Solver](/202609/01/2608.30532v1-diffpde-masked-diffusion-language-models-as-pde-solver)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：流匹配方法结合等变图生成，关注商空间的Wasserstein几何
-4. [When Can Conditional Flow Matching Replace Pointwise Negative Log-Likelihood?](/202608/31/2608.28010v1-when-can-conditional-flow-matching-replace-pointwise-negative-log-likelihood)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：条件流匹配损失的理论分析，为流匹配在流体模拟中的应用提供损失设计依据
-5. [VersaGauss: A Versatile Framework for Generating Multiphase Dynamics with 3D Gaussians](/202608/31/2608.28069v1-versagauss-a-versatile-framework-for-generating-multiphase-dynamics-with-3d-gaussians)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：基于3D高斯和耦合多相点方法的多相动力学生成框架
+   evidence：使用掩码离散扩散语言模型修复PDE求解器代码，属于扩散模型在计算PDE求解中的应用
 
 
 <div class="dpr-home-promo-card">

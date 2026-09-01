@@ -1,0 +1,99 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-09-01T22:59:50.605357+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.23938v1",
+      "source": "arxiv",
+      "title": "Generalization, memorization, and overfitting for diffusion models trained in the lazy high-dimensional regime",
+      "abstract": "Modern score-based generative models have achieved remarkable empirical success in high-dimensional tasks such as image, audio, and video synthesis. These models reduce distribution learning to a sequence of regression problems that, if solved exactly on finite data, would ultimately reproduce the training samples. Their ability to generalize must therefore arise from the implicit or explicit regularization during training. In this work, we develop a generative counterpart to the theory of benign overfitting and algorithmic regularization for overparameterized neural networks in the supervised lazy-training regime. We study denoising score matching in a vector-valued reproducing kernel Hilbert space with an inner-product kernel. In the proportional high-dimensional regime $n\\asymp d$, we derive exact risk trajectories under gradient flow training. These trajectories exhibit three phases governed by qualitatively distinct estimators: a spectral estimator that generalizes, a pure-noise score with localized peaks that interpolate the training objective, and an empirical Bayes estimator that memorizes the data. We then analyze how these estimators combine along the reverse-time SDE and characterize the distribution of the resulting samples. The analysis reveals familiar mechanisms from supervised learning, including kernel linearization and self-induced regularization from the nonlinear part of the kernel, but also reveals a distinct phenomenology specific to generative modeling.",
+      "authors": [
+        "Hugo Latourelle-Vigeant",
+        "Sinho Chewi",
+        "Aram-Alexandre Pooladian",
+        "John Sous",
+        "Theodor Misiakiewicz"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.LG",
+        "math.ST"
+      ],
+      "published": "2026-08-25T00:54:59+00:00",
+      "link": "https://arxiv.org/pdf/2608.23938v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Theoretical analysis of score-based diffusion models; relevant to applying score-based generative models to fluid flow.",
+      "llm_evidence_cn": "关于分数生成模型的理论，对流体流动的分数生成模型有参考意义。",
+      "llm_evidence": "关于分数生成模型的理论，对流体流动的分数生成模型有参考意义。",
+      "canonical_evidence": "关于分数生成模型的理论，对流体流动的分数生成模型有参考意义。",
+      "llm_tldr_en": "Develops a theory of benign overfitting for score-based diffusion models in the lazy high-dimensional regime, showing how algorithmic regularization enables generalization despite finite-sample memorization; relevant to the robust training of diffusion models in applications including fluid flow.",
+      "llm_tldr_cn": "扩散模型在有限数据上若精确求解会复现训练样本，其泛化能力源于显式或隐式正则化。本文将良性过拟合理论推广到生成模型，在惰性高维机制下研究向量值再生核希尔伯特空间中的去噪分数匹配。结果显示算法正则化能够解释扩散模型的泛化与记忆权衡。该理论为高维扩散模型的训练提供了指导，也可为流体力学中的分数生成模型提供理论基础。",
+      "llm_tldr": "扩散模型在有限数据上若精确求解会复现训练样本，其泛化能力源于显式或隐式正则化。本文将良性过拟合理论推广到生成模型，在惰性高维机制下研究向量值再生核希尔伯特空间中的去噪分数匹配。结果显示算法正则化能够解释扩散模型的泛化与记忆权衡。该理论为高维扩散模型的训练提供了指导，也可为流体力学中的分数生成模型提供理论基础。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "score-based generative models for fluid flow",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.30532v1",
+      "source": "arxiv",
+      "title": "DiffPDE: Masked Diffusion Language Models as PDE Solver",
+      "abstract": "Existing approaches for synthesizing Partial Differential Equation (PDE) solvers predominantly rely on autoregressive models, yet their global left-to-right decoding incurs substantial redundancy when addressing inherently localized bugs. In this work, we challenge this inefficient paradigm and propose DiffPDE, a framework leveraging discrete diffusion language models for targeted code repair. By introducing a localized re-masking and infilling strategy, DiffPDE regenerates only erroneous regions while preserving correct context, naturally aligning generation with the sparse nature of PDE errors. Furthermore, to handle coupled bugs requiring sequential interventions, we present Iterative Debugging GRPO (ID-GRPO), a reinforcement learning scheme that enables multi-round debugging within single trajectories via intermediate rewards. Experiments on PDEBench show that DiffPDE achieves competitive accuracy, outperforms same-scale AR models, and significantly accelerates repair.",
+      "authors": [
+        "Wenxuan Guo",
+        "Yuyang Hong",
+        "Lubin Fan",
+        "Zhaojin Fu",
+        "Lin Chen",
+        "Kun Ding",
+        "Shiming Xiang"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-08-31T10:01:13+00:00",
+      "link": "https://arxiv.org/pdf/2608.30532v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "uses masked discrete diffusion language models to repair PDE solver code, a diffusion model application for computational PDE solving",
+      "llm_evidence_cn": "使用掩码离散扩散语言模型修复PDE求解器代码，属于扩散模型在计算PDE求解中的应用",
+      "llm_evidence": "使用掩码离散扩散语言模型修复PDE求解器代码，属于扩散模型在计算PDE求解中的应用",
+      "canonical_evidence": "使用掩码离散扩散语言模型修复PDE求解器代码，属于扩散模型在计算PDE求解中的应用",
+      "llm_tldr_en": "Proposes DiffPDE, a masked diffusion language model that repairs localized errors in PDE solver code via re-masking and infilling, and introduces iterative debugging GRPO to handle coupled bugs, demonstrating diffusion models in PDE programming tasks.",
+      "llm_tldr_cn": "该文针对现有PDE求解器自动生成依赖自回归模型、全局解码冗余的问题，提出DiffPDE框架，利用离散扩散语言模型进行局部重掩码与填充，只重新生成错误区域而保留正确上下文，从而与PDE错误稀疏性自然对齐。针对需要序列干预的耦合错误，引入迭代调试GRPO强化学习方案。该方法展示了扩散模型在PDE编程任务中的潜力，可间接支持计算流体动力学中的求解器开发，但并未直接面向流体流动模拟。",
+      "llm_tldr": "该文针对现有PDE求解器自动生成依赖自回归模型、全局解码冗余的问题，提出DiffPDE框架，利用离散扩散语言模型进行局部重掩码与填充，只重新生成错误区域而保留正确上下文，从而与PDE错误稀疏性自然对齐。针对需要序列干预的耦合错误，引入迭代调试GRPO强化学习方案。该方法展示了扩散模型在PDE编程任务中的潜力，可间接支持计算流体动力学中的求解器开发，但并未直接面向流体流动模拟。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion model applications in computational fluid dynamics",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
