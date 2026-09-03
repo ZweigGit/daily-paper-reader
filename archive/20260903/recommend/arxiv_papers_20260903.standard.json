@@ -1,0 +1,132 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-09-03T22:52:55.244053+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2609.01705v1",
+      "source": "arxiv",
+      "title": "Generative Diffusion Surrogates with Analytical Variance Schedule",
+      "abstract": "Stochastic transport describes physical systems in which an initially structured distribution spreads under unresolved forcing, scattering, or heterogeneous media. Useful surrogates for such systems should be probabilistic, time-resolved, and able to represent non-Gaussian distributional structure. Generative diffusion models, which corrupt data with Gaussian noise and learn a reverse flow back to structured states, have these properties. Their noise schedules, however, are usually chosen heuristically: image and audio generation---the canonical use cases---provide no physical clock. In transport, by contrast, the variance, or mean-square displacement, is often known from macroscopic theory or empirical scaling even when the full distribution is not. Here we prescribe the forward noising rate as the time derivative of this variance, turning generative time into a calibrated transport clock. The variance path is enforced by construction, while the learned score field represents how non-Gaussian structure inherited from entrance data is smoothed along that path, requiring no intermediate-time physical transport data. For ballistic-to-diffusive transport in turbulent plasmas, the surrogate matches test-particle distributions, reproduces the laboratory-measured variance scale, and tracks the simulated kurtosis evolution without schedule tuning, enabling calibrated emulation and likelihood-based inference.",
+      "authors": [
+        "Patrick Reichherzer",
+        "Gianluca Gregori",
+        "David N. Hosking",
+        "Subir Sarkar"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "astro-ph.IM",
+        "physics.plasm-ph"
+      ],
+      "published": "2026-09-01T18:00:00+00:00",
+      "link": "https://arxiv.org/pdf/2609.01705v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Generative diffusion surrogate with analytical variance schedule tied to stochastic transport physics",
+      "llm_evidence_cn": "面向随机输运物理系统的生成扩散替代模型，采用与物理时间对应的解析方差调度",
+      "llm_evidence": "面向随机输运物理系统的生成扩散替代模型，采用与物理时间对应的解析方差调度",
+      "canonical_evidence": "面向随机输运物理系统的生成扩散替代模型，采用与物理时间对应的解析方差调度",
+      "llm_tldr_en": "A generative diffusion surrogate for stochastic transport whose analytical variance schedule follows the physical mean-square displacement, enabling probabilistic time-resolved non-Gaussian surrogates.",
+      "llm_tldr_cn": "随机输运中初始分布会在未解析强迫、散射或非均匀介质作用下展开，理想的替代模型需兼具概率性、时间分辨和非高斯表示能力。生成扩散模型具备这些特性，但其噪声调度在图像和音频等场景缺乏物理时钟。本文将扩散模型噪声调度与宏观理论或经验给出的方差均方位移对齐，使生成过程的时间步对应真实输运时刻，从而构建物理可解释的概率替代模型。该方法为流体随机输运系统的生成式代理建模提供了物理感知新途径。",
+      "llm_tldr": "随机输运中初始分布会在未解析强迫、散射或非均匀介质作用下展开，理想的替代模型需兼具概率性、时间分辨和非高斯表示能力。生成扩散模型具备这些特性，但其噪声调度在图像和音频等场景缺乏物理时钟。本文将扩散模型噪声调度与宏观理论或经验给出的方差均方位移对齐，使生成过程的时间步对应真实输运时刻，从而构建物理可解释的概率替代模型。该方法为流体随机输运系统的生成式代理建模提供了物理感知新途径。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.29107v1",
+      "source": "arxiv",
+      "title": "PathGuide: Dynamic Classifier-Free Guidance via On-Policy Transport Alignment",
+      "abstract": "While modern generative models excel at modeling complex data, precise inference-time control in conditional generation remains a critical challenge. Classifier-free guidance (CFG) is a primary mechanism for such control, yet it is typically treated as a static tuning parameter. In flow-based models, however, the guidance scale fundamentally dictates the velocity field and the resulting probability path, making guidance selection a dynamic path-optimization problem. We introduce PathGuide, a framework that reformulates scalar CFG selection as an on-policy transport problem. Leveraging the weak form of the continuity equation, we derive a selection criterion with a direct path-correctness interpretation: we prove that if the guided field is weakly equivalent to the exact conditional field along the generated rollout, the sampler's path coincides with the target conditional law. For scalar CFG, this criterion yields a strictly quadratic local objective with an efficient, closed-form selector for each solver interval. PathGuide enables optimal guidance scales to be computed and used online during generation or fitted offline as a reusable piecewise-constant schedule. We validate our method on low-resolution image manifolds and controlled settings across various continuous-time flow constructions, demonstrating that this transport-based selector improves path alignment and sample fidelity over both fixed and state-of-the-art adaptive guidance baselines.",
+      "authors": [
+        "Avishag Nevo",
+        "Tamir Hazan"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "stat.ML"
+      ],
+      "published": "2026-08-29T07:26:21+00:00",
+      "link": "https://arxiv.org/pdf/2608.29107v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Flow-based generative model with dynamic classifier-free guidance via transport alignment, highly relevant to flow matching methods for scientific field generation.",
+      "llm_evidence_cn": "面向流式生成模型的输运对齐引导方法，可支持流体动力学中的流匹配类生成模型。",
+      "llm_evidence": "面向流式生成模型的输运对齐引导方法，可支持流体动力学中的流匹配类生成模型。",
+      "canonical_evidence": "面向流式生成模型的输运对齐引导方法，可支持流体动力学中的流匹配类生成模型。",
+      "llm_tldr_en": "Introduces PathGuide, an on-policy transport alignment framework that turns classifier-free guidance scale selection into a dynamic path-correctness problem for flow-based generative models, with validity from the continuity equation's weak form.",
+      "llm_tldr_cn": "论文指出现有生成模型中的无分类器引导通常被当作静态超参数处理，但在流式生成模型中引导尺度会改变速度场与概率路径，因此应视为动态路径优化问题。作者提出PathGuide框架，将标量CFG选择转化为在线策略输运问题，并利用连续性方程弱形式推导具有路径正确性解释的选取准则。该工作为流匹配与科学流体生成等需要精细条件控制的生成方法提供了理论基础和动态调参工具。",
+      "llm_tldr": "论文指出现有生成模型中的无分类器引导通常被当作静态超参数处理，但在流式生成模型中引导尺度会改变速度场与概率路径，因此应视为动态路径优化问题。作者提出PathGuide框架，将标量CFG选择转化为在线策略输运问题，并利用连续性方程弱形式推导具有路径正确性解释的选取准则。该工作为流匹配与科学流体生成等需要精细条件控制的生成方法提供了理论基础和动态调参工具。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2609.00863v1",
+      "source": "arxiv",
+      "title": "Conditional Flow Matching for ML-Based Inverse Design Problems",
+      "abstract": "Engineering inverse design is often limited by the high computational cost of iterative solvers for optimization problems constrained by partial differential equations (PDEs) and by their sensitivity to initialization. Deep generative models can produce candidate designs without rerunning the simulator at inference time. Generative adversarial networks (GANs) sample in one forward pass, whereas diffusion models require iterative reverse-time integration.   In this work, we add conditional flow matching (CFM) to EngiOpt and compare it with a conditional diffusion model and a conditional generative adversarial network (cGAN) on structural (beams2d) and thermal (heatconduction2d) benchmarks from EngiBench using the same downstream optimization protocol. We use cumulative optimality gap (COG) and final optimality gap (FOG) as the primary metrics for evaluating the generated designs as warm starts for gradient-based refinement. On the evaluated EngiOpt implementations and two EngiBench tasks, CFM achieves the lowest measured COG, FOG, maximum mean discrepancy (MMD), and volume-fraction deviation on both tasks. CFM has mean volume-fraction deviations of 0.4% and 1.0% on beams2d and heatconduction2d, respectively, compared with 3.8% and 11.2% for diffusion. At Euler s = 16, CFM achieves 53.2 samples/s on beams2d, about 66 times the measured throughput of the evaluated diffusion baseline using 1000 network evaluations under the same timing protocol, with COG 1.182 +/- 3.126, compared with 1.173 +/- 3.100 for Euler s = 32.   Across the two tasks, CFM produces warm starts with lower measured COG than both baselines and uses fewer network evaluations than diffusion.",
+      "authors": [
+        "Juliana Felder",
+        "Milad Habibi",
+        "Soheyl Massoudi",
+        "Mark Fuge"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-09-01T08:00:33+00:00",
+      "link": "https://arxiv.org/pdf/2609.00863v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Conditional flow matching generative model for PDE-constrained inverse design; methodology generalizes to fluid inverse-design problems.",
+      "llm_evidence_cn": "面向PDE约束反设计问题引入条件流匹配生成模型，方法可迁移至流体反设计。",
+      "llm_evidence": "面向PDE约束反设计问题引入条件流匹配生成模型，方法可迁移至流体反设计。",
+      "canonical_evidence": "面向PDE约束反设计问题引入条件流匹配生成模型，方法可迁移至流体反设计。",
+      "llm_tldr_en": "Adds conditional flow matching to EngiOpt for PDE-constrained inverse design and compares it against conditional diffusion and cGAN on structural and thermal benchmarks using a shared downstream optimization protocol.",
+      "llm_tldr_cn": "工程反设计受制于迭代求解PDE的高成本和初值敏感，深度生成模型可在推理时直接生成候选设计。该文在EngiOpt工具链中加入条件流匹配(CFM)，并与条件扩散模型、条件GAN在梁结构和热传导两个基准上按同一下游优化流程对比。CFM兼具少步采样与训练稳定优势，在生成质量和下游优化目标上展现出竞争力。虽然测试基准不是流体，但该反设计流程和CFM算法可直接迁移到气动或流道等流体动力学逆设计任务中。",
+      "llm_tldr": "工程反设计受制于迭代求解PDE的高成本和初值敏感，深度生成模型可在推理时直接生成候选设计。该文在EngiOpt工具链中加入条件流匹配(CFM)，并与条件扩散模型、条件GAN在梁结构和热传导两个基准上按同一下游优化流程对比。CFM兼具少步采样与训练稳定优势，在生成质量和下游优化目标上展现出竞争力。虽然测试基准不是流体，但该反设计流程和CFM算法可直接迁移到气动或流道等流体动力学逆设计任务中。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

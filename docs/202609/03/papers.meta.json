@@ -1,0 +1,54 @@
+{
+  "label": "2026-09-03",
+  "date": "2026-09-03",
+  "generated_at": "2026-09-03T22:55:28",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202609/03/2609.01705v1-generative-diffusion-surrogates-with-analytical-variance-schedule",
+      "section": "deep",
+      "title_en": "Generative Diffusion Surrogates with Analytical Variance Schedule",
+      "authors": "Patrick Reichherzer, Gianluca Gregori, David N. Hosking, Subir Sarkar",
+      "date": "2026-09-01",
+      "pdf": "https://arxiv.org/pdf/2609.01705v1",
+      "score": "8.0",
+      "evidence": "面向随机输运物理系统的生成扩散替代模型，采用与物理时间对应的解析方差调度",
+      "tldr": "随机输运系统中，生成扩散模型的噪声调度通常缺乏物理时间校准。本文利用已知的方差（均方位移）时间导数直接设定前向加噪速率，使生成时间成为校准的输运时钟。该方法无需中间时刻物理数据即可学习非高斯结构的平滑演化，在湍流等离子体弹道-扩散输运中无需调度调参即可准确复现测试粒子分布、方差标度与峰度演化，支持校准仿真与似然推断。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Stochastic transport describes physical systems in which an initially structured distribution spreads under unresolved forcing, scattering, or heterogeneous media. Useful surrogates for such systems should be probabilistic, time-resolved, and able to represent non-Gaussian distributional structure. Generative diffusion models, which corrupt data with Gaussian noise and learn a reverse flow back to structured states, have these properties. Their noise schedules, however, are usually chosen heuristically: image and audio generation---the canonical use cases---provide no physical clock. In transport, by contrast, the variance, or mean-square displacement, is often known from macroscopic theory or empirical scaling even when the full distribution is not. Here we prescribe the forward noising rate as the time derivative of this variance, turning generative time into a calibrated transport clock. The variance path is enforced by construction, while the learned score field represents how non-Gaussian structure inherited from entrance data is smoothed along that path, requiring no intermediate-time physical transport data. For ballistic-to-diffusive transport in turbulent plasmas, the surrogate matches test-particle distributions, reproduces the laboratory-measured variance scale, and tracks the simulated kurtosis evolution without schedule tuning, enabling calibrated emulation and likelihood-based inference.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202609/03/2608.29107v1-pathguide-dynamic-classifier-free-guidance-via-on-policy-transport-alignment",
+      "section": "quick",
+      "title_en": "PathGuide: Dynamic Classifier-Free Guidance via On-Policy Transport Alignment",
+      "authors": "Avishag Nevo, Tamir Hazan",
+      "date": "2026-08-29",
+      "pdf": "https://arxiv.org/pdf/2608.29107v1",
+      "score": "7.0",
+      "evidence": "面向流式生成模型的输运对齐引导方法，可支持流体动力学中的流匹配类生成模型。",
+      "tldr": "现代生成模型在条件生成时需精确推理期控制，常用的CFG却常被当作静态参数，但在流模型中引导尺度实际上决定概率路径，选择最优尺度是动态路径优化。为此PathGuide将标量CFG选择重构成on-policy传输问题，利用连续方程弱形式导出路径正确性准则，得到闭式二次选择器，可在采样时在线计算或离线拟合调度。在多种连续时间流构造与图像流形上，该方法显著改善路径一致性和样本保真度，优于固定和自适应引导方法。该工作建立了CFG尺度与概率路径传输之间的理论联系，为动态条件生成控制提供新思路。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "While modern generative models excel at modeling complex data, precise inference-time control in conditional generation remains a critical challenge. Classifier-free guidance (CFG) is a primary mechanism for such control, yet it is typically treated as a static tuning parameter. In flow-based models, however, the guidance scale fundamentally dictates the velocity field and the resulting probability path, making guidance selection a dynamic path-optimization problem. We introduce PathGuide, a framework that reformulates scalar CFG selection as an on-policy transport problem. Leveraging the weak form of the continuity equation, we derive a selection criterion with a direct path-correctness interpretation: we prove that if the guided field is weakly equivalent to the exact conditional field along the generated rollout, the sampler's path coincides with the target conditional law. For scalar CFG, this criterion yields a strictly quadratic local objective with an efficient, closed-form selector for each solver interval. PathGuide enables optimal guidance scales to be computed and used online during generation or fitted offline as a reusable piecewise-constant schedule. We validate our method on low-resolution image manifolds and controlled settings across various continuous-time flow constructions, demonstrating that this transport-based selector improves path alignment and sample fidelity over both fixed and state-of-the-art adaptive guidance baselines.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202609/03/2609.00863v1-conditional-flow-matching-for-ml-based-inverse-design-problems",
+      "section": "quick",
+      "title_en": "Conditional Flow Matching for ML-Based Inverse Design Problems",
+      "authors": "Juliana Felder, Milad Habibi, Soheyl Massoudi, Mark Fuge",
+      "date": "2026-09-01",
+      "pdf": "https://arxiv.org/pdf/2609.00863v1",
+      "score": "6.0",
+      "evidence": "面向PDE约束反设计问题引入条件流匹配生成模型，方法可迁移至流体反设计。",
+      "tldr": "工程逆向设计受限于PDE求解的计算成本和初始猜测敏感性。本文将条件流匹配（CFM）引入EngiOpt，与扩散模型和cGAN对比，用于生成可微优化热启动。在EngiBench的beams2d与heatconduction2d任务上，CFM获得最低COG、MMD和体积分数偏差，且采样吞吐约为扩散基线的66倍。结果表明CFM能以极少的网络评估生成更优的设计起点。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Engineering inverse design is often limited by the high computational cost of iterative solvers for optimization problems constrained by partial differential equations (PDEs) and by their sensitivity to initialization. Deep generative models can produce candidate designs without rerunning the simulator at inference time. Generative adversarial networks (GANs) sample in one forward pass, whereas diffusion models require iterative reverse-time integration.   In this work, we add conditional flow matching (CFM) to EngiOpt and compare it with a conditional diffusion model and a conditional generative adversarial network (cGAN) on structural (beams2d) and thermal (heatconduction2d) benchmarks from EngiBench using the same downstream optimization protocol. We use cumulative optimality gap (COG) and final optimality gap (FOG) as the primary metrics for evaluating the generated designs as warm starts for gradient-based refinement. On the evaluated EngiOpt implementations and two EngiBench tasks, CFM achieves the lowest measured COG, FOG, maximum mean discrepancy (MMD), and volume-fraction deviation on both tasks. CFM has mean volume-fraction deviations of 0.4% and 1.0% on beams2d and heatconduction2d, respectively, compared with 3.8% and 11.2% for diffusion. At Euler s = 16, CFM achieves 53.2 samples/s on beams2d, about 66 times the measured throughput of the evaluated diffusion baseline using 1000 network evaluations under the same timing protocol, with COG 1.182 +/- 3.126, compared with 1.173 +/- 3.100 for Euler s = 32.   Across the two tasks, CFM produces warm starts with lower measured COG than both baselines and uses fewer network evaluations than diffusion.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
