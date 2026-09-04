@@ -6,29 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-03
-- 运行时间：2026-09-03 22:55:24 UTC
+- 最新运行日期：2026-09-04
+- 运行时间：2026-09-04 22:39:30 UTC
 - 运行状态：成功
-- 本次总论文数：3
+- 本次总论文数：1
 - 精读区：1
-- 速读区：2
+- 速读区：0
 
 ### 今日简报（AI）
-今日精读1篇、速读2篇，聚焦扩散模型与流匹配生成方法；最值得关注的是《Generative Diffusion Surrogates with Analytical Variance Schedule》（8分），其解析方差调度方案是效率提升关键；建议普通读者优先从精读论文入手，可后续结合PathGuide的引导策略对比理解。
-- 详情：[/202609/03/README](/202609/03/README)
+今日精读 1 篇高分论文，聚焦风暴潮情景生成的生成式 AI 新方法。  
+最值得关注：SurgeGen 框架（9.0/10）用混合扩散模型合成风暴潮场景，为灾害模拟提供新思路。  
+若想入门，可由此了解生成式模型在极端天气情景生成中的潜力和应用边界。
+- 详情：[/202609/04/README](/202609/04/README)
 
 ### 精读区论文标签
-1. [Generative Diffusion Surrogates with Analytical Variance Schedule](/202609/03/2609.01705v1-generative-diffusion-surrogates-with-analytical-variance-schedule)  
-   标签：评分：8.0/10、query:genmod-fluid
-   evidence：面向随机输运物理系统的生成扩散替代模型，采用与物理时间对应的解析方差调度
+1. [SurgeGen: A Hybrid Generative Diffusion Framework for Storm Surge Scenario Synthesis](/202609/04/2609.03382v1-surgegen-a-hybrid-generative-diffusion-framework-for-storm-surge-scenario-synthesis)  
+   标签：评分：9.0/10、query:genmod-fluid
+   evidence：面向风暴潮仿真的扩散生成代理，直接对应流体流动扩散模型应用
 
 ### 速读区论文标签
-1. [PathGuide: Dynamic Classifier-Free Guidance via On-Policy Transport Alignment](/202609/03/2608.29107v1-pathguide-dynamic-classifier-free-guidance-via-on-policy-transport-alignment)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：面向流式生成模型的输运对齐引导方法，可支持流体动力学中的流匹配类生成模型。
-2. [Conditional Flow Matching for ML-Based Inverse Design Problems](/202609/03/2609.00863v1-conditional-flow-matching-for-ml-based-inverse-design-problems)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：面向PDE约束反设计问题引入条件流匹配生成模型，方法可迁移至流体反设计。
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">

@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-09-04 <!--dpr-date:20260904-->
+    * 精读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202609/04/2609.03382v1-surgegen-a-hybrid-generative-diffusion-framework-for-storm-surge-scenario-synthesis" data-sidebar-item="{&quot;title&quot;: &quot;SurgeGen: A Hybrid Generative Diffusion Framework for Storm Surge Scenario Synthesis&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2609.03382v1-surgegen-a-hybrid-generative-diffusion-framework-for-storm-surge-scenario-synthesis&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;面向风暴潮仿真的扩散生成代理，直接对应流体流动扩散模型应用&quot;}">SurgeGen: A Hybrid Generative Diffusion Framework for Storm Surge Scenario Synthesis</a>
   * 2026-09-03 <!--dpr-date:20260903-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202609/03/2609.01705v1-generative-diffusion-surrogates-with-analytical-variance-schedule" data-sidebar-item="{&quot;title&quot;: &quot;Generative Diffusion Surrogates with Analytical Variance Schedule&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2609.01705v1-generative-diffusion-surrogates-with-analytical-variance-schedule&quot;, &quot;score&quot;: &quot;8.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;面向随机输运物理系统的生成扩散替代模型，采用与物理时间对应的解析方差调度&quot;}">Generative Diffusion Surrogates with Analytical Variance Schedule</a>
