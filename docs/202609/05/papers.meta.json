@@ -1,0 +1,54 @@
+{
+  "label": "2026-09-05",
+  "date": "2026-09-05",
+  "generated_at": "2026-09-05T22:14:06",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202609/05/2609.01746v1-cat-flow-curvature-adaptive-steps-for-flow-matching",
+      "section": "quick",
+      "title_en": "CAT-Flow: Curvature-Adaptive sTeps for Flow Matching",
+      "authors": "Qinchan Li, Pedro Cisneros-Velarde, Keru Fu, Samuel Antunes Miranda, Sharan Vaswani, Hao Zhang",
+      "date": "2026-09-01",
+      "pdf": "https://arxiv.org/pdf/2609.01746v1",
+      "score": "7.0",
+      "evidence": "提出通用流匹配采样加速算法，可服务流体流场生成所需的流匹配推理",
+      "tldr": "Flow Matching生成模型采样依赖ODE步长，现有方法常需20-30步。本文提出两种免训练推理时自适应步长算法CAT-OV与CAT-OT，分别基于状态空间梯度与时间差分近似曲率，无需额外函数评估，截断误差有常数阶界。在四个文生图Flow Matching模型上减少至多40%步数并提升图像质量。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Flow Matching has emerged as a leading framework for generative modeling, powering state-of-the-art systems such as FLUX and Stable Diffusion 3.5. However, the iterative nature of its ODE-based sampling process creates a fundamental efficiency bottleneck: the quality of generated samples is highly sensitive to the choice of step-sizes, and current models typically require 20 to 30 steps for good quality. In this work, we propose two lightweight, training-free algorithms, CAT-OV and CAT-OT that adapt step-sizes at inference time based on a novel connection between Flow Matching sampling and gradient flow. Our algorithms are computed efficiently by not requiring additional neural function evaluations. Specifically, CAT-OT estimates curvature over time via a finite-difference approximation of the time-derivative of the vector field, while CAT-OV approximates curvature over the state space via a gradient of the vector field. Under suitable conditions, both methods have truncation error bounds of constant order. Empirically, CAT-OV and CAT-OT outperform existing step-size heuristics in image quality metrics across four text- to-image Flow Matching models, reducing the number of generation steps required to reach comparable quality by up to 40%.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202609/05/2609.03443v1-beyond-straightness-non-crossing-flow-matching-via-quantile-aligntree-coupling",
+      "section": "quick",
+      "title_en": "Beyond Straightness: Non-Crossing Flow Matching via Quantile AlignTree Coupling",
+      "authors": "Junyi Lin, Mengyu Li, Jingxuan Hu, Kejun He, Cheng Meng",
+      "date": "2026-09-03",
+      "pdf": "https://arxiv.org/pdf/2609.03443v1",
+      "score": "7.0",
+      "evidence": "提出分位数对齐树流匹配方法，可为流体流动生成建模提供高效非交叉耦合策略",
+      "tldr": "流匹配性能依赖源与目标分布的耦合质量，但独立耦合易导致路径交叉与速度歧义，OT耦合成本高昂。提出QAT-FM，利用量化对齐树结构构建分层耦合，以O(Nd log N)时间构建、O(d)采样。理论上证明满足边际一致性、产生非交叉线性插值并改善路径分离，实验显示生成性能与构建成本均具优势。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "The performance of Flow Matching largely depends on the quality of the coupling between the source and target distributions. However, independent coupling often leads to path crossings and local velocity ambiguity, while OT-based couplings typically incur high construction costs. To address this challenge, we propose Quantile AlignTree Flow Matching (QAT-FM), an efficient structured coupling strategy that constructs a hierarchical coupling between a Gaussian prior and the target data distribution via a quantile-aligned tree structure. QAT-FM constructs the coupling in $\\mathcal{O}(Nd\\log N)$ time and supports per-pair source sampling with $\\mathcal{O}(d)$ complexity, enabling scalable training for large-scale high-dimensional generative tasks. Theoretically, we prove that the QAT coupling satisfies marginal consistency, induces non-crossing linear interpolation paths, and consistently improves path separation at intermediate times compared with independent coupling, thereby alleviating local velocity ambiguity. QAT-FM further extends naturally to conditional generation, enabling structured conditional coupling while preserving global Gaussian alignment. Experiments across diverse benchmark datasets demonstrate that QAT-FM achieves competitive generative performance while substantially reducing coupling construction cost.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202609/05/2609.01756v1-a-study-of-conditional-diffusion-models-for-open-loop-control-under-dry-friction-and-stiction",
+      "section": "quick",
+      "title_en": "A Study of Conditional Diffusion Models for Open-Loop Control under Dry Friction and Stiction",
+      "authors": "Eric Aislan Antonelo",
+      "date": "2026-09-01",
+      "pdf": "https://arxiv.org/pdf/2609.01756v1",
+      "score": "6.0",
+      "evidence": "研究条件扩散模型在物理控制任务中的生成；其方法可作为流体模拟与控制中扩散模型应用的迁移基础",
+      "tldr": "针对含干摩擦和静摩擦的点质量系统，有效控制序列仅占很小且有时间结构的子空间。本文采用条件扩散模型生成动作序列，作为开环控制提议分布。通过与随机射击和交叉熵方法对比，条件扩散在低样本下显著降低终端误差和卡死步数。表明其能通过条件生成和重组结构化控制基元，实现克服静摩擦的时序连贯控制。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Diffusion models have recently emerged as expressive generative priors for planning and control. This paper studies Action Diffusion, an action-sequence diffusion formulation used as an open-loop proposal distribution for a point-mass system with dry friction and stiction. In this benchmark, motion starts only when the applied input exceeds a static-friction threshold, so effective controls occupy a small and temporally structured subset of the action-sequence space. A compact conditional 1D U-Net generates bounded control sequences conditioned on initial and target states. We compare it with uniform random shooting, random shooting from the same structured dataset prior, and the Cross-Entropy Method (CEM). Results show that Action Diffusion reduces terminal error and stuck steps, especially in low-sample regimes. These results indicate that conditional diffusion provides an effective mechanism for generating temporally coherent control sequences that overcome stiction by conditioning and recombining structured control primitives from the training prior for state-to-state open-loop control.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
