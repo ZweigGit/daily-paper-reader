@@ -1,0 +1,39 @@
+{
+  "label": "2026-09-06",
+  "date": "2026-09-06",
+  "generated_at": "2026-09-06T22:09:20",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202609/06/2609.02160v1-geosprint-geometric-redundancy-aware-step-pruning-for-inference-in-diffusion-trajectories",
+      "section": "quick",
+      "title_en": "GeoSPRINT: Geometric Redundancy-Aware Step Pruning for Inference in Diffusion Trajectories",
+      "authors": "Arpita Joshi",
+      "date": "2026-09-02",
+      "pdf": "https://arxiv.org/pdf/2609.02160v1",
+      "score": "6.0",
+      "evidence": "免训练的扩散采样加速方法；领域无关，可迁移到基于扩散的流体流动模拟",
+      "tldr": "扩散模型采样需大量顺序神经网络评估，推理成本高。现有加速方法依赖固定跳步、局部误差或额外训练。GeoSPRINT提出免训练框架，利用轨迹几何检测高曲率区域，通过QR分解的超平面性测试识别冗余步骤，生成非均匀采样调度。在CIFAR-10、LSUN Church和Stable Diffusion上，以相同NFE预算一致优于均匀DDIM，并超越DPM-Solver++，证明轨迹几何是分配推理步数的有效全局信号。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Diffusion models achieve high sample quality but remain expensive at inference time because sampling requires many sequential neural function evaluations (NFEs). Existing acceleration methods either use fixed step-skipping schedules, adapt step sizes based on local numerical error, or require additional training. We introduce GeoSPRINT (Geometric Step Pruning for Inference in Trajectories), a training-free framework for constructing non-uniform sampling schedules from the geometry of denoising trajectories. GeoSPRINT detects geometrically redundant steps using a hyperplanarity test in latent space, implemented efficiently via QR factorization, and converts the resulting redundancy profile into a sampling schedule that allocates more steps to high-curvature regions of the trajectory. In addition, we introduce the trajectory projection score $α_{\\mathrm{traj}}$, a residual-variance metric that quantifies trajectory straightness and serves as a model-free diagnostic for rectified flow quality. Across CIFAR-10 ($32{\\times}32$), LSUN Church ($256{\\times}256$), and Stable Diffusion v1.5 ($512{\\times}512$ latent), GeoSPRINT consistently improves over uniform DDIM (Denoising Diffusion Implicit Models) schedules at matched NFE budgets. On CIFAR-10, GeoSPRINT improves FID (Fréchet Inception Distance) by 0.7-1.1 over DDIM across 49-89 NFEs and surpasses DPM-Solver++ at NFE${\\geq}30$ despite using a first-order DDIM solver. On LSUN Church, it reduces FID from 1.48 to 1.26 at 52 steps, and on Stable Diffusion v1.5 it achieves up to 1.93 FID improvement over DDIM. These results show that trajectory geometry provides a useful global signal for allocating inference steps and that schedule quality can substantially improve diffusion sampling efficiency without retraining.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202609/06/2609.03343v1-learning-informative-prior-with-infinite-dimensional-continuous-normalizing-flow-for-bayesian-inverse-problem",
+      "section": "quick",
+      "title_en": "Learning Informative Prior with Infinite-Dimensional Continuous Normalizing Flow for Bayesian Inverse Problem",
+      "authors": "Yang Zhao, Junxiong Jia, Tao Zhou",
+      "date": "2026-09-03",
+      "pdf": "https://arxiv.org/pdf/2609.03343v1",
+      "score": "6.0",
+      "evidence": "面向PDE贝叶斯反问题的无限维连续归一化流先验，可支撑流体动力参数场的生成式估计",
+      "tldr": "针对偏微分方程反问题中参数处于无限维希尔伯特空间的贝叶斯推断，本文提出一种基于连续归一化流的无限维先验模型。通过定义无限维空间中的神经ODE，将简单参考测度变换为携有先验信息的复杂测度，并建立理论框架保证先验良定性。文中针对两种数据设置给出训练方法及两种后验采样算法，在三个反问题上的数值实验验证了其有效性与效率。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "This paper addresses infinite-dimensional Bayesian inference for inverse problem of partial differential equations with model parameters in infinite-dimensional Hilbert space. To effectively incorporate prior information, we propose a novel continuous normalizing flows based infinite-dimensional model. Specifically, by introducing a well-defined neural ordinary differential equation in infinite-dimensional space, a simple reference measure can be transformed into a more complex measure which encodes the prior information. A corresponding theoretical framework is established to ensure the well-posedness of our proposed Bayesian prior in infinite-dimensional space. We also provide training methods of the prior for two distinct data settings, along with two sampling algorithms for the resulting Bayesian posterior. The proposed framework is applied to three representative inverse problems: the simple smooth inverse problem, inverse scattering problem, and the inverse heat conduction problem. Numerical experiments support the theoretical analysis and demonstrate the efficiency of the proposed algorithms.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

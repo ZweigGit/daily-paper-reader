@@ -6,32 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-05
-- 运行时间：2026-09-05 22:14:02 UTC
+- 最新运行日期：2026-09-06
+- 运行时间：2026-09-06 22:09:16 UTC
 - 运行状态：成功
-- 本次总论文数：3
+- 本次总论文数：2
 - 精读区：0
-- 速读区：3
+- 速读区：2
 
 ### 今日简报（AI）
-今日速读3篇论文，重点聚焦流匹配与条件扩散模型方向。
-最值得关注两篇7.0分工作：CAT-Flow提出曲率自适应步长，另一篇用分位数对齐树耦合实现无交叉流匹配。
-若对生成模型感兴趣，建议从流匹配的耦合与采样加速入手继续跟进。
-- 详情：[/202609/05/README](/202609/05/README)
+今日速读2篇论文，聚焦扩散模型推理加速与贝叶斯反问题先验学习。  
+值得关注：引入几何冗余感知的步剪枝策略减少扩散采样成本，以及用无限维连续归一化流构建更有效的先验分布。  
+建议先从扩散轨迹剪枝方向入手，便于直观理解生成效率提升的实用价值。
+- 详情：[/202609/06/README](/202609/06/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [CAT-Flow: Curvature-Adaptive sTeps for Flow Matching](/202609/05/2609.01746v1-cat-flow-curvature-adaptive-steps-for-flow-matching)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：提出通用流匹配采样加速算法，可服务流体流场生成所需的流匹配推理
-2. [Beyond Straightness: Non-Crossing Flow Matching via Quantile AlignTree Coupling](/202609/05/2609.03443v1-beyond-straightness-non-crossing-flow-matching-via-quantile-aligntree-coupling)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：提出分位数对齐树流匹配方法，可为流体流动生成建模提供高效非交叉耦合策略
-3. [A Study of Conditional Diffusion Models for Open-Loop Control under Dry Friction and Stiction](/202609/05/2609.01756v1-a-study-of-conditional-diffusion-models-for-open-loop-control-under-dry-friction-and-stiction)  
+1. [GeoSPRINT: Geometric Redundancy-Aware Step Pruning for Inference in Diffusion Trajectories](/202609/06/2609.02160v1-geosprint-geometric-redundancy-aware-step-pruning-for-inference-in-diffusion-trajectories)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：研究条件扩散模型在物理控制任务中的生成；其方法可作为流体模拟与控制中扩散模型应用的迁移基础
+   evidence：免训练的扩散采样加速方法；领域无关，可迁移到基于扩散的流体流动模拟
+2. [Learning Informative Prior with Infinite-Dimensional Continuous Normalizing Flow for Bayesian Inverse Problem](/202609/06/2609.03343v1-learning-informative-prior-with-infinite-dimensional-continuous-normalizing-flow-for-bayesian-inverse-problem)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：面向PDE贝叶斯反问题的无限维连续归一化流先验，可支撑流体动力参数场的生成式估计
 
 
 <div class="dpr-home-promo-card">
