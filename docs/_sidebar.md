@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-09-07 <!--dpr-date:20260907-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202609/07/2609.02748v1-balancing-frequencies-and-pixels-in-flow-matching" data-sidebar-item="{&quot;title&quot;: &quot;Balancing Frequencies and Pixels in Flow Matching&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2609.02748v1-balancing-frequencies-and-pixels-in-flow-matching&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;将流匹配生成模型训练中的频谱失衡问题作为对象，提出可迁移到多尺度流体生成的频谱均衡损失&quot;}">Balancing Frequencies and Pixels in Flow Matching</a>
   * 2026-09-06 <!--dpr-date:20260906-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202609/06/2609.02160v1-geosprint-geometric-redundancy-aware-step-pruning-for-inference-in-diffusion-trajectories" data-sidebar-item="{&quot;title&quot;: &quot;GeoSPRINT: Geometric Redundancy-Aware Step Pruning for Inference in Diffusion Trajectories&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2609.02160v1-geosprint-geometric-redundancy-aware-step-pruning-for-inference-in-diffusion-trajectories&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;免训练的扩散采样加速方法；领域无关，可迁移到基于扩散的流体流动模拟&quot;}">GeoSPRINT: Geometric Redundancy-Aware Step Pruning for Inference in Diffusion Trajectories</a>
