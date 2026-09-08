@@ -6,28 +6,22 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-07
-- 运行时间：2026-09-07 22:32:11 UTC
+- 最新运行日期：2026-09-08
+- 运行时间：2026-09-08 21:52:20 UTC
 - 运行状态：成功
-- 本次总论文数：1
+- 本次总论文数：0
 - 精读区：0
-- 速读区：1
+- 速读区：0
 
 ### 今日简报（AI）
-今日仅完成1篇论文速读，暂无精读，整体投入较少。
-
-最值得关注的是《Balancing Frequencies and Pixels in Flow Matching》（6.0/10），聚焦生成模型中频率与像素的平衡问题。
-
-建议普通读者可了解该方向基础概念，但论文评分中等，不必作为重点深入阅读。
-- 详情：[/202609/07/README](/202609/07/README)
+> 今日无新推荐，系统未产出可展示论文。
+- 详情：[/202609/08/README](/202609/08/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Balancing Frequencies and Pixels in Flow Matching](/202609/07/2609.02748v1-balancing-frequencies-and-pixels-in-flow-matching)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：将流匹配生成模型训练中的频谱失衡问题作为对象，提出可迁移到多尺度流体生成的频谱均衡损失
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">
