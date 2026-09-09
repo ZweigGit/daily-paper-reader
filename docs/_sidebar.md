@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-09-09 <!--dpr-date:20260909-->
+    * 精读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202609/09/2609.06135v1-physical-field-reconstruction-from-sparse-observations-when-are-diffusion-models-preferable-to-deterministic-regression" data-sidebar-item="{&quot;title&quot;: &quot;Physical-Field Reconstruction from Sparse Observations: When Are Diffusion Models Preferable to Deterministic Regression?&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2609.06135v1-physical-field-reconstruction-from-sparse-observations-when-are-diffusion-models-preferable-to-deterministic-regression&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;在Navier-Stokes流动等物理场上比较条件扩散与先验引导扩散在稀疏观测重建中的适用性&quot;}">Physical-Field Reconstruction from Sparse Observations: When Are Diffusion Models Preferable to Deterministic Regression?</a>
   * 2026-09-07 <!--dpr-date:20260907-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202609/07/2609.02748v1-balancing-frequencies-and-pixels-in-flow-matching" data-sidebar-item="{&quot;title&quot;: &quot;Balancing Frequencies and Pixels in Flow Matching&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2609.02748v1-balancing-frequencies-and-pixels-in-flow-matching&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;将流匹配生成模型训练中的频谱失衡问题作为对象，提出可迁移到多尺度流体生成的频谱均衡损失&quot;}">Balancing Frequencies and Pixels in Flow Matching</a>

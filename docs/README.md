@@ -6,19 +6,21 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-08
-- 运行时间：2026-09-08 21:52:20 UTC
+- 最新运行日期：2026-09-09
+- 运行时间：2026-09-09 21:58:49 UTC
 - 运行状态：成功
-- 本次总论文数：0
-- 精读区：0
+- 本次总论文数：1
+- 精读区：1
 - 速读区：0
 
 ### 今日简报（AI）
-> 今日无新推荐，系统未产出可展示论文。
-- 详情：[/202609/08/README](/202609/08/README)
+今日精读1篇高分论文，聚焦物理场重建任务中扩散模型与确定性回归的适用性对比。核心看点：稀疏观测下扩散模型并非总是更优，其与回归方法各有优劣，需结合数据条件选择。建议普通读者先理解“何时选扩散模型”的判据，再深入实验细节。
+- 详情：[/202609/09/README](/202609/09/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [Physical-Field Reconstruction from Sparse Observations: When Are Diffusion Models Preferable to Deterministic Regression?](/202609/09/2609.06135v1-physical-field-reconstruction-from-sparse-observations-when-are-diffusion-models-preferable-to-deterministic-regression)  
+   标签：评分：9.0/10、query:genmod-fluid
+   evidence：在Navier-Stokes流动等物理场上比较条件扩散与先验引导扩散在稀疏观测重建中的适用性
 
 ### 速读区论文标签
 - 本次无速读推荐。

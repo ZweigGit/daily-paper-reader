@@ -1,0 +1,1010 @@
+Title: Physical-Field Reconstruction from Sparse Observations: When Are Diffusion Models Preferable to Deterministic Regression?
+
+URL Source: https://arxiv.org/pdf/2609.06135v1
+
+Published Time: Wed, 09 Sep 2026 00:59:38 GMT
+
+Number of Pages: 33
+
+Markdown Content:
+## Physical-Field Reconstruction from Sparse Observations: When Are Diffusion Models Preferable to Deterministic Regression? 
+
+Hao Zhou a, Rui Zhang a, Qi Wang b and Hao Sun a
+
+> a
+
+Gaoling School of Artificial Intelligence, Renmin University of China, Beijing, China 
+
+> b
+
+Zhongguancun Academy, Beijing, China 
+
+ARTICLE HISTORY 
+
+Compiled September 5, 2026 
+
+ABSTRACT 
+
+Reconstructing physical fields from sparse observations is central to system identifi-cation, forecasting, and control, yet sparse measurements generally underdetermine the full field. This makes reconstruction an ill-posed inverse problem rather than sim-ple interpolation. Although many deterministic and generative methods have been developed, there is still no clear consensus on when a single point estimate is suffi-cient and when a distribution of plausible reconstructions is more useful. We conduct a fair comparison of a deterministic U-Net, conditional diffusion, and prior-guided diffusion under matched experimental settings, including 2D Poisson equation, 2D Navier–Stokes flow, and 1D Kuramoto–Sivashinsky dynamics. Through this com-parison, we make three observations. First, accuracy is field- and regime-dependent, with no systematic advantage for diffusion under higher complexity or sparser ob-servations. Second, ensemble means improve phase-aligned accuracy, whereas indi-vidual samples better preserve variability and can retain high-wavenumber power in selected regimes. Third, conditional diffusion provides more reliable uncertainty esti-mates at lower cost, while prior-guided diffusion is more robust to mask-distribution shifts but requires substantially higher inference cost and guidance tuning. These results clarify when generative reconstruction is useful and provide guidance for improving uncertainty estimation, fine-scale sample fidelity, robustness, and compu-tational efficiency in sparse field reconstruction. 
+
+KEYWORDS 
+
+sparse reconstruction; generative model; diffusion model; uncertainty quantification. 
+
+1. Introduction 
+
+Reconstructing physical fields from sparse observations is a fundamental problem in state estimation, system identification, forecasting, and control across science and engi-neering [1–3]. The problem is generally ill posed because multiple fields can agree with all available measurements while differing at unobserved locations. This underdetermina-tion makes sparse reconstruction more than an interpolation problem: the observations constrain only part of the field, while the remaining degrees of freedom must be in-ferred from additional statistical, geometric, or physical structure. Existing methods differ mainly in how they introduce such structure, such as reduced-order bases, learned reconstruction operators, and generative field priors. 
+
+> CONTACT Rui Zhang and Hao Sun. Email: {rayzhang,haosun}@ruc.edu.cn arXiv:2609.06135v1 [physics.comp-ph] 5 Sep 2026
+
+Classical approaches to recovering the physical field have relied on reduced-order and sparse representations, including proper orthogonal decomposition (POD) and its gappy extensions [4–6] and compressed sensing [7,8]. Deep learning-based approaches have fur-ther expanded this paradigm by exploiting the representation-learning capacity of neural networks to learn nonlinear reconstruction operators from data. This flexibility allows sparse observations and reconstructed fields to be represented in several ways. For pre-defined sensor layouts, neural networks infer complete discretized fields either directly from sensor values or through reduced field representations [9–11]. Grid-based models exploit spatial structure in coarse or incomplete fields using convolutional and operator-learning architectures [12–14]. For irregular or variable sensor layouts, Voronoi-assisted networks convert scattered measurements into structured inputs, whereas attention-based architectures process sensor values and coordinates directly [15,16]. Coordinate-based implicit neural representations further allow reconstructed fields to be evaluated continuously at arbitrary locations [17,18]. When governing equations are available, physics-informed methods can further incorporate them through PDE-residual con-straints [19,20]. These developments have improved the flexibility and expressive power of sparse field reconstruction. However, the resulting reconstructions are generally de-terministic: for a given set of observations, they return a single field estimate and do not represent the distribution of fields compatible with the measurements. Beyond deterministic approaches, Bayesian inverse methods address the non-uniqueness of sparse reconstruction by characterizing a posterior distribution over fields conditioned on the observations [21]. Modern generative models provide flexible data-driven representations of field priors or conditional distributions and can produce mul-tiple plausible reconstructions consistent with the same measurements. Variational au-toencoders, generative adversarial networks, diffusion models, and flow matching [22–26] have been adapted to physical-field generation and sparse reconstruction [27–31]. Within diffusion-based reconstruction, observations can condition the model during training or guide a learned full-field prior during sampling [32]. Conditional diffusion uses ob-servations as conditioning inputs during training and directly learns an observation-conditioned field distribution [31,33,34]. Prior-guided diffusion instead learns an un-conditional prior from complete fields and imposes measurement consistency during sampling through data-consistency corrections or gradient-based guidance [29,35–39]. These methods shift sparse reconstruction from predicting a single best estimate to-ward representing a family of observation-consistent fields, making them particularly attractive when ambiguity, uncertainty, or sample diversity is scientifically relevant. Existing studies have demonstrated the feasibility of these reconstruction approaches, but differences in benchmarks, architectures, observation protocols, physical constraints, and sampling procedures limit direct comparison across formulations. Consequently, it remains unclear when deterministic regression is sufficient and when generative recon-struction provides practical advantages in accuracy, uncertainty quantification, robust-ness, or computational cost. We address this gap through a controlled comparison of a deterministic U-Net [40] and two diffusion formulations based on the same EDM framework [41], namely conditional EDM (C-EDM) and prior-guided EDM (G-EDM). Model backbones, data splits, and observation protocols are matched across methods. The evaluation covers four reconstruction targets drawn from the Poisson equation, two-dimensional Navier–Stokes flow, and one-dimensional Kuramoto–Sivashinsky dy-namics, with controlled variations in field complexity, observation density, and mask distribution. The principal findings are summarized below. (1) Reconstruction accuracy is field-specific, and neither increasing field complexity 2nor reducing observation density systematically favors generative methods. (2) Generative models produce ensembles of plausible reconstructions that support uncertainty quantification. Their ensemble means improve phase-aligned accuracy but can attenuate high-wavenumber power in selected regimes. (3) Conditional diffusion generally provides more reliable uncertainty estimates at lower cost, whereas prior-guided diffusion is least sensitive to mask-distribution shifts but requires longer sampling and guidance-weight tuning. In summary, these findings clarify the trade-offs among reconstruction accuracy, spectral fidelity, uncertainty quantification, robustness, and computational cost, pro-viding a basis for selecting reconstruction strategies suited to different scientific ob-jectives and sensing conditions. Moreover, these observations suggest concrete ways to improve future sparse-reconstruction methods. For instance, conditional generative methods should better preserve fine-scale sample variability without degrading point-wise accuracy, while prior-guided methods should retain their flexibility under changing sensing geometries while reducing sampling cost and guidance sensitivity. The remainder of this paper is organized as follows. Section 2 formulates the sparse reconstruction problem and introduces the deterministic U-Net, C-EDM, and G-EDM formulations. Section 3 describes the benchmark PDE systems, observation protocols, controlled comparison setup, and evaluation metrics. Section 4 presents the empirical comparison in terms of reconstruction accuracy, spectral behavior, robustness to mask-distribution shifts, uncertainty estimation, and inference cost. Section 5 discusses the implications and limitations of the findings, and Section 6 concludes the paper. 
+
+2. Methods 
+
+2.1. Problem formulation and reconstruction paradigms 
+
+Let x0 ∈ RC×|G| denote a complete field with C channels on a spatial or spatiotemporal grid G. Let M ∈ { 0, 1}|G| denote the binary observation mask, with Mg = 1 at observed locations and Mg = 0 elsewhere. The mask is shared across channels when C > 1. The corresponding zero-filled observation is 
+
+y = M ⊙ x0, (1) where ⊙ denotes elementwise multiplication. Sparse physical-field reconstruction seeks to infer x0 from ( y, M). Sparse observations generally admit multiple full-field reconstructions consistent with the same measurements. We therefore compare three reconstruction formulations. The deterministic U-Net learns a direct map from ( y, M) to a single reconstruction ̂ x0.Conditional EDM (C-EDM) models pθ(x0 | y, M) by conditioning the denoising process on the observations and mask. Prior-guided EDM (G-EDM) instead models the full-field distribution pθ(x0) and incorporates the observations through guidance during sampling. Here, EDM refers to the diffusion formulation and denoiser preconditioning introduced by Karras et al. [41]. Figure 1 summarizes how observations enter the three formulations. 3Full  fi eld 
+
+> +
+
+Scaled noise Noisy state 
+
+Prior denoiser Estimate State 
+
+Prior denoiser 
+
+Estimate 
+
+Euler-Heun Update 
+
+Provisional state Corrected state Mask Observation 
+
+(c) Prior-guided EDM 
+
+Noisy state Mask Observation Conditional denoiser Estimate  
+
+> CC
+
+State Mask Observation  
+
+> CC
+
+Conditional denoiser Estimate 
+
+Euler-Heun Update 
+
+State 
+
+(b) Conditional EDM 
+
+Mask Observation 
+
+Train / infer 
+
+Predictor Prediction 
+
+> C
+
+(a) Deterministic U-Net 
+
+Down Block Mid Block Up Block Down Block Mid Block Up Block Down Block Mid Block Up Block 
+
+Weighted observation loss Guidance correction 
+
+Down Block Mid Block Up Block Down Block Mid Block Up Block 
+
+Train Sample Train Sample  
+
+> CChannel-wise concatenation
+
+Figure 1. Three architecture-matched formulations for physical-field reconstruction from sparse observations. (a) U-Net maps the zero-filled observation and mask directly to a single reconstruction. (b) C-EDM conditions each denoising evaluation on the observation and mask. (c) G-EDM learns a full-field prior and incorporates the observations through gradient-based corrections during sampling. 
+
+2.2. Deterministic U-Net 
+
+The deterministic formulation treats reconstruction as direct regression. The U-Net [40] 
+
+f D
+
+θ receives the channel-wise concatenation of the zero-filled observations and mask and predicts the complete field as ̂
+
+x0 = f D
+
+θ (cat[ y, M]) . (2) 4The model is trained by minimizing the expected full-field mean-squared error 
+
+LD = Ex0,M [MSE( ̂x0, x0)] , (3) where the mean is taken over all channels and grid locations. At inference, a single forward pass produces one reconstruction. 
+
+2.3. Conditional EDM (C-EDM) 
+
+C-EDM models the conditional field distribution pC 
+
+> θ
+
+(x0 | y, M) from masked training examples. Following the EDM formulation, a clean field is perturbed according to 
+
+xσ = x0 + σϵ, ϵ ∼ N (0, I), log σ ∼ N 
+
+> (
+
+Pmean , P 2std 
+
+> )
+
+. (4) The preconditioned conditional denoiser DC 
+
+> θ
+
+(xσ, σ | y, M) is trained using the noise-weighted objective 
+
+LC = Ex0,M,σ, ϵ
+
+> [
+
+λ(σ) MSE 
+
+> (
+
+DC 
+
+> θ
+
+(xσ, σ | y, M), x0
+
+> )]
+
+. (5) The weighting function λ(σ) and denoiser preconditioning follow the EDM formulation. At inference, let σ0 > σ 1 > · · · > σ N = 0 denote the sampling noise levels. Sam-pling begins from x(σ0) = σ0ϵ, where ϵ ∼ N (0, I), and follows the conditional EDM probability-flow ODE dx(σ)dσ = x(σ) − DC 
+
+> θ
+
+(x(σ), σ | y, M)
+
+σ . (6) The ODE is integrated from high noise to the clean-data limit using a second-order Euler–Heun solver. The same observation pair ( y, M) is supplied at every denoising evaluation. Independent draws of ϵ produce distinct conditional reconstructions for the same observation pair. The noise schedule and sampler configuration are reported in Appendix A.3. 
+
+2.4. Prior-guided EDM (G-EDM) 
+
+G-EDM separates full-field prior learning from observation conditioning. Its denoiser 
+
+DP 
+
+> θ
+
+is trained on complete fields using the same corruption process, loss weighting, and denoiser preconditioning as C-EDM, but receives neither y nor M. The training objective is 
+
+LP = Ex0,σ, ϵ
+
+> [
+
+λ(σ) MSE 
+
+> (
+
+DP 
+
+> θ
+
+(xσ, σ ), x0
+
+> )]
+
+. (7) The resulting model represents the full-field distribution pP 
+
+> θ
+
+(x0) rather than an observation-conditioned distribution. Prior sampling follows Equation 6, with DC 
+
+> θ
+
+replaced by DP 
+
+> θ
+
+. Starting from the same Gaussian initialization as C-EDM, each sampling step first advances the prior ODE using the Euler–Heun scheme and then applies an observation-guidance correction. The 5guidance procedure is adapted from DiffusionPDE [38] and motivated by diffusion pos-terior sampling [35]. At sampling step i, let x(i) = x(σi) denote the current state, and let ˜x(i+1) denote the provisional state obtained by advancing the prior ODE from σi to σi+1 . The denoised estimate used for guidance is ̂
+
+x(i)0 = DP
+
+> θ
+> (
+
+x(i), σ i
+
+> )
+
+.
+
+Observation consistency is measured by 
+
+L(i)obs =
+
+> C∑
+> c=1
+
+ζc
+
+> ∥∥∥
+
+M ⊙
+
+> (̂
+
+x(i)0,c − yc 
+
+> )∥ ∥∥2
+
+, (8) where ζc controls the relative contribution of channel c. The mask restricts this un-squared ℓ2 discrepancy to observed locations. Because L(i)obs depends on x(i) through the prior denoiser, its gradient is backpropa-gated through DP 
+
+> θ
+
+. The provisional state is corrected as 
+
+x(i+1) = ˜x(i+1) − ri∇x(i) L(i)obs , (9) where ri is the step-dependent guidance multiplier. The corrected state x(i+1) is then used as the input to the next Euler–Heun step. The PDE residual used in DiffusionPDE is omitted, leaving L(i)obs as the sole guidance objective. The final guidance configura-tions are summarized in Appendix A.3, and their selection is described in Appendix E. Independent initial noise fields produce distinct observation-guided reconstructions for the same observation pair ( y, M). 
+
+3. Experimental design and evaluation 
+
+3.1. Benchmarks and observation protocol 
+
+We consider three benchmarks with four reconstruction targets. The Poisson benchmark is posed on Ω = (0 , 1) 2 as 
+
+−∆u(s) = f (s), s ∈ Ω, u|∂Ω = 0 . (10) We jointly reconstruct the solution u and source f , with kc ∈ { 1, 2, 4, 6} controlling the frequency content of the source. The Navier–Stokes (NS) benchmark is governed by the two-dimensional incompress-ible vorticity equation on the periodic unit square (0 , 1) 2,
+
+∂ω ∂t + v · ∇ ω = ν∆ω + q(s), s ∈ (0 , 1) 2, ∇ · v = 0 . (11) Here, v denotes velocity, ω = ∇ × v is the reconstructed scalar vorticity, and q is a fixed forcing. We use ten-frame vorticity trajectories from the Fourier neural operator dataset [42] at ν ∈ { 10 −3, 10 −4, 10 −5}, corresponding to Re = ν−1 ∈ { 10 3, 10 4, 10 5}.6The Kuramoto–Sivashinsky (KS) benchmark is governed on the periodic domain 
+
+x ∈ [0 , L ] by 
+
+∂u ∂t + u ∂u ∂x + ∂2u∂x 2 + ν ∂4u∂x 4 = 0 . (12) Here, u(t, x ) denotes the evolving scalar field and ν is the viscosity parameter. We reconstruct u(t, x ) from spatiotemporal windows in the PDE-Refiner data splits [43], with ν ∈ [0 .5, 1.5] grouped into five intervals. The domain length L follows the released trajectory metadata. Across the three benchmarks, higher kc, higher Re, and lower ν
+
+correspond to greater field complexity. U-Net and C-EDM are trained with uniformly sampled masks, whereas G-EDM is trained on complete fields without observation masks. For each U-Net and C-EDM training example, the observation fraction is drawn uniformly from {5, 8, 10 , 15 , 20 }%, after which the observed locations are sampled without replacement. All three methods are evaluated at the same five observation fractions. Poisson uses the same observed locations for u and f , while NS and KS use time-invariant spatial sensor locations within each temporal window. Fixed validation and test masks are shared across methods. Additional observation-fraction tests include interpolation at 12% and extrapolation below the training range at 3%. Poisson source-frequency generalization uses kc = 3 .5for interpolation and kc = 8 for extrapolation, both evaluated at the same five observa-tion fractions. Mask-distribution shifts are evaluated for Poisson and NS at a fixed 5% observation count using Gaussian–uniform, directional, and patch-missing masks. Each shifted mask is paired with a uniform mask on the same field or trajectory. Dataset construction, evaluation panels, and shifted mask distributions are detailed in Appen-dices A.1, A.2, and C. 
+
+3.2. Controlled comparison and ensemble statistics 
+
+Within each benchmark, all three methods use identical data splits, normalization statistics, and test observations. The U-Net predictor and the two EDM denoisers use matched backbone architectures. Sampling configurations for both EDM formulations are selected using validation performance. Architecture, training, and final sampling configurations are reported in Appendix A.3, while the selection of G-EDM guidance parameters is detailed in Appendix E. At test time, each EDM formulation generates Nens = 32 reconstructions, {̂x(m)0 }Nens 
+
+> m=1
+
+.Their ensemble mean is ̂
+
+x(E) 0 = 1
+
+Nens 
+
+> Nens ∑
+> m=1 ̂
+
+x(m)0 . (13) For a scalar reconstruction metric d, we report 
+
+dE = d
+
+> (̂
+
+x(E) 0 , x0
+
+> )
+
+, dS = 1
+
+Nens 
+
+> Nens ∑
+> m=1
+
+d
+
+> (̂
+
+x(m)0 , x0
+
+> )
+
+. (14) The suffixes (E) and (S) denote ensemble-mean and mean memberwise statistics, re-spectively. A “sample” refers to one generated member. The ensemble-size analysis is provided in Appendix F. 73.3. Evaluation metrics 
+
+Before evaluating reconstruction and spectral accuracy, predicted values at observed locations are replaced with the corresponding measurements. Probabilistic metrics are computed only at unobserved locations. Reconstruction accuracy is primarily evaluated using the full-field relative ℓ2 error 
+
+εrel =
+
+> ∥∥̂
+
+xeval 0 − x0
+
+> ∥∥2
+
+∥x0∥2
+
+, (15) where ̂ xeval 0 denotes the reconstruction after restoring the observed values. Frequency-domain evaluation separates agreement with the spectral coefficients of the ground truth from agreement with its spectral power distribution. Let X = T x0
+
+and ̂ X = T̂ xeval 0 , where T is the benchmark-specific orthonormal spatial transform. For a set of spatial modes A, define 
+
+∥Z∥22,A = ∑
+
+> t∈I t
+> ∑
+> κ∈A
+
+|Z(t, κ )|2,
+
+where the sum over time is omitted for the static Poisson fields. The phase-aligned coefficient error in frequency band b is 
+
+εspec  
+
+> b
+
+=
+
+> ∥∥∥̂
+
+X − X
+
+> ∥∥∥2,Kb
+
+∥X∥2,K
+
+, (16) where Kb contains the spatial modes in band b and K contains all evaluated spatial modes. The common full-spectrum denominator preserves each band’s contribution to the total coefficient error. The complementary metric evaluates normalized spectral shape. Given the power spectrum P (k), we define ˜P (k) = P (k)/ ∑ 
+
+> j
+
+P (j) and ˜Pϵ(k) = max { ˜P (k), ϵ }, where 
+
+ϵ = 10 −14 prevents undefined logarithms. The bandwise log-power error is 
+
+Dlog Pb = 1
+
+|B b|
+
+> ∑
+> k∈B b
+> ∣∣∣∣∣
+
+log 10 
+
+> ˜
+
+Ppred ,ϵ (k)
+
+> ˜
+
+Ptrue ,ϵ (k) 
+
+> ∣∣∣∣∣
+
+, (17) where Bb contains the wavenumbers in band b. Because Dlog Pb depends on spectral power rather than spectral coefficients, it is insensitive to phase. Predictive uncertainty is evaluated at unobserved locations using the continuous ranked probability score (CRPS), empirical coverage of the central 90% prediction inter-val, and mean interval width. CRPS measures the accuracy of the ensemble predictive distribution, while coverage and width characterize its calibration and sharpness. De-tails of the spectral transforms, frequency bands, and probabilistic metrics are provided in Appendices A.4 and B. 8Table 1. Mean full-field relative ℓ2 error (%). Best and second-best results are shown in bold and underlined, respectively. Full relative ℓ2 error (%) ↓
+
+Field U-Net C-EDM (E) C-EDM (S) G-EDM (E) G-EDM (S) Poisson solution u 0.2132 0.2078 0.2980 0.3705 0.4905 Poisson source f 8.3462 8.9191 12.5897 11.2882 13.6826 NS vorticity ω 1.9707 2.1200 2.8550 1.4318 1.8343 KS state u 2.0630 2.1991 3.2794 4.5670 6.6020 1 2 4 6 
+
+> Frequency parameter kc
+> 0.2 0.5 1
+> Relative  ℓ2 error (\%)
+
+(a) Poisson solution u    
+
+> 1246
+> Frequency parameter kc
+> 510 20
+> Relative  ℓ2 error (\%)
+
+(b) Poisson source f    
+
+> 10 310 410 5
+> Reynolds number Re = 1/ ν
+> 0.5 125
+> Relative  ℓ2 error (\%)
+
+(c) NS vorticity ω     
+
+> 0.5 --0.7 0.7 --0.9 0.9 --1.1 1.1 --1.3 1.3 --1.5
+> Viscosity interval ν
+> 12510
+> Relative  ℓ2 error (\%)
+
+(d) KS state u    
+
+> U-Net C-EDM (E) C-EDM (S) G-EDM (E) G-EDM (S)
+
+Figure 2. Mean full-field relative ℓ2 error across field-complexity regimes: (a) Poisson u, (b) Poisson f , (c) NS ω, and (d) KS u. Values are averaged over the five observation fractions at each complexity setting; shading shows 95% confidence intervals over independent fields or trajectories. 
+
+4. Results 
+
+4.1. Reconstruction accuracy is field- and regime-dependent 
+
+Table 1 compares the mean full-field relative ℓ2 errors across the four reconstruction targets, averaged over field-complexity settings and observation fractions. Consistent with the convexity of the relative ℓ2 metric, the ensemble-mean error was lower than the corresponding mean memberwise error for both EDM formulations. C-EDM (E) was only marginally more accurate than U-Net for Poisson u, whereas G-EDM (E) led by a more pronounced numerical margin for NS ω. U-Net performed best for Poisson 
+
+f and KS u. Overall, reconstruction accuracy was field-dependent, with no formulation consistently superior. Figure 2 resolves the aggregate results in Table 1 by field complexity. Reconstruction error increased monotonically with kc for both Poisson fields and with Re for NS; 9KS was generally more difficult at lower viscosity, although the trend was not strictly monotonic. For Poisson u, the leading method shifted from U-Net at kc = 1 and 2 to C-EDM (E) at kc = 4 and 6. KS showed the opposite pattern: U-Net led in the four lower-viscosity intervals, whereas C-EDM (E) led only at ν ∈ [1 .3, 1.5). U-Net remained best for Poisson f , and G-EDM (E) for NS ω, across all tested complexity settings. Thus, increasing field complexity did not systematically increase the advantage of either EDM formulation over U-Net. Reconstruction accuracy also depended on observation density (Appendix Figure C1). Across the five benchmark observation fractions, full-field errors generally decreased as more measurements were provided. U-Net remained best for Poisson f , and G-EDM (E) for NS ω, across all five fractions. For Poisson u, C-EDM (E) led at 5% observations before U-Net took the lead from 8% onward; KS showed the opposite transition, from U-Net at 5% to C-EDM (E) from 8% onward. Together, the complexity- and density-dependent crossovers were field-specific: neither increasing complexity nor reducing ob-servation density systematically increased the advantage of the EDM formulations over U-Net. Figure 3 examines the most challenging setting in the main evaluation for each bench-mark: 5% observations with kc = 6 for Poisson, Re = 10 5 for NS, and ν ∈ [0 .5, 0.7) for KS. The paired error distributions identify the same leading method for each recon-struction target as the aggregate results in Table 1. Despite differences in full-field error, the representative reconstructions recover broadly similar dominant structures. This ap-parent large-scale agreement motivates the frequency-resolved analysis in Section 4.2, which examines whether the methods differ in their recovery of finer-scale content. 
+
+4.2. Ensemble averaging improves phase-aligned accuracy but can attenuate spectral tails 
+
+We determined dataset-specific low-, mid-, and high-frequency bands from the ground-truth spectral energy distributions before comparing the reconstruction methods (Ap-pendix Figure B1). Figure 4 reports the phase-aligned spectral coefficient error εspec 
+
+> b
+
+defined in Equation (16) over these bands. Consistent with the convexity of this metric, the ensemble-mean error was 10.9–37.6% lower than the corresponding mean member-wise error across both EDM formulations, all four reconstruction targets, and all three frequency bands. Table 2 reports the high-frequency log-power error Dlog PH defined in Equation (17) for Poisson f and NS ω. For Poisson f , both EDM memberwise errors were lower than the U-Net error at every kc. The C-EDM memberwise error was about one fifth of its ensemble-mean counterpart, while the memberwise advantage within G-EDM widened as kc increased. For NS, the reversal occurred only at Re = 10 5, where both EDM memberwise errors were also lower than their ensemble-mean counterparts and the U-Net error. No high-frequency reversal occurred for Poisson u or KS. Complete bandwise results are reported in Appendix Tables B1–B3. Thus, in selected regimes, individual EDM members on average matched high-wavenumber power more closely than both their ensemble means and U-Net, despite the lower phase-aligned error achieved by ensemble averaging. Figure 5 examines this effect in randomly selected cases at 5% observations for Poisson 
+
+f at kc = 6 and NS ω at Re = 10 5. The faster high-wavenumber decay of the ensemble-mean spectrum is clear for Poisson f in panel (a). In both cases, the EDM members have lower spectral-tail log-power errors than their ensemble-mean counterparts in panels (c) 10 Sparse obs. Truth U-Net C-EDM mean C-EDM sample G-EDM mean G-EDM sample            
+
+> 0.3 0.5 12
+> Rel.  ℓ2 error (\%)
+> Poisson u
+> 20 30 40
+> Rel.  ℓ2 error (\%)
+> Poisson f
+> 3510
+> Rel.  ℓ2 error (\%)
+> NS ω
+> 2510 20 50
+> Rel.  ℓ2 error (\%)
+> KS u
+> (a)
+> u
+> (b)
+> f
+> (c)
+> ω
+> (d)
+> u
+> (e) (f) (g) (h)
+> U-Net C-EDM (E) C-EDM (S) G-EDM (E) G-EDM (S)
+
+Figure 3. Reconstructions and error distributions for the most challenging setting in the main evaluation: 5% observations with kc = 6 for Poisson, Re = 10 5 for NS, and ν ∈ [0 .5, 0.7) for KS. Panels (a)–(d) compare sparse observations, ground truth, and reconstructions for one randomly selected test case per target; panels (e)–(h) summarize the paired full-field relative ℓ2 errors across all 50 test cases. 
+
+Table 2. High-frequency ( k ≥ 8) log-power error Dlog P 
+
+> H
+
+across kc for Poisson f and Re 
+
+for NS ω, averaged over test cases and observation fractions. Best and second-best results are shown in bold and underlined, respectively. Mean absolute log-power error Dlog P 
+
+> H
+
+↓
+
+Field Regime U-Net C-EDM (E) C-EDM (S) G-EDM (E) G-EDM (S) Poisson f kc = 1 0.3586 0.3348 0.0630 0.2235 0.1509 
+
+kc = 2 0.3356 0.3170 0.0600 0.2460 0.1447 
+
+kc = 4 0.2940 0.2918 0.0570 0.2392 0.0926 
+
+kc = 6 0.2703 0.2778 0.0557 0.2256 0.0704 NS ω Re = 10 3 6.2367 6.1541 6.8390 6.2545 6.4540 
+
+Re = 10 4 0.5889 0.6137 0.7922 0.5128 0.6448 
+
+Re = 10 5 0.1674 0.1646 0.0625 0.1204 0.0371 
+
+and (d). As shown in panel (e), the Poisson f ensemble means are also smoother than the individual EDM members, which retain more fine-scale texture. The two spectral metrics in Figure 4 and Table 2 capture different aspects of re-construction. The phase-aligned coefficient error compares Fourier coefficients with the 11 0≤ k<4 4≤ k<8 k≥8                   
+
+> Wavenumber k
+> 0.0003 0.0005 0.001 0.002 0.005
+> Relative spectral error
+> (a) Poisson solution u
+> 0≤ k<4 4≤ k<8 k≥8
+> Wavenumber k
+> 0.004 0.01 0.02 0.05 0.1
+> Relative spectral error
+> (b) Poisson source f
+> 0≤ k<4 4≤ k<8 k≥8
+> Wavenumber k
+> 0.004 0.006 0.01 0.02
+> Relative spectral error
+> (c) NS vorticity ω
+> 1≤ k<5 5≤ k<13 13≤ k≤60
+> Wavenumber k
+> 0.006 0.01 0.02 0.05
+> Relative spectral error
+> (d) KS state u
+> U-Net C-EDM (E) C-EDM (S) G-EDM (E) G-EDM (S)
+
+Figure 4. Mean bandwise phase-aligned spectral coefficient error εspec  
+
+> b
+
+for the four reconstruction targets. Values are averaged over field-complexity settings and the five observation fractions in the main evaluation; error bars show paired-bootstrap 95% confidence intervals. 
+
+ground truth, whereas the log-power error compares normalized spectral power with-out regard to phase. A lower log-power error therefore indicates closer agreement in high-wavenumber power but not necessarily the correct spatial placement of the cor-responding fine-scale structures. The relative ℓ2 distance between normalized power spectra produced a different ordering from the high-frequency log-power comparison (Appendix Table B4). This distance emphasizes energetic modes and is less sensitive to the low-power spectral tail. Overall, ensemble averaging consistently reduced phase-aligned error but attenuated high-wavenumber power in selected fields and regimes, possibly because member-specific components cancel during averaging. 12 2 4 8 10 1 64 
+
+Wavenumber k
+
+> 10 −5
+> 10 −4
+> 10 −3
+> 10 −2
+> 10 −1
+> Normalized power  ̃  P(k)
+
+(a) Poisson f: normalized spectrum 
+
+Low Mid High     
+
+> 24810 132
+
+Wavenumber k
+
+> 10 −4
+> 10 −2
+> 10 0
+> Normalized power  ̃  P(k)
+
+(b) NS ω(t1 : t10 ): normalized spectrum 
+
+Low Mid High     
+
+> 24810 164
+
+Wavenumber k
+
+> 0.0 0.5 1.0
+> Log-power error  dlog  P(k)
+
+(c) Poisson f: log-power error 
+
+Low Mid High 
+
+×2     
+
+> 24810 132
+
+Wavenumber k
+
+> 0.0 0.1 0.2 0.3 0.4
+> Log-power error  dlog  P(k)
+
+(d) NS ω(t1 : t10 ): log-power error 
+
+Low Mid High 
+
+×2 
+
+(e) Poisson f         
+
+> Truth C-EDM (E) C-EDM sample G-EDM (E) G-EDM sample
+> Truth U-Net C-EDM (E) C-EDM members G-EDM (E) G-EDM members
+
+Figure 5. Spectral diagnostics and reconstructions for selected cases with 5% observations: Poisson f at 
+
+kc = 6 and NS ω at Re = 10 5. Panels (a,b) show normalized spectra, and panels (c,d) show per-wavenumber log-power errors. Faint curves represent individual EDM members. Highlighted curves show their pointwise median spectra in (a,b) and mean errors in (c,d), with 10th–90th percentile error bands. Panel (e) compares the Poisson f ground truth with the ensemble mean and one member from each EDM formulation. 
+
+4.3. Prior-guided generation is least sensitive to observation-mask distribution shifts 
+
+Method rankings remained unchanged under the observation-fraction and Poisson source-frequency shifts shown in Appendix Figures C1 and C2. Clearer differences emerged under shifts in the spatial mask distribution. At 5% observations, we com-pared uniform masks with Gaussian–uniform, directional, and patch-missing masks on paired Poisson fields and NS trajectories while holding all model and sampler settings fixed (Figure 6). Their construction is detailed in Appendix C. KS was excluded because its fixed one-dimensional sensor layout has no direct analogue of these two-dimensional mask shifts. Figure 7(a)–(c) quantifies sensitivity by the mean paired increase in full-field relative 
+
+ℓ2 error from each method’s uniform-mask baseline, ∆ εm,g = εm,g − εm, uniform . G-EDM (E) had the smallest increase across all nine combinations of reconstructed fields and shifted masks. The largest separation occurred for Poisson f under patch missingness, where the mean error increased by 12.72 percentage points for U-Net, 24.68 for C-EDM 13 (a) Uniform random (b) Gaussian + uniform (c) Directional bias (d) Patch missing Figure 6. Mask distributions at a fixed 5% observation count. Gaussian–uniform sampling combines clustered and uniformly sampled sensors, directional sampling concentrates sensors in one half of the domain, and patch missingness leaves a square region unobserved. G+U Directional Patch 
+
+0*
+
+2468
+
+> Relative  ℓ2 error increase
+
+(a) Poisson solution u  
+
+> G+U Directional Patch
+
+0*
+
+510 15 20 25 
+
+> Relative  ℓ2 error increase
+
+(b) Poisson source f  
+
+> G+U Directional Patch
+
+0*
+
+0.3 0.6 0.9 1.2 
+
+> Relative  ℓ2 error increase
+
+(c) NS vorticity ω
+
+> Uniform
+
+(d) Paired Poisson source f example                    
+
+> Sparse obs. Truth
+> ℓ2= 0.090
+> U-Net
+> ℓ2= 0.094
+> C-EDM (E)
+> ℓ2= 0.132
+> C-EDM sample
+> ℓ2= 0.113
+> G-EDM (E)
+> ℓ2= 0.132
+> G-EDM sample
+> Patch missing  ℓ2= 0.275 ℓ2= 0.513 ℓ2= 0.558 ℓ2= 0.121 ℓ2= 0.150
+> U-Net C-EDM (E) C-EDM (S) G-EDM (E) G-EDM (S)
+
+Figure 7. Sensitivity to mask-distribution shifts at 5% observations. Panels (a)–(c) show the mean paired increase (percentage points) in full-field relative ℓ2 error from each method’s uniform-mask baseline, with 95% bootstrap confidence intervals. Panel (d) compares reconstructions of the same Poisson f test field under uniform and patch-missing masks. Annotations give full-field relative ℓ2 errors. 
+
+(E), and only 1.01 for G-EDM (E). The differences were smaller for the directional Poisson masks and across all three NS masks, but G-EDM (E) remained the least affected. Figure 7(d) illustrates this result using paired Poisson f reconstructions under uniform and patch-missing masks. For this case, the full-field relative ℓ2 error increased from 0.090 to 0.275 for U-Net and from 0.094 to 0.513 for C-EDM (E), whereas it changed only from 0.113 to 0.121 for G-EDM (E). The reconstructions indicate that much of the additional U-Net and C-EDM (E) error arose within the unobserved patch. Additional paired examples under Gaussian–uniform and directional masks are provided in Appendix Figure C3. 14 Table 3. Empirical uncertainty estimation at unobserved locations under paired 5% uniform masks, computed from ensembles of Nens = 32 members. Field Method Ncase CRPS ↓ Coverage (%) → 90 90% width Poisson u C-EDM 200 0.0013 84.9 0.0064 G-EDM 200 0.0020 61.2 0.0068 Poisson f C-EDM 200 0.0656 85.9 0.3506 G-EDM 200 0.0871 60.2 0.3000 NS ω C-EDM 150 0.0158 87.6 0.0726 G-EDM 150 0.0105 87.2 0.0486 KS u C-EDM 250 0.0220 93.9 0.1578 G-EDM 250 0.0411 79.1 0.3307 
+
+The absolute-error rankings across the shifted test sets broadly followed the sensitivity results. G-EDM (E) achieved the lowest mean absolute error in seven of the nine shifted conditions (Appendix Table C1). The directional Poisson masks were the two exceptions, favoring C-EDM (E) for u and U-Net for f . Although G-EDM (E) was not the most accurate method for either Poisson variable under uniform masks, it became the most accurate for both under Gaussian–uniform and patch-missing masks. The formulations differ in how they incorporate the observation mask. U-Net and C-EDM learn an amortized conditional mapping from observations and masks drawn from the uniform training distribution. G-EDM instead learns a full-field prior independently of the observations and applies the test mask through guidance during sampling. This separation between prior learning and observation enforcement helps explain the smaller degradation of G-EDM (E) when the spatial distribution of observations changed. 
+
+4.4. Conditional generation generally provides more reliable uncertainty estimates 
+
+Table 3 evaluates uncertainty at unobserved locations under paired 5% uniform masks using CRPS, empirical 90% interval coverage, and interval width. Lower CRPS is prefer-able, whereas a narrower interval is favorable only when coverage is comparable. C-EDM achieved lower CRPS for Poisson u, Poisson f , and KS, and its coverage was closer to the nominal 90% level for all four reconstruction targets. For Poisson f , G-EDM produced a narrower interval, but its coverage was only 60.2%, compared with 85.9% for C-EDM. C-EDM led on all three diagnostics for KS, with lower CRPS, a narrower interval, and coverage closer to 90%. NS was the exception, with G-EDM achieving lower CRPS and a narrower interval at similar coverage. Ensemble standard deviation provides a spatially resolved measure of predictive spread. Figure 8 compares its spatial distribution with absolute reconstruction error for representative Poisson u and NS cases. For both EDM formulations, regions of larger predictive spread broadly coincided with regions of larger reconstruction error. Addi-tional Poisson f and KS examples in Appendix Figures D1 and D2 show similar spatial correspondence. Together, Table 3 and Figure 8 characterize uncertainty through pre-dictive diagnostics at individual locations and the spatial relationship between ensemble spread and reconstruction error. 15 Sparse obs. C-EDM mean C-EDM |error| C-EDM std.            
+
+> Truth G-EDM mean G-EDM |error| G-EDM std.
+> Sparse obs. C-EDM mean C-EDM |error| C-EDM std.
+> Truth G-EDM mean G-EDM |error| G-EDM std.
+> (a) Poisson u
+> (b) NS ω(t6)
+
+Figure 8. Spatial uncertainty for representative Poisson u and NS ω(t6) fields with 5% uniformly sampled observations. Panels show observations, ground truth, ensemble means, absolute errors, and standard deviations for both EDM formulations ( Nens = 32). Errors and standard deviations are normalized by the RMS amplitude of the corresponding ground-truth field. 
+
+4.5. Prior-guided sampling is costly and sensitive to guidance parameters 
+
+The number of G-EDM sampling steps and the guidance weights were selected sep-arately for each benchmark on validation data, as detailed in Appendix E. Valida-tion error was sensitive to their combination, and neither stronger guidance nor more sampling steps consistently improved reconstruction accuracy. The selected configu-rations were ( N, ζ u, ζ f ) = (400 , 10 , 20) for Poisson, ( N, ζ ) = (1 ,600 , 5) for NS, and (N, ζ ) = (1 ,600 , 70) for KS. Increasing the number of steps for Poisson from 400 to 800 16 Table 4. Per-member inference cost under the final sampling configurations, measured with a batch size of 1 on an NVIDIA RTX 4090. Relative latency is normalized to the corresponding U-Net latency. Dataset Method Steps Denoiser evals Obs.-gradient evals Latency (s) Relative latency Poisson U-Net – 1 0 0.0140 1×                                          
+
+> C-EDM 40 79 01.009 72 ×
+> G-EDM 400 799 400 20.17 1,439 ×
+> NS U-Net –100.0107 1×
+> C-EDM 40 79 00.936 87 ×
+> G-EDM 1,600 3,199 1,600 70.13 6,555 ×
+> KS U-Net –100.0140 1×
+> C-EDM 20 39 00.601 43 ×
+> G-EDM 1,600 3,199 1,600 92.26 6,604 ×
+
+yielded no further improvement. For NS, increasing the number of steps from 1,600 to 2,000 reduced the validation error by only 1.3% at 25% greater sampling cost. Under the final sampling configurations, Table 4 compares the per-member inference costs of the three reconstruction formulations. U-Net required one network evaluation for each reconstruction. C-EDM used 40 sampling steps for Poisson and NS and 20 steps for KS, corresponding to 79 and 39 denoiser evaluations per member. G-EDM used 400 sampling steps for Poisson and 1,600 steps for NS and KS, corresponding to 799–3,199 denoiser evaluations per member. In addition, every G-EDM sampling step required one observation-gradient evaluation. The resulting per-member latency was 43–87 times the U-Net baseline for C-EDM and 1,439–6,604 times for G-EDM. Compared with C-EDM, the per-member latency of G-EDM was approximately 20 times higher for Poisson, 75 times higher for NS, and 154 times higher for KS. All ensemble-based results used Nens = 32 for both EDM formulations. This common ensemble size was selected using the C-EDM validation results reported in Appendix F. Ensemble-mean reconstruction error showed diminishing improvement beyond 16 mem-bers, whereas some uncertainty estimates continued to improve, supporting the use of 32 members for the reported comparisons. The sampling trajectories are independent and can be evaluated in parallel along the batch dimension, although the denoising steps within each trajectory remain sequential. Consequently, the wall time of a 32-member ensemble is not simply 32 times the batch-size-one latency in Table F1, but depends on the available batch parallelism and device memory. Overall, C-EDM directly modeled the observation-conditioned distribution and produced ensemble reconstructions with far fewer sampling steps, while retaining competitive reconstruction accuracy and gen-erally more reliable uncertainty estimates. G-EDM instead applied benchmark-specific observation guidance over longer sampling trajectories and showed lower sensitivity to observation-mask distribution shifts. 
+
+5. Discussion 
+
+Reconstruction accuracy did not follow a universal ranking among deterministic re-gression, conditional generation, and prior-guided generation. The leading formulation varied with the reconstructed field and operating regime, and neither increasing field complexity nor reducing observation density consistently favored generative reconstruc-tion. Problem difficulty alone therefore does not determine whether a generative method is preferable. Deterministic regression remains a strong choice when the objective is a single accurate reconstruction at low inference cost. Diffusion models, however, can gen-17 erate multiple plausible reconstructions from the same sparse observations, providing ensemble predictions and a natural basis for characterizing predictive uncertainty. The ensemble mean and individual members represent different scientific outputs. Within both EDM formulations, ensemble averaging consistently reduced phase-aligned error, whereas individual members more closely matched high-wavenumber power in selected fields and regimes. This contrast may result from cancellation of member-specific high-wavenumber components during averaging. Since the log-power metric is phase-insensitive, the memberwise advantage concerns spectral amplitudes rather than the spatial placement of fine-scale structures. The ensemble mean is therefore more appropriate when pointwise agreement is primary, while the member distribution is more informative for predictive variability and phase-insensitive spectral statistics. The two EDM formulations incorporate observations in fundamentally different ways. In conditional generation, C-EDM amortizes observation conditioning during training, enabling much shorter sampling trajectories. Its uncertainty estimates were also gener-ally more reliable. In prior-guided generation, G-EDM learns a full-field prior indepen-dently of the observations and applies the observation mask through test-time guidance. This separation is consistent with its lower sensitivity to the tested mask-distribution shifts. G-EDM nevertheless required longer sampling trajectories, substantially greater inference cost, and benchmark-specific guidance selection. The preferred formulation therefore depends on the required output, the anticipated observation process, and the available computational budget. Several questions remain regarding more realistic observational and physical settings. The mask-shift analysis covers limited spatial distributions, while the spatiotemporal masks remain fixed over time and the measurements are noise-free. Generalization to time-varying sensing, noisy observations, and three-dimensional fields therefore remains unresolved. The evaluation also does not directly assess whether reconstructed fields satisfy governing equations, conservation laws, or boundary conditions. Future work should extend the comparison to noisy three-dimensional systems with broader spatial and temporal sensing geometries and enforce physical consistency. 
+
+6. Conclusions 
+
+In this work, we investigated when diffusion-based generative reconstruction is prefer-able to deterministic regression for physical-field reconstruction from sparse observa-tions. To this end, we conducted a controlled comparison of three architecture-matched formulations: a deterministic U-Net, conditional EDM (C-EDM), and prior-guided EDM (G-EDM). The comparison covered four reconstruction targets from the 2D Poisson equation, 2D Navier–Stokes flow, and 1D Kuramoto–Sivashinsky dynamics, with con-trolled variations in field complexity, observation density, and mask distribution. The results show that sparse physical-field reconstruction does not admit a universally superior deterministic or generative formulation. Reconstruction accuracy depended on the reconstructed field and operating regime, and neither greater field complexity nor sparser observations consistently favored diffusion models. Deterministic regression re-mained a strong low-cost option when the objective was a single accurate reconstruc-tion. Diffusion models, however, provided ensembles of plausible reconstructions, mak-ing them useful when uncertainty, sample diversity, or robustness to changing sensing conditions was important. The ensemble results further showed that different summaries of the generated dis-tribution serve different purposes. Ensemble means achieved lower phase-aligned error 18 and can be viewed as variance-reduced point estimates, whereas individual samples more closely preserved variability and high-wavenumber power in selected fields and regimes. The comparison between C-EDM and G-EDM also revealed distinct trade-offs in how observations are incorporated. C-EDM generally provided more reliable uncer-tainty estimates at substantially lower inference cost, while G-EDM was least sensitive to the tested mask-distribution shifts but required longer sampling and guidance-weight tuning. Taken together, these findings clarify that the value of generative reconstruction lies not in universally better pointwise accuracy, but in how its distributional outputs are used. They provide practical guidance for selecting reconstruction methods according to the required scientific output, anticipated sensing conditions, and computational budget. They also suggest concrete directions for future sparse-reconstruction methods, including improving uncertainty estimation in deterministic approaches, preserving fine-scale sample variability in conditional generative models, and reducing the sampling cost and guidance sensitivity of prior-guided methods. 
+
+Acknowledgments 
+
+The work is supported by the National Natural Science Foundation of China (No. 62506367 and No. 62276269) and the Beijing Natural Science Foundation (No. F261002). 
+
+Declaration of AI use 
+
+During the preparation of this manuscript, H.Z. used OpenAI Codex (GPT-5.6, Ope-nAI) to improve the language, clarity, and flow of author-prepared text. All AI-assisted edits were critically reviewed and revised by the authors. The authors take full re-sponsibility for the originality, accuracy, and integrity of the manuscript, including its references. 
+
+Data availability statement 
+
+The data supporting the findings of this study are available from the corresponding author upon reasonable request. 
+
+Code availability statement 
+
+The source code used for model training, reconstruction, and evaluation is available from the corresponding author upon reasonable request. 
+
+Disclosure statement 
+
+No potential conflict of interest was reported by the authors. 19 References 
+
+[1] Brunton SL, Noack BR, Koumoutsakos P. Machine learning for fluid mechanics. Annual Review of Fluid Mechanics. 2020;52:477–508. [2] Lu PY, Ariño Bernad J, Soljačić M. Discovering sparse interpretable dynamics from partial observations. Communications Physics. 2022;5:206. [3] Course K, Nair PB. State estimation of a physical system with unknown governing equa-tions. Nature. 2023;622:261–267. [4] Berkooz G, Holmes P, Lumley JL. The proper orthogonal decomposition in the analysis of turbulent flows. Annual Review of Fluid Mechanics. 1993;25:539–575. [5] Everson R, Sirovich L. Karhunen–loève procedure for gappy data. Journal of the Optical Society of America A. 1995;12(8):1657–1664. [6] Willcox K. Unsteady flow sensing and estimation via the gappy proper orthogonal de-composition. Computers & Fluids. 2006;35(2):208–226. [7] Donoho DL. Compressed sensing. IEEE Transactions on Information Theory. 2006; 52(4):1289–1306. [8] Callaham JL, Maeda K, Brunton SL. Robust flow reconstruction from limited measure-ments via sparse representation. Physical Review Fluids. 2019;4(10):103907. [9] Erichson NB, Mathelin L, Yao Z, et al. Shallow neural networks for fluid flow reconstruc-tion with limited sensors. Proceedings of the Royal Society A: Mathematical, Physical and Engineering Sciences. 2020;476(2238):20200097. [10] Nair NJ, Goza A. Leveraging reduced-order models for state estimation using deep learn-ing. Journal of Fluid Mechanics. 2020;897:R1. [11] Dubois P, Gomez T, Planckaert L, et al. Machine learning for fluid flow reconstruction from limited measurements. Journal of Computational Physics. 2022;448:110733. [12] Fukami K, Fukagata K, Taira K. Super-resolution reconstruction of turbulent flows with machine learning. Journal of Fluid Mechanics. 2019;870:106–120. [13] Mo Y, Magri L. Reconstructing unsteady flows from sparse, noisy measurements with a physics-constrained convolutional neural network. Physical Review Fluids. 2025; 10(3):034901. [14] Zhang Q, Krotov D, Karniadakis GE. Operator learning for reconstructing flow fields from sparse measurements: An energy transformer approach. Journal of Computational Physics. 2025;538:114148. [15] Fukami K, Maulik R, Ramachandra N, et al. Global field reconstruction from sparse sen-sors with Voronoi tessellation-assisted deep learning. Nature Machine Intelligence. 2021; 3(11):945–951. [16] Santos JE, Fox ZR, Mohan A, et al. Development of the Senseiver for efficient field reconstruction from sparse observations. Nature Machine Intelligence. 2023;5(11):1317– 1325. [17] Luo X, Xu W, Nadiga BT, et al. Continuous field reconstruction from sparse observations with implicit neural networks. In: International Conference on Learning Representations; 2024. [18] Sun G, Miao T, Huang H, et al. Geometry-aware neural optimizer for shape optimiza-tion and inversion. In: Forty-third International Conference on Machine Learning; 2026. Available from: https://openreview.net/forum?id=PTaUjEBHat .[19] Raissi M, Perdikaris P, Karniadakis GE. Physics-informed neural networks: A deep learn-ing framework for solving forward and inverse problems involving nonlinear partial dif-ferential equations. Journal of Computational Physics. 2019;378:686–707. [20] Raissi M, Yazdani A, Karniadakis GE. Hidden fluid mechanics: Learning velocity and pressure fields from flow visualizations. Science. 2020;367(6481):1026–1030. [21] Stuart AM. Inverse problems: A bayesian perspective. Acta Numerica. 2010;19:451–559. [22] Kingma DP, Welling M. Auto-encoding variational bayes. In: International Conference on Learning Representations; 2014. Available from: https://arxiv.org/abs/1312.6114 .[23] Goodfellow IJ, Pouget-Abadie J, Mirza M, et al. Generative adversarial nets. In: Advances 
+
+20 in Neural Information Processing Systems; Vol. 27; 2014. [24] Ho J, Jain AN, Abbeel P. Denoising diffusion probabilistic models. In: Advances in Neural Information Processing Systems; Vol. 33; 2020. p. 6840–6851. [25] Song Y, Sohl-Dickstein J, Kingma DP, et al. Score-based generative modeling through stochastic differential equations. In: International Conference on Learning Representa-tions; 2021. [26] Lipman Y, Chen RTQ, Ben-Hamu H, et al. Flow matching for generative modeling. In: International Conference on Learning Representations; 2023. [27] Gundersen K, Oleynik A, Blaser N, et al. Semi-conditional variational auto-encoder for flow reconstruction and uncertainty quantification from limited observations. Physics of Fluids. 2021;33(1):017119. [28] Güemes A, Sanmiguel Vila C, Discetti S. Super-resolution generative adversarial networks of randomly-seeded fields. Nature Machine Intelligence. 2022;4(12):1165–1173. [29] Du P, Parikh MH, Fan X, et al. Conditional neural field latent diffusion model for gener-ating spatiotemporal turbulence. Nature Communications. 2024;15:10416. [30] Zhou H, Zhang R, Wan H, et al. PerFlow: Physics-embedded rectified flow for efficient reconstruction and uncertainty quantification of spatiotemporal dynamics. arXiv. 2026; Available from: https://arxiv.org/abs/2605.03548 .[31] Oommen V, Khodakarami S, Bora A, et al. Learning turbulent flows with generative models for super resolution and sparse flow reconstruction. Nature Communications. 2026; 17:3707. [32] Shysheya A, Diaconu C, Bergamin F, et al. On conditional diffusion models for PDE simulations. In: Advances in Neural Information Processing Systems; Vol. 37; 2024. p. 23246–23300. [33] Baldassari L, Siahkoohi A, Garnier J, et al. Conditional score-based diffusion models for bayesian inference in infinite dimensions. In: Advances in Neural Information Processing Systems; Vol. 36; 2023. p. 24262–24290. [34] Li Z, Dou H, Fang S, et al. Physics-aligned field reconstruction with diffusion bridge. In: International Conference on Learning Representations; 2025. [35] Chung H, Kim J, McCann MT, et al. Diffusion posterior sampling for general noisy inverse problems. In: International Conference on Learning Representations; 2023. [36] Shu D, Li Z, Barati Farimani A. A physics-informed diffusion model for high-fidelity flow field reconstruction. Journal of Computational Physics. 2023;478:111972. [37] Li Z, Han W, Zhang Y, et al. Learning spatiotemporal dynamics with a pretrained gen-erative model. Nature Machine Intelligence. 2024;6(12):1566–1579. [38] Huang J, Yang G, Wang Z, et al. DiffusionPDE: Generative PDE-solving under partial observation. In: Advances in Neural Information Processing Systems; Vol. 37; 2024. p. 130291–130323. [39] Amorós-Trepat M, Medrano-Navarro L, Liu Q, et al. Guiding diffusion models to recon-struct flow fields from sparse data. Physics of Fluids. 2026;38(1):015112. [40] Ronneberger O, Fischer P, Brox T. U-Net: Convolutional networks for biomedical image segmentation. In: Medical Image Computing and Computer-Assisted Intervention; 2015. p. 234–241. [41] Karras T, Aittala M, Aila T, et al. Elucidating the design space of diffusion-based gen-erative models. In: Advances in Neural Information Processing Systems; Vol. 35; 2022. p. 26565–26577. [42] Li Z, Kovachki N, Azizzadenesheli K, et al. Fourier neural operator for parametric partial differential equations. In: International Conference on Learning Representations; 2021. [43] Lippe P, Veeling BS, Perdikaris P, et al. PDE-Refiner: Achieving accurate long rollouts with neural PDE solvers. In: Advances in Neural Information Processing Systems; Vol. 36; 2023. p. 67398–67433. 
+
+21 Table A1. Dataset dimensions, independent splits, and standard test panels. Split sizes count indepen-dent fields or trajectories, while test cases count masked reconstruction conditions. Dataset Reconstructed field Complexity setting Resolution Train/val/test Test cases Poisson (u, f ) kc ∈ { 1, 2, 4, 6} 2 × 128 × 128 5000 /1000 /1000 1000 NS ω(t, x, y ) Re ∈ { 10 3, 10 4, 10 5} 10 × 64 × 64 3000 /300 /300 750 KS u(t, x ) five ν intervals in [0 .5, 1.5] 1 × 128 × 256 4096 /256 /512 1250 
+
+Appendix A. Experimental details and metric implementation 
+
+This appendix provides details of dataset construction, evaluation panels, model ar-chitectures, training and sampling configurations, and metric implementation for the experiments reported in Sections 3 and 4. 
+
+A.1. Datasets and splits 
+
+Table A1 summarizes the dataset dimensions, split sizes, and standard test panels. Split sizes count independent fields or trajectories, while test cases count masked reconstruc-tion conditions. No complete field or trajectory is shared across splits. For Poisson, the source in Equation 10 is generated in an orthonormal DCT basis as ̂
+
+fk = akξk, where ξk ∼ N (0 , 1) and ak ∝ (1 + ∥k∥22/k 2 
+
+> c
+
+)−1. Increasing kc retains more source energy at higher wavenumbers. The zero mode is removed, and the spectral filter is normalized to give unit expected RMS. Each split is balanced across the four values of kc.For NS, the fixed forcing in Equation 11 is q(s) = 0.1[sin(2 π(s1 + s2)) + cos(2 π(s1 + s2))]. We use the released Fourier neural operator trajectories [42] at 
+
+ν ∈ { 10 −3, 10 −4, 10 −5}, corresponding to Re = ν−1 ∈ { 10 3, 10 4, 10 5}. The ten retained frames correspond to nondimensional times t = 5 , . . . , 14. For each viscosity, trajectory indices 0–999, 1000–1099, and 1100–1199 form the training, validation, and test splits. For KS, we use the parameter-dependent HDF5 dataset released with PDE-Refiner [43] for ν ∈ [0 .5, 1.5]. The original training, validation, and test splits are retained. The domain length and time increment vary across trajectories. We retain the first 128 time steps and all 256 spatial points without interpolation, and divide ν
+
+into five intervals using the boundaries {0.5, 0.7, 0.9, 1.1, 1.3, 1.5}.
+
+A.2. Observation and evaluation panels 
+
+Training masks for U-Net and C-EDM are generated online. For each training example, the observation fraction is drawn uniformly from {5, 8, 10 , 15 , 20 }%, after which the observed locations are sampled without replacement. Poisson uses the same locations for u and f , while NS and KS use one spatial sensor set throughout each temporal window. Validation and test masks are fixed by seed and shared across methods. The standard Poisson test panel contains 50 independently generated fields at each 
+
+kc, evaluated at all five observation fractions, yielding 1,000 reconstruction conditions. The NS and KS panels contain 50 trajectories per parameter regime. Evaluating each trajectory at all five observation fractions yields 750 NS and 1,250 KS reconstruction conditions. Additional observation-fraction panels evaluate 3% and 12% masks on 200 Poisson fields, 150 NS trajectories, and 250 KS trajectories. The 3% setting extrapolates below the training range, whereas 12% interpolates within it. Poisson source-frequency gen-22 Table A2. Training epochs, EMA checkpoints used for evaluation, and sampling con-figurations. U, C, and G denote U-Net, C-EDM, and G-EDM. The Poisson guidance weights are reported as ( ζu, ζ f ). Dataset Training epochs U/C/G EMA epoch U/C/G C-EDM N G-EDM ( N, ζ )Poisson 1000 /1000 /1000 1000 /1000 /1000 40 400 , (10 , 20) NS 1500 /1500 /1500 1500 /1470 /1360 40 1600 , 5KS 1200 /1200 /1000 1200 /1040 /960 20 1600 , 70 
+
+eralization is evaluated using 50 new fields at each of kc = 3 .5 and kc = 8 across all five standard observation fractions. Mask-distribution robustness is evaluated on 200 Poisson fields and 150 NS trajectories at 5% observations. Each shifted mask is paired with a uniform mask on the same field or trajectory. KS is excluded because its one-dimensional spatial sensors have no direct counterpart to these two-dimensional mask shifts. The shifted mask distributions are defined in Appendix C. 
+
+A.3. Architecture, training, and sampling configurations 
+
+All methods use architecture-matched U-Net backbones with approximately 14.3 mil-lion parameters. Each backbone has base width 64, channel multipliers (1 , 2, 2, 4), two residual blocks per level, attention at resolution 16, and dropout 0.1. Optimization uses Adam with an initial learning rate of 2 × 10 −4, a batch size of 32, automatic mixed precision, gradient clipping at norm 1, and an EMA half-life of 50 ,000 training fields. The learning rate is warmed up for five epochs and decayed to 2 × 10 −5 by epoch 750. All models are trained with seed 0. For both EDM formulations, σdata = 1 and the training noise levels follow log σ ∼N (−0.5, 1.22). Sampling uses the Karras schedule over σ ∈ [0 .002 , 80] with ρ = 7. The Poisson variables are standardized separately by channel, whereas NS and KS use one global mean and standard deviation. All normalization statistics are computed from the training split. Table A2 reports the training budgets, EMA checkpoints selected according to vali-dation performance, and test-time sampling configurations. For G-EDM, the guidance multiplier is fixed at ri = 0 .1 during the final 20% of sampling steps. Appendix E details the selection of the sampling steps and guidance weights. All reported EDM ensembles use Nens = 32, with the corresponding ensemble-size analysis provided in Appendix F. 
+
+A.4. Metric implementation 
+
+Before computing reconstruction and spectral metrics, predicted values at observed locations are replaced with the corresponding measurements according to ̂
+
+xeval 0 = y + ( 1 − M) ⊙̂ x0. (A1) Reconstruction and spectral errors are computed in physical units for each variable before averaging across test cases. Probabilistic metrics are computed using standardized values only at unobserved locations. For method m and shifted mask distribution g, mask sensitivity is computed for each paired test case as ∆ εm,g = εm,g − εm, uniform . Both masks contain 5% observations, and the reported value is the mean paired difference across test cases. For any scalar reconstruction metric d, the relative reduction from the mean memberwise statistic to 23 the ensemble-mean statistic is calculated as 100( dS − dE)/d S.The transform T in Equation 16 is benchmark-specific. Poisson u uses a type-I discrete sine transform of the interior field, consistent with its homogeneous Dirich-let boundary condition, while Poisson f uses a type-II discrete cosine transform. For NS and KS, the temporal dimension is retained, and T is applied independently over space at each time step. NS uses a two-dimensional spatial Fourier transform, while KS uses a one-dimensional spatial Fourier transform and retains modes 1 ≤ k ≤ 60. The frequency-band norms then accumulate the coefficient errors over time. For the two-dimensional fields, radial power is obtained by summing squared coefficient magnitudes within each integer-wavenumber shell. The dataset-specific frequency bands are shown in Appendix Figure B1. Because the frequency bands form a disjoint partition of K and share the same full-spectrum denominator, Equation 16 satisfies (εspec all )2 = ∑
+
+> b
+
+(εspec  
+
+> b
+
+)2 . (A2) Each band therefore retains its contribution to the full-spectrum coefficient error. The log-power metric instead averages wavenumberwise discrepancies after power normal-ization and does not weight frequency bands by their contribution to the total spectral energy. For a standardized scalar target x at an unobserved location and ensemble predictions 
+
+{̂x(m)}Nens 
+
+> m=1
+
+, the empirical continuous ranked probability score is CRPS = 1
+
+Nens 
+
+> Nens ∑
+> m=1
+> ∣∣∣̂
+
+x(m) − x 
+
+> ∣∣∣
+
+− 12N 2ens 
+
+> Nens ∑
+> m=1
+> Nens ∑
+> n=1
+> ∣∣∣̂
+
+x(m) −̂ x(n)∣∣∣ . (A3) CRPS is averaged over unobserved entries and then over test cases. The central 90% prediction interval is formed from the empirical 0.05 and 0.95 quantiles. Its coverage is the fraction of unobserved targets within the interval, and its width is the mean difference between the two quantiles. Per-output inference latency is measured on an NVIDIA RTX 4090 with batch size 1 and mixed precision after warming up each inference graph. Measurements exclude data loading, metric computation, and file I/O. Neural function evaluations count denoiser calls. For G-EDM, observation-gradient corrections are counted separately as gradient evaluations. The 95% confidence intervals shown in the figures are computed by paired bootstrap resampling, using an independent field or trajectory as the sampling unit. 
+
+Appendix B. Spectral results and metric sensitivity 
+
+Dataset-specific frequency bands were selected from the ground-truth normalized power spectra shown in Figure B1. For Poisson and NS, the low-, mid-, and high-frequency bands are 0 ≤ k < 4, 4 ≤ k < 8, and k ≥ 8. For KS, the corresponding bands are 1 ≤ k < 5, 5 ≤ k < 13, and 13 ≤ k ≤ 60. Poisson u and NS ω are dominated by low-frequency energy, whereas Poisson f and KS u contain larger fractions of energy in the mid- and high-frequency bands. Tables B1–B3 report Dlog Pb for all complexity regimes and frequency bands, including the high-frequency results summarized in Table 2. 24 10 0 4 8 10 1 64  
+
+> Wavenumber k
+> 10 −7
+> 10 −5
+> 10 −3
+> 10 −1
+> Mean normalized power  ̄  p(k)
+> Low 92.4% Mid 7.2% High 0.3%
+
+(a) Poisson solution u     
+
+> 10 04810 164
+> Wavenumber k
+> 10 −4
+> 10 −3
+> 10 −2
+> 10 −1
+> 10 0
+> Mean normalized power  ̄  p(k)
+> Low 62.4% Mid 22.3% High 15.3%
+
+(b) Poisson source f     
+
+> 10 04810 132
+> Wavenumber k
+> 10 −5
+> 10 −4
+> 10 −3
+> 10 −2
+> 10 −1
+> 10 0
+> Mean normalized power  ̄  p(k)
+> Low 98.7% Mid 1.0% High 0.3%
+
+(c) NS vorticity ω     
+
+> 10 0510 113 60
+> Wavenumber k
+> 10 −9
+> 10 −7
+> 10 −5
+> 10 −3
+> 10 −1
+> Mean normalized power  ̄  p(k)
+> Low 10.4% Mid 81.2% High 8.4%
+
+(d) KS state u 
+
+> Mean truth spectrum 5th--95th percentile
+
+Figure B1. Normalized ground-truth power spectra partitioned into dataset-specific low-, mid-, and high-frequency bands. Lines show test-set means, shaded regions indicate the 5th–95th percentile ranges, and an-notations report the mean energy fraction in each band. 
+
+Table B1. Bandwise log-power error Dlog Pb for Poisson u and f across kc, averaged over test fields and observation fractions. Best and second-best results are shown in bold and underlined, respectively. Field Regime Wavenumber range U-Net C-EDM (E) C-EDM (S) G-EDM (E) G-EDM (S) Poisson u kc = 1 0 ≤ k < 4 0.00378 0.00973 0.00815 0.00067 0.00112 4 ≤ k < 8 0.00124 0.00111 0.00163 0.00139 0.00167 
+
+k ≥ 8 0.2470 0.1268 0.1762 0.3032 0.4145 Poisson u kc = 2 0 ≤ k < 4 0.00060 0.00117 0.00230 0.00015 0.00021 4 ≤ k < 8 0.00094 0.00101 0.00146 0.00120 0.00155 
+
+k ≥ 8 0.2149 0.0963 0.1493 0.2818 0.3860 Poisson u kc = 4 0 ≤ k < 4 0.00054 0.00115 0.00240 0.00032 0.00037 4 ≤ k < 8 0.00076 0.00077 0.00121 0.00119 0.00144 
+
+k ≥ 8 0.1753 0.0730 0.1286 0.1996 0.2981 Poisson u kc = 6 0 ≤ k < 4 0.00093 0.00174 0.00346 0.00079 0.00090 4 ≤ k < 8 0.00082 0.00084 0.00128 0.00211 0.00254 
+
+k ≥ 8 0.1678 0.0739 0.1227 0.2147 0.3171 Poisson f kc = 1 0 ≤ k < 4 0.00123 0.00128 0.00155 0.00156 0.00170 4 ≤ k < 8 0.00412 0.00405 0.00591 0.00620 0.00689 
+
+k ≥ 8 0.3586 0.3348 0.0630 0.2235 0.1509 Poisson f kc = 2 0 ≤ k < 4 0.00206 0.00214 0.00195 0.00229 0.00246 4 ≤ k < 8 0.00360 0.00392 0.00516 0.00607 0.00692 
+
+k ≥ 8 0.3356 0.3170 0.0600 0.2460 0.1447 Poisson f kc = 4 0 ≤ k < 4 0.00540 0.00599 0.00380 0.00799 0.00872 4 ≤ k < 8 0.00536 0.00618 0.00542 0.00820 0.00929 
+
+k ≥ 8 0.2940 0.2918 0.0570 0.2392 0.0926 Poisson f kc = 6 0 ≤ k < 4 0.0110 0.0129 0.00733 0.0145 0.0133 4 ≤ k < 8 0.0107 0.0124 0.00749 0.0133 0.0127 
+
+k ≥ 8 0.2703 0.2778 0.0557 0.2256 0.0704 
+
+25 Table B2. Bandwise log-power error Dlog Pb for NS ω across Reynolds numbers, averaged over test trajectories and observation fractions. Best and second-best results are shown in bold and underlined, respectively. Field Regime Wavenumber range U-Net C-EDM (E) C-EDM (S) G-EDM (E) G-EDM (S) NS ω Re = 10 3 0 ≤ k < 4 0.00240 0.00241 0.00435 0.00045 0.00064 4 ≤ k < 8 0.1961 0.1229 0.3174 0.1155 0.1636 
+
+k ≥ 8 6.2367 6.1541 6.8390 6.2545 6.4540 NS ω Re = 10 4 0 ≤ k < 4 0.00146 0.00188 0.00267 0.00054 0.00069 4 ≤ k < 8 0.00937 0.0132 0.0119 0.00320 0.00346 
+
+k ≥ 8 0.5889 0.6137 0.7922 0.5128 0.6448 NS ω Re = 10 5 0 ≤ k < 4 0.00286 0.00306 0.00382 0.00263 0.00303 4 ≤ k < 8 0.0165 0.0207 0.0177 0.0105 0.0111 
+
+k ≥ 8 0.1674 0.1646 0.0625 0.1204 0.0371 Table B3. Bandwise log-power error Dlog Pb for KS u across viscosity intervals, averaged over test trajecto-ries and observation fractions. Best and second-best results are shown in bold and underlined, respectively. Field Regime Wavenumber range U-Net C-EDM (E) C-EDM (S) G-EDM (E) G-EDM (S) KS u ν ∈ [0 .5, 0.7) 1 ≤ k < 5 0.00636 0.0104 0.0140 0.0178 0.0257 5 ≤ k < 13 0.00475 0.00778 0.0113 0.0140 0.0197 13 ≤ k ≤ 60 0.9301 0.5797 0.6930 0.9379 0.9988 KS u ν ∈ [0 .7, 0.9) 1 ≤ k < 5 0.00561 0.00685 0.00933 0.0166 0.0219 5 ≤ k < 13 0.00394 0.00509 0.00715 0.0106 0.0139 13 ≤ k ≤ 60 1.5144 0.9481 1.1226 1.6035 1.6682 KS u ν ∈ [0 .9, 1.1) 1 ≤ k < 5 0.00571 0.00566 0.00869 0.0142 0.0193 5 ≤ k < 13 0.00360 0.00537 0.00708 0.00870 0.0124 13 ≤ k ≤ 60 2.2203 1.4960 1.7430 2.3292 2.4199 KS u ν ∈ [1 .1, 1.3) 1 ≤ k < 5 0.00629 0.00507 0.00741 0.0155 0.0208 5 ≤ k < 13 0.00412 0.00406 0.00623 0.00790 0.0118 13 ≤ k ≤ 60 2.7283 1.9064 2.1920 2.9233 2.9899 KS u ν ∈ [1 .3, 1.5) 1 ≤ k < 5 0.00608 0.00323 0.00548 0.0142 0.0191 5 ≤ k < 13 0.00494 0.00261 0.00452 0.0101 0.0132 13 ≤ k ≤ 60 3.3289 2.3433 2.6807 3.5621 3.5890 
+
+B.1. Sensitivity to the spectral metric 
+
+The high-frequency analysis in Section 4.2 uses the log-power error, which measures discrepancies at each wavenumber on a logarithmic scale and remains sensitive to modes with low normalized power. To examine whether the method rankings depend on this emphasis, we also compare unit-total-power spectra using the relative ℓ2 distance 
+
+R˜P =
+
+∥∥∥ ˜Ppred − ˜Ptrue 
+
+∥∥∥2∥∥∥ ˜Ptrue 
+
+∥∥∥2
+
+. (B1) The denominator is a global norm of the ground-truth spectrum rather than a pointwise normalization at each wavenumber. Consequently, R˜P is driven mainly by absolute discrepancies in energetic modes and is less sensitive to the low-power spectral tail than 
+
+Dlog Pb .Table B4 reports R˜P averaged over each test set. G-EDM (E) achieved the lowest distance for Poisson u and NS ω, C-EDM (S) for Poisson f , and U-Net for KS u. This ordering differs from the high-frequency log-power comparison, showing that recovery of energetic modes and recovery of the low-power spectral tail are distinct aspects of spectral reconstruction. 26 Table B4. Mean relative ℓ2 distance R˜P between normalized power spectra across test cases, field-complexity settings, and observation fractions. The lowest and second-lowest values are shown in bold and underlined, respectively. Field U-Net C-EDM (E) C-EDM (S) G-EDM (E) G-EDM (S) Poisson u 3.586 ×10 −4 6.811 ×10 −4 1.220 ×10 −3 2.786 ×10 −4 3.454 ×10 −4
+
+Poisson f 1.200 ×10 −2 1.362 ×10 −2 8.819 ×10 −3 1.584 ×10 −2 1.578 ×10 −2
+
+NS ω 1.464 ×10 −3 1.669 ×10 −3 1.713 ×10 −3 9.437 ×10 −4 1.034 ×10 −3
+
+KS u 1.548 ×10 −2 1.846 ×10 −2 2.704 ×10 −2 3.589 ×10 −2 5.046 ×10 −23 5 8 10 12 15 20 
+
+> Observation fraction (%)
+> 0.2 0.5 1
+> Relative  ℓ2 error (\%)
+
+(a) Poisson solution u      
+
+> 35810 12 15 20
+> Observation fraction (%)
+> 10 20
+> Relative  ℓ2 error (\%)
+
+(b) Poisson source f      
+
+> 35810 12 15 20
+> Observation fraction (%)
+> 125
+> Relative  ℓ2 error (\%)
+
+(c) NS vorticity ω      
+
+> 35810 12 15 20
+> Observation fraction (%)
+> 0.1 0.5 1510 50
+> Relative  ℓ2 error (\%)
+
+(d) KS state u      
+
+> U-Net C-EDM (E) C-EDM (S) G-EDM (E) G-EDM (S) OOD Interpolation
+
+Figure C1. Full-field relative ℓ2 error versus observation fraction for Poisson u and f , NS ω, and KS u. The 3% setting extrapolates below the training range, while the 12% setting interpolates between training fractions. Bands show paired-bootstrap 95% confidence intervals. 
+
+Appendix C. Observation-process robustness and source-frequency generalization 
+
+Figure C1 extends the five observation fractions used during training with an extrapo-lation below the training range at 3% and an interpolation at 12%. Full-field relative ℓ2
+
+error generally decreased as the observation fraction increased. Both additional fractions followed the neighboring trends without changing the method rankings. Figure C2 evaluates Poisson source-frequency generalization at 5% observations. The 
+
+kc = 3 .5 interpolation followed the trend between neighboring training frequencies, while the kc = 8 extrapolation continued the increase in error beyond the upper training boundary. C-EDM (E) retained the lowest error for Poisson u, and U-Net retained the lowest error for Poisson f .The mask distributions shown in Figure 6 were evaluated on paired test fields or trajectories at a fixed 5% observation count. Each shifted mask was compared with a 27 1 2 3.5 4 6 8                        
+
+> Frequency parameter kc
+> 0.2 0.5 12
+> Relative  ℓ2 error (\%)
+> (a) Poisson solution u
+> 123.5 468
+> Frequency parameter kc
+> 510 20 50
+> Relative  ℓ2 error (\%)
+> (b) Poisson source f
+> U-Net C-EDM (E) C-EDM (S) G-EDM (E) G-EDM (S) OOD Interpolation Figure C2. Full-field relative ℓ2error versus the Poisson source-frequency parameter kcat 5% observations. The kc= 3 .5 case interpolates between training frequencies, while kc= 8 extrapolates beyond the training range. Bands show bootstrap 95% confidence intervals.
+
+uniform mask on the same test case. Gaussian–uniform masks placed half of the sensors in an isotropic Gaussian cluster with a random center and a standard deviation of 0.1 on the unit domain. The remaining sensors were sampled uniformly. Directional masks placed 75% of the sensors in one half of the domain, with the four orientations balanced across test cases. Patch-missing masks excluded a randomly positioned square with a side length equal to 25% of the domain and sampled the remaining sensors uniformly. For NS, the same mask was applied to every temporal frame, with periodic wrapping of the missing patch. Figure C3 presents additional paired reconstructions for Poisson u under Gaussian– uniform masks and NS ω(t6) under directional masks. Table C1 reports the correspond-ing mean full-field relative ℓ2 errors under the uniform baseline and the three shifted mask distributions, complementing the baseline-relative increases in Figure 7. 28 Uniform 
+
+(a) Paired Poisson solution u examples 
+
+Sparse obs. Truth U-Net C-EDM (E) C-EDM sample G-EDM (E) G-EDM sample                   
+
+> |e|
+> ℓ2= 0.002 ℓ2= 0.002 ℓ2= 0.003 ℓ2= 0.003 ℓ2= 0.004
+> Gaussian + uniform |e|
+> ℓ2= 0.036 ℓ2= 0.020 ℓ2= 0.019 ℓ2= 0.005 ℓ2= 0.007
+> Uniform
+
+(b) Paired NS vorticity ω(t6) examples 
+
+Sparse obs. Truth U-Net C-EDM (E) C-EDM sample G-EDM (E) G-EDM sample                   
+
+> |e|
+> ℓ2= 0.017 ℓ2= 0.016 ℓ2= 0.024 ℓ2= 0.010 ℓ2= 0.013
+> Directional |e|
+> ℓ2= 0.022 ℓ2= 0.020 ℓ2= 0.030 ℓ2= 0.010 ℓ2= 0.014
+
+Figure C3. Paired reconstructions and absolute-error maps at 5% observations. Panel (a) compares Poisson 
+
+u under uniform and Gaussian–uniform masks, and panel (b) compares NS ω(t6) under uniform and directional masks. Each reconstruction row is followed by the corresponding absolute-error map. Annotations report the full-field relative ℓ2 error. 
+
+29 Table C1. Mean full-field relative ℓ2 error (%) under the uniform baseline and three shifted mask distributions at a fixed 5% observation count, evaluated on paired test fields or trajectories. The lowest and second-lowest values are shown in bold and underlined, respectively. Field Mask U-Net C-EDM (E) C-EDM (S) G-EDM (E) G-EDM (S) Poisson u Uniform 0.315 0.281 0.397 0.572 0.724 Gaussian + uniform 3.096 1.934 2.091 1.140 1.454 Directional bias 0.782 0.632 0.806 0.874 1.114 Patch missing 4.428 8.007 8.337 1.068 1.355 Poisson f Uniform 11.573 12.347 17.400 16.118 19.554 Gaussian + uniform 25.728 20.815 26.985 20.771 26.151 Directional bias 13.950 14.877 20.645 18.303 22.658 Patch missing 24.298 37.023 41.695 17.133 20.936 NS ω Uniform 2.599 2.748 3.681 2.005 2.597 Gaussian + uniform 3.672 3.615 4.843 2.621 3.459 Directional bias 3.116 3.213 4.356 2.222 2.901 Patch missing 2.802 2.928 3.966 2.099 2.720 Sparse obs. C-EDM mean C-EDM |error| C-EDM std.    
+
+> Truth G-EDM mean G-EDM |error| G-EDM std.
+
+Figure D1. Spatial uncertainty for a representative Poisson f field at kc = 6 with 5% uniformly sampled observations. Panels show observations, ground truth, ensemble means, absolute errors, and standard deviations for both EDM formulations ( Nens = 32). 
+
+Appendix D. Additional spatial uncertainty examples 
+
+Figures D1 and D2extend the spatial uncertainty analysis in Figure 8 to Poisson f
+
+and KS u underthe same 5% uniformly sampled observation protocol. For each EDM-formulation, the figures compare ensemble standard deviation withabsolute reconstruc-tion error. Both quantities are normalized by theRMS amplitude of the corresponding ground-truth field. In bothexamples, regions of larger ensemble spread broadly coincided withregions of larger reconstruction error. 30 Sparse obs. C-EDM mean C-EDM |error| C-EDM std.    
+
+> Truth G-EDM mean G-EDM |error| G-EDM std.
+
+Figure D2. Spatial uncertainty for a representative KS u(t, x ) trajectory with 5% uniformly sampled obser-vations. Panels show observations, ground truth, ensemble means, absolute errors, and standard deviations for both EDM formulations ( Nens = 32). 
+
+Table E1. Validation results for selecting the G-EDM sampling steps and guidance weights for Poisson. The guidance weights are ( ζu, ζ f ). Boldface indicates the lowest 
+
+Jval within each selection stage, and † marks the configuration used for test evaluation. 
+
+N Weight Jval ↓ Obs. NRMSE ↓
+
+Screen 
+
+400 (5 , 5) 0.08502 0.00645 400 (5 , 10) 0.07906 0.01199 400 (5 , 20) 0.07659 0.02548 400 (10 , 10) 0.07866 0.01497 400 (10 , 20) 0.07653 0.02622 400 (10 , 40) 0.07836 0.04348 400 (20 , 20) 0.07890 0.03153 400 (20 , 40) 0.11623 0.05111 400 (20 , 80) 0.16804 0.09568 
+
+Confirm 
+
+40 (25 , 50) 0.09242 0.06528 100 (20 , 40) 0.07019 0.04473 200 (10 , 20) 0.06602 0.02493 400 † (10 , 20) 0.06570 0.02579 800 (9 , 19) 0.06648 0.02369 
+
+Appendix E. Prior-guided sampling parameter selection 
+
+G-EDM sampling parameters were selected on validation data. N denotes the number of sampling steps, and ζ denotes the per-step observation-guidance weight. Poisson uses separate weights ( ζu, ζ f ) for the solution and source fields. The selection score Jval is the macro-average ensemble-mean relative ℓ2 error over unobserved locations. For Poisson, the score assigns equal weight to the two reconstructed fields. Candidate configurations with an observed-location normalized RMSE above 0.1 were discarded. Parameter selection followed two stages. Each configuration was first evaluated using one generated sample per case on a balanced screening panel. Promising configurations were then evaluated using four samples per case on a larger, disjoint confirmation panel. The screening and confirmation panels contained 40 and 200 cases for Poisson, 30 and 150 for NS, and 25 and 125 for KS. Validation masks and sampling seeds were fixed across configurations. The final-20% guidance multiplier was also fixed at ri = 0 .1. Tables E1 and E2 report the evaluated combinations of sampling steps and guidance weights. 31 Table E2. Validation results for selecting the G-EDM sampling steps and guidance weights for NS and KS. Both benchmarks use a single guidance weight ζ. Boldface indicates the lowest Jval within each selection stage, and † marks the configuration used for test evaluation.                                                                                
+
+> (a) NS
+> NWeight Jval ↓Obs. NRMSE ↓
+> Screen
+> 400 20 0.02207 0.01615 600 13 0.02083 0.01042 800 10 0.02032 0.00786 1,200 70.01983 0.00540 1,600 50.01959 0.00399 2,000 40.01946 0.00309
+> Confirm
+> 40 50 0.05067 0.04081 100 40 0.02457 0.03316 200 20 0.01975 0.01653 400 10 0.01809 0.00780 1,200 70.01571 0.00524 1,600 †50.01536 0.00388 2,000 40.01517 0.00309
+> (b) KS
+> NWeight Jval ↓Obs. NRMSE ↓
+> Screen
+> 400 100 0.14791 0.09169 600 67 0.13173 0.06198 800 50 0.12064 0.04540 1,200 61 0.11331 0.05758 1,600 71 0.07691 0.05824 2,000 63 0.08018 0.05509
+> Confirm
+> 40 63 0.49786 0.05453 100 100 0.20732 0.09105 200 100 0.11970 0.09202 1,600 †70 0.05241 0.06546
+
+The selected configurations were ( N, ζ u, ζ f ) = (400 , 10 , 20) for Poisson, ( N, ζ ) = (1 ,600 , 5) for NS, and ( N, ζ ) = (1 ,600 , 70) for KS. Increasing the number of Poisson sampling steps from 400 to 800 yielded no further improvement. For NS, increasing the number of steps from 1,600 to 2,000 reduced Jval by only 1.3% at 25% greater sampling cost, so the 1,600-step configuration was retained. For KS, the validation score reached its minimum at 1,600 steps. These configurations were used for all reported test evaluations and the inference-cost measurements in Table 4. 
+
+Appendix F. Ensemble-size sensitivity 
+
+The common ensemble size was selected using C-EDM validation results. The balanced Poisson panel contained 200 fields, with ten cases for each combination of kc and ob-servation fraction. The KS panel contained 125 trajectories, with five cases for each combination of viscosity interval and observation fraction. The NS panel contained 30 trajectories evaluated at all five observation fractions, yielding 150 reconstruction cases. Validation fields or trajectories, masks, and sampling seeds were fixed across ensemble sizes. For each case, a single 32-member ensemble was generated, and smaller ensemble sizes were evaluated using nested prefixes of the same members. Table F1 and Figure F1 summarize the resulting ensemble-size dependence. For Pois-son and NS, ensemble-mean reconstruction error decreased through Nens = 32. The rel-ative improvement from 16 to 32 members was only 1.4–1.7%. For KS, ensemble-mean reconstruction error showed no consistent improvement beyond eight members. The KS uncertainty estimation nevertheless improved from 16 to 32 members, with empirical coverage increasing from 85.6% to 89.3% and normalized CRPS decreasing from 0.00778 to 0.00758. We therefore retained Nens = 32 as the common reporting size for both EDM formulations despite the diminishing gains in reconstruction accuracy. 32 Table F1. C-EDM ensemble-size sensitivity on balanced validation panels. Ndata denotes the number of independent fields or trajectories, and Ncase denotes the number of reconstruction con-ditions. For each case, results for smaller ensemble sizes use nested prefixes of the corresponding 32-member ensemble. Field Ndata Ncase Nens = 1 2 4 8 16 32 
+
+Ensemble-mean full relative ℓ2 error (%; ↓)
+
+Poisson u 200 200 0.3149 0.2680 0.2383 0.2204 0.2124 0.2095 
+
+Poisson f 200 200 12.6736 10.9102 9.9086 9.3714 9.0919 8.9416 
+
+NS ω 30 150 2.7567 2.4230 2.2171 2.1078 2.0559 2.0227 
+
+KS u 125 125 3.8993 3.3000 2.9383 2.7599 2.8239 2.8134 
+
+KS distributional metrics over unobserved locations 
+
+Normalized CRPS ↓ 125 125 0.01653 0.01203 0.00938 0.00778 0.00778 0.00758 
+
+90% coverage (%) → 90 125 125 0.0 32.1 60.3 77.2 85.6 89.3 1 2 4 8 16 32 
+
+Ensemble size Nens 
+
+0.2 0.5 12510 
+
+> Relative  ℓ2 error (\%)
+
+fixed Nens = 32 
+
+Poisson u Poisson f NS ω KS u
+
+Figure F1. C-EDM ensemble-mean full-field relative ℓ2 error versus ensemble size for the four reconstruction targets on the balanced validation panels summarized in Table F1. 
+
+33
