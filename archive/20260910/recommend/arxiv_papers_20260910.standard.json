@@ -1,0 +1,130 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-09-10T21:16:07.693819+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2609.06992v1",
+      "source": "arxiv",
+      "title": "A Hybrid POD-Autoencoder Framework for Reduced Order Modeling of Turbulent Flow via Strategic Field Decomposition",
+      "abstract": "This study proposes a hybrid reduced-order modeling (ROM) framework for the simulation of turbulent flow. The central idea is to decompose flow dynamics according to their temporal characteristics and predict the resulting components individually. The full field is first divided into a sub-field represented by a limited number of proper orthogonal decomposition (POD) modes (named as POD-retained field) and the corresponding residual sub-field (named as POD-truncated field). A frequency-informed POD strategy identifies the retained modes by considering both modal energy and dominant frequency. The evolution of retained POD coefficients, which feature similar temporal scales, is described using a vector autoregressive (VAR) model. In parallel, the POD-truncated field is compressed into a low-dimensional latent space using a Fourier-neural-operator-based Koopman $β$-variational autoencoder (FK-$β$-VAE), with the latent variables subsequently predicted by a switching-VAR model. Turbulent statistics of the full field are recovered by combining the contributions from the two components. The framework is assessed using turbulent channel flow at a friction Reynolds number of $110$. The predicted Reynolds-stress components, turbulent kinetic energy (TKE), and dominant wavenumber spectra show good agreement with the reference. Moreover, in comparison with an alternative framework of full-field modeling (i.e., without field decomposition), the proposed framework yields more accurate and robust long-term statistical predictions.",
+      "authors": [
+        "Xianglong Li",
+        "Zeng Liu",
+        "Zhan Wang",
+        "Kai Wang",
+        "Shunxiang Cao",
+        "Guangyao Wang"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn"
+      ],
+      "published": "2026-09-07T03:35:13+00:00",
+      "link": "https://arxiv.org/pdf/2609.06992v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "autoencoder-based reduced-order modeling of turbulent flow",
+      "llm_evidence_cn": "基于自编码器的湍流降阶建模",
+      "llm_evidence": "基于自编码器的湍流降阶建模",
+      "canonical_evidence": "基于自编码器的湍流降阶建模",
+      "llm_tldr_en": "A hybrid POD-autoencoder reduced-order framework decomposes turbulent flow into a POD-retained field and a residual field, predicts their coefficients separately, and improves simulation accuracy at reduced cost.",
+      "llm_tldr_cn": "湍流降阶建模需在降低计算成本的同时保持精度。作者提出混合POD-自编码器框架，按时间特征把流场分解为POD保留场与残差场，用频率信息POD选取模态，并用向量自回归等方法分别预测系数。实验表明该框架能提升湍流模拟的降阶精度，为自编码器等生成式思路用于流体建模提供了参考。",
+      "llm_tldr": "湍流降阶建模需在降低计算成本的同时保持精度。作者提出混合POD-自编码器框架，按时间特征把流场分解为POD保留场与残差场，用频率信息POD选取模态，并用向量自回归等方法分别预测系数。实验表明该框架能提升湍流模拟的降阶精度，为自编码器等生成式思路用于流体建模提供了参考。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2609.08387v1",
+      "source": "arxiv",
+      "title": "Risk-Aware Generative Inpainting for Optimized Design Editing of EV Battery Cooling Channels",
+      "abstract": "Cooling-channel layouts for electric-vehicle battery packs must deliver temperature uniformity and low pressure drop while maintaining a single continuous channel. In late-stage design, local modification is a practical way to improve performance while retaining established global features. Diffusion-based inpainting supports such local edits, but its stochastic nature produces different outcomes even for the same region. This raises a fundamental question: how should edit locations be selected when each modification's outcome is stochastic? We propose a risk-aware generative editing framework that selects edit locations by accounting for this variability. Rather than scoring each candidate location by a single expected improvement, the method estimates a distribution of outcomes from offline edit results evaluated with a CFD-trained surrogate, and ranks locations by a chosen risk level. A single trained model therefore supports different editing preferences at inference time, emphasizing either higher expected improvement or greater consistency, without retraining. The policy is evaluated against random editing in a held-out paired study across seven mask configurations. It improves the cooling-channel objective over random editing in most configurations, and the advantage holds under independent CFD verification of the edited designs. Varying the risk level reveals a consistent trade-off between mean improvement and run-to-run consistency, while the learned distribution is useful for ranking locations but should not be read as a calibrated probability distribution. Together, these results show that stochastic generative editing can be converted from a source of variability into a controllable design decision through risk-aware location selection: effective editing depends not only on how a design is modified, but also on where and how much outcome variability is acceptable.",
+      "authors": [
+        "Leekyo Jeong",
+        "Yoon Koo Lee",
+        "Namwoo Kang"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE"
+      ],
+      "published": "2026-09-08T07:57:28+00:00",
+      "link": "https://arxiv.org/pdf/2609.08387v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "risk-aware diffusion inpainting for cooling-channel design",
+      "llm_evidence_cn": "面向冷却流道设计的风险感知扩散修复",
+      "llm_evidence": "面向冷却流道设计的风险感知扩散修复",
+      "canonical_evidence": "面向冷却流道设计的风险感知扩散修复",
+      "llm_tldr_en": "Late-stage editing of EV battery cooling channels is tackled with a risk-aware generative framework that uses diffusion-based inpainting and selects edit locations by accounting for stochastic outcome variability rather than expected improvement alone.",
+      "llm_tldr_cn": "电动车电池冷却流道设计需兼顾温度均匀、低压降并保持单通道连续。作者提出风险感知的生成式编辑框架，利用扩散修复进行局部修改，并按结果的随机性选择编辑位置，而非仅看期望改进。实验表明该方法能更稳健地优化冷却通道布局，为随机生成式设计编辑的决策提供了新依据。",
+      "llm_tldr": "电动车电池冷却流道设计需兼顾温度均匀、低压降并保持单通道连续。作者提出风险感知的生成式编辑框架，利用扩散修复进行局部修改，并按结果的随机性选择编辑位置，而非仅看期望改进。实验表明该方法能更稳健地优化冷却通道布局，为随机生成式设计编辑的决策提供了新依据。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2609.10236v1",
+      "source": "arxiv",
+      "title": "A stochastic modeling framework to generate 2-D rough-wall high-Reynolds-number turbulent boundary layers",
+      "abstract": "Atmospheric surface layer flows are computationally challenging, predominantly due to surface roughness and the high Reynolds number, both of which demand exceptionally high spatial resolution in the near-surface region. We have developed a 2-D stochastic-based model for the generation and the streamwise concatenation of instantaneous, step-like velocity profiles featuring key elements of wall turbulent flows, i.e., uniform momentum zones (UMZ) and shear layers (Ehsani et al. 2024a,b), and vortices (Ehsani et al. 2026). The model is extended herein to the top of the logarithmic layer to reproduce the high-Reynolds-number, rough-wall, turbulent boundary layer measured by Saddoughi and Veeravalli(2000), without the support of a UMZ dataset, using only a handful of critical flow parameters: the Taylor microscale λT, the boundary layer height δ, the friction velocity uτ, and the aerodynamic roughness length z0. The primary challenge lies in the integration of the stochastic model with the scaled distributions of the UMZ and vortex characteristics. The resulting statistical moments, energy spectra, and structure functions are compared against the experimental results. The validated code is made available in a GitHub repository.",
+      "authors": [
+        "Roozbeh Ehsani",
+        "Michele Guala"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn"
+      ],
+      "published": "2026-09-09T14:28:59+00:00",
+      "link": "https://arxiv.org/pdf/2609.10236v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "stochastic generative model producing turbulent velocity profiles",
+      "llm_evidence_cn": "随机生成模型生成湍流速度剖面",
+      "llm_evidence": "随机生成模型生成湍流速度剖面",
+      "canonical_evidence": "随机生成模型生成湍流速度剖面",
+      "llm_tldr_en": "Atmospheric surface-layer flows are hard to simulate due to roughness and high Reynolds number. This work builds a 2-D stochastic model that generates and concatenates instantaneous velocity profiles with uniform momentum zones, shear layers and vortices, extending to the log-layer to reproduce measured rough-wall turbulent boundary layers.",
+      "llm_tldr_cn": "大气表面层流动因粗糙度与高雷诺数而计算困难，近壁区需要极高空间分辨率。作者提出一种二维随机生成模型，能够生成并沿流向拼接含均匀动量区、剪切层和涡结构的瞬时阶跃式速度剖面，并将模型扩展至对数层顶部，从而在无需额外支撑数据的情况下再现实测的高雷诺数粗糙壁面湍流边界层。该方法为湍流边界层的高效概率化合成与建模提供了新途径。",
+      "llm_tldr": "大气表面层流动因粗糙度与高雷诺数而计算困难，近壁区需要极高空间分辨率。作者提出一种二维随机生成模型，能够生成并沿流向拼接含均匀动量区、剪切层和涡结构的瞬时阶跃式速度剖面，并将模型扩展至对数层顶部，从而在无需额外支撑数据的情况下再现实测的高雷诺数粗糙壁面湍流边界层。该方法为湍流边界层的高效概率化合成与建模提供了新途径。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "probabilistic flow models for fluid dynamics",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

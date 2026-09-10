@@ -1,0 +1,828 @@
+Title: A Hybrid POD-Autoencoder Framework for Reduced Order Modeling of Turbulent Flow via Strategic Field Decomposition
+
+URL Source: https://arxiv.org/pdf/2609.06992v1
+
+Published Time: Wed, 09 Sep 2026 01:47:08 GMT
+
+Number of Pages: 23
+
+Markdown Content:
+> Under consideration for publication in J. Fluid Mech.
+
+Banner appropriate to article type will appear here in typeset article 
+
+# A Hybrid POD-Autoencoder Framework for Reduced Order Modeling of Turbulent Flow via Strategic Field Decomposition 
+
+Xianglong Li 1, Zeng Liu 2, Zhan Wang 3, Kai Wang 4, Shunxiang Cao 5 and Guangyao Wang 1,6 
+
+> 1
+
+Centre for Regional Oceans, Department of Ocean Science and Technology, Institute of Smart City Technologies , and State Key Laboratory of Internet of Things for Smart City, University of Macau, Macau S.A.R. 
+
+> 2
+
+School of Naval Architecture and Ocean Engineering, Huazhong University of Science and Technology Institution, Wuhan, China 
+
+> 3
+
+Institute of Mechanics, Chinese Academy of Sciences, Beijing, China 
+
+> 4
+
+School of Ocean Engineering and Technology, Sun Yat-Sen University, and Southern Marine Science and Engineering Guangdong Laboratory (Zhuhai), Zhuhai, China 
+
+> 5
+
+Institute for Ocean Engineering, Shenzhen International Graduate School, Tsinghua University, Shenzhen, China 
+
+> 6
+
+Zhuhai UM Science and Technology Research Institute, Zhuhai, China 
+
+Corresponding author: Guangyao Wang, wanggy@um.edu.mo (Received xx; revised xx; accepted xx) 
+
+This study proposes a hybrid reduced-order modeling (ROM) framework for the simulation of turbulent flow. The central idea is to decompose flow dynamics according to their temporal characteristics and predict the resulting components individually. The full field is first divided into a sub-field represented by a limited number of proper orthogonal decomposition (POD) modes (named as POD-retained field) and the corresponding residual sub-field (named as POD-truncated field). A frequency-informed POD strategy identifies the retained modes by considering both modal energy and dominant frequency. The evolution of retained POD coefficients, which feature similar temporal scales, is described using a vector autoregressive (VAR) model. In parallel, the POD-truncated field is compressed into a low-dimensional latent space using a Fourier-neural-operator-based Koopman 𝛽 -variational autoencoder (FK-𝛽 -VAE), with the latent variables subsequently predicted by a switching-VAR model. Turbulent statistics of the full field are recovered by combining the contributions from the two components. The framework is assessed using turbulent channel flow at a friction Reynolds number of 110. The predicted Reynolds-stress components, turbulent kinetic energy (TKE), and dominant wavenumber spectra show good agreement with the reference. Moreover, in comparison with an alternative framework of full-field modeling (i.e., without field decomposition), the proposed framework yields more accurate and robust long-term statistical predictions. 
+
+Abstract must not spill onto p.2 0 X0-1 arXiv:2609.06992v1 [physics.flu-dyn] 7 Sep 2026 Xianglong Li et al. 
+
+> 1. Introduction
+
+Reduced-order modeling (ROM) has been widely employed to address the prohibitive computational costs associated with the simulation of high-dimensional flow systems, such as channel flows (Nakamura et al. 2021; Eivazi et al. 2021), flows around bluff bodies (Hasegawa et al. 2020), and fluid–structure interaction problems (Jiang & Cao 2024, 2026). Typically, ROM aims at reproducing the essential flow behavior via a compact set of state variables in a low-dimensional space, while a full-order model (FOM) captures flow dynamics with high fidelity by solving the governing equations involving a high-dimensional state space (Rowley & Dawson 2017). Consequently, the overall performance of ROM fundamentally depends on the constructed low-dimensional basis. In general, ROM consists of two main components, i.e. a method that maps the original high-dimensional onto a low-dimensional state space and a model that describes the dynamics within the latter. The state space mapping methods can be broadly classified into linear and nonlinear types. The linear mapping methods, such as proper orthogonal decomposition (POD) and dynamic mode decomposition (DMD) (Taira et al. 2017; Sirovich 1987; Berkooz et al. 1993), assume that the high-dimensional data lies on a flat linear subspace and rely on linear transformation operators to realize the space projection. Once the low-dimensional space is established, the corresponding dynamic model can be constructed using either intrusive or non-intrusive techniques. Intrusive methods (e.g., Galerkin projection) derive the low-dimensional equations directly from the original governing equations by forcing the residual to be orthogonal to the subspace spanned by the basis functions and are therefore also referred to as physics-based methods (Wang 
+
+et al. 2012; Ahmed et al. 2021). In contrast, non-intrusive methods (e.g. deep learning) treat the time evolution as a black-box function problem without considering the governing equations (Racca et al. 2023; Jiang et al. 2025). Instead, they learn the dynamics directly from data and thus are also known as data-driven methods. However, linear mapping methods often struggle to efficiently represent highly transient or advection-dominated flows, as describing these phenomena on a flat subspace requires an extremely large number of modes (Maulik et al. 2021; Lee & Carlberg 2020). To overcome this limitation, nonlinear mapping methods project the high-dimensional data onto a curved lower-dimensional manifold. Deep learning models, such as autoencoders (AEs) and their probabilistic variants, have become the primary pathway for this task. By utilizing nonlinear activation functions, these models can realize significant dimension compression even for complex dynamics (Murata et al. 2020; Fukami et al. 2020; Solera-Rico et al. 
+
+2024). Because this latent space is constructed through nonlinear transformations, the subsequent temporal modeling is almost exclusively implemented via the aforementioned non-intrusive, data-driven techniques. Despite the existing ROM methods, which are featured with different low-dimensional representation and dynamic modeling methods, have demonstrated feasibility and success across various problems, almost all of them follow a monolithic strategy. Specifically, they compress and model the entire flow field, which inherently consists of multi-scale dynamics, within a single framework. In other words, the full flow field is compressed directly without decoupling or isolating dynamics with distinct physical scales. This mono-lithic strategy can potentially result in limited dimensionality reduction, underestimated turbulent statistics, or both, although the specific underlying reasons may vary across different frameworks. For example, Khoo et al. (2022) develop a ROM framework for turbulent plane Couette flow by combining the POD-based space mapping method and a data-driven regression model. Their results show that the fist 4 leading POD modes alone contain approximately 95% of the total perturbation kinetic energy. However, even  
+
+> 0X0-2
+
+Journal of Fluid Mechanics 
+
+when the first 41 POD modes are retained, the ROM still exhibits large deviations from the DNS results, with the velocity fluctuation errors up to 50%. Besides, Halder et al. 
+
+(2026) propose one ROM method by combining the Koopman 𝛽 -variational autoencoder and LSTM, which is tested on simulations of flow past a Windsor body. As indicated by their results, the turbulent kinetic energy is underestimated by up to 60%. This substantial loss is mainly induced by the nonlinear space mapping, which acts as an overly aggressive dynamics filter by eradicating the relatively small-scale physical processes. In this regard, we propose a hybrid ROM framework, that explicitly separates the flow dynamics with different temporal characteristics and models their evolutions independently. Specifically, the full field is first decomposed into a subfield represented by a set of retained POD modes (named as POD-retained field) and the corresponding truncated field (named as POD-truncated field). The retained modes are determined using a frequency-informed POD strategy, in which both modal energy and dominant frequency are considered for mode selection. The retained POD coefficients, which are featured with similar temporal characteristics, are then modeled using a vector autoregressive (VAR) model. The POD-truncated field is compressed into a low-dimensional latent space using a Fourier-neural-operator-based Koopman 𝛽 -variational autoencoder (FK-𝛽 -VAE), and a switching-VAR model is adopted for the prediction of latent variables. The proposed framework focuses on the reconstruction of long-term turbulent statistics by combining the contributions from the two components. The method is assessed using a turbulent channel flow at a friction Reynolds number Re 𝜏 = 110. The results show that the proposed ROM accurately reproduces the Reynolds stress components, turbulent kinetic energy (TKE) and the wavenumber spectra. In particular, the predicted TKE captures the reference peak location exactly, with only a 3 .61% difference in the peak amplitude. In comparison with an alternative framework of direct full-field modeling, which underestimates the Reynolds stress up to 37 .27%, the proposed method yields an overestimation of only 3.90%, corresponding to reduction of 89 .54% terms of the absolute error. These results demonstrate that separating flow dynamics according to their temporal characteristics can substantially improve the robustness and accuracy of long-term predictions. The paper is organized as follows. The proposed hybrid ROM framework and its detailed formulation are introduced in Section 2. The numerical setup and results for a turbulent channel flow are presented in Section 3. We give the main conclusions in Section 4. 
+
+> 2. Methodology
+
+This section presents the details of the proposed hybrid ROM framework, which aims at predicting the long-term turbulent statistics. In the following subsections, we first introduce the general hybrid ROM framework and then present the sub-modules in detail. 2.1. The general hybrid ROM framework 
+
+In this study, we consider decomposing the full flow-fluctuation field 𝝃 into two compo-nents, one corresponding to the subfield characterized by a limited number of POD modes (named as POD-retained field, 𝝃 ret ) and the other representing the POD truncation residual (named as POD-truncated field, 𝝃 tru ). Specifically, we first select the POD modes based on both their energy contributions and frequency features, instead of only considering the former (see §2.2 for details). The retained POD coefficients are modeled via the vector autoregressive (VAR) method ( §2.3). Furthermore, 𝝃 tru is mapped into a low-dimensional latent space using a Fourier-neural-operator-based Koopman 𝛽 -variational autoencoder (named as FK-𝛽 -VAE), which imposes stronger regularization on the latent variables than conventional autoencoders ( §2.4). The latent variables are then predicted by a switching- 
+
+> 0X0-3
+
+Xianglong Li et al.  
+
+> Figure 1. Hybrid POD-ROM and latent-space truncation-error closure framework. The POD branch models the resolved large-scale component, while the latent residual branch models the unresolved truncation-error statistics.
+
+VAR method, which combines two VAR predictors with different lag orders to ensure the deterministic forecasting accuracy across varying time horizons (see § 2.5 for details). Finally, the turbulent statistics of 𝝃 are obtained by combining the contributions from 𝝃 ret 
+
+and 𝝃 tru .2.2. Frequency-informed POD 
+
+2.2.1. POD 
+
+We consider 𝑁 snapshots of the fluctuation field, 𝝃 𝑛 ∈ R𝑁 𝑠 , at time instants 𝑡 𝑛 , 𝑛 =
+
+1, 2, . . . , 𝑁 . 𝑁 𝑠 = 𝑁 𝑋 × 𝑁 𝑌 is the total number of spatial grid points, with 𝑁 𝑋 and 𝑁 𝑌 
+
+denoting the numbers of grid points in the 𝑋 and 𝑌 directions, respectively. Then the snapshot matrix is assembled as 
+
+𝜩 = 𝝃 1, 𝝃 2, . . . , 𝝃 𝑁 
+
+ ∈ R𝑁 𝑠 × 𝑁 . (2.1) Afterwards, the correlation matrix is evaluated as 
+
+𝑪 = 𝜩 T 𝜩 . (2.2) The eigenvectors 𝝓 𝑖 and eigenvalues 𝜆 𝑖 are obtained by solving the eigenvalue problem 
+
+𝑪𝝓 𝑖 = 𝜆 𝑖 𝝓 𝑖 , 𝑖 = 1, 2, . . . , 𝑁, (2.3) where the eigenvalues are ordered as 
+
+𝜆 1 ≥ 𝜆 2 ≥ · · · ≥ 𝜆 𝑁 . (2.4) Then the corresponding orthonormal POD basis vectors are obtained as 
+
+𝝋 𝑖 = 1
+
+√𝜆 𝑖 
+
+𝜩 𝝓 𝑖 ∈ R𝑁 𝑠 ×1, 𝑖 = 1, 2, . . . , 𝑁. (2.5) Then the snapshot at the 𝑛 -th time instant can be represented as 
+
+𝝃 𝑛 = 𝜱𝒂 𝑛 (2.6) where 
+
+𝜱 = 𝝋 1, 𝝋 2, . . . , 𝝋 𝑁 
+
+ ∈ R𝑁 𝑠 × 𝑁 , (2.7) and 
+
+𝒂 𝑛 = 𝛼 𝑛  
+
+> 1
+
+, 𝛼 𝑛  
+
+> 2
+
+, . . . , 𝛼 𝑛 𝑁 
+
+T ∈ R𝑁 (2.8) is the POD coefficient vector at the 𝑛 -th time instant. Equivalently, all snapshots can be written in matrix form as 
+
+𝜩 = 𝜱 𝑨 , (2.9) 
+
+0 X0-4 Focus on Fluids articles must not exceed this page length Journal of Fluid Mechanics 
+
+where 
+
+𝑨 = 𝒂 1, 𝒂 2, . . . , 𝒂 𝑁  ∈ R𝑁 × 𝑁 . (2.10) Moreover, the 𝑖 -th row of 𝑨 , denoted as 𝜶 𝑖 = 𝛼 1 
+
+> 𝑖
+
+, 𝛼 2 
+
+> 𝑖
+
+, . . . , 𝛼 𝑁 𝑖 
+
+ ∈ R1× 𝑁 , represents the temporal sequence of POD coefficients for the 𝑖 -th POD mode. 2.2.2. Frequency-informed mode selection 
+
+The traditional POD truncation method usually selects the retained modes according to their cumulative modal energy ratio, which can be evaluated based on the eigenvalues. In this study, both modal energy and dominant frequency are considered to determine which modes are included to construct 𝝃 ret . Specifically, the relative energy ratio of the 𝑖 -th mode is defined as 
+
+𝐸 𝑖 = 𝜆 𝑖 
+
+Í𝑁 𝑗 =1 𝜆 𝑗 
+
+, 𝑖 = 1, 2, . . . , 𝑁. (2.11) The dominant frequency of the 𝑖 -th POD mode is evaluated based on 𝜶 𝑖 . Specifically, the modal spectrum is computed as 
+
+P𝑖 ( 𝑓 ) = |F 𝑡 (𝜶 𝑖 )| 2 , (2.12) where F𝑡 denotes the temporal Fourier transform and 𝑓 denotes the frequency. Then the dominant frequency for the 𝑖 -th mode is determined as 
+
+𝑓 𝐷 𝑖 = arg max 
+
+> 𝑓
+
+P𝑖 ( 𝑓 ). (2.13) Afterwards, the retained modal index set is formed as 
+
+I = 𝑖 𝐸 𝑖 ≥ 𝐸 𝑐 , 𝑓 𝐷 𝑖 ≤ 𝑓 𝑐 , (2.14) where 𝐸 𝑐 and 𝑓 𝑐 are two predefined criteria for mode selection. In addition, the corre-sponding subsets of POD basis and coefficients can be formulated as 
+
+𝜱 ′ = {𝝋 𝒊 |𝑖 ∈ I} ∈ R𝑁 𝑠 ×𝑟 . (2.15) and 
+
+𝑨 ′ = {𝜶 𝑖 |𝑖 ∈ I} ∈ R𝑟 × 𝑁 (2.16) where 𝑟 is the number of retained modes. Finally, the POD-retained field can be written as 
+
+𝜩 ret = 𝜱 ′ 𝑨 ′. (2.17) The purpose of doing this is to only keep the modes with significant energy levels and comparable frequencies, thereby making it feasible to forecast their corresponding coefficients within a unified framework. 2.3. VAR Method 
+
+The VAR method is a statistical model of multivariate temporal dynamics (L¨ utkepohl 2005). For a state vector at time 𝑡 = 𝑡 𝑛 , 𝒚 𝑛 ∈ R𝑑 , a VAR model with order 𝑞 is expressed as 
+
+𝒚 𝑛 = 𝒃 +
+
+> 𝑞
+
+∑︁ 
+
+> 𝑗 =1
+
+𝑨 𝑗 𝒚 𝑛 − 𝑗 + 𝜺 𝑛 , (2.18) where 𝒃 ∈ R𝑑 is the intercept vector, 𝑨 𝑗 ∈ R𝑑 ×𝑑 is the coefficient matrix for the 𝑗 -step lagged state 𝒚 𝑛 − 𝑗 , and 𝜺 𝑛 ∈ R𝑑 is the error term. For a sequence {𝒚 𝑛 }𝑁 𝑛 =1, the target states 
+
+0 X0-5 Xianglong Li et al. 
+
+are collected in a matrix 
+
+𝝍 =
+
+
+
+𝒚 T
+
+> 𝑞 +1
+
+𝒚 T
+
+> 𝑞 +2
+
+...
+
+𝒚 T
+
+> 𝑁
+
+
+
+∈ R( 𝑁 −𝑞 ) × 𝑑 , (2.19) and the corresponding lagged states are assembled into the design matrix 
+
+𝜳 =
+
+
+
+1 𝒚 T 
+
+> 𝑞
+
+𝒚 T 
+
+> 𝑞 −1
+
+· · · 𝒚 T1
+
+1 𝒚 T 
+
+> 𝑞 +1
+
+𝒚 T 
+
+> 𝑞
+
+· · · 𝒚 T2
+
+... ... ... . . . ...
+
+1 𝒚 T  
+
+> 𝑁 −1
+
+𝒚 T  
+
+> 𝑁 −2
+
+· · · 𝒚 T 
+
+> 𝑁 −𝑞
+
+
+
+∈ R( 𝑁 −𝑞 ) × ( 1+𝑞𝑑 ) . (2.20) The regression parameters are represented in a matrix collectively 
+
+𝑩 =
+
+𝒃 T
+
+B
+
+
+
+∈ R(1+𝑞𝑑 ) × 𝑑 , (2.21) where 
+
+B =
+
+
+
+𝑨 T1
+
+𝑨 T2
+
+...
+
+𝑨 T
+
+> 𝑞
+
+
+
+∈ R(𝑞𝑑 ) × 𝑑 (2.22) contains the lag coefficient matrices. Then the system of VAR equations corresponding to different time instants can be written in a matrix form as 
+
+𝝍 = 𝜳 𝑩 + E, (2.23) where 
+
+E =
+
+
+
+𝜺 T
+
+> 𝑞 +1
+
+𝜺 T
+
+> 𝑞 +2
+
+...
+
+𝜺 T
+
+> 𝑁
+
+
+
+∈ R( 𝑁 −𝑞 ) × 𝑑 (2.24) is the error matrix. Afterwards, the optimal regression parameters are obtained by solving a ridge-regularized least-squares problem (Hoerl & Kennard 1970), 
+
+𝑩 opt = arg min 
+
+> 𝑩
+
+
+
+∥𝝍 − 𝜳 𝑩 ∥2 
+
+> 𝐹
+
++ 𝜂 ∥ B∥2
+
+> 𝐹
+
+
+
+, (2.25) where 𝑩 opt denotes the optimal ridge-regression coefficient matrix, ∥ · ∥ 𝐹 denotes the Frobenius norm, and 𝜂 ≥ 0 controls the regularization strength. Compared with conven-tional least squares, ridge regression introduces an additional quadratic penalty on the lag-coefficient matrix, reducing the variance of the estimated coefficients at the expense of a small bias and thereby improving model robustness. The corresponding residual matrix is evaluated as 
+
+E = 𝝍 − 𝜳 𝑩 opt , (2.26) 
+
+0 X0-6 Journal of Fluid Mechanics   
+
+> Figure 2. Schematic of the FK-𝛽 -VAE. The backbone is an FNO-enhanced 𝛽 -VAE for residual-field representation. The FNO operator performs spectral–pointwise spatial feature mixing, while the Koopman branch regularizes the latent-mean evolution during training.
+
+The residual covariance matrix is then calculated as 
+
+𝜴 = ET E
+
+𝑁 − 𝑞 − 1 . (2.27) Since this study aims at predicting the turbulent statistics of the flow field, Monte Carlo simulations are subsequently performed. For the same prediction horizon, 𝑀 trajectories are generated recursively using Eq. (2.18) with the fitted regression parameters, while the innovation 𝜺 𝑛 at each time step is sampled from N ( 0, 𝜴 ). Finally, the contribution from the retained POD modes to the turbulent statistics is evaluated based on the reconstructed snapshots with VAR-predicted POD coefficients. 2.4. Fourier-neural-operator-based Koopman 𝛽 -variational autoencoder 
+
+The POD-truncated field is compressed and represented by a Fourier-neural-operator-based Koopman 𝛽 -variational autoencoder, for which the overall structure is shown in figure 2. This model is built on the basis of VAE, which maps each input field to a probability distribution in the latent space and then reconstructs the field from the sampled latent variable. Practically, we adopt 𝛽 -VAE for the trade-off between reconstruction accuracy and interpretability. Moreover, Fourier neural operators (FNOs) are integrated into the model as spatial representation modules to capture both local and nonlocal correlations. Additionally, a linear Koopman transition is imposed on the latent mean space during training, so that the encoded temporal sequence is regularized for subsequent latent-space forecasting. 2.4.1. 𝛽 -Variational Autoencoder 
+
+The VAE first maps 𝝃 tru (the time index is dropped off in this section for the purpose of conciseness) through convolutional layers into a normal distribution within a latent space, 
+
+𝒛 ∼ N ( 𝝁 , 𝜮 ), where 𝒛 ∈ R𝑑 𝑧 is the 𝑑 𝑧 -dimensional latent variable, and 𝝁 and 𝜮 are its mean and diagonal covariance matrix, respectively. In practice, the encoder outputs the mean 𝝁 and the logarithm of variance terms 𝑙 𝑖 = log [𝜮 (𝑖, 𝑖 )] , 𝑖 = 1, 2 · · · 𝑑 𝑧 , to guarantee positive variance values and enhance numerical stability. Afterwards, the latent variable is generated via the reparameterization trick, 
+
+𝒛 = 𝝁 + exp 
+
+ 12 ℓ
+
+
+
+⊙ 𝝐 , 𝝐 ∼ N ( 0, 𝑰 ) , (2.28) where ℓ = [𝑙 1, 𝑙 2, · · · , 𝑙 𝑑 𝑧 ]T and ⊙ denotes element-wise multiplication. The decoder then builds the reconstructed residual snapshot b𝝃 tru from the sampled latent variable. The loss of VAE consists of the reconstruction and latent distribution regularization loss terms. The reconstruction loss term measures the discrepancy between the decoded and 
+
+0 X0-7 Xianglong Li et al. 
+
+original residual snapshots, which is defined as 
+
+Lrec = || b𝝃 tru − 𝝃 tru || 2 
+
+> 𝐹
+
+(2.29) The latent distribution regularization term is defined as the KL divergence between the approximate posterior N ( 𝝁 , 𝜮 ) and the standard normal prior 𝑝 (𝒛 ) = N ( 0, 𝑰 ), which is formulated as 
+
+LKL = − 12
+
+> 𝑑 𝑧
+
+∑︁ 
+
+> 𝑖 =1
+
+1 + 𝑙 𝑖 − ( 𝜇 𝑖 )2 − exp (𝑙 𝑖 ) . (2.30) As a variant of the conventional VAE, 𝛽 -VAE introduces one additional hyperparameter 
+
+𝛽 to control the tradeoff between Lrec and LKL , for which the corresponding loss term is defined as 
+
+L𝛽 -VAE = Lrec + 𝛽 LKL . (2.31) The parameter 𝛽 therefore controls the balance between reconstruction accuracy and latent-space regularization. 2.4.2. Fourier neural operator 
+
+The FNO is integrated into the 𝛽 -VAE to improve the spatial representation of residual fields. Although the POD-truncated field is obtained by removing the high-energy POD contributions from the original field, it still contains considerable spatially correlated structures. A conventional encoder captures nonlocal dependencies only through the progressive expansion of the receptive field. By contrast, the FNO performs global spectral mixing over the sampled grid, which allows the low-wavenumber, nonlocal structures to be represented directly via a finite set of retained Fourier modes. Within the FNO module, the single-channel input field is first lifted to a multi-channel feature field with the same spatial resolution, 
+
+𝒉 (1) = 𝔏  𝝃 tru  ∈ R𝐶 1 × 𝑁 𝑋 × 𝑁 𝑌 , (2.32) where 𝔏 denotes the lifting operator, and 𝐶 1 is the channel dimension. Then the lifted feature field passes through 𝑀 stacked Fourier layers. For the 𝑚 -th FNO layer, the feature field is updated as 
+
+𝒉 (𝑚 +1) = 𝜚 GELU 
+
+n
+
+BN 
+
+h
+
+F −1 
+
+R (𝑚 ) 
+
+F 𝒉 (𝑚 )   
+
++ W (𝑚 ) 
+
+> p
+
+𝒉 (𝑚 ) i o 
+
+. (2.33) where F and F −1 denote the fast Fourier transform (FFT) and inverse FFT, respectively. 
+
+R (𝑚 ) is the learnable complex-valued tensor representing the kernel in the frequency domain. W (𝑚 ) 
+
+> p
+
+is a point-wise linear transformation, which is applied on 𝒉 (𝑚 ) in order to capture the high-frequency local features that might be lost during frequency truncation. BN and 𝜚 GELU denote batch normalization and GELU activation function, respectively. Finally, after 𝑀 Fourier layers, a projection layer maps 𝒉 ( 𝑀 +1) back to a single-channel field, 
+
+b𝝃 tru = 𝔓 
+
+
+
+𝒉 ( 𝑀 +1) 
+
+∈ R1× 𝑁 𝑋 × 𝑁 𝑌 , (2.34) where 𝔓 is the projection operator. 2.4.3. Koopman Latent Regularization 
+
+The Koopman regularization is introduced to encourage linear temporal evolution of the latent state, thereby rendering subsequent forecasting more tractable. The latent mean 
+
+0 X0-8 Journal of Fluid Mechanics 
+
+is used as the constrained state 𝒔 𝑛 . Then a trainable Koopman operator K ∈ R𝑑 𝑧 ×𝑑 𝑧 is introduced as 
+
+𝒔 𝑛 +1 = K 𝒔 𝑛 . (2.35) For a training window {𝑡 𝑛 , 𝑡 𝑛 +1, . . . , 𝑡 𝑛 +𝑇 }, the Koopman rollout is initialized from the refer-ence state of the first time instant, 𝒔 𝑛 , and the approximated sequence {˜𝒔 𝑛 +1, ˜𝒔 𝑛 +2, · · · ˜𝒔 𝑛 +𝑇 }
+
+is obtained by applying K recursively. The Koopman loss is defined as 
+
+LKoop = Llin + 𝜁 pred Lpred + 𝜁 orth Lorth , (2.36) where 
+
+Llin = 1
+
+𝑇 
+
+> 𝑇
+
+∑︁ 
+
+> 𝑘 =1
+
+∥ ˜𝒔 𝑛 +𝑘 − 𝒔 𝑛 +𝑘 ∥22 (2.37) is the Koopman linear evolution loss. Lpred is the prediction loss and formulated as 
+
+Lpred = 1
+
+𝑇 
+
+> 𝑇
+
+∑︁ 
+
+> 𝑖 =1
+
+DFNO ( ˜𝒔 𝑛 +𝑖 ) − 𝝃 tru  
+
+> 𝑛 +𝑖
+> 2
+> 𝐹
+
+, (2.38) where DFNO denotes the FNO-based probabilistic decoder operator. 𝜁 pred is the corre-sponding weight. Lorth is an orthogonality regularization term, which is expressed as 
+
+Lorth = K𝑇 K − 𝑰 𝐹 , (2.39) This term discourages excessive amplification or decay during recursive application of K
+
+and 𝜁 orth is its weight. Finally, the total loss for the proposed FK-𝛽 -VAE is formulated as 
+
+L = L𝛽 −VAE + 𝛾 LKoop , (2.40) where 𝛾 is a parameter which controls the contribution of the Koopman regularization. During the initial training stage, the model parameters are first optimized with 𝛾 = 0, such that we first build a preliminary encoder-decoder architecture without regularizing the latent dynamics. That is to say, only the model parameters in the encoder and decoder operators are updated during this stage. Then the joint training is performed, during which the Koopman weight is linearly increased from zero to its prescribed value during the initial warm-up epochs and is then kept fixed. In this process, the model parameters for both the encoder-decoder architecture and K are updated simultaneously. After training, the sequence of latent means is extracted and used as the dataset for the subsequent latent-space forecasting module. 2.5. Switching-VAR Forecasting 
+
+Following the latent-space representation described above, temporal forecasting is per-formed directly for the latent mean sequence 𝝁 𝑛 ∈ R𝑑 𝑧 . Here we use the switching-VAR, combining two VAR models with distinct lag orders to enhance the prediction robustness across multiple lead times. Specifically, two VAR models with orders 𝑞 (1) and 
+
+𝑞 (2) (𝑞 (1) < 𝑞 (2) ) are fitted to the latent-mean sequence using the procedure described in § 2.3. Then, motivated by smooth-transition autoregressive modeling (Ter¨ asvirta 1994; van Dijk et al. 2002), the two predicted trajectories are combined as 
+
+b𝝁 𝑛 = (1 − 𝜒 𝑛 ) b𝝁 (1) 
+
+> 𝑛
+
++ 𝜒 𝑛 b𝝁 (2) 
+
+> 𝑛
+
+, (2.41) 
+
+0 X0-9 Xianglong Li et al. 
+
+where 𝜒 𝑛 is a raised-cosine switching function. 
+
+𝜒 𝑛 =
+
+
+
+0, 𝑡 𝑛 ≤ 𝑐 𝑠 − 𝛥 𝑠 /2,
+
+12 − 12 cos 
+
+
+
+𝜋 𝑡 𝑛 − ( 𝑐 𝑠 − 𝛥 𝑠 /2)
+
+𝛥 𝑠 
+
+
+
+, 𝑐 𝑠 − 𝛥 𝑠 /2 < 𝑡 𝑛 < 𝑐 𝑠 + 𝛥 𝑠 /2,
+
+1, 𝑡 𝑛 ≥ 𝑐 𝑠 + 𝛥 𝑠 /2,
+
+(2.42) where 𝑐 𝑠 and 𝛥 𝑠 denote the centre and width of the switching interval, respectively. As a result, the early prediction stage is primarily governed by the lower-order predictor; as the horizon advances, the secondary predictor is introduced via a smooth transition weighting and ultimately takes full control of the temporal propagation. 
+
+> 3. Numerical Experiments
+
+This section evaluates the proposed hybrid ROM framework based on the simulation of a turbulent channel flow. Specifically, we first run a DNS model to generate the high-fidelity dataset, which then works as the basis for constructing and validating the hybrid ROM framework. 3.1. Turbulent Channel-Flow Dataset 
+
+Here we consider an incompressible turbulent channel flow, which is governed by the incompressible Navier–Stokes equations, 
+
+∇ · 𝒖 = 0 (3.1) 
+
+𝜕 𝒖 
+
+𝜕𝑡 + ( 𝒖 · ∇) 𝒖 = −∇ 𝑝 + 𝜈 ∇2𝒖 (3.2) where 𝒖 = (𝑢 1, 𝑢 2, 𝑢 3)T is the velocity vector, with 𝑢 1, 𝑢 2, and 𝑢 3 denoting the components along 𝑋 , 𝑌 , and 𝑍 directions, respectively. 𝑝 is the kinematic pressure, and 𝜈 is the kinematic viscosity. The flow condition is characterized by the friction Reynolds number based on the channel half-height, 
+
+Re 𝜏 = 𝑢 𝜏 ℎ𝜈 = 110 , (3.3) where 𝑢 𝜏 is the friction velocity and ℎ is the channel half-height. The dataset is obtained from an open-source DNS model, i.e. Canonical Navier-Stokes (CaNS), developed by Costa Costa (2018). In CaNS, the governing equations are discretized on a staggered Cartesian grid using the second-order finite difference scheme, and the temporal integration is performed using a three-stage Runge–Kutta scheme. Moreover, the pressure Poisson equation is solved using eigenfunction expansions and fast Fourier transforms in the homogeneous directions. The simulation is performed with a time step 𝛥𝑡 = 0.01 ℎ/𝑢 𝜏 . The computational domain sizes are 𝐿 𝑋 = 𝜋ℎ , 𝐿 𝑌 = 2ℎ and 𝐿 𝑍 = 𝜋ℎ /2, discretized using 64 × 64 × 64 grid points. A schematic of the computational domain is shown in figure 3. Periodic boundary conditions are imposed in the 𝑋 and 𝑍 directions, whereas no-slip conditions are prescribed at the walls located at 𝑌 = 0 and 𝑌 = 2ℎ. The grid is uniform in the 𝑋 and 𝑍 directions and stretched in the 𝑌 direction to improve the near-wall resolution. The flow is initialized from a laminar Poiseuille profile and advanced under a prescribed constant pressure gradient until a statistically stationary turbulent state is established. Subsequently, 12 000 two-dimensional snapshots are extracted at 𝑍 = 𝜋ℎ /4, with a temporal interval of 10 𝛥𝑡 .
+
+0 X0-10 Rapids articles must not exceed this page length Journal of Fluid Mechanics        
+
+> Figure 3. Computational domain and spanwise mid-plane sampling location for the turbulent channel-flow dataset. 020 40 60 80 100
+> i
+> 0510 15 20 25 30 35
+> Ei (%)
+> Figure 4. Modal energy distribution of the first 100 POD modes, with retained modes indicated by filled orange circles and unretained modes by grey circles.
+
+3.2. Frequency-informed POD results 
+
+The frequency-informed POD is first applied to the snapshots to determine the retained modes, based on which the whole flow field is sequentially divided into the POD-retained and POD-truncated fields, i.e. 𝝃 ret and 𝝃 tru . Figures 4 and 5 show the relative modal energy ratios 𝐸 𝑖 and dominant frequencies 𝑓 𝐷 𝑖 of the first 100 POD modes, respectively. Specifically, the prescribed criteria for 𝐸 𝑖 and 𝑓 𝐷 𝑖 are 𝐸 𝑐 = 0.3 % and 𝑓 𝐷 𝑐 = 0.01 (𝑢 𝜏 /ℎ),respectively, yielding the retained modal index set 
+
+I = {1, 2, 3, 6, 9, 10 , 15 , 18 } . (3.4) The 8 retained POD modes account for approximately 69 .51 % of the total energy. Moreover, they are featured with comparable dominant frequencies with a mean of 3.54 × 10 −3 (𝑢 𝜏 /ℎ) and variance of only 2 .91 × 10 −6 (𝑢 𝜏 /ℎ)2, which therefore makes it feasible to predict their corresponding POD coefficients with a single VAR model. 
+
+0 X0-11 Xianglong Li et al. 0 20 40 60 80 100  
+
+> i
+> 0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8
+> f h  / uτ
+> Figure 5. Dominant-frequency distribution of the first 100 POD modes of the streamwise velocity fluctuation field, with retained modes indicated by filled orange markers and unretained modes by open grey markers.
+
+To build the VAR model, we set 𝑞 = 2 and 𝜂 = 10 −4. The resulting standardized innovation covariance matrix for the streamwise component is 
+
+𝜴 = 10 −4
+
+
+
+1.29 0.06 −0.20 −0.40 −0.95 0.21 0.08 −0.79 0.06 2.21 0.50 0.20 0.40 0.85 2.16 −0.04 
+
+−0.20 0.50 5.03 0.55 −6.73 0.88 1.21 0.75 
+
+−0.40 0.20 0.55 66 .71 0.13 2.49 −3.02 −14 .37 
+
+−0.95 0.40 −6.73 0.13 81 .46 −9.89 −8.23 10 .53 0.21 0.85 0.88 2.49 −9.89 27 .77 4.30 −6.91 0.08 2.16 1.21 −3.02 −8.23 4.30 50 .92 38 .80 
+
+−0.79 −0.04 0.75 −14 .37 10 .53 −6.91 38 .80 344 .09 
+
+
+
+. (3.5) To implement the prediction step, M = 512 independent trajectories are generated, with the error term 𝜺 𝑛 randomly sampled from N ( 0, 𝜴 ) at each time instant. Figure 6 presents the predicted POD coefficients for 4 selected modes (including modes 1 , 6, 10 , and 15) and their reference, as well as their variance information (presented in the form of the 5th-95th percentile range). It can be observed that the predicted variances demonstrate an initial trend of progressive expansion and eventually converge to constant values. The reason is that all the predicted trajectories are initialized from the same (reference) POD coefficients, which makes the initial ensemble represent a conditional distribution with relatively small spreads. As the independent random errors are introduced continuously, the influence of the initial condition decays and the predicted variance approaches a stationary value L¨ utkepohl (2005). In this regard, the last 1800 snapshots are used for further evaluation, where the variances are steady and also consistent with those estimated from the reference trajectories. Figure 7 compares the power spectra of representative retained POD coefficients obtained from the reference data and the VAR predictions. It can be observed that the VAR model successfully captures the overall spectral feature, especially the spectral decay, of the POD-retained field. In particular, the energetically dominant low-frequency range ( 𝑓 < 0.5𝑢 𝜏 /ℎ), which contains more than 96 .4% of the total spectral energy, is accurately reproduced by the VAR predictions. The discrepancies are mainly confined to higher frequencies, where the corresponding energy levels are substantially lower. Afterwards, with the VAR-predicted POD coefficients, we reconstruct the POD-retained field, for which the Reynolds stress is evaluated. Figure 8 compares the three normal 
+
+0 X0-12 Journal of Fluid Mechanics 840 900 960 1020 1080 1140 1200 
+
+t u τ / h
+
+> -0.60 -0.40 -0.20 0.00 0.20 0.40
+> a1
+
+(a) 840 900 960 1020 1080 1140 1200 
+
+t u τ / h
+
+> -0.15 -0.10 -0.05 0.00 0.05 0.10
+> a6
+
+(b) 840 900 960 1020 1080 1140 1200 
+
+t u τ / h
+
+> -0.10 -0.05 0.00 0.05 0.10
+> a10
+
+(c) 840 900 960 1020 1080 1140 1200 
+
+t u τ / h
+
+> -0.10 -0.05 0.00 0.05 0.10
+> a15
+
+(d) Figure 6. Temporal histories of selected POD coefficients from the reference dataset (black solid line) and VAR predictions (grey lines). The reference and predicted 5th–95th percentile ranges are denoted by grey dashed lines and the green shaded area, respectively: (a) 𝛼 1; (b) 𝛼 6; (c) 𝛼 10 ; (d) 𝛼 15 .
+
+Reynolds-stress components ( 𝜏 ret 11 , 𝜏 ret 22 , and 𝜏 ret 33 ) calculated from the reference and VAR-predicted POD-retained fields. It can be observed that the dominant component 𝜏 ret 11 is reproduced by the VAR model in close agreement with the reference. Specifically, the location of the peak is exactly captured, with only a 5 .75% relative error for the peak value. For the other two components, 𝜏 ret 22 and 𝜏 ret 33 , the principal peak locations are reproduced 
+
+0 X0-13 Xianglong Li et al. 10 −2 10 −1   
+
+> f h /uτ
+> 10 −5
+> 10 −4
+> 10 −3
+> 10 −2
+> 10 −1
+> 10 0
+> P(f)
+
+(a) 10 −2 10 −1    
+
+> f h /uτ
+> 10 −6
+> 10 −5
+> 10 −4
+> 10 −3
+> 10 −2
+> 10 −1
+> 10 0
+> P(f)
+
+(b) 10 −2 10 −1   
+
+> f h /uτ
+> 10 −6
+> 10 −5
+> 10 −4
+> 10 −3
+> 10 −2
+> 10 −1
+> P(f)
+
+(c) 10 −2 10 −1    
+
+> f h /uτ
+> 10 −6
+> 10 −5
+> 10 −4
+> 10 −3
+> 10 −2
+> P(f)
+
+(d) Figure 7. Modal power spectra of selected retained POD coefficients from the reference (black solid line) and VAR predictions (green dashed line): (a) 𝛼 1; (b) 𝛼 6; (c) 𝛼 10 ; (d) 𝛼 15 .
+
+exactly by the VAR model. Only the secondary peak of 𝜏 ret 22 exhibits a minor shift of 0 .03 ℎ,although some discrepancies are observed in the peak amplitudes. 3.3. Latent Residual Results 
+
+The FK-𝛽 -VAE is first applied to the POD-truncated fields, yielding a temporal sequence of latent means and variance. The input is a single-channel 64 × 64 field, and the latent dimension is set to be 𝑑 𝑧 = 24. The FNO blocks employ a channel width of 32 and retain 16 Fourier modes in each spatial direction. The multi-step Koopman regularization is evaluated over a prediction sequence of four time steps. The relative weights of the Koopman and KL terms are set to 𝛾 = 1.0 and 𝛽 = 10 −4, respectively. As one example, Figure 9 shows the complete temporal history of the second latent mean 
+
+𝜇 2. It can be observed that the latent variable exhibits strong temporal correlations, rather than random and uncorrelated white noise, which makes the sequential prediction feasible. To build the switching-VAR model describing the evolution of the latent variable, the two lag orders are set as 𝑞 (1) = 4 and 𝑞 (2) = 32, with an identical regularization parameter 
+
+𝜂 = 10 −3. In addition, for the current prediction horizon 18 000 𝛥𝑡 the switching parameters are set to 𝑐 𝑠 = 12 000 𝛥𝑡 and 𝛥 𝑠 = 7 000 𝛥𝑡 .Figure 10 compares the reference and predicted trajectories of three representative latent variables. It can be found that the switching-VAR model accurately predicts the overall pattern of the latent variables, closely tracking both peaks and troughs. Although predictions are more precise in the early stages and gradually diverge from the reference data over time, this error remains bounded rather than growing drastically. 
+
+0 X0-14 Journal of Fluid Mechanics 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Y/h
+
+> 0.0 2.0 4.0 6.0 8.0
+> τret 11  / ( uτ)2
+
+(a) 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Y/h
+
+> 0.0 0.1 0.1 0.2 0.2
+> τret 22  / ( uτ)2
+
+(b) 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Y/h
+
+> 0.0 0.1 0.1 0.2
+> τret 33  / ( uτ)2
+
+(c) Figure 8. Reynolds-stress components calculated from the reference (black solid line) and VAR-predicted (green dashed line) POD-retained fields: (a) 𝜏 ret 11 ; (b) 𝜏 ret 22 ; (c) 𝜏 ret 33 .
+
+Finally, the predicted latent mean, b𝝁 𝑛 , is passed through the decoder to reconstruct the POD-truncated field, b𝝃 tru  
+
+> 𝑛
+
+. Figure 11 compares the results of 𝜏 tru 11 , 𝜏 tru 22 and 𝜏 tru 33 , evaluated from the reference and predicted POD-truncated fields. For 𝜏 tru 11 , the prediction reproduces the near-wall growth and the subsequent decay towards the outer region. Its peak amplitude is underestimated by only 5 .68%, although the predicted peak has a shift of 0 .12 ℎ from 
+
+0 X0-15 Xianglong Li et al. 0 200 400 600 800 1000 1200   
+
+> tu τ/h
+> -0.6 -0.4 -0.2 0.0 0.2 0.4 0.6
+> μ2
+> Figure 9. Temporal sequence of the second latent mean, 𝜇 2, generated by the FK-𝛽 -VAE method.
+
+the reference. For 𝜏 tru 22 , the peak location is reproduced exactly, while its amplitude is underestimated by 22 .44%. For 𝜏 tru 33 , the peak is displaced by only 0 .03 ℎ, and its amplitude is overestimated by 7 .53%. Overall, the latent-mean switching-VAR model retains the principal spatial characteristics of Reynolds stresses from the POD-truncated field. 3.4. Total field results 
+
+Sequentially the full field statistics are obtained by combining the contributions from the POD-retained and POD-truncated fields, 
+
+𝜏 ∗∗ = 𝜏 ret  
+
+> ∗∗
+
++ 𝜏 tru  
+
+> ∗∗
+
+, (3.6) where ∗ = 1, 2 or 3. Figure 12 presents the predicted Reynolds stress components from the hybrid ROM method, in comparison with their reference, for the full field. Overall, the predicted profiles reproduce the principal spatial structures of all three components. Notably, both 𝜏 11 and 𝜏 33 are precisely reproduced, with both the general trend and amplitude exhibiting almost negligible discrepancies. For 𝜏 22 , the deviations are slightly greater, but the proposed ROM still captures the primary spatial features to a great extent. Finally, figure 13 compares the reference and predicted TKE profiles. The reconstructed profile closely follows the reference distribution, reproducing its near-wall growth, peak and subsequent decay towards the channel interior. The peak location is captured exactly at 𝑌 = 0.19 ℎ, with an overestimation of only 3 .61% in the peak amplitude. Since the TKE combines the contributions of the three normal Reynolds-stress components, this agreement demonstrates that the combined ROM accurately recovers the principal spatial distribution of the fluctuation energy over the whole domain. To further validate the proposed hybrid ROM method, the spatial features of the reconstructed field are also assessed by evaluating the wavenumber spectrum. As shown in figure 14, the reconstructed spectrum closely follow the reference over the low and intermediate wavenumber ranges, accurately capturing the overall spectral distribution and particularly the energy decay toward smaller spatial scales. Notable differences only arise at the high wavenumber region, where the energy content is several orders of magnitude lower than other regions and therefore can be considered negligible. In contrast to the proposed hybrid ROM method, in which the full field is decomposed into two sub-fields through frequency-informed POD analysis, a common alternative is to compress the full field directly using an autoencoder and predicting the resulting latent variables with a temporal model (Milano & Koumoutsakos 2002; Murata et al. 2020; Fukami et al. 2020; Nakamura et al. 2021; Racca et al. 2023). To demonstrate the necessity and advantage of the proposed field decomposition step, we further conduct a numerical 
+
+0 X0-16 Journal of Fluid Mechanics 1020 1050 1080 1110 1140 1170 1200 
+
+tu τ/h
+
+> -0.4 -0.2 0.0 0.2 0.4
+> μ7
+
+(a) 1020 1050 1080 1110 1140 1170 1200 
+
+tu τ/h
+
+> -0.4 -0.2 0.0 0.2 0.4 0.6
+> μ19
+
+(b) 1020 1050 1080 1110 1140 1170 1200 
+
+tu τ/h
+
+> -1.0 -0.5 0.0 0.5 1.0
+> μ24
+
+(c) Figure 10. Temporal sequences of latent means from the reference dataset (black solid line) and switching-VAR predictions (green dashed line): (a) 𝜇 7; (b) 𝜇 19 ; (c) 𝜇 24 .
+
+experiment by directly applying the FK-𝛽 -VAE and switching-VAR models to predict the full field, in which the model parameters remain identical to those mentioned above. The corresponding predicted temporal sequences for two selected latent variables are shown in figure 15, as well as the reference. It can be found that, without the field decomposition, the predicted latent variables can closely track the reference at the early stage. However, as the time moves forward, the results gradually deviate from the reference, exhibiting 
+
+0 X0-17 Xianglong Li et al. 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Y/h
+
+> 0.0 1.0 2.0 3.0
+> τtru 11  / ( uτ)2
+
+(a) 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Y/h
+
+> 0.0 0.5 1.0 1.5
+> τtru 22  / ( uτ)2
+
+(b) 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Y/h
+
+> 0.0 0.2 0.4 0.6
+> τtru 33  / ( uτ)2
+
+(c) Figure 11. Reynolds-stress components calculated from the reference (black solid line) and predicted (green dashed line) POD-truncated fields: (a) 𝜏 tru 11 ; (b) 𝜏 tru 22 ; (c) 𝜏 tru 33 .
+
+both phase mismatch and amplitude attenuation. This degradation ultimately leads to the significant misestimation of the Reynolds stresses. As one example, figure 16 compares the reconstructed and reference profiles for 𝜏 11 . Although the direct full-field modeling method can still capture the approximate location of the peak and the general decay trend toward the outer region, it exhibits significant underestimation over the whole domain (up to 37 .27%). Fundamentally, this discrepancy arises because the full field encompasses 
+
+0 X0-18 Journal of Fluid Mechanics 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Y/h
+
+> 0.0 2.5 5.0 7.5 10.0
+> τ11  / ( uτ)2
+
+(a) 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Y/h
+
+> 0.0 0.5 1.0 1.5
+> τ22  / ( uτ)2
+
+(b) 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Y/h
+
+> 0.0 0.2 0.4 0.6 0.8
+> τ33  / ( uτ)2
+
+(c) Figure 12. Reynolds-stress components calculated from the reference (black solid line) and hybrid-ROM-predicted (green dashed line) fields: (a) 𝜏 11 ; (b) 𝜏 22 ; (c) 𝜏 33 .
+
+multiscale dynamics featured with distinct frequencies, which is a notable characteristic also preserved in the latent space. Therefore, capturing their long-term evolution becomes more challenging. In contrast, the proposed ROM framework decouples these multi-frequency dynamics via field decomposition, therefore enabling robust and accurate long-term predictions. 
+
+0 X0-19 Xianglong Li et al. 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Y/h       
+
+> 0.0 2.0 4.0 6.0
+> TKE / ( uτ)2
+> Figure 13. Wall-normal profile of TKE from the reference (black solid line) and hybrid-ROM-predicted (green dashed line) fields. 12510 20 45
+> k
+> 10 −19
+> 10 −17
+> 10 −15
+> 10 −13
+> 10 −11
+> 10 −9
+> 10 −7
+> 10 −5
+> E(k)
+> Figure 14. Wavenumber spectrum of the total fluctuation energy from the reference (black solid line) and hybrid-ROM-predicted (green dashed line) fields.
+
+4. Conclusions 
+
+A hybrid POD-autoencoder ROM framework has been developed for the long-term prediction of turbulent flow statistics. Within the framework, the full field is first divided into a POD-retained field and a POD-truncated field. The retained modes are selected using a frequency-informed POD strategy based on modal energy and dominant frequency. Their POD coefficients are modeled using a VAR model. The POD-truncated field is compressed into a low-dimensional latent space using an FK-𝛽 -VAE. In this model, FNO operators help improve the spatial representation, while the Koopman operator regularizes the latent evolution process. A switching-VAR model is then used to predict the latent variables. Finally, the contributions from the two branches are combined to recover the turbulent statistics. The framework is evaluated using turbulent channel flow at Re 𝜏 = 110. As indicated by the results, the VAR model captures the main statistical and spectral features of the retained POD coefficients. The latent-space model also reproduces the main dynamics and Reynolds-stress contribution of the POD-truncated field. After combining 
+
+0 X0-20 Journal of Fluid Mechanics 1020 1050 1080 1110 1140 1170 1200 
+
+tu τ/h
+
+> -0.4 -0.3 -0.2 -0.1 0.0 0.1
+> μ8
+
+(a) 1020 1050 1080 1110 1140 1170 1200 
+
+tu τ/h
+
+> -0.4 -0.2 0.0 0.2 0.4
+> μ16
+
+(b) Figure 15. Temporal sequences of latent means from the reference dataset (black solid line) and switching-VAR predictions for the full field (dark-red dot-dash line): (a) 𝜇 8; (b) 𝜇 16 .0.0 0.2 0.4 0.6 0.8 1.0 
+
+Y/h
+
+> 0.0 2.0 4.0 6.0 8.0
+> τ11  / ( uτ)2
+
+Figure 16. Wall-normal profile of 𝜏 11 from the reference (black solid line) and direct full-field FK-𝛽 -VAE– switching-VAR predictions (dark-red dash-dotted line). 
+
+the two components, the hybrid ROM gives accurate predictions of the Reynolds stresses, TKE, and the wavenumber spectrum. In contrast, the alternative method of direct full-field modeling (i.e. without field decomposition) shows much higher prediction errors over long prediction horizons. These results demonstrate that separating flow dynamics with different temporal characteristics can improve the accuracy and robustness of long-term statistical 
+
+0 X0-21 Xianglong Li et al. 
+
+prediction. The proposed framework thus provides a practical ROM tool for turbulent flows governed by complex, multi-scale dynamics. 
+
+Acknowledgements This research is financially supported by the Science and Technology Development Fund of Macau S.A.R. (0048/2025/ITP1, 001/2024/SKL and 0002/2025/EQP), the National Natural Science Foundation of China (52301336), and the University of Macau (MYRG-GRG2026-00121-FEG and SRG2025-00004-FST). 
+
+Declaration of interests The authors report no conflict of interest. 
+
+REFERENCES 
+
+Ahmed, Shady E., Pawar, Suraj, San, Omer, Rasheed, Adil, Iliescu, Traian & Noack, Bernd R. 2021 On closures for reduced order models—a spectrum of first-principle to machine-learned avenues. Physics of Fluids 33 (9), 091301. Berkooz, Gal, Holmes, Philip & Lumley, John L. 1993 The proper orthogonal decomposition in the analysis of turbulent flows. Annual Review of Fluid Mechanics 25 , 539–575. Costa, Pedro 2018 A FFT-based finite-difference solver for massively-parallel direct numerical simulations of turbulent flows. Computers & Mathematics with Applications 76 (8), 1853–1862. van Dijk, Dick, Ter ¨ asvirta, Timo & Franses, Philip Hans 2002 Smooth transition autoregressive models—a survey of recent developments. Econometric Reviews 21 (1), 1–47. Eivazi, Hamidreza, Guastoni, Luca, Schlatter, Philipp, Azizpour, Hossein & Vinuesa, Ricardo 2021 Recurrent neural networks and Koopman-based frameworks for temporal predictions in a low-order model of turbulence. International Journal of Heat and Fluid Flow 90 , 108816. Fukami, Kai, Nakamura, Taichi & Fukagata, Koji 2020 Convolutional neural network based hierarchical autoencoder for nonlinear mode decomposition of fluid field data. Physics of Fluids 32 (9), 095110. Halder, Rakesh, Eiximeno, Benet & Lehmkuhl, Oriol 2026 Reduced-order modeling of large-scale turbulence using Koopman 𝛽 -variational autoencoders. Physics of Fluids 38 (1), 015104. Hasegawa, Kazuto, Fukami, Kai, Murata, Takaaki & Fukagata, Koji 2020 Machine-learning-based reduced-order modeling for unsteady flows around bluff bodies of various shapes. Theoretical and Computational Fluid Dynamics 34 (4), 367–383. Hoerl, Arthur E. & Kennard, Robert W. 1970 Ridge regression: Biased estimation for nonorthogonal problems. Technometrics 12 (1), 55–67. Jiang, Haokui & Cao, Shunxiang 2024 Balanced proper-orthogonal-decomposition-based feedback control of vortex-induced vibration. Physical Review Fluids 9 (7), 073901. Jiang, Haokui & Cao, Shunxiang 2026 Model predictive control of fluid–structure interaction via Koopman-based reduced-order model. Journal of Fluid Mechanics 1026 , A32. Jiang, Haokui, Pfister, Jean-Lou, Huang, Daniel Zhengyu & Cao, Shunxiang 2025 Koopman reduced-order modeling and analysis of flag flapping in the wake of a cylinder. Physical Review E 111 (4), 045101. Khoo, Zhao Chua, Chan, Chi Hin & Hwang, Yongyun 2022 A sparse optimal closure for a reduced-order model of wall-bounded turbulence. Journal of Fluid Mechanics 939 , A11. Lee, Kookjin & Carlberg, Kevin T. 2020 Model reduction of dynamical systems on nonlinear manifolds using deep convolutional autoencoders. Journal of Computational Physics 404 , 108973. L ¨ utkepohl, Helmut 2005 New Introduction to Multiple Time Series Analysis . Springer Berlin Heidelberg. Maulik, Romit, Lusch, Bethany & Balaprakash, Prasanna 2021 Reduced-order modeling of advection-dominated systems with recurrent neural networks and convolutional autoencoders. Physics of Fluids 33 (3), 037106. Milano, Michele & Koumoutsakos, Petros 2002 Neural network modeling for near wall turbulent flow. 
+
+Journal of Computational Physics 182 (1), 1–26. Murata, Takaaki, Fukami, Kai & Fukagata, Koji 2020 Nonlinear mode decomposition with convolutional neural networks for fluid dynamics. Journal of Fluid Mechanics 882 , A13. Nakamura, Taichi, Fukami, Kai, Hasegawa, Kazuto, Nabae, Yusuke & Fukagata, Koji 2021 Convolutional neural network and long short-term memory based reduced order surrogate for minimal turbulent channel flow. Physics of Fluids 33 (2), 025116. Racca, Alberto, Doan, Nguyen Anh Khoa & Magri, Luca 2023 Predicting turbulent dynamics with the convolutional autoencoder echo state network. Journal of Fluid Mechanics 975 , A2. Rowley, Clarence W. & Dawson, Scott T. M. 2017 Model reduction for flow analysis and control. Annual Review of Fluid Mechanics 49 , 387–417. Sirovich, Lawrence 1987 Turbulence and the dynamics of coherent structures. part i: Coherent structures. 
+
+Quarterly of Applied Mathematics 45 (3), 561–571. Solera-Rico, Alberto, Sanmiguel Vila, Carlos, G ´ omez-L ´ opez, Miguel, Wang, Yuning, Almashjary, 
+
+0 X0-22 Journal of Fluid Mechanics 
+
+Abdulrahman, Dawson, Scott T. M. & Vinuesa, Ricardo 2024 𝛽 -variational autoencoders and transformers for reduced-order modelling of fluid flows. Nature Communications 15 , 1361. Taira, Kunihiko, Brunton, Steven L., Dawson, Scott T. M., Rowley, Clarence W., Colonius, Tim, McKeon, Beverley J., Schmidt, Oliver T., Gordeyev, Stanislav, Theofilis, Vassilios & Ukeiley, Lawrence S. 2017 Modal analysis of fluid flows: An overview. AIAA Journal 55 (12), 4013–4041. Ter ¨ asvirta, Timo 1994 Specification, estimation, and evaluation of smooth transition autoregressive models. 
+
+Journal of the American Statistical Association 89 (425), 208–218. Wang, Zhu, Akhtar, Imran, Borggaard, Jeff & Iliescu, Traian 2012 Proper orthogonal decomposition closure models for turbulent flows: A numerical comparison. Computer Methods in Applied Mechanics and Engineering 237–240 , 10–26. 
+
+0 X0-23

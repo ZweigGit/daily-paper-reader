@@ -1,0 +1,871 @@
+Title: Risk-Aware Generative Inpainting for Optimized Design Editing of EV Battery Cooling Channels
+
+URL Source: https://arxiv.org/pdf/2609.08387v1
+
+Published Time: Wed, 09 Sep 2026 03:00:36 GMT
+
+Number of Pages: 35
+
+Markdown Content:
+# Risk-Aware Generative Inpainting for Optimized Design Editing of EV Battery Cooling Channels 
+
+Leekyo Jeong a, Yoon Koo Lee a, Namwoo Kang a,b, ∗
+
+> aCho Chun Shik Graduate School of Mobility, Korea Advanced Institute of Science and Technology (KAIST), Daejeon 34051, Republic of Korea
+> bNarnia Labs, Daejeon 34051, Republic of Korea
+
+Abstract 
+
+Cooling-channel layouts for electric-vehicle battery packs must deliver temperature uniformity and low pressure drop while maintaining a single continuous channel. In late-stage design, local topol-ogy modification offers a practical way to improve performance while retaining established global features. Diffusion-based inpainting naturally accommodates such local edits, but its stochastic nature can produce different outcomes even when applied to the same region. This variability poses a fundamental question: how should edit locations be selected when the outcome of each modifi-cation is stochastic? We propose a risk-aware generative editing framework that incorporates this variability into the selection of edit locations. Instead of scoring each candidate location by a single expected improvement, the method estimates a distribution of possible outcomes from offline edit results evaluated using a computational-fluid-dynamics (CFD)-trained surrogate and ranks loca-tions according to a chosen level of risk. A single trained model therefore supports different editing preferences at inference time, emphasizing either higher expected improvement or greater consis-tency without retraining. The policy is evaluated against random editing in a held-out paired study across seven mask configurations. It improves the cooling-channel objective over random editing in most configurations, and the advantage is retained under independent CFD verification of the edited designs. Varying the risk level reveals a consistent trade-off between mean improvement and run-to-run consistency, while the learned distribution is useful for ranking locations but should not be interpreted as a calibrated probability distribution. Together, these results show that stochastic generative editing can be converted from a source of variability into a controllable design decision through risk-aware location selection: effective editing depends not only on how a design is modified, but also on where it is modified and how much outcome variability is acceptable. 
+
+Keywords: Cooling channel design, Distributional value regression, Diffusion model, Inpainting, Risk-sensitive design, Surrogate model, Design editing     
+
+> ∗Corresponding author.
+> Email addresses: leekyoj@kaist.ac.kr (Leekyo Jeong), nwkang@kaist.ac.kr (Namwoo Kang) arXiv:2609.08387v1 [cs.CE] 8 Sep 2026
+
+1. Introduction 
+
+Many engineering design problems can be formulated as iterative refinement processes in which an existing feasible solution is progressively modified to improve its performance. Rather than replacing the entire design at each iteration, selected regions can be modified while satisfactory portions of the current solution are retained. This formulation introduces a decision problem at each iteration: which region should be modified, and what modification should be considered at that location? The problem becomes more challenging when a given location admits multiple plausible mod-ifications. A single region may admit alternative modifications with substantially different design outcomes. Consequently, selecting the next edit requires comparing candidate locations while ac-counting for the range of outcomes that their possible modifications may produce. Generative models provide a natural mechanism for exploring such alternatives (Regenwetter et al., 2022), since a local region can be regenerated into multiple plausible configurations while the remainder of the design is preserved. Electric-vehicle (EV) battery cooling-channel design provides a representative engineering set-ting for this problem. Thermal management is a central constraint in the design of EV battery packs and high-power electronics — ambient and operating-temperature extremes alone can shift an EV’s usable driving range by tens of percent (Yuksel & Michalek, 2015) — and embedded cool-ing channels have to provide low and uniform component temperatures, small pressure drop, and a manufacturable layout at once. Cooling-channel layouts are discrete connected topologies, and improving an existing layout can be formulated as a sequence of local modifications: a region is selected, edited, and evaluated while the remainder of the layout is retained. Each such edit must honour a single-stroke connectivity constraint (one continuous channel, a manufacturing require-ment) that classical adjoint topology optimization and parametric optimization both handle poorly on a discrete pixel grid. Importantly, these constraints define the feasible engineering design space rather than merely restricting the optimization problem. Accordingly, the key challenge is not to remove these constraints, but to efficiently identify promising edit locations within the feasible space. Diffusion-based inpainting instantiates this local-editing mechanism directly: masking a selected region and regenerating its contents can modify part of an existing channel while preserving the surrounding design, and diffusion-based generators in particular (Ho et al., 2020) can synthesize completions that already satisfy the single-stroke topology. These generators are stochastic , however: the same edit mask produces different completions on every run. Two questions follow at once: (i) which edit sites deserve an inpainting call in the first place, and (ii) how should an agent cope with that per-call stochasticity? Both questions are answered here with the same mechanism: a distributional value function that scores each candidate edit site by its outcome distribution, not its expected value alone. This is the outlook of distributional reinforcement learning (RL), which supports risk-sensitive decisions that act on the tails of the distribution instead of its mean alone (reviewed in §2.3). Within that family of architectures we adopt the implicit quantile network (IQN), which can be queried at an arbitrary probability τ without committing to any fixed set of quantile fractions (Dabney et al., 2018a), so one trained network exposes a whole family of risk-sensitive policies through the value of τ alone. 2IQN is conventionally trained end-to-end by sequential reinforcement learning: temporal-difference (TD) learning with a bootstrapped target, n-step returns, and a replay buffer. For this editing task we found that the paradigm degrades the learned distribution (§5.3.5), so we dropped it while keeping IQN’s query interface. In this study, diffusion inpainting serves as the edit primitive of a design-editing agent for cooling-channel skeletons. A frozen ridge-regression term on five geometric path features is combined with a τ -conditioned residual network, both fit by supervised regression on offline-labelled edit outcomes with no bootstrapping or replay; at inference, every candidate edit site is scored once and visited in that fixed order for a fixed number of steps, a deterministic single-pass policy, with τ the inference-time risk dial detailed in the contributions below. The policy beats random editing across most mask configurations under a pre-registered evaluation protocol, an advantage that survives independent CFD verification and is not explained by surrogate scoring error, at a measurable cost in seed-to-seed consistency and in how faithfully the learned distribution calibrates as a probability object. Comparisons of this kind also face two confounds invisible to ordinary testing — an input-convention mismatch that silently decorrelates the training objective from ground truth, and a rollout-seed dependence that leaves any single-realization number an incomplete summary of the effect (§5.3.1) — both measured and reported throughout this study. Existing approaches primarily optimize or generate designs, whereas our framework addresses the decision of where to perform a stochastic local generative edit on an already feasible topology. This study makes four contributions: 1. A single inference-time risk dial τ that moves the deployed policy along a mean-improvement/seed-to-seed-consistency frontier without retraining. A mixed-effects decomposition locates the measurable benefit in this dial: the effect is robust across a three-seed IQN-vs-FQF compari-son, and provisional for the single-seed DQN and ridge-only arms (§S1). 2. A held-out, paired evaluation of the trained policy against random editing across seven mask configurations, with effect sizes reported both at a pre-registered rollout seed and averaged over independent rollout seeds. We evaluate against random editing only; comparison against a published cooling-channel RL agent (Kim & Han, 2023) was judged out of scope because its action space and training code are not directly transferable (§2.1). 3. A CFD-verified fidelity study of the surrogate objective that drives training: high decision-level agreement with CFD within the deployment range, and no statistical association between the measured policy advantage (Contribution 2) and surrogate scoring error, evidence against reward exploitation as an explanation for that advantage. 4. A methodological account, null results included, of what the risk-conditioned quantile function can and cannot do: a temporal-difference-trained version is measurably worse-calibrated than the same architecture trained by supervised regression, and even the supervised version, useful for ranking edit sites, fails a standard calibration test structurally and must not be read as a calibrated probability distribution. Because diffusion sampling introduces substantial rollout-level stochasticity, we explicitly eval-uate the policy across independent rollout seeds rather than relying on a single realization. The rest of the paper runs as follows. Section 2 reviews related work in cooling-channel design optimization, generative models for engineering design, and distributional reinforcement learning. 3Section 3 presents the proposed three-stage system, first as a whole and then stage by stage: the objective, the surrogate evaluator, the inpainting edit operator, and the learned position-value policy. Section 4 describes the experimental setup: data generation, the surrogate model, and the evaluation protocol. Section 5 presents the measurements stage by stage, from surrogate fidelity (Stage 1) and what iterative inpainting search achieves without a learned policy (Stage 2) to the learned policy itself (Stage 3), covering held-out improvement and its rollout-seed dependence, a factor decomposition of where the benefit lives, CFD verification on edited designs, the comparison against TD training, and the calibration tests. Section 6 interprets these findings and states the limitations, and Section 7 concludes. 
+
+2. Related Work 
+
+2.1. Cooling-channel and flow-field design optimization 
+
+Cooling-channel and flow-field layout is a long-standing engineering-design problem; in EV ap-plications it is driven by the need to hold battery-pack temperatures low and uniform while con-taining the pumping pressure drop. Existing methods broadly fall into three categories: parametric optimization of a fixed channel template, typically a serpentine cooling plate, against a thermal-hydraulic objective (Jarrett & Kim, 2011, 2014; Yu et al., 2009; Patil et al., 2023; Benabdelaziz et al., 2020); topology optimization (TO), which lifts the template restriction by making the mate-rial distribution itself the design variable (Lee, 2025; Yaji et al., 2018; Chen et al., 2019; Yaji et al., 2020); and surrogate-assisted global search, which couples a cheap learned model with evolutionary or generator-based search over candidate layouts (Zheng et al., 2024; Wan et al., 2022; Zhong et al., 2025; Srivardhan et al., 2026; Ebbs-Picken et al., 2024; Liu et al., 2026; He et al., 2023). All three work well inside a predefined parameterization but are less suited to free-form editing of a discrete single-stroke channel skeleton: adjoint-based TO targets continuous density fields, not the binary 
+
+pixel grid and hard single-stroke manufacturing constraint this problem imposes, and the surrogate-assisted line still optimizes, screens, or generates inside a fixed structural parameterization rather than making agent-directed local edits on an arbitrary skeleton. The closest precedent is the reinforcement-learning cooling-channel agent of Kim & Han (2023), in which a deep Q-network (DQN) grows a channel layout on a grid step by step, calling CFD directly inside the training loop. We score each edit candidate cheaply with a deep-learning surrogate (§3.3), which is what keeps the editing loop affordable at training scale, and our final policy, unlike that work, is not trained by sequential RL at all (§5.3.2). Two further differences separate it from ours: its action space is a hand-crafted grid move (no generative model), and its critic is a scalar value function blind to the return distribution and to risk. We do not attempt a quantitative head-to-head comparison against this method: its action space and training code are not directly transferable to our diffusion-based editing setting. 
+
+2.2. Generative models for engineering design and diffusion inpainting 
+
+Deep generative models are now a standard tool for engineering design (Regenwetter et al., 2022): an early, influential example couples a generative adversarial network with topology optimization to synthesize structural designs directly (Oh et al., 2019), and the idea has since spread to building-scale layout synthesis from fused text/image conditioning (Liao et al., 2022) and to physics-constrained 4settings that couple a generator with physical-parameter generators through a physics-based loss (Yu & Liu, 2024). In each case the generator proposes and a physical or optimization-derived criterion disciplines what it proposes, a division of labour our system shares as well. Among the generative families, denoising diffusion probabilistic models (DDPMs) (Ho et al., 2020) learn to reverse a gradual noising process and have become the dominant image generator; their sampling is inherently stochastic , a property that is central to our formulation. Most relevant here is diffusion-based inpainting: RePaint (Lugmayr et al., 2022) completes a masked region without retraining, repeatedly resampling the masked region during the reverse process while keeping the known region fixed, which yields diverse completions for an arbitrary mask. Our edit primitive descends directly from this idea: “place a mask and let an unconditional DDPM regenerate that region.” Related restoration-as- inpainting formulations, such as the denoising diffusion null-space model (DDNM) (Wang et al., 2023), enforce data consistency through a null-space projection. Diffusion models have also served directly as design generators, in structural topology optimiza-tion, thermal heat-sink synthesis, and cold-plate digital twins (Mazé & Ahmed, 2023; Keramati et al., 2026; Wu et al., 2026): all cast design generation as a single, conditional, surrogate- or gradient-guided sampling pass, so a design emerges from one guided generation. We instead invoke an unconditional generator repeatedly at agent-selected sites and treat the resulting generative noise as a random quantity to be actively ranked and risk-managed, not steered away by a guidance term. A complementary line fine-tunes the generator’s own weights toward a reward with RL, reading the denoising chain as a multi-step decision process: DDPO (Black et al., 2024) and DPOK (Fan et al., 2023). Our use of the pretrained generator is orthogonal to that line — we hold it fixed and learn instead where, and at what scale, to apply it — and the outer decision function is not trained by RL either, for the reasons argued in §3.6. 
+
+2.3. Distributional reinforcement learning and risk-sensitive control 
+
+Standard value-based RL (e.g. DQN (Mnih et al., 2013)) learns only the expectation of the return, Qπ(s, a ) = E[Zπ(s, a )] . Distributional RL models the full distribution of the return Zπ(s, a )
+
+instead, which opens the way to risk-sensitive policies that act on the tails of the distribution (e.g. CVaR), not merely its mean. C51 (Bellemare et al., 2017) represents the return distribution as a categorical distribution over 51 fixed atoms; QR-DQN (Dabney et al., 2018b) fixes a uniform set of quantile fractions and regresses the corresponding quantile locations. IQN (Dabney et al., 2018a) goes further by committing to no fixed set of quantile fractions: a fraction τ ∼ U (0 , 1) is sampled, embedded (cosine/Fourier embedding), and fed into the network together with the state, so a single implicit network approximates the whole quantile function and can be queried at arbitrary resolution. FQF (Yang et al., 2019) extends IQN by also learning the quantile fractions via a separate fraction-proposal network. 
+
+What we borrow from this literature, and what we leave behind. We keep IQN’s core interface — condition a network on a cosine-embedded τ and read off a value at that quantile — as the mechanism behind a single, re-trainable risk dial, but not the training paradigm it is usually paired with (temporal-difference learning, bootstrapped targets, replay); §3.6 argues why. On top of these distributions we place the conditional value-at-risk (CVaR), introduced by Rockafellar & Uryasev (2000) and belonging to the family of coherent risk measures (Artzner et al., 1999). Tail-risk criteria have been brought into sequential decision making by Tamar et al. (2015), 5Chow et al. (2018), and Keramati et al. (2020), and in continuous control by distributional actor– critic methods (Ma et al., 2025). Applied work in the same spirit builds risk or safety directly into the decision rule of an industrial agent, as in the risk-sensitive controller for human–robot collaborative manufacturing of Wang & Zhou (2026) and the safety-thresholded policy selector of Pan et al. (2026). Our deployment differs from each of these: the risk-conditioned value function never passes through an RL training loop, because τ is a supervised-regression conditioning input consulted only at inference to select a risk band. The supervised half of that construction has its own history: Xu et al. (2017) fit several quantiles jointly inside one network, which is the estimation problem our residual solves, with the difference that our quantile fraction is sampled and embedded instead of fixed in advance. 
+
+3. Proposed System 
+
+3.1. Overview of the proposed system Path         
+
+> generation
+> using DFS
+> 𝑇 max ,
+> 𝑇 min ,
+> ത𝑇 ,
+> 𝑇 uni ,
+> Δ𝑝
+> 𝑇 max ,
+> 𝑇 min ,
+> ത𝑇 ,
+> 𝑇 uni ,
+> Δ𝑝
+> Path generation using inpainting
+> Choose best of N
+> New path set
+> x N
+> Stage 2
+> Stage 1
+> 48 ×35
+> 64 ×64 48 ×35 41x33 →41x41
+> 7
+> 5 feature
+> 5 feature
+> Corner weight
+> Ridge regression
+
+# 𝝍    
+
+> Distributional
+> residual regression
+> cos(𝜏 ∙ 𝑘𝜋) 𝝉 𝝓(𝝉)
+> 41 ×33
+> 𝑉 Ridge
+> Stage 3
+
+𝑸 IQN  𝝉 → ഥ 𝑸 𝒓𝒊𝒔𝒌  𝒑 
+
+→ 𝝅    
+
+> Static greedy
+> ranking policy
+> 𝒅 𝒄 𝒅 𝜸 𝒏 𝒆
+> 𝒍 𝒑 𝒏 b
+
+Figure 1: Proposed cooling-channel design-support system: the current skeleton is edited by a DDPM inpainting operator at a position selected by the static greedy ranking policy, the edited layout is scored by the surrogate, and the policy’s priority list is built from the frozen ridge term plus the τ -conditioned residual; CFD closes the loop offline as the verification stage. 
+
+The system is a three-stage pipeline, and these stage labels are used throughout the results. Each stage answers the question the next one needs answered: Stage 1 settles how a layout is evaluated, Stage 2 settles whether editing can improve it at all, and Stage 3 settles where to edit first when 6the editing budget is small. Architecture and training details of the diffusion inpainting operator itself are given in the supplementary material (§S2). Stage 1 (data generation and surrogate) :layouts are generated, labelled by CFD, and a surrogate is trained to predict performance for any layout in real time. Stage 2 (iterative optimization by inpainting) : a DDPM inpainting operator, driven by a best-of-N search over randomly placed masks, iteratively improves a single design (Algorithm 1). No learned position policy is involved here, and this stage also supplies the offline candidate outcomes that §3.5’s position-value model is fit on. Stage 3 (learned editing policy) : given a masked region’s geometric features, the ridge + residual model ranks candidate edit positions by expected improvement under a chosen risk level, and the static policy visits them in that order (Algorithm 2). Stage 3 is the contribution of this paper; Stages 1 and 2 come first because they establish the two premises it rests on. The remainder of this section follows the pipeline in order: §3.2 fixes the design representation and the objective, §3.3 the Stage 1 evaluator, §3.4 the Stage 2 edit operator and search, and §3.5–§3.7 the Stage 3 position-value model, its training rule, and the deployment policy. 
+
+3.2. Design problem and objective score 
+
+The design is a binary single-stroke channel skeleton on a discrete grid, one pixel of which is 
+
+10 × 10 mm. The skeleton the policy edits occupies a 41 × 33 grid and carries no inlet/outlet routing; that routing is attached afterwards by the assembly step (§4.1), giving the 48 × 35 domain that is actually scored and meshed, i.e. a 480 × 350 mm cold plate. The objective is a composite, lower-is-better fitness score Score = Tavg + Tuni + ∆ p + wcorner · (corners ),
+
+with all terms normalized and wcorner = 0 .001 at deployment (the corner term penalizes manufac-turability); improvement = initial score − final score. Tavg is the volume-average metal temperature, 
+
+Tuni = 2 Tavg (1 − UI) is the top-surface temperature non-uniformity, and ∆p is the pressure drop across the channel. 
+
+3.3. Stage 1: surrogate evaluator 
+
+An EfficientNetV2-S surrogate, trained on CFD labels (§4.1), scores each edited candidate in place of CFD inside the scoring loop; CFD is kept for offline verification (§5.3.4). Without this substitution the loop would be unaffordable: one conjugate-heat-transfer case takes on the order of ten minutes of wall-clock time on 64 cores, against milliseconds for a surrogate forward pass. A single 20-step rollout scores 20 candidates, already more than three hours of 64-core time if each were sent to CFD, and the evaluation campaign behind §5 scores on the order of 10 6 candidates in total. CFD is therefore reserved for the places where it is decisive, generating the training labels (§4.1) and verifying final designs (§5.3.4), and never appears inside the edit loop. 
+
+3.4. Stage 2: inpainting edit operator and best-of-N search 
+
+The edit primitive shared by Stages 2 and 3 is an unconditional denoising diffusion model applied as inpainting. The 41 ×33 skeleton is padded to 41 ×41 and resized to the 64 ×64 working canvas; the masked window is regenerated by a 10-step reverse diffusion schedule while the known region is held 7fixed, and the result is binarised and mapped back to the skeleton frame, after which the inlet/outlet routing is attached to form the 48 × 35 layout the surrogate scores. A candidate is accepted only if the edited skeleton is still a single continuous stroke with valid inlet/outlet attachment; up to five sampling attempts are made, and a step in which no attempt is valid leaves the layout unchanged. Architecture and training details of the operator are given in the supplementary material (§S2). Stage 2 uses this operator with no learned position policy: at each generation a mask is placed at random, N =8 candidates are generated and scored by the surrogate, and the best-so-far design is kept (Algorithm 1). Stage 2 serves two purposes. It establishes that inpainting edits can improve a layout at all (§5.2), and its per-position candidate outcomes are the offline labels on which the Stage 3 position-value model is fit (§4.3). 
+
+Algorithm 1 Stage 2 — best-of-N optimization by inpainting 
+
+Require: initial bare skeleton x(0) (41 ×33 ); generations G=200 ; candidates/gen N =8 ; corner weight wcorner  
+
+> 1:
+
+for g = 1 , . . . , G do  
+
+> 2:
+
+sample a mask position mg uniformly at random over x(g−1)  
+
+> 3:
+
+for i = 1 , . . . , N do  
+
+> 4:
+
+ci ← DDPMInpaint (x(g−1) , m g) ▷ 41 ×33 →41 ×41 →64 ×64 , 10-step, ≤ 5 attempts (§S2); 
+
+ci←x(g−1) if none valid  
+
+> 5:
+
+attach Type-B routing to ci (→ 48 ×35 ); si ← Score( ci) (Eq. (1), weight wcorner ) 
+
+> 6:
+
+end for  
+
+> 7:
+
+i∗ ← arg min i si 
+
+> 8:
+
+x(g) ← ci∗ if si∗ < s (x(g−1) ), else x(g−1) ▷ keep only the best-so-far  
+
+> 9:
+
+end for  
+
+> 10:
+
+return x(G) ▷ G ×N = 1 ,600 diffusion calls per finished design 
+
+3.5. Stage 3: position-value model 
+
+Stage 3 replaces Stage 2’s random mask placement with a learned ranking of candidate positions. The value of editing position p in image x, read at quantile fraction τ , is modelled as a frozen linear term plus a τ -conditioned residual: 
+
+Q(x, p, τ ) = β⊤ϕ5(x, p )
+
+| {z }
+
+> Ridge, frozen
+
++ hθ
+
+
+
+ψθ
+
+ ϕ5(x, p ), w  ⊙ φθ(τ )
+
+| {z }
+
+> distributional residual, learned
+
+, (1) where ⊙ is the elementwise product, 
+
+φθ(τ ) = ReLU 
+
+
+
+Wφ
+
+ cos( πkτ )64  
+
+> k=1
+
++ bφ
+
+
+
+, τ ∼ U (0 , 1) during training . (2) Here ϕ5 is the five-dimensional geometric feature vector described below and β is fit once by ordinary ridge regression ( α=100 , N =31 ,581 position samples on mask m24 ) and then frozen, i.e. excluded from all gradient updates. Here w denotes the policy’s conditioning input, distinct from the fixed scoring-objective weight wcorner of the Score equation above; the gap between the two is the subject of the supplementary material (§S5). The learned part is three small networks: ψθ embeds the 8geometric features together with the corner weight w, φθ is IQN’s quantile embedding — a fixed cosine basis of 64 terms followed by a learned linear map and a ReLU, so that τ enters the network rather than merely indexing its output — and hθ maps their elementwise product back to the scalar improvement value. Only θ is trained, by regressing Eq. (1) on empirical position-outcome distributions ( ncand =8 pre-generated candidate edits per position, §4.3) under the quantile Huber (pinball) loss 
+
+L(θ) = Eτ ∼U (0 ,1) 
+
+"
+
+1
+
+ncand 
+
+> ncand
+
+X
+
+> i=1
+
+ρκτ
+
+ yi(x, p ) − Q(x, p, τ )) 
+
+#
+
+, (3) 
+
+ρκτ (u) = τ − ⊮{u < 0} ·
+
+( 12 u2 |u| ≤ κκ(|u| − 12 κ) otherwise (4) where ncand =8 is the number of offline candidate edits pre-generated per position, yi(x, p ) is the realised improvement of its i-th draw at (x, p ), κ=1 , and the outer expectation is approximated with 32 samples of τ per minibatch: supervised regression on a fixed offline label set, with no bootstrapped target and no environment interaction during training. 
+
+The five geometric features ϕ5. Each candidate mask window is summarised by the five scalars of Table 1, all computed from the skeleton alone and therefore available without invoking the diffusion model or the surrogate.                
+
+> Table 1: The five geometric path features ϕ5and the frozen ridge fit. Pearson ris the univariate correlation of each feature with the realised improvement; βis its coefficient in the joint ridge fit ( α=100 ,N=31 ,581 position samples, mask m24 , intercept b=0 .01274 ). The boundary-crossing count is written nb, matching the F5 panel of Fig. 1, to avoid collision with the ridge coefficient vector βof Eq. (1).
+
+# Symbol Feature Pearson r β
+
+F1 dc Distance from mask centre to image centre +0 .0388 +0 .00475 
+
+F2 dγ Distance from mask centre to nearest path +0 .0237 +0 .00360 
+
+F3 ne Number of broken-path endpoints in the window +0 .0241 +0 .00168 
+
+F4 lp Length of existing path inside the window +0 .0089 +0 .00139 
+
+F5 nb Number of path crossings of the mask boundary −0.0107 −0.00063 
+
+Four of the five promote improvement; the boundary-crossing count nb suppresses it, since a location crossed by many paths risks severing an existing connection when edited. Two properties of this fit matter below. First, the signs are individually interpretable, so the frozen term works as a usable prior instead of an opaque initialisation. Second, the univariate correlations are all below 
+
+0.04 in magnitude, meaning the linear term explains almost none of the per-position variance — yet ranking positions by it alone already wins against random editing in five of the seven mask configurations. That count overstates the evidence, for the reasons set out in the supplementary material (§S1): the seven configurations yield only five distinct ridge-only rollouts, and no individual cell is significant. Section 6 returns to this gap between per-position accuracy and deployed ranking quality. 9Architectures compared. IQN residual as above. FQF (Yang et al., 2019): the residual addi-tionally learns τ itself via a fraction-proposal network, instead of only querying it. DQN : the residual is a scalar f (ϕ5, w ) with no τ input and hence no risk axis — architecture-matched (same ridge term, same feature encoder depth) so that any difference from IQN isolates the value of the distributional/risk-conditioned residual instead of raw capacity. Ridge-only : the frozen linear term alone, no residual at all, isolating how much of the position-value signal is already linear in ϕ5.
+
+3.6. Training strategy: supervised regression versus sequential RL 
+
+An earlier version of this system trained a distributional critic end-to-end by temporal-difference (TD) learning; that formulation was abandoned in favour of the design below. Because an offline pool of labelled edit outcomes is available and each edit can be evaluated independently, we keep only IQN’s query interface — conditioning a value network on τ — and fit every component by supervised regression on a fixed offline label set, with no bootstrapped target, n-step return, or replay buffer. §5.3.5 verifies this choice against a controlled TD comparison on the same architecture and data. 
+
+3.7. Deployment policy 
+
+Deployment is a single deterministic forward pass, not a sequential decision process. For one held-out image, every candidate position p ∈ { 1, . . . , P } for the active mask size is scored at once (full enumeration, never a sample), and each position is reduced to one scalar by averaging Eq. (1) over a risk band: 
+
+¯Qrisk (p) = 1
+
+|T risk |
+
+Z
+
+> Trisk
+
+Q(x, p, τ ) d τ, π = argsort desc 
+
+> p=1 ,...,P
+
+¯Qrisk (p). (5) The band is one of three fixed τ -windows, Taverse =[0 .001 , 0.25] , Tneutral =[0 .01 , 0.99] , Tseeking =[0 .75 , 0.999] ;the integral is evaluated as a uniform average over 32 quantile points per window. The permutation 
+
+π that results is the priority list, and the policy visits positions in that fixed order for 20 steps; revisits are structurally impossible and no information flows from step to step. We call this the 
+
+static greedy ranking policy . Only the band, not the shape of the predicted distribution, enters the decision: two positions with very different predicted distributions but equal band averages are interchangeable to π. This is the sense in which the policy uses the distributional output as a ranking device (§5.3.5). Both the risk band Trisk and the corner weight w are inference-time inputs: changing either and re-scoring produces a new priority list with no retraining (§5.3.2, supplementary §S5). Algorithms 1 and 2 make the budget contrast between the two stages explicit: Stage 2 repeatedly scores N freshly generated candidates per generation and keeps only the best-so-far design, while Stage 3 scores every candidate position once, in a single deterministic pass, and never re-scores a visited position. 10 Algorithm 2 Stage 3 — static greedy ranking policy 
+
+Require: held-out bare skeleton x (41 ×33 ); trained {β, θ }; risk band Trisk ; corner weight w; 20 steps  
+
+> 1:
+
+for p = 1 , . . . , P do  
+
+> 2:
+
+¯Qrisk (p) ← average of Eq. (1) over Trisk (32 quantile pts), from ϕ5(x, p ) ▷ no diffusion call  
+
+> 3:
+
+end for  
+
+> 4:
+
+π ← argsort desc p ¯Qrisk (p) ▷ static priority list, computed once  
+
+> 5:
+
+for t = 1 , . . . , 20 do  
+
+> 6:
+
+p ← π[t] 
+
+> 7:
+
+x′ ← DDPMInpaint (x, p ) ▷ same operator as Alg. 1: 41 ×33 →41 ×41 →64 ×64 , 10-step, ≤ 5
+
+attempts  
+
+> 8:
+
+x ← x′ if x′ passes single-stroke + inlet/outlet validity (§3.2), else x unchanged  
+
+> 9:
+
+end for  
+
+> 10:
+
+return x ▷ scored via routing → 48 ×35 ; 20 ×1 = 20 diffusion calls, no re-scoring 
+
+4. Experimental Setup 
+
+4.1. Data generation (ground truth) 
+
+Ground-truth labels come from CFD: OpenFOAM chtMultiRegionFoam (transient conjugate heat transfer, laminar), two regions (coolant fluid + aluminum-grade solid), the same open-source solver Kim & Han (2023) couple to their DQN cooling-channel agent (validated there against a commercial Ansys cross-check), which motivates our own analogous validation practice (§S3 of the supplementary material). Layouts are generated by a mirror-symmetric maze and a longest-path depth-first search, meshed with blockMesh + topoSet using our own OpenFOAM case-generation pipeline, with Tmax , Tmin , Tavg , Tuni and ∆p extracted by function objects (the resulting labelled data’s availability is discussed in §7). Each accepted skeleton is aligned to predefined inlet/outlet positions by one of two routing conventions (Type A/B); both are used to train the surrogate, but Type B is fixed for all editing and evaluation. A layout is accepted only if its extracted path exceeds a length threshold, and that threshold separates the two populations used here. The training set 
+
+pools the layouts accepted at thresholds above 300 (2,000 layouts, 4,000 image–label pairs across both routing types). The held-out set is generated at the stricter threshold of 360 (100 layouts) and supports every judgement in §5. Because a higher threshold admits only longer channels, the held-out population is not a random split of the training population but a deliberately harder sample drawn from the same generator: its mean Tavg and ∆p both sit roughly 2.8 standard deviations above the training mean, and only 34 –37% of held-out layouts fall inside the training population’s central 95% interval on those two quantities. Held-out numbers in §5 are therefore measured on the upper tail of the distribution the surrogate was fitted to, not at its centre. 
+
+4.2. Surrogate model 
+
+The network is an EfficientNetV2-S backbone (Tan & Le, 2021) with a five-output regression head, trained on the assembled layout (inlet/outlet routing included), predicting [Tmax , T min , T avg , T uni , ∆p];its accuracy on the labelled population appears in §5.1. The assembled-vs.-bare-skeleton distinction 11 Path type-a↑ 
+
+(48x35 pixels) 
+
+Path type-b↑ 
+
+(48x35 pixels) 
+
+(a) Generation of Cooling channel 
+
+(b) Solve using OpenFoam 
+
+Path 
+
+Threshold met ?
+
+Insert initial parameters 
+
+> (inlet, outlet, width, height, etc.)
+
+Generate 
+
+a maze 
+
+DFS-based path finding 
+
+Save Binary img and Path 
+
+Generate a cooling channels [n, w, h] 
+
+blockMesh 
+
+topoSet 
+
+splitMesh 
+
+Regions 
+
+> chtMultiRegion
+> Foam
+
+Save on 
+
+csv file, 
+
+log file 
+
+copy * n 
+
+yes 
+
+no 
+
+𝑇 max ,
+
+𝑇 min ,
+
+ത𝑇 ,
+
+𝑇 uni ,
+
+Δ𝑝 
+
+(c) Image and label Figure 2: Dataset preparation. (a) Layout generation: from the initial parameters (inlet, outlet, channel width and height) a maze is generated and a depth-first search extracts the longest path; a layout whose path fails the length threshold is discarded and regenerated, and only accepted layouts are saved as a binary skeleton with its path. (b) CFD solution: each accepted layout is replicated into n cases and solved through blockMesh → topoSet 
+
+→ splitMeshRegions → chtMultiRegionFoam , with the results written to CSV. (c) Image and label: each layout is stored both as the bare skeleton and as its two routing assemblies ( img_a , img_b ), paired with the five response quantities Tmax , Tmin , Tavg , Tuni and ∆p extracted per assembly. 
+
+12 matters: an earlier iteration of the pipeline fed the surrogate a geometrically incomplete (bare-skeleton) input at scoring time, which produced numerically plausible but physics-uncorrelated scores ( r≈0.04 ) without raising any error and silently inverted which arm appeared to win. The lesson has stayed with us: any pipeline that couples a learned evaluator to a generative editor should treat input-convention agreement with the training data as a release gate, not an assumption. 
+
+4.3. Training configuration 
+
+For each candidate edit position, 8 candidate completions are pre-generated offline (best-of-8 per generation in the diffusion search stage) and serve as the empirical outcome distribution on which the residual is regressed. The residual network is compact, roughly a 3-layer MLP, so a full 300-epoch training run takes about 105–195 seconds; Table 2 gives its architecture and optimization hyperparameters in full. All results below use three training seeds; per-mask effects are pooled across these three seeds by inverse-variance fixed-effect meta-analysis, and a further random-effects meta-analysis pools across the seven mask configurations. No additional training seeds were run beyond these three, a pre-registered decision rather than a stopping-early choice.      
+
+> Table 2: Residual network ( ψθ, φ θ, h θof Eq. (1)) architecture and optimization hyperparameters. The frozen ridge term β⊤ϕ5is fit separately (§3.5) and is not part of this table.
+
+Field Value Feature encoder ψθ two 128-unit layers (ReLU), input [ϕ5(x, p ), w ]
+
+Quantile embedding φθ 64-term cosine basis → learned linear map → ReLU (Eq. (2)) Combination elementwise product ψθ ⊙ φθ(τ )
+
+Output head hθ linear readout to the scalar improvement value Loss quantile Huber / pinball, κ=1 (Eqs. (3)–(4)) 
+
+τ sampling τ ∼ U (0 , 1) , 32 samples per minibatch Candidates per position ncand =8 (offline pre-generated, best-of-8) Optimizer AdamW, learning rate 10 −3, weight decay 10 −4
+
+Batch size 16 Epochs 300, no learning-rate schedule Training seeds 3 (fixed-effect pooled; §5.3.1) Wall-clock (full run) 105–195 s 
+
+4.4. Evaluation protocol 
+
+Evaluation is paired : the trained policy and a random-position baseline are scored on the same 
+
+100 held-out images (a fixed held-out index seed, seed #1), each rolled out for 20 steps with ncand =1 
+
+(one new sample scored per step, no best-of-N at deployment). Statistics are per-image paired t-tests (image = independent unit, no episode pooling), with all 81–371 candidate positions of the active mask scored, sorted, and visited deterministically per §3.7. One property of the task shapes this protocol: a candidate edit is accepted only if the resulting layout still satisfies the single-stroke connectivity constraint of §3.2, one continuous channel so that the coolant path remains a 13 single manufacturable route, and a masked region cannot always be reconnected that way. When no sampled candidate at the visited position satisfies the constraint, the step leaves the layout unchanged. Under the project’s pre-registered statistical policy, headline numbers are reported at raw (uncorrected) p-values when the compared cell was fixed before the data were seen (one representative condition, IQN, risk-seeking, w=0 .001 , per mask); any number selected after seeing results (e.g. “the best cell for this mask”) is flagged as post-hoc and never supports a headline claim, because a companion analysis found that post-hoc per-mask winners do not reproduce across training seeds and can flip sign entirely. 
+
+5. Results 
+
+Results follow the three stages of §3.1. §5.1 establishes that the surrogate reproduces CFD on the labelled population, the licence for using it as the objective at all. §5.2 reports what iterative inpainting search achieves with no learned policy, the capability the learned policy has to improve on. §5.3 covers Stage 3, the learned editing policy, the contribution of this paper. Stage 2 and Stage 3 answer different questions and are never pooled: Stage 2 spends many generations of best-of-N
+
+search on one design, whereas Stage 3 makes one deterministic pass with a single candidate per step (§4.4). 
+
+5.1. Stage 1: labelled population and surrogate fidelity 
+
+Fig. 3 shows the labelled population the surrogate is trained on. The optimization problem it defines is a narrow one: the entire population spans about 0.6 K in Tavg , so the objective is governed by relative rather than absolute differences, and a scoring model has to resolve the population at that scale to be useful. The two routing conventions shift Tavg and ∆p noticeably while leaving Tuni 
+
+and corner count nearly unchanged; this is why the routing convention is held fixed (type-B) for all editing and evaluation (§4.1) instead of being treated as a free variable. The surrogate resolves the population at that scale. It reproduces the composite CFD objective with R2=0 .994 and MAE 0.014 for both routing types (Fig. 4, top left; r=0 .997 ), and the individual responses are recovered at least as well: Tavg R2=0 .998 with MAE 0.0038 K, Tuni R2=0 .997 with MAE 0.0032 , and ∆p R 2=0 .997 with MAE 0.51 Pa. The Tavg error sits roughly two orders of magnitude below the population spread, which is what allows the surrogate to stand in for CFD inside the Stage 2 and Stage 3 loops. Whether that fidelity carries over to edited designs is a different and stronger claim, tested separately in §5.3.4. 
+
+5.2. Stage 2: best-of-N optimization by inpainting, without a learned policy 
+
+This stage establishes the premise the learned policy depends on: that editing an existing layout with the inpainting operator improves it at all, and by how much when the number of edits is unconstrained. Stage 3 then takes up a different question, where to edit first when the budget is small, at a budget two orders of magnitude lower; the two stages answer different questions and are not competing methods. Here we measure what the operator achieves under an unguided best-of-N search: at each generation, N =8 candidate edits are proposed at randomly placed masks, all are scored by the surrogate, and the best is retained. Fig. 5 shows the resulting fitness evolution over 200 generations for every combination of mask size and corner weight, and Fig. 6 shows the 14 Average temperature  ഥ𝑻   
+
+> Average temperature 𝑇 𝑎vg (K)
+> Density ( -)
+
+Temperature non -uniformity  𝑻 𝒖𝒏𝒊   
+
+> Temperature non -uniformity 𝑇 𝑢ni (K)
+
+Pressure drop  𝜟𝒑    
+
+> Pressure drop Δp (Pa)
+> Density ( -)
+> Corner count
+> Type A
+> Type B
+
+Corner count  𝒏 𝒄𝒐𝒓𝒏𝒆𝒓 Figure 3: Stage 1. Distribution of the four CFD-labelled response quantities over the generated population ( N =2 ,000 
+
+layouts, each assembled under both routing conventions). The two routing types differ in level on the flow-coupled quantities ( Tavg , ∆p) but almost coincide on Tuni and corner count, which depend on the channel skeleton rather than on how it is connected to the inlet and outlet. 
+
+15 T_avg:  𝑹 𝟐 = 0.998,  MAE= 0.0038  K
+
+CFD  𝑇 𝑎vg (K) 
+
+𝚫𝐩: 𝑹 𝟐 = 𝟎. 𝟗𝟗𝟕, 𝐌𝐀𝐄 = 𝟎. 𝟓𝟎𝟔𝟒𝐏𝐚 
+
+CFD  Δp  (Pa) 
+
+CFD ground -truth score 
+
+A: R 2=0.994 , MAE= 0.014 
+
+B:  R2=0.994 , MAE= 0.014 
+
+> Type -A (N= 2000 )
+> Type -B (N= 2000 )
+> y=x
+> Surrogate  𝑇 𝑎vg (K)
+
+𝐓 𝐮𝐧𝐢 ∶ 𝑹 𝟐 = 𝟎. 𝟗𝟗𝟕, 𝐌𝐀𝐄 = 𝟎. 𝟎𝟎𝟑𝟐𝐊 
+
+CFD  𝑇 𝑢ni  (K) 
+
+> Surrogate  Δp  (Pa)
+> Surrogat e score Surrogate  𝑇 𝑢ni  (K)
+
+Surrogate score vs CFD ground truth Figure 4: Stage 1. Surrogate ↔ CFD agreement on the labelled population. Top left: the composite objective, for both routing types. Remaining panels: the individual physical responses. The dashed line is y=x.
+
+16 Generation 
+
+> surrogate score (lower = better)
+
+Generation 
+
+𝑤 𝑐𝑜𝑟𝑛𝑒𝑟 = 0.000 
+
+> surrogate score (lower = better)
+
+mask=16 
+
+mask=24 
+
+mask=32 
+
+# Fitness evolution: corner weight  × mask size (best-of-8/gen) 
+
+𝑤 𝑐𝑜𝑟𝑛𝑒𝑟 = 0.001 
+
+𝑤 𝑐𝑜𝑟𝑛𝑒𝑟 = 0.005  𝑤 𝑐𝑜𝑟𝑛𝑒𝑟 = 0.010 Figure 5: Stage 2. Fitness evolution under best-of-8 inpainting search, for each corner weight wcorner (panels) and mask size (curves). Lower is better. Search is monotone by construction (the best-so-far design is retained), so these curves show how quickly, not whether, the objective falls. 
+
+17 score =1.827  score =0.642  score =0.614  score =0.359  score =0.296 
+
+score =1.417  score =0.375  score =0.178  score =0.170  score =0.131 
+
+score =1.458  score =0.408  score =0.228  score =0.169  score =0.169 
+
+score =1.622  score =0.437  score =0.424  score =0.231  score =0.231 
+
+𝒘 𝒄𝒐𝒓𝒏𝒆𝒓 
+
+= 𝟎. 𝟎𝟎𝟎 
+
+𝒘 𝒄𝒐𝒓𝒏𝒆𝒓 
+
+= 𝟎. 𝟎𝟎𝟏 
+
+𝒘 𝒄𝒐𝒓𝒏𝒆𝒓 
+
+= 𝟎. 𝟎𝟎𝟓 
+
+𝒘 𝒄𝒐𝒓𝒏𝒆𝒓 
+
+= 𝟎. 𝟎𝟏𝟎 
+
+Gen 0  Gen 50  Gen 100  Gen 150  Gen 200 Figure 6: Stage 2. Channel layouts at generations 0, 50, 100, 150 and 200 for each corner weight (mask =32 ), with surrogate scores. Raising wcorner visibly suppresses staircase-like corner structure, which is what the term is intended to penalize, at the cost of a higher achieved score under the composite objective. 
+
+18 corresponding layouts. Two observations matter for the rest of the paper. First, unguided search is already strong: over 200 generations the surrogate score falls from 1.417 to 0.131 at wcorner =0 ,and the corresponding physical quantities improve consistently ( Tavg 337 .998 → 337 .656 K, Tuni 
+
+0.9165 → 0.6566 , ∆p 334 .01 → 288 .96 Pa, corner count 49 → 35 , for mask =32 ). A learned policy therefore has to justify itself against a baseline far from trivial — though, as set out above, it is not asked to beat this number. Stage 2 spends 200 generations × 8 candidates = 1 ,600 diffusion calls to produce one finished design. Stage 3 spends 20 steps × 1 candidate = 20 calls, an 80 × smaller budget, and its ranking is computed by a single forward pass that invokes no diffusion at all. The question Stage 3 answers is therefore not “can a learned policy beat exhaustive search” but “when the edit budget is small, does knowing where to edit beat editing at random.” Second, mask size dominates convergence speed: mask =16 is consistently the slowest to converge across all four corner weights, foreshadowing the mask-size effect that reappears in Stage 3 (Table 4). An independent CFD check of Stage 2 designs confirms the direction of improvement for the two larger masks (paired, N =30 designs per mask: m24 p=0 .009 , m32 p=0 .012 ), but not for m16 
+
+(p=0 .240 ), where the surrogate-predicted gains do not reach physical significance at this sample size. Two caveats attach to these curves. They are surrogate scores, and late generations push designs toward the edge of the range the surrogate was trained on, where its error grows (§5.3.4); and because best-of-N retains the best-so-far design, the curves cannot rise, so they should be read as convergence rates, not as evidence that every generation improved the design. 
+
+5.3. Stage 3: the learned editing policy 
+
+Stage 3 asks whether ranking edit positions with a learned value model beats an unguided order-ing under the same edit budget. The subsections below answer that in four steps: the pre-registered held-out comparison, and how far its effect size moves across independent rollout seeds (§5.3.1); which axis the advantage actually lives on — the inference-time risk level rather than the architec-ture — what it costs in seed-to-seed consistency, and how it degrades when the conditioning value disagrees with the objective being scored (§5.3.2–§5.3.3); whether the surrogate-level advantage survives CFD (§5.3.4); and what the learned quantile function is, and is not, good for (§5.3.5). 
+
+5.3.1. Held-out improvement across seven mask configurations 
+
+The pre-registered headline condition beats random editing in six of seven mask configurations (Table 3); the seventh, m32 , misses at p=0 .063 and is reported as a borderline null instead of being omitted. Pooling all seven conditions by random-effects meta-analysis gives a mask-averaged effect of ∆= + 0 .0674 (95% CI [0 .0402 , 0.0946] , z=4 .86 , p=1 .2 × 10 −6), which agrees with the per-mask table by construction (same condition definition) and is the number we quote as “the agent beats random editing on average.” Two features of this pooling belong alongside it. The heterogeneity is substantial ( I2=69 .4% ): the seven mask configurations do not share one common effect size, and the pooled value averages over configurations that genuinely differ, as Fig. 7 shows directly as well. The seven effects are also not seven independent samples, since every configuration is evaluated on the same fixed 100 held-out designs and their sampling errors are therefore correlated. The mixed-effects model of §5.3.2, which pools all 15 ,200 rows with an image random intercept and models that shared structure explicitly, reaches the same conclusion, and we treat it as the check on this one. That model reports only main effects (Table 4); we do not add a mask ×risk interaction 19 Table 3: Pre-registered headline condition (IQN, risk-seeking, w=0 .001 ) vs. random, per mask, held-out N =100 ,20-step paired rollout, fixed-effect pooling over three training seeds, a single rollout seed (seed #1). “mm” denotes the union of all three single masks and “pair( a,b)” the union of two. Action space P = number of candidate edit positions for that mask configuration. 
+
+Mask P ∆ (agent − random) z p
+
+m16 169 +0 .0441 2.59 0.0096 
+
+m24 121 +0 .0545 2.47 0.0136 
+
+m32 81 +0 .0415 1.86 0.063 
+
+mm (16+24+32) 371 +0 .0876 4.03 5.5 × 10 −5
+
+pair(16,24) 290 +0 .1389 6.51 7.8 × 10 −11 
+
+pair(24,32) 202 +0 .0650 3.16 0.0016 
+
+pair(16,32) 250 +0 .0633 2.75 0.0060 
+
+term here because the question it answers is whether architecture identity retains a main effect once mask and risk are controlled for, not how the risk effect varies mask by mask, which Table 3 and Fig. 11 already report directly. The action-space size P scales with mask footprint as expected (P16+24+32 = P16 + P24 + P32 exactly, confirming the multi-mask action space is the union of the single-mask spaces). The Table 3 headline number, like the rest of Table 3, is measured at a single, pre-registered DDPM rollout seed (seed #1). Because the environment transition is itself stochastic (§3.4), we additionally measured the headline configuration (pair(16,24)) at five independent rollout seeds (seeds #1–#5). The pre-registered seed, one of the five, gives ∆= + 0 .1317 ; across the five the range is [+0 .0537 , +0 .1317] (mean +0 .094 , s.d. 0.031 ), and the seed-averaged, per-image paired comparison gives t=3 .72 , p=3 .3 × 10 −4, a 63/100 win rate. The corresponding spread across the three training seeds, a separate axis, is given in the supplementary material (§S4). The effect is present at every rollout seed tested; what varies is its size. Table 3 — the pre-registered protocol, one rollout seed — remains the reporting basis throughout, so that every configuration in this paper is quoted on the same footing, with the seed range reported beside it rather than folded into the headline: on this configuration the pre-registered seed is the largest of the five, and the seed-averaged estimate is +0 .094 , some 30% below the single-seed value measured at the same training seed ( +0 .1317 ). Extending the same measurement to a consecutive block of 24 rollout seeds (seeds #1–#24) leaves that picture unchanged, with a positive effect in all 24 and a 24-seed average of 
+
++0 .083 (p=1 .8 × 10 −4), consistent with the five-seed spread reported here. The same single-rollout caveat applies to the other six mask configurations and to the pooled estimate above. 
+
+5.3.2. Factor decomposition of the headline effect 
+
+Table 4 decomposes the headline effect. Architecture identity, whether the residual is IQN’s, FQF’s, DQN’s scalar variant or absent entirely (ridge-only), has no significant main effect once mask and risk level are accounted for. The measurable benefit sits on the risk axis: risk-seeking is a large, highly significant effect, risk- averse a borderline positive one, consistent with the per-mask 20 Table 4: Mixed-effects decomposition of held-out improvement by factor (image random intercept; reference levels: mask = m16 , architecture = random baseline, risk = neutral, w=0 .001 ). IQN and FQF are estimated from three training seeds at the matched cell (supplementary §S1); DQN and ridge-only rest on a single training seed each. 
+
+Factor Level Coefficient p
+
+Mask (all levels, vs. m16 ) +0 .079 to +0 .139 all < 10 −20 
+
+Risk seeking +0 .0471 9.5 × 10 −15 
+
+Risk averse +0 .0118 0.053 (borderline) 
+
+w 0.005 −0.0202 3.2 × 10 −4
+
+w 0.010 −0.0319 1.2 × 10 −8
+
+Architecture ridge-only / DQN / IQN / FQF +0 .001 to +0 .014 all ≥ 0.32 
+
+pattern in §5.3.1, where the winning configuration is risk-seeking in every mask that has a significant winner. The supplementary material (§S1) gives the per-arm comparison behind the architecture row, together with the full post-hoc grid from which the same conclusion can be read directly. One qualification belongs with this row: a targeted three-seed comparison of IQN against FQF at the matched pre-registered cell, a more powerful test than the pooled factor above because it pairs the two architectures on the same designs, does separate them, with IQN ahead in five of seven mask configurations and tied in the other two (supplementary material, §S1). The factor model says architecture is not where the large effect lives; it does not say the architectures are identical, and at the operating point we deploy they are not. §5.3.3 measures what is traded away when that dial is turned toward seeking. 
+
+5.3.3. Risk vs. seed-to-seed consistency           
+
+> Table 5: Within-mask correlations of the seed-to-seed spread with the three factors that can be set at or before deployment. The seed-spread ratio is random_std / agent_std over K=5 rollout noise seeds ( N=20 images per condition); >1means the agent’s outcomes vary less than random’s. The first and third rows pool the seven mask configurations at all three conditioning values ( n=63 cells); because the random arm is a single shared baseline within a mask, both are equivalent to statements about the agent’s own spread. The second row is measured against that spread directly and over the three single-mask configurations ( n=27 ), since the action space is a property of the mask configuration and the paired and multi-mask settings do not lie on the same axis.
+
+Comparison Spearman ρ p
+
+Risk level (averse →neutral →seeking) vs. seed-spread ratio −0.564 1.5 × 10 −6
+
+Mask size vs. agent seed spread (single masks) +0 .833 7.1 × 10 −8
+
+Corner weight w (conditioning input) vs. seed-spread ratio +0 .023 0.86 (n.s.) Moving the risk dial from averse toward seeking increases seed-to-seed variance in every mask configuration tested (7/7): the agent buys mean improvement at the cost of consistency. Mask size moves both axes together and in the same direction: across the single-mask configurations a 21 larger mask brings both a larger mean improvement ( ρ= + 0 .646 , p=2 .7 × 10 −4) and a larger seed spread ( ρ= + 0 .833 ), measured on the same repeated-seed campaign. Mask size thus sets a floor on achievable consistency, and the risk level moves within it. The corner weight w, by contrast, is not correlated with seed spread at all ( ρ=0 .023 , n.s.): it moves the mean (Table 4) but not the variance axis. One caveat concerns the level of these ratios. They are measured with the scoring objective held at w=0 .001 while the conditioning input is swept (supplementary §S5); a follow-up campaign that instead matches the scoring objective to the conditioning value, for the agent arm only since the random baseline is not rescored, reproduces the direction throughout, but returns a 
+
+lower ratio in all 42 cells of the grid. Because that follow-up rescores one of the two arms and not the other, it bears on the level of the ratio rather than on its ordering. The ordering that Table 5 rests on is therefore robust, while the absolute ratio levels reported here should be read as upper estimates. A second caveat applies to those levels for a different reason: the two arms carry different sources of seed-to-seed variation. The agent visits a fixed sequence of positions, so its spread reflects the generator alone, whereas the random arm re-draws its positions at every seed and its spread therefore also contains the variability of that choice. That is the comparison a practitioner actually faces, since random editing does land elsewhere each time, but the level should not be read as a measure of robustness to generator noise. The correlations in Table 5 are unaffected by this: within a mask the random arm is a single shared baseline, so the risk and corner-weight rows are equivalent to statements about the agent’s own spread. Seed spread ratio through percentile (K=8 seeds)                                                           
+
+> Δ-0.30
+> pair[16,24], risk-seeking
+> ratio > 1: 10/19 (median 1.08) |Δ > 0: 13/19 (mean +0.15)
+> ρ(baseline): ratio -0.34 (p=0.16), Δ 0.26 (p=0.27)
+> seed-spread ratio
+> σ(random) / σ(IQN)
+> P5 P15 P25 P35 P45 P55 P65 P75 P85 P95
+> 0.125
+> 0.25
+> 0.5
+> 1
+> 2
+> 4
+> 8
+> Δ improvement (IQN − random)
+> −1.00
+> −0.75
+> −0.50
+> −0.25
+> 0.00
+> 0.25
+> 0.50
+> 0.75
+> 1.00
+> pair[24,32], risk-seeking
+> ratio > 1: 18/19 (median 1.66) |Δ > 0: 10/19 (mean +0.07)
+> ρ(baseline): ratio 0.31 (p=0.20), Δ -0.23 (p=0.34)
+> P5 P15 P25 P35 P45 P55 P65 P75 P85 P95
+> pair[16,32], risk-seeking
+> ratio > 1: 15/19 (median 1.44) |Δ > 0: 7/19 (mean -0.04)
+> ρ(baseline): ratio 0.00 (p=0.99), Δ -0.06 (p=0.81)
+> seed-spread ratio
+> σ(random) / σ(IQN)
+> P5 P15 P25 P35 P45 P55 P65 P75 P85 P95
+> 0.125
+> 0.25
+> 0.5
+> 1
+> 2
+> 4
+> 8
+> Δ improvement (IQN − random)
+> −1.00
+> −0.75
+> −0.50
+> −0.25
+> 0.00
+> 0.25
+> 0.50
+> 0.75
+> 1.00
+> multi-mask (16,24,32), risk-averse
+> ratio > 1: 17/19 (median 1.85) |Δ > 0: 8/19 (mean +0.04)
+> ρ(baseline): ratio -0.47 (p=0.04), Δ -0.19 (p=0.45)
+> P5 P15 P25 P35 P45 P55 P65 P75 P85 P95
+> ratio > 1 : IQN more consistent ratio < 1 : Random more consistent Δ improvement (right axis) ratio = 1 ≡ Δ = 0
+> Δ 0. 63
+> Δ-0. 26
+> Δ 0. 38
+> Δ 0. 69
+> Δ-0. 39
+> Δ 0. 44
+> Δ-0. 68
+
+Figure 7: Seed-to-seed spread across the held-out improvement range. Held-out images are ordered by improvement and divided into 19 percentile slices. Bars show the seed-spread ratio σrandom /σ IQN across eight independent DDPM rollout seeds, and the line shows the corresponding improvement ∆. The dashed line indicates ratio = 1 and ∆ = 0 .
+
+Fig. 7 restricts to the four mask configurations with a significant mean effect, panelled by mask 22 composition, pairs first; both the bars and the line for a given panel come from the same K=8 
+
+rollouts. The two axes are scaled so that ratio =1 and ∆=0 coincide on the dashed reference, above which the agent is the better choice under either encoding — blue marks a slice where the agent is more consistent, red one where random editing is, and the grey numbers in each panel’s corners give ∆ at the first and last slice. Two axes that are easily conflated come apart here: pair(24,32) is the most consistent configuration (ratio > 1 in 18/19 slices) but wins only 10/19 slices; pair(16,24), the configuration with the largest mean effect in Table 3, wins the most slices (13/19) while being the weakest on the consistency axis (10/19); and pair(16,32) is consistent but does not improve (15/19 vs. 7/19). Across the four configurations the two measures are not correlated (Spearman 
+
+ρ= − 0.18 , p=0 .13 , n=75 slices). Every configuration contains both favourable and unfavourable slices, so no configuration performs uniformly well, and the aggregate effects of Table 3 are averages over exactly this kind of mixture. One multi-mask slice substitutes the nearest edited design in the same ranking, because at that percentile the agent completes no net edit in any rollout, leaving 
+
+σIQN =0 and the ratio undefined — a ratio obtained by not acting is not consistency in any useful sense. The percentile slices are descriptive only: each slice is a single image and individual points should not be read as significance tests; all significance claims instead use the pooled N =100 results of Table 3. Fig. 7 shows that this consistency behaviour is not a property of a few favourable designs. It holds across the full improvement range of the held-out set and in every mask configuration with a significant mean effect, and it makes visible where it does not hold, so the single-design illustrations that follow can be read against the population they are drawn from rather than in place of it. Because the same checkpoint is also conditioned on w at inference (§3.7), we additionally swept the conditioning value away from the scoring objective it was trained under; the mismatch degrades performance, and the detailed sweep is reported in the supplementary material (§S5). Fig. 8 gives the first single-design illustration, on the same held-out design that §5.3.4 solves with CFD. Moving the risk band from averse to seeking changes which sites the static policy visits first, and the three rollouts reproduce, on one design, the population-level ordering of Table 5: the risk-seeking rollout reaches the lowest step-20 score and the risk-averse rollout the highest, with the seed-to-seed spread narrowing in the same direction. All three settings improve on the unedited baseline in every rollout seed, against six of eight for random editing. 
+
+5.3.4. CFD verification of the deployed policy 
+
+§5.1 established surrogate fidelity on the labelled population. Stage 3 needs a stronger claim, because the policy is evaluated on edited designs, which the surrogate never saw during training and which the policy actively steers toward the objective. We therefore verified the surrogate against CFD on 240 policy-edited designs (four representative conditions × 30 held-out images × {agent, random}). • Decision-level agreement, edited designs. Across the 240 CFD-verified designs, the surrogate and CFD agree on the sign of agent-vs-random improvement in 116 /120 paired comparisons ( 96 .7% , 95% CI [91 .7, 98 .7] , p=1 .3 × 10 −29 vs. chance); because these 120 com-parisons reuse the same 30 held-out designs across four conditions rather than drawing on 120 independent designs, this interval assumes independence across conditions — the same correlated-sample caveat noted for the mask-pooled estimate of §5.3.1 — and should be read 23 Predicted  Rollout 
+
+> Top-5 box line:
+> dotted = mask 16, solid = mask 24
+
+Risk-averse  ഥQrisk (p) 
+
+> Baseline = 1.3713
+
+Risk-neutral  ഥQrisk (p) 
+
+> Baseline = 1.3713
+
+Risk-seeking  ഥQrisk (p) 
+
+> Baseline = 1.3713
+
+Risk-conditioned edit-site selection and rollout performance 
+
+0.9134 ±0.1 159 
+
+1.1097 ±0.30 40 
+
+0.8100 ±0.1 259 
+
+1.1097 ±0.3040 
+
+0.7096 ±0.1 578 
+
+1.1097 ±0.30 40 Figure 8: Risk-conditioned edit-site selection and rollout performance on held-out design 7 (pair(16,24), IQN, 
+
+w=0 .001 ). Each row is one deployed risk band. Left: the position-value surface ¯Qrisk (p) of Eq. (5) over the mask-16 candidate layer, overlaid on the unedited skeleton, with the five positions the static policy visits first under that band (numbered; dotted outline mask-16, solid outline mask-24). Right: surrogate score against edit step, mean 
+
+±1 standard deviation over the same eight independent DDPM rollout seeds as Fig. 9, with random editing (grey) and the unedited-baseline score (dotted line) as references; the three score panels share one y-axis. Step-20 means are 0.913 (averse), 0.810 (neutral) and 0.710 (seeking) against 1.110 for random; every IQN rollout improves on the baseline under all three bands, random in six of eight. The seeking-band panel is the family solved with CFD in Table S4 of the supplementary material. 
+
+24 descriptively. Magnitude agreement is Spearman ρ=0 .982 , Pearson r=0 .964 (within-image paired Pearson r=0 .962 ). A Bland–Altman analysis shows the surrogate is systematically more optimistic for worse-scoring designs (proportional bias r= − 0.797 ), which we flag as a limitation of the calibration, not the ranking. • Advantage is not exploited surrogate error. Correlating the per-image policy advantage against four independent definitions of surrogate error, on the official N =100 held-out rollout across three masks, gives |r| < 0.11 in all sixteen tests (Holm-adjusted p ≥ 0.83 ): the measured advantage is statistically unrelated to how wrong the surrogate is on that image, which argues against the concern that the policy is simply learning to exploit surrogate mis-scoring. Both checks hold within the deployment range : the surrogate’s error grows 3.2–3.4× once the pressure-drop prediction is extrapolated outside the training scaler’s range, and both verification sets here stay inside that range by construction. The two checks above are population-level, sampling one edited design per image. To confirm that the surrogate scorer behind the seed-spread claims of §5.3.3 tracks CFD seed by seed, and not only design by design, we solved one K=8 rollout family in full — an example held-out design, the unedited baseline, and both arms at step 20 for all eight rollout seeds (17 designs; Fig. 9, full detail in Table S4 of the supplementary material). The two scorers agree closely (score mean absolute error 
+
+0.051 across a range of 1.40 , r=0 .989 ; 0.03 K in mean temperature, 3.7 Pa in pressure drop) and put the agent ahead by a similar margin on both (surrogate +0 .66 , CFD +0 .70 , against +0 .26 /+0 .20 
+
+for random), agreeing on the sign of the agent–random gap in seven of eight seeds and returning a seed-spread ratio near two on both scorers ( 1.93 surrogate, 1.81 CFD); with only eight seeds the 
+
+F (7 , 7) interval on that ratio spans roughly 2.2× either way and includes 1, so no consistency claim rests on this one design — that is what Fig. 7, across the full held-out set, is for. In physical units the agent lowers mean temperature by 0.26 K and pressure drop by 9.6% in all eight seeds, against 
+
+0.08 K and 3.6% for random, which raises the corner count instead of lowering it ( 51 → 55 .6 vs. 
+
+51 → 46 .3); the temperature swing is small in absolute terms but not on this problem’s scale, since the labelled population spans only about 0.6 K in Tavg (§5.1), so this one edit covers roughly two-fifths of that range, while uniformity is essentially unchanged ( 0.7313 → 0.7269 ), consistent with it being the quantity the agent trades away rather than improves. These are one design’s numbers, quoted to fix the scale of the effect rather than to estimate its size. The same family also shows what the deterministic policy narrows and what it does not: all eight rollouts share a bit-identical action sequence, yet end in eight distinct final layouts, because the generator stays stochastic at every visited site — the policy narrows the spread of outcome 
+
+quality , not the diversity of designs, with the agent’s eight CFD improvements clustering at +0 .70 
+
+(s.d. 0.18 ) while random’s spread ( 0.33 ) exceeds its own mean ( 0.20 ). Part of that gap is structural rather than learned: the random arm re-draws positions at every seed and so carries that variability on top of the generator’s, while the agent’s fixed visiting order does not, so this one design cannot separate committing to a fixed order from committing to a good one; that separation is available on the risk axis instead (§5.3.3), where moving the dial from averse to seeking widens the agent’s own seed-to-seed spread in all seven mask configurations, so it is which order is fixed, not merely that one is, that moves consistency. 25 baseline = 1.3713                  
+
+> 1.1097 ±0.3040
+> 0.7096 ±0.1578
+> baseline = 51.0
+> 55.6 ±9.0
+> 46.2 ±2.9
+> pair[16,24] IQN w = 0.001 seeking ·K = 8 rollout seeds seed-spread ratio score =1.93 , corner =3.15
+> Random (mean ± sd)
+> IQN (mean ± sd)
+> Step
+> Surrogate score (lower is better)
+> 0510 15 20
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> 1.2
+> 1.4
+> 1.6
+> 1.8
+> 2.0
+> Step
+> Corner count (binarised skeleton)
+> 0510 15 20 35
+> 40
+> 45
+> 50
+> 55
+> 60
+> 65
+> 70
+
+Figure 9: The K=8 rollout family solved in full (held-out design 7, pair(16,24), risk-seeking): surrogate score (left) and corner count (right) against edit step, mean ±1 standard deviation over eight independent DDPM rollout seeds — not a best-of-eight selection. CFD was solved at step 0 and step 20 only, so it appears in Table S4 of the supplementary material rather than as a curve here. 
+
+5.3.5. Supervised regression versus TD training 
+
+The design decision of §3.6 rests on a controlled comparison, holding the network architecture and offline per-position outcome labels fixed and fitting the same quantile function by (i) temporal-difference learning with a bootstrapped target, and (ii) supervised pinball-loss regression, the rule used everywhere else in this paper. The two rank candidate positions equally well (mean Spearman 
+
+ρ from −0.012 to +0 .088 for the TD variants and +0 .145 for the supervised critic, all intervals overlapping), but supervised regression is markedly better-calibrated along τ : on a coarse five-point 
+
+τ grid (the grid used by the TD comparison harness), quantile-crossing falls from 9–32% under TD to 1.0% under supervised training. Full tables, including a 100-point diagnostic τ grid on which all three critics degrade to 41 –48% crossing, are given in the supplementary material (§S6). Even the supervised critic actually deployed, however, is not a calibrated probability distribu-tion: a probability-integral-transform (PIT) test rejects uniformity strongly across all six significant conditions of Table 3 (Kolmogorov–Smirnov p ≈ 0; PIT mean 0.36 –0.41 against an ideal of 0.5), 1
+
+and quantile-crossing within the deployed τ windows remains 7–20% . Isotonic recalibration removes crossing only by construction and does not fix the underlying miscalibration; it also significantly 
+
+hurts the ranking-based decision quality it is meant to preserve ( p=0 .00065 –0.0024 ). We therefore use the quantile function only as a ranking device and a mean-improvement/consistency dial, not as a calibrated probability object. 
+
+> 1
+
+Computed on the validation split of the labelled training population, the only split with per-position outcome distributions; the deployment evaluations of §5.3.1 use the separate held-out set (§4.1). 
+
+26 6. Discussion 
+
+6.1. Interpretation of the results Ranking-based decisions versus calibrated absolute values. A single pattern recurs across §5: deci-sions that depend only on ordering (argsort the position-value map, rank agent vs. random by sign, use τ to move along a frontier) are robust, while decisions that require a calibrated absolute value 
+
+(a probability-integral-transform test, a coverage guarantee) are not. The comparison in §5.3.5 is the clearest instance: for this task, where an offline pool of labelled edit outcomes is cheap to build and a step’s outcome does not depend on the trajectory that led to it, sequential value-function training bought nothing on ranking and cost calibration, so a distributional critic should be checked along τ , not only across actions, since the metric practitioners usually report (rank agreement with ground truth) is blind by construction to the failure mode that matters for a risk-sensitive deploy-ment. The same split shows up in the per-position accuracy itself: the frozen linear term explains almost none of the per-position variance (univariate correlations below 0.04 , Table 1), yet ranking positions by it alone already wins against random editing in five of the seven mask configurations — a count that overstates the evidence, since those seven configurations yield only five distinct ridge-only rollouts and no individual cell is significant (supplementary material, §S1). Two measurements narrow that gap without closing it: the advantage is front-loaded on the faster mask configurations, realised within the first five of 20 edits (the horizon stays at 20 because the slowest configuration, pair(24,32), does not realise its advantage until close to the full horizon); and on a held-out probe set for m24 the correlation between predicted and realised position value is close to zero over all positions but roughly four times larger once positions where no edit is realisable are excluded — the model orders editable positions weakly but does not identify which positions are editable at all. Both are narrowing evidence, not a full mechanism, and come from a single mask configuration and a probe budget that differs from deployment. 
+
+Risk dial τ versus corner-weight conditioning w. This is why we present τ as a dial rather than as a claim that risk-seeking is the better setting: §5.3.2 and §5.3.3 together show it moves the deployed policy along a mean-improvement/consistency frontier, and which end of that frontier is preferable is a deployment choice, not a result. The corner weight w does not behave this way; it moves the mean without moving the variance axis, so of the two inference-time conditioning inputs only τ is a frontier dial. Mask size sets a floor on that frontier that no risk setting escapes: the median seed spread rises from 0.070 (m16 ) to 0.158 (m24 ) to 0.173 (m32 ), and larger masks buy their higher mean improvement by paying into that floor (mask size correlates +0 .646 with mean improvement and +0 .833 with the spread across single-mask configurations), making it the coarse control, chosen before deployment and not adjustable afterwards (Fig. 10). Within a fixed mask, moving τ from averse to seeking lowers the seed-spread ratio monotonically in every configuration tested (Fig. 11), trading consistency for mean improvement along the frontier mask size positioned. A high seed-spread ratio is not a general claim that a configuration is better, only that it is more consistent than its own random baseline, and the ratio is not bounded below by one: the m32 configuration crosses below ratio =1 at risk-seeking, meaning the policy is less consistent across rollout seeds than random editing there even though it retains a mean-improvement advantage — exactly the combination a single-number report of mean improvement would hide. 27 m16 
+
+m24 
+
+m32 
+
+mm 
+
+[16,24] 
+
+[24,32] 
+
+[16,32] 
+
+mean improvement 
+
+> seed spread  (lower is better)
+
+m16  median 0.0698 
+
+m24  median 0.1583 
+
+m32  median  0.1733 
+
+# Mask size sets the seed-spread floor Figure 10: The improvement–consistency plane, replotting the measurements of §5.3.3. Each marker is one measured condition; dotted lines are the median seed spread per single-mask configuration. Mask size sets a floor on achievable seed spread ( ρ=+0 .833 between mask size and the agent’s seed spread, Table 5), and mean improvement rises with mask size as well ( ρ=+0 .646 ), so the two move together along this axis. Improvement is the held-out mean at N =100 ;the spread is from the repeated-seed campaign of §5.3.3. 
+
+28 seed spread ratio = 𝜎 𝑟and /𝜎 agent  (higher is better)  Trade-off between risk and seed spread ratio 
+
+averse  neutral  seeking Figure 11: The inference-time risk dial along the same frontier, replotting §5.3.3. Each line is one mask configuration moved from risk-averse through neutral to risk-seeking; the ratio falls in every configuration ( ρ=−0.564 , Table 5). The dashed line marks parity with the random baseline: m32 at risk-seeking falls below it. 
+
+29 Single-stroke connectivity and the realised-edit rate. Because a step only changes the layout when a sampled candidate satisfies the single-stroke constraint (§4.4), part of the edit budget produces no change at all. This is one reason every position is scored and ranked rather than sampled: ranking consumes no additional generative calls, so the budget can be spent where the model rates the prospects highest instead of on arbitrary positions. We do not attach a number to the realised-edit rate here: it is not logged uniformly across the campaign, so any single figure we could quote would rest on a different measurement basis than the headline results, and pairing the two would invite exactly the mismatched comparison this paper is otherwise careful to avoid. The single-stroke constraint does not make the search space too restrictive to improve in: under the same constraint, unguided best-of-8 search lowers the surrogate score from 1.417 to 0.131 over 200 generations (§5.2), while CFD confirms the direction for m24 and m32 . This indicates that substantial improvement remains possible within the constrained design space. 
+
+6.2. Limitations Surrogate extrapolation. The CFD checks of §5.3.4 license the surrogate as a decision proxy only within the pressure-drop range it was trained on, where its error is small and its sign agreement with CFD is high. Outside that range the error grows several-fold, so staying in-range is an explicit deployment gate rather than an incidental property of these particular test sets. 
+
+Scope: operating point, seed coverage, and architecture comparison. This study covers a single phys-ical operating point (fixed heat flux). A corner-weight conditioning sweep is confounded with a scoring-objective mismatch (supplementary §S5), and the quantile function itself is not calibrated (§5.3.5). The headline effect size depends measurably on which of several plausible rollout seeds is used (§5.3.1), where the pre-registered seed is the largest of the five measured. For the DQN and ridge-only arms, the architecture comparison still rests on a single training seed — the IQN-vs-FQF comparison is now three-seed at the matched cell (supplementary material, §S1), but DQN and ridge-only are not. This study also compares only against random editing; a published external baseline (Kim & Han, 2023) was judged out of scope for the reasons given in §2.1. 
+
+6.3. Implications for practice For generative-design agents. Practitioners deploying a similar system should restrict themselves to ranking-based uses of a learned distributional value function unless they have separately verified calibration; any use requiring calibrated absolute probabilities (e.g. P (improvement > t ), or an adaptive stopping rule) should not be attempted on top of a function like ours without first solving the calibration problem, which we did not solve. 
+
+For offline outcome pools. The same task structure that made supervised regression preferable here — a cheap-to-build offline pool of labelled outcomes, and a step’s outcome that does not depend on the trajectory that led to it — recurs in other generative-design editing problems; where it holds, sequential training is a cost to justify, not a default. 
+
+For surrogate verification. A deployment that begins to produce designs outside a surrogate’s train-ing range should re-verify against the ground-truth solver before trusting its rankings, rather than assuming in-range fidelity extends to out-of-range decisions. 30 7. Conclusion 
+
+We presented a cooling-channel design-support system that uses the query interface of a distribu-tional value function, IQN’s τ -conditioned implicit quantile network, without its usual reinforcement-learning training loop, fitting a frozen linear term plus a residual by supervised regression on offline edit outcomes and deploying it as a deterministic, one-shot ranking policy. On a held-out, paired, 100-image evaluation the policy beats random editing in six of seven mask configurations, with a headline effect of +0 .1389 (p=7 .8 × 10 −11 ) at the pre-registered protocol, an effect size that falls to 
+
++0 .094 when averaged over five rollout seeds; a single inference-time risk dial moves the policy along a mean- improvement/consistency frontier that architecture identity does not touch; and the surro-gate objective that drives training is CFD-verified to be a valid decision proxy within its deployment range. The failures are reported with the same care as the successes: temporal-difference training measurably hurts distributional calibration relative to supervised regression on this task, the learned quantile function fails a calibration test regardless of training method, and conditioning the policy on a value that does not match the true scoring objective costs performance. The proposed frame-work improves design quality under a constrained single-stroke topology while explicitly exposing the trade-off between improvement and consistency. Beyond this application, we conjecture that the same recipe — fitting a value function by supervised regression when an offline outcome pool is available, using it only for the decisions that survive miscalibration, and verifying a learned surro-gate against physics before trusting a policy trained on it — extends to other topology-constrained generative-design problems that share the two conditions of §6.3: a cheap-to-build offline pool of labelled outcomes, and a step’s outcome that does not depend on the trajectory that produced it. 
+
+Declaration of competing interest 
+
+The authors declare that they have no known competing financial interests or personal relation-ships that could have appeared to influence the work reported in this paper. 
+
+Declaration of generative AI use 
+
+During the preparation of this work the authors used a generative AI tool to translate the authors’ native-language drafting into English. After using this tool, the authors reviewed and edited the content as needed and take full responsibility for the content of the published article. 
+
+Acknowledgments 
+
+This work was supported by grants from the Ministry of Science and ICT (GTL24033-000, N10250154, No. 2022-0-00986, and RS-2026-25537227), the Ministry of Trade, Industry and Energy (RS-2025-02317327 and RS-2025-25444634), the Ministry of Oceans and Fisheries (PET0050), and Korea Hydro & Nuclear Power Co., Ltd. (No. 8-Tech-07). 31 CRediT authorship contribution statement 
+
+• Leekyo Jeong: Conceptualization, Methodology, Software, Validation, Formal analysis, In-vestigation, Data curation, Writing – original draft, Writing – review & editing, Visualization. • Yoon Koo Lee: Investigation, Validation, Writing – review & editing. • Namwoo Kang: Supervision, Funding acquisition, Writing – review & editing. 
+
+Data availability 
+
+The data that support the findings of this study are not publicly available. They are available from the corresponding author upon reasonable request. 
+
+References 
+
+Artzner, P., Delbaen, F., Eber, J.-M., & Heath, D. (1999). Coherent measures of risk. Mathematical Finance , 9 (3), 203–228. Bellemare, M. G., Dabney, W., & Munos, R. (2017). A distributional perspective on reinforcement learning. Proceedings of Machine Learning Research (ICML) , 70 , 449–458. Benabdelaziz, K., Lebrouhi, B., Maftah, A., & Maaroufi, M. (2020). Novel external cooling solution for electric vehicle battery pack. Energy Reports , 6, 262–272. Black, K., Janner, M., Du, Y., Kostrikov, I., & Levine, S. (2024). Training diffusion models with reinforcement learning. International Conference on Learning Representations (ICLR) .Chen, C.-H., Yaji, K., Yamasaki, S., Tsushima, S., & Fujita, K. (2019). Computational design of flow fields for vanadium redox flow batteries via topology optimization. Journal of Energy Storage ,
+
+26 , 100990. Chow, Y., Ghavamzadeh, M., Janson, L., & Pavone, M. (2018). Risk-constrained reinforcement learning with percentile risk criteria. Journal of Machine Learning Research , 18 (167), 1–51. Dabney, W., Ostrovski, G., Silver, D., & Munos, R. (2018a). Implicit quantile networks for distribu-tional reinforcement learning. Proceedings of Machine Learning Research (ICML) , 80 , 1096–1105. Dabney, W., Rowland, M., Bellemare, M. G., & Munos, R. (2018b). Distributional reinforcement learning with quantile regression. AAAI Conference on Artificial Intelligence , 32 (1), 2892–2901. Ebbs-Picken, T., Romero, D. A., Da Silva, C. M., & Amon, C. H. (2024). Deep encoder–decoder hierarchical convolutional neural networks for conjugate heat transfer surrogate modeling. Applied Energy , 372 , 123723. Fan, Y., Watkins, O., Du, Y., Liu, H., Ryu, M., Boutilier, C., Abbeel, P., Ghavamzadeh, M., Lee, K., & Lee, K. (2023). DPOK: Reinforcement learning for fine-tuning text-to-image diffusion models. Advances in Neural Information Processing Systems (NeurIPS) , 36 , 79858–79885. 32 He, C., Zhang, Y., Gong, D., & Ji, X. (2023). A review of surrogate-assisted evolutionary algorithms for expensive optimization problems. Expert Systems with Applications , 217 , 119495. Ho, J., Jain, A., & Abbeel, P. (2020). Denoising diffusion probabilistic models. Advances in Neural Information Processing Systems (NeurIPS) , 33 , 6840–6851. Jarrett, A., & Kim, I. Y. (2011). Design optimization of electric vehicle battery cooling plates for thermal performance. Journal of Power Sources , 196 (23), 10359–10368. Jarrett, A., & Kim, I. Y. (2014). Influence of operating conditions on the optimum design of electric vehicle battery cooling plates. Journal of Power Sources , 245 , 644–655. Keramati, H., Sadeghi, M., & Jaiman, R. K. (2026). HeatGen: A guided diffusion framework for multiphysics heat sink design optimization. International Journal of Heat and Mass Transfer ,
+
+261 , 128579. Keramati, R., Dann, C., Tamkin, A., & Brunskill, E. (2020). Being optimistic to be conservative: Quickly learning a CVaR policy. AAAI Conference on Artificial Intelligence , 34 (04), 4436–4443. Kim, Y.-T., & Han, S.-Y. (2023). Cooling channel designs of a prismatic battery pack for electric vehicle using the deep Q-network algorithm. Applied Thermal Engineering , 219 , 119610. Lee, C. (2025). Thermofluid topology optimization of liquid-based cooling plate for lithium-ion battery pack of EVs. Energy , 323 , 135712. Liao, W., Huang, Y., Zheng, Z., & Lu, X. (2022). Intelligent generative structural design method for shear wall building based on “fused-text-image-to-image” generative adversarial networks. Expert Systems with Applications , 210 , 118530. Liu, Y., Chen, J., Feng, Y., & Pan, T. (2026). Point-wise attention digital twin modeling for full-field stress prediction in delivery testing of complex structures. Expert Systems with Applications ,
+
+330 , 133101. Lugmayr, A., Danelljan, M., Romero, A., Yu, F., Timofte, R., & Van Gool, L. (2022). RePaint: Inpainting using denoising diffusion probabilistic models. IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , 11451–11461. Ma, X., Chen, J., Xia, L., Yang, J., Zhao, Q., & Zhou, Z. (2025). DSAC: Distributional soft actor-critic for risk-sensitive reinforcement learning. Journal of Artificial Intelligence Research , 83 .Mazé, F., & Ahmed, F. (2023). Diffusion models beat GANs on topology optimization. AAAI Conference on Artificial Intelligence , 37 (8), 9108–9116. Mnih, V., Kavukcuoglu, K., Silver, D., Graves, A., Antonoglou, I., Wierstra, D., & Riedmiller, M. (2013). Playing Atari with deep reinforcement learning. arXiv preprint , arXiv:1312.5602. Oh, S., Jung, Y., Kim, S., Lee, I., & Kang, N. (2019). Deep generative design: Integration of topology optimization and generative models. Journal of Mechanical Design , 141 (11), 111405. 33 Pan, J., Feng, X., & Yu, H. (2026). Efficient and safe decision-making in reinforcement learning: One-step anticipatory policy selector with adaptive safety thresholds. Expert Systems with Appli-cations , 318 , 131850. Patil, S. R., Lokavarapu, B. R., & Thaliyanveedu, H. K. (2023). Optimization of battery cooling system used in electric vehicles. Journal of Energy Storage , 58 , 106299. Regenwetter, L., Nobari, A. H., & Ahmed, F. (2022). Deep generative models in engineering design: A review. Journal of Mechanical Design , 144 (7), 071704. Rockafellar, R. T., & Uryasev, S. (2000). Optimization of conditional value-at-risk. Journal of Risk ,
+
+2, 21–42. Srivardhan, G., Shaosen, S., Panda, B., Garg, A., Lougou, B. G., & Gao, L. (2026). AI-driven bioinspired cooling plate design for enhanced lithium-ion battery thermal management: integrat-ing topology optimization and deep learning. International Journal of Heat and Fluid Flow , 121 ,110477. Tamar, A., Glassner, Y., & Mannor, S. (2015). Optimizing the CVaR via sampling. AAAI Confer-ence on Artificial Intelligence , 29 (1). Tan, M., & Le, Q. (2021). EfficientNetV2: Smaller models and faster training. Proceedings of Machine Learning Research (ICML) , 139 , 10096–10106. Wan, S., Jiang, H., Guo, Z., He, C., Liang, X., Djilali, N., & Zhao, T. (2022). Machine learning-assisted design of flow fields for redox flow batteries. Energy & Environmental Science , 15 (7), 2874–2888. Wang, W., & Zhou, P. (2026). LLM-guided risk-sensitive reinforcement learning for smart factories in the scenario of human–robot symbiosis. Expert Systems with Applications , 299 , 130093. Wang, Y., Yu, J., & Zhang, J. (2023). Zero-shot image restoration using denoising diffusion null-space model. International Conference on Learning Representations (ICLR) .Wu, H., Coaty, J., Zong, Y., Azar, K., Minary-Jolandan, M., Tian, Z., & Xu, Y. (2026). Opti-mization of cold plates with asymmetric heat sources via a diffusion-model-driven digital twin. 
+
+Structural and Multidisciplinary Optimization , 69 (4), 85. Xu, Q., Deng, K., Jiang, C., Sun, F., & Huang, X. (2017). Composite quantile regression neural network with applications. Expert Systems with Applications , 76 , 129–139. Yaji, K., Yamasaki, S., Tsushima, S., Suzuki, T., & Fujita, K. (2018). Topology optimization for the design of flow fields in a redox flow battery. Structural and Multidisciplinary Optimization ,
+
+57 (2), 535–546. Yaji, K., Yamasaki, S., & Fujita, K. (2020). Multifidelity design guided by topology optimization. 
+
+Structural and Multidisciplinary Optimization , 61 (3), 1071–1085. 34 Yang, D., Zhao, L., Lin, Z., Qin, T., Bian, J., & Liu, T.-Y. (2019). Fully parameterized quantile function for distributional reinforcement learning. Advances in Neural Information Processing Systems (NeurIPS) , 32 .Yu, S. H., Sohn, S., Nam, J. H., & Kim, C.-J. (2009). Numerical study to examine the performance of multi-pass serpentine flow-fields for cooling plates in polymer electrolyte membrane fuel cells. 
+
+Journal of Power Sources , 194 (2), 697–703. Yu, Y., & Liu, Y. (2024). Physics-guided generative adversarial network for probabilistic structural system identification. Expert Systems with Applications , 239 , 122339. Yuksel, T., & Michalek, J. J. (2015). Effects of regional temperature on electric vehicle efficiency, range, and emissions in the United States. Environmental Science & Technology , 49 (6), 3974– 3980. Zheng, A., Gao, H., Jia, X., Cai, Y., Yang, X., Zhu, Q., & Jiang, H. (2024). Deep learning-assisted design for battery liquid cooling plate with bionic leaf structure considering non-uniform heat generation. Applied Energy , 373 , 123898. Zhong, Q., Gao, L., Li, W., & Garg, A. (2025). Transfer learning based topology optimization of battery cooling channels design for improved thermal performance. Applied Thermal Engineering ,
+
+263 , 125400. 35

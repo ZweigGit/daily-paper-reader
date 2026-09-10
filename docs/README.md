@@ -6,24 +6,30 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-09
-- 运行时间：2026-09-09 21:58:49 UTC
+- 最新运行日期：2026-09-10
+- 运行时间：2026-09-10 21:19:00 UTC
 - 运行状态：成功
-- 本次总论文数：1
-- 精读区：1
-- 速读区：0
+- 本次总论文数：3
+- 精读区：0
+- 速读区：3
 
 ### 今日简报（AI）
-今日精读1篇高分论文，聚焦物理场重建任务中扩散模型与确定性回归的适用性对比。核心看点：稀疏观测下扩散模型并非总是更优，其与回归方法各有优劣，需结合数据条件选择。建议普通读者先理解“何时选扩散模型”的判据，再深入实验细节。
-- 详情：[/202609/09/README](/202609/09/README)
+2026-09-10 日报速读 3 篇，聚焦湍流降阶建模、电池冷却流道设计与高雷诺数壁面湍流生成。最值得看的是混合 POD-自编码器做湍流降阶、以及风险感知生成式修复用于电动车电池冷却流道优化。普通读者可先读这两篇的摘要与方法图，重点看它们如何把物理约束嵌入生成模型。
+- 详情：[/202609/10/README](/202609/10/README)
 
 ### 精读区论文标签
-1. [Physical-Field Reconstruction from Sparse Observations: When Are Diffusion Models Preferable to Deterministic Regression?](/202609/09/2609.06135v1-physical-field-reconstruction-from-sparse-observations-when-are-diffusion-models-preferable-to-deterministic-regression)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：在Navier-Stokes流动等物理场上比较条件扩散与先验引导扩散在稀疏观测重建中的适用性
+- 本次无精读推荐。
 
 ### 速读区论文标签
-- 本次无速读推荐。
+1. [A Hybrid POD-Autoencoder Framework for Reduced Order Modeling of Turbulent Flow via Strategic Field Decomposition](/202609/10/2609.06992v1-a-hybrid-pod-autoencoder-framework-for-reduced-order-modeling-of-turbulent-flow-via-strategic-field-decomposition)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：基于自编码器的湍流降阶建模
+2. [Risk-Aware Generative Inpainting for Optimized Design Editing of EV Battery Cooling Channels](/202609/10/2609.08387v1-risk-aware-generative-inpainting-for-optimized-design-editing-of-ev-battery-cooling-channels)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：面向冷却流道设计的风险感知扩散修复
+3. [A stochastic modeling framework to generate 2-D rough-wall high-Reynolds-number turbulent boundary layers](/202609/10/2609.10236v1-a-stochastic-modeling-framework-to-generate-2-d-rough-wall-high-reynolds-number-turbulent-boundary-layers)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：随机生成模型生成湍流速度剖面
 
 
 <div class="dpr-home-promo-card">
