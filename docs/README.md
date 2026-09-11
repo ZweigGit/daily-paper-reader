@@ -6,30 +6,24 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-10
-- 运行时间：2026-09-10 21:19:00 UTC
+- 最新运行日期：2026-09-11
+- 运行时间：2026-09-11 21:58:28 UTC
 - 运行状态：成功
-- 本次总论文数：3
+- 本次总论文数：1
 - 精读区：0
-- 速读区：3
+- 速读区：1
 
 ### 今日简报（AI）
-2026-09-10 日报速读 3 篇，聚焦湍流降阶建模、电池冷却流道设计与高雷诺数壁面湍流生成。最值得看的是混合 POD-自编码器做湍流降阶、以及风险感知生成式修复用于电动车电池冷却流道优化。普通读者可先读这两篇的摘要与方法图，重点看它们如何把物理约束嵌入生成模型。
-- 详情：[/202609/10/README](/202609/10/README)
+今日仅速读 1 篇，精读为 0，重点落在流匹配与无分类器引导的粒子动力学几何分析（6.0/10）。该文从分阶段几何视角拆解生成采样中粒子如何随引导强度演化，适合想理解 CFG 机制而非只看效果的人。建议普通读者先把它当作概念地图，重点看几何直觉部分，再决定是否深挖公式细节。
+- 详情：[/202609/11/README](/202609/11/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [A Hybrid POD-Autoencoder Framework for Reduced Order Modeling of Turbulent Flow via Strategic Field Decomposition](/202609/10/2609.06992v1-a-hybrid-pod-autoencoder-framework-for-reduced-order-modeling-of-turbulent-flow-via-strategic-field-decomposition)  
+1. [Particle Dynamics of Flow Matching and Classifier-Free Guidance from a Stagewise Geometry Perspective](/202609/11/2609.06947v1-particle-dynamics-of-flow-matching-and-classifier-free-guidance-from-a-stagewise-geometry-perspective)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：基于自编码器的湍流降阶建模
-2. [Risk-Aware Generative Inpainting for Optimized Design Editing of EV Battery Cooling Channels](/202609/10/2609.08387v1-risk-aware-generative-inpainting-for-optimized-design-editing-of-ev-battery-cooling-channels)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：面向冷却流道设计的风险感知扩散修复
-3. [A stochastic modeling framework to generate 2-D rough-wall high-Reynolds-number turbulent boundary layers](/202609/10/2609.10236v1-a-stochastic-modeling-framework-to-generate-2-d-rough-wall-high-reynolds-number-turbulent-boundary-layers)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：随机生成模型生成湍流速度剖面
+   evidence：流匹配与引导的动力学理论分析
 
 
 <div class="dpr-home-promo-card">

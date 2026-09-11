@@ -1,0 +1,54 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-09-11T21:56:17.039865+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2609.06947v1",
+      "source": "arxiv",
+      "title": "Particle Dynamics of Flow Matching and Classifier-Free Guidance from a Stagewise Geometry Perspective",
+      "abstract": "Flow matching, together with classifier-free guidance (CFG), is widely used in generative modeling, yet much of the theoretical understanding remains distribution-wise. Since practical sampling follows individual trajectories, distribution-level guarantees alone do not fully capture how trajectories interact with the data geometry or how guidance reshapes it. To overcome this limitation, we establish a unified stagewise geometric theory of attraction and absorption for both continuous dynamics and explicit Euler discretization. Specifically, with $t\\in[0,1]$ running from noise to data, we show that unconditional flow trajectories are successively attracted toward a neighborhood of the global mean, the data convex hull, and a neighborhood of a possibly nonconvex local cluster. Across these stages, the corresponding distance satisfies a common contraction estimate, yielding an ${O}(1-t)$ decay of the distance in the final stage. For CFG, the same structure persists with an extrapolated mean, an inflated conditional convex hull, and, near the target cluster, the restored local geometry of conditional flow matching. We further show that a general time schedule $a(t)$ replaces the $O(1-t)$ decay by $O(1-a(t))$. Together, these results provide a unified particle-level geometric account of flow matching and CFG across continuous and discrete sampling.",
+      "authors": [
+        "Jian-Feng Cai",
+        "Zhengyi Su",
+        "Chao Wang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-09-07T02:33:36+00:00",
+      "link": "https://arxiv.org/pdf/2609.06947v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Theory of flow matching and guidance dynamics",
+      "llm_evidence_cn": "流匹配与引导的动力学理论分析",
+      "llm_evidence": "流匹配与引导的动力学理论分析",
+      "canonical_evidence": "流匹配与引导的动力学理论分析",
+      "llm_tldr_en": "This paper develops a stagewise geometric theory of flow matching trajectories with classifier-free guidance, showing how particles are attracted toward mean, convex hull and data manifold, relevant to flow matching methodology.",
+      "llm_tldr_cn": "针对流匹配与无分类器引导仅有分布层面保证、难以刻画单条采样轨迹与数据几何交互的问题，本文建立连续动力学与显式欧拉离散统一的分阶段吸引-吸收几何理论，证明无条件流轨迹依次被吸引至全局均值邻域、数据凸包及数据流形附近。工作为流匹配采样与引导机制提供轨迹级理论解释，属于生成式建模方法层面贡献，可与流体动力学的流匹配仿真方法相互迁移借鉴。",
+      "llm_tldr": "针对流匹配与无分类器引导仅有分布层面保证、难以刻画单条采样轨迹与数据几何交互的问题，本文建立连续动力学与显式欧拉离散统一的分阶段吸引-吸收几何理论，证明无条件流轨迹依次被吸引至全局均值邻域、数据凸包及数据流形附近。工作为流匹配采样与引导机制提供轨迹级理论解释，属于生成式建模方法层面贡献，可与流体动力学的流匹配仿真方法相互迁移借鉴。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
