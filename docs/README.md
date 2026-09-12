@@ -6,24 +6,22 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-11
-- 运行时间：2026-09-11 21:58:28 UTC
+- 最新运行日期：2026-09-12
+- 运行时间：2026-09-12 21:31:45 UTC
 - 运行状态：成功
-- 本次总论文数：1
+- 本次总论文数：0
 - 精读区：0
-- 速读区：1
+- 速读区：0
 
 ### 今日简报（AI）
-今日仅速读 1 篇，精读为 0，重点落在流匹配与无分类器引导的粒子动力学几何分析（6.0/10）。该文从分阶段几何视角拆解生成采样中粒子如何随引导强度演化，适合想理解 CFG 机制而非只看效果的人。建议普通读者先把它当作概念地图，重点看几何直觉部分，再决定是否深挖公式细节。
-- 详情：[/202609/11/README](/202609/11/README)
+> 今日无新推荐，系统未产出可展示论文。
+- 详情：[/202609/12/README](/202609/12/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Particle Dynamics of Flow Matching and Classifier-Free Guidance from a Stagewise Geometry Perspective](/202609/11/2609.06947v1-particle-dynamics-of-flow-matching-and-classifier-free-guidance-from-a-stagewise-geometry-perspective)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：流匹配与引导的动力学理论分析
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">
