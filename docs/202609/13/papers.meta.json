@@ -1,0 +1,24 @@
+{
+  "label": "2026-09-13",
+  "date": "2026-09-13",
+  "generated_at": "2026-09-13T21:33:36",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202609/13/2609.10924v1-why-we-should-condition-denoising-diffusion-generative-models-on-windows-of-past-observations",
+      "section": "quick",
+      "title_en": "Why we should condition denoising diffusion generative models on windows of past observations",
+      "authors": "Matthias Morzfeld, Daniel Hodyss",
+      "date": "2026-09-10",
+      "pdf": "https://arxiv.org/pdf/2609.10924v1",
+      "score": "6.0",
+      "evidence": "以过去观测窗口条件化去噪扩散生成模型用于数据同化",
+      "tldr": "传统资料同化依赖随时间变化的先验，将过去观测的信息传递到未来。扩散生成模型用于同化时因训练集固定，先验静态、忽略过去观测，导致后验误差偏大。受卡尔曼滤波对过去观测依赖指数衰减启发，本文让扩散模型以短时观测窗口为条件，并提出扩散DA与直接观测预测DOP的训练框架。在线性系统上，两者无需重训即可达到全循环同化的最小后验误差，前提是窗口足够长。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Data assimilation (DA) is, traditionally, a cycling process that relies on time-dependent priors to propagate information from past observations to future cycles. Using denoising diffusion generative modeling for DA is challenging because standard approaches use a fixed training data set, which in turn leads to a static prior that ignores information from past observations. Because past observations are ignored, DA systems with static priors lead to larger posterior errors than cycling DA systems. Incorporating time-dependent priors into generative models, however, requires expensive and frequent retraining. Motivated by linear systems theory - where the dependence of a prediction of a Kalman filter on past observations decays exponentially - we condition diffusion models on short windows of past observations. Specifically, we describe training procedures for two frameworks: a diffusion DA system predicting the current state given a set of past observations, and a diffusion ``direct observation prediction'' (DOP) system, predicting future observations given a set of past observations. Using a canonical linear system, we show that both systems can achieve the minimal posterior error characteristic of a fully-cycled DA/DOP system, without re-training, provided the time windows are long enough. The linear setup ensures analytical tractability, avoids confounding neural network training errors, and confirms that conditioning on windows of past observations is required for efficient and accurate diffusion-based DA or DOP.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

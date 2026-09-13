@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-09-13 <!--dpr-date:20260913-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202609/13/2609.10924v1-why-we-should-condition-denoising-diffusion-generative-models-on-windows-of-past-observations" data-sidebar-item="{&quot;title&quot;: &quot;Why we should condition denoising diffusion generative models on windows of past observations&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2609.10924v1-why-we-should-condition-denoising-diffusion-generative-models-on-windows-of-past-observations&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;以过去观测窗口条件化去噪扩散生成模型用于数据同化&quot;}">Why we should condition denoising diffusion generative models on windows of past observations</a>
   * 2026-09-11 <!--dpr-date:20260911-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202609/11/2609.06947v1-particle-dynamics-of-flow-matching-and-classifier-free-guidance-from-a-stagewise-geometry-perspective" data-sidebar-item="{&quot;title&quot;: &quot;Particle Dynamics of Flow Matching and Classifier-Free Guidance from a Stagewise Geometry Perspective&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2609.06947v1-particle-dynamics-of-flow-matching-and-classifier-free-guidance-from-a-stagewise-geometry-perspective&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;流匹配与引导的动力学理论分析&quot;}">Particle Dynamics of Flow Matching and Classifier-Free Guidance from a Stagewise Geometry Perspective</a>

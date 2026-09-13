@@ -1,0 +1,53 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-09-13T21:32:27.139355+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2609.10924v1",
+      "source": "arxiv",
+      "title": "Why we should condition denoising diffusion generative models on windows of past observations",
+      "abstract": "Data assimilation (DA) is, traditionally, a cycling process that relies on time-dependent priors to propagate information from past observations to future cycles. Using denoising diffusion generative modeling for DA is challenging because standard approaches use a fixed training data set, which in turn leads to a static prior that ignores information from past observations. Because past observations are ignored, DA systems with static priors lead to larger posterior errors than cycling DA systems. Incorporating time-dependent priors into generative models, however, requires expensive and frequent retraining. Motivated by linear systems theory - where the dependence of a prediction of a Kalman filter on past observations decays exponentially - we condition diffusion models on short windows of past observations. Specifically, we describe training procedures for two frameworks: a diffusion DA system predicting the current state given a set of past observations, and a diffusion ``direct observation prediction'' (DOP) system, predicting future observations given a set of past observations. Using a canonical linear system, we show that both systems can achieve the minimal posterior error characteristic of a fully-cycled DA/DOP system, without re-training, provided the time windows are long enough. The linear setup ensures analytical tractability, avoids confounding neural network training errors, and confirms that conditioning on windows of past observations is required for efficient and accurate diffusion-based DA or DOP.",
+      "authors": [
+        "Matthias Morzfeld",
+        "Daniel Hodyss"
+      ],
+      "primary_category": "math-ph",
+      "categories": [
+        "math-ph"
+      ],
+      "published": "2026-09-10T00:14:07+00:00",
+      "link": "https://arxiv.org/pdf/2609.10924v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "conditioning denoising diffusion generative models on windows of past observations for data assimilation",
+      "llm_evidence_cn": "以过去观测窗口条件化去噪扩散生成模型用于数据同化",
+      "llm_evidence": "以过去观测窗口条件化去噪扩散生成模型用于数据同化",
+      "canonical_evidence": "以过去观测窗口条件化去噪扩散生成模型用于数据同化",
+      "llm_tldr_en": "Conditioning denoising diffusion generative models on windows of past observations introduces time-dependent priors for data assimilation, avoiding frequent retraining while reducing posterior error.",
+      "llm_tldr_cn": "论文针对将去噪扩散生成模型用于数据同化时静态先验忽略过去观测、导致后验误差偏大的问题，提出以过去观测窗口对生成模型进行条件化的思路。作者借鉴线性系统理论，指出卡尔曼滤波预测对历史观测的依赖随时间衰减，从而可在无需频繁重训练的前提下引入时变先验。该研究为扩散生成模型在循环数据同化中的应用提供理论依据，对地球物理流体状态估计与流体动力学中的生成式建模具有参考价值。",
+      "llm_tldr": "论文针对将去噪扩散生成模型用于数据同化时静态先验忽略过去观测、导致后验误差偏大的问题，提出以过去观测窗口对生成模型进行条件化的思路。作者借鉴线性系统理论，指出卡尔曼滤波预测对历史观测的依赖随时间衰减，从而可在无需频繁重训练的前提下引入时变先验。该研究为扩散生成模型在循环数据同化中的应用提供理论依据，对地球物理流体状态估计与流体动力学中的生成式建模具有参考价值。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "diffusion models for fluid flow simulation",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
