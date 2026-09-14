@@ -6,24 +6,22 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-13
-- 运行时间：2026-09-13 21:33:30 UTC
+- 最新运行日期：2026-09-14
+- 运行时间：2026-09-14 22:32:10 UTC
 - 运行状态：成功
-- 本次总论文数：1
+- 本次总论文数：0
 - 精读区：0
-- 速读区：1
+- 速读区：0
 
 ### 今日简报（AI）
-今日扫读1篇扩散模型论文，聚焦用历史观测窗口作为生成条件。唯一速读《Why we should condition denoising diffusion generative models on windows of past observations》得6.0分，核心方向是给扩散生成模型补上时序上下文。普通读者可先记住“生成模型也该看历史”，后续关注该思路在预测类任务中的实际效果即可。
-- 详情：[/202609/13/README](/202609/13/README)
+> 今日无新推荐，系统未产出可展示论文。
+- 详情：[/202609/14/README](/202609/14/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Why we should condition denoising diffusion generative models on windows of past observations](/202609/13/2609.10924v1-why-we-should-condition-denoising-diffusion-generative-models-on-windows-of-past-observations)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：以过去观测窗口条件化去噪扩散生成模型用于数据同化
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">
