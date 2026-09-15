@@ -1,0 +1,134 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-09-15T22:07:29.851809+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2609.13729v1",
+      "source": "arxiv",
+      "title": "A Variational Optimal Transport Operator on Incompressible Flow",
+      "abstract": "We present the Variational Incompressible Optimal Transport (VIOT) operator, a generative neural operator for amortized incompressible density transport. Given a new source-target density pair, VIOT predicts a divergence-free velocity field and generates the full transport trajectory by feed-forward inference, replacing the hour-scale per-pair optimization used by adjoint fluid solvers and differentiable simulation baselines. The system consists of three components: a stream-function or vector-potential representation that enforces incompressibility by construction, a regularized incompressible transport objective that balances endpoint accuracy and flow smoothness, and a Fourier Neural Operator backbone that amortizes the solve across new pairs and grid resolutions. Together, these components make incompressible transport a reusable neural operator that facilitates various transport processes. Further, the generative capability extends beyond the training distribution, with VIOT producing incompressible transports for user-drawn source-target pairs in a real-time interactive system. We demonstrate VIOT on 2D and 3D density-transport benchmarks. Both 2D and 3D rollouts complete in seconds per pair, while per-instance baselines in our 2D comparisons optimize each new pair from scratch and require on the order of an hour, a roughly $10^4\\times$ online speedup.",
+      "authors": [
+        "Jinjin He",
+        "Shenyifan Lu",
+        "Sinan Wang",
+        "Zhiqi Li",
+        "Duowen Chen",
+        "Bo Zhu"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.GR"
+      ],
+      "published": "2026-09-12T05:43:44+00:00",
+      "link": "https://arxiv.org/pdf/2609.13729v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "generative neural operator for incompressible flow density transport",
+      "llm_evidence_cn": "面向不可压流密度输运的生成式神经算子",
+      "llm_evidence": "面向不可压流密度输运的生成式神经算子",
+      "canonical_evidence": "面向不可压流密度输运的生成式神经算子",
+      "llm_tldr_en": "VIOT is a generative neural operator that predicts divergence-free velocity fields to transport densities, replacing slow per-pair adjoint fluid optimization with feed-forward inference.",
+      "llm_tldr_cn": "传统不可压密度输运依赖每对源-目标密度上的伴随流体求解或可微模拟优化，耗时可达数小时。本文提出变分不可压最优输运（VIOT）算子，利用流函数或矢量势表示在构造上保证无散度，配合正则化不可压输运目标与傅里叶神经算子主干，实现对新密度对的摊销式前馈推断。方法能快速生成完整输运轨迹，大幅加速原本昂贵的不可压输运求解。",
+      "llm_tldr": "传统不可压密度输运依赖每对源-目标密度上的伴随流体求解或可微模拟优化，耗时可达数小时。本文提出变分不可压最优输运（VIOT）算子，利用流函数或矢量势表示在构造上保证无散度，配合正则化不可压输运目标与傅里叶神经算子主干，实现对新密度对的摊销式前馈推断。方法能快速生成完整输运轨迹，大幅加速原本昂贵的不可压输运求解。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "generative models applied to fluid dynamics problems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2609.15536v1",
+      "source": "arxiv",
+      "title": "Physics-Guided Conditional Flow Matching with Energy Regularization for Robust PDE Inverse Problems",
+      "abstract": "We consider partial differential equation (PDE) inverse problems from sparse, noisy, and corrupted observations, with the aim of recovering unknown coefficient fields and associated state variables in a mesh-free setting. Under such sparse and corrupted observations, standard physics-informed and generative approaches typically treat all samples indiscriminately and therefore lack a principled mechanism for reconciling physical laws with contaminated data. We address this difficulty with a two-stage flow-matching framework. In the first stage, we develop physics-guided conditional flow matching (PG-CFM), which incorporates strong-form PDE information through residual regularization along the generative trajectories together with intermittent global collocation constraints. In the second stage, we introduce energy-regularized flow matching (ERFM), which fine-tunes the Stage-1 model by assigning each observation a physics--data energy score from a frozen teacher and reweighting the flow-matching objective to reduce the influence of high-energy, PDE-inconsistent samples. We show that the resulting Stage-2 objective is equivalent to flow matching under a teacher-induced reweighted data distribution, which gives a population-level interpretation of the robustness mechanism. Numerical experiments on several inverse benchmarks, including Poisson and Navier--Stokes problems, show that the proposed framework yields more accurate coefficient recovery than robust PINN variants and competing generative baselines.",
+      "authors": [
+        "Yongsheng Chen",
+        "Shuo Lu",
+        "Wei Guo",
+        "Xinghui Zhong"
+      ],
+      "primary_category": "math.NA",
+      "categories": [
+        "math.NA"
+      ],
+      "published": "2026-09-14T13:22:16+00:00",
+      "link": "https://arxiv.org/pdf/2609.15536v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "physics-guided conditional flow matching for PDE inverse problems",
+      "llm_evidence_cn": "物理引导条件流匹配求解PDE反问题",
+      "llm_evidence": "物理引导条件流匹配求解PDE反问题",
+      "canonical_evidence": "物理引导条件流匹配求解PDE反问题",
+      "llm_tldr_en": "A two-stage flow-matching framework, with physics-guided conditional flow matching and energy regularization, recovers unknown coefficient fields and states from sparse noisy corrupted PDE observations in a mesh-free setting.",
+      "llm_tldr_cn": "该文针对稀疏、含噪且被污染观测下PDE反问题中物理规律与数据难以协调的问题，提出两阶段流匹配框架。第一阶段发展物理引导条件流匹配PG-CFM，沿生成轨迹施加强形式PDE残差正则；第二阶段结合能量正则提升鲁棒性。方法在无网格设置下恢复未知系数场与状态变量，优于 indiscriminate 的物理信息与生成式基线。该工作将流匹配生成模型与物理约束结合，对流体场反演与仿真具直接借鉴价值。",
+      "llm_tldr": "该文针对稀疏、含噪且被污染观测下PDE反问题中物理规律与数据难以协调的问题，提出两阶段流匹配框架。第一阶段发展物理引导条件流匹配PG-CFM，沿生成轨迹施加强形式PDE残差正则；第二阶段结合能量正则提升鲁棒性。方法在无网格设置下恢复未知系数场与状态变量，优于 indiscriminate 的物理信息与生成式基线。该工作将流匹配生成模型与物理约束结合，对流体场反演与仿真具直接借鉴价值。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2609.12953v1",
+      "source": "arxiv",
+      "title": "Fast and Faithful: Principled Conditional Flow Matching for Inverse Problems",
+      "abstract": "Flow matching approaches to imaging inverse problems commonly incorporate measurements in two ways. Conditioning-based approaches supply measurement-derived information as a network input, often through concatenation, while inference-guided approaches combine an unconditional velocity field with a separate data-consistency update. In these common formulations, the forward model is not explicitly enforced within the learned conditional velocity field. We propose a principled parametrization of the measurement-conditional velocity field to solve inverse problems. Under linear interpolation, we express the conditional velocity $v(x_t,t,y)$ in terms of the posterior mean $E[x_1 | x_t,y]$, and characterize that mean as the unique minimizer of a variational objective whose data-consistency term is explicit. We further prove that the velocity field defines a probability flow from the source distribution to the measurement-conditioned posterior. Splitting the variational objective yields a conditional velocity parameterization with operator-dependent data-consistency updates, which we train end-to-end under the flow-matching objective, with no additional guidance at inference. Our method achieves state-of-the-art PSNR with $50\\times$ fewer function evaluations than the strongest flow baseline. Varying the sampling steps provides test-time control over the distortion-perception trade-off without retraining.",
+      "authors": [
+        "Shirin Shoushtari",
+        "Edward P. Chandler",
+        "Xiao Shi",
+        "Ulugbek S. Kamilov"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-09-11T15:12:11+00:00",
+      "link": "https://arxiv.org/pdf/2609.12953v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "conditional flow matching parametrization for inverse problems",
+      "llm_evidence_cn": "面向逆问题的条件流匹配参数化",
+      "llm_evidence": "面向逆问题的条件流匹配参数化",
+      "canonical_evidence": "面向逆问题的条件流匹配参数化",
+      "llm_tldr_en": "This paper proposes a principled conditional flow matching parametrization for inverse problems, expressing the velocity field via the posterior mean, offering a transferable method for flow-matching-based simulation.",
+      "llm_tldr_cn": "针对逆问题中流匹配方法未显式约束前向模型的问题，本文提出一种有原则的测量条件速度场参数化方法。在线性插值下，作者将条件速度表示为后验均值的函数，并刻画该均值为某变分目标的唯一极小值点。该方法为流匹配框架提供了更忠实、更快速的条件生成途径，其技术核心可迁移到流体流动的生成式模拟中，但其验证场景为成像逆问题而非流体力学。",
+      "llm_tldr": "针对逆问题中流匹配方法未显式约束前向模型的问题，本文提出一种有原则的测量条件速度场参数化方法。在线性插值下，作者将条件速度表示为后验均值的函数，并刻画该均值为某变分目标的唯一极小值点。该方法为流匹配框架提供了更忠实、更快速的条件生成途径，其技术核心可迁移到流体流动的生成式模拟中，但其验证场景为成像逆问题而非流体力学。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "flow matching methods in fluid dynamics",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

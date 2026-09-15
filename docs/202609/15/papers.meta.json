@@ -1,0 +1,54 @@
+{
+  "label": "2026-09-15",
+  "date": "2026-09-15",
+  "generated_at": "2026-09-15T22:12:45",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202609/15/2609.13729v1-a-variational-optimal-transport-operator-on-incompressible-flow",
+      "section": "deep",
+      "title_en": "A Variational Optimal Transport Operator on Incompressible Flow",
+      "authors": "Jinjin He, Shenyifan Lu, Sinan Wang, Zhiqi Li, Duowen Chen, Bo Zhu",
+      "date": "2026-09-12",
+      "pdf": "https://arxiv.org/pdf/2609.13729v1",
+      "score": "8.0",
+      "evidence": "面向不可压流密度输运的生成式神经算子",
+      "tldr": "不可压缩密度输运通常需为每个源-目标对单独求解，伴随流体求解器或可微模拟耗时可达小时级。VIOT将流函数或向量势表示、正则化不可压缩输运目标与傅里叶神经算子结合，前馈预测无散度速度场并生成完整输运轨迹。在2D/3D密度输运基准上，每对轨迹数秒完成，较逐实例优化约加速10^4倍。该方法把不可压缩输运变为可复用神经算子，并支持实时交互与训练分布外的新配对。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We present the Variational Incompressible Optimal Transport (VIOT) operator, a generative neural operator for amortized incompressible density transport. Given a new source-target density pair, VIOT predicts a divergence-free velocity field and generates the full transport trajectory by feed-forward inference, replacing the hour-scale per-pair optimization used by adjoint fluid solvers and differentiable simulation baselines. The system consists of three components: a stream-function or vector-potential representation that enforces incompressibility by construction, a regularized incompressible transport objective that balances endpoint accuracy and flow smoothness, and a Fourier Neural Operator backbone that amortizes the solve across new pairs and grid resolutions. Together, these components make incompressible transport a reusable neural operator that facilitates various transport processes. Further, the generative capability extends beyond the training distribution, with VIOT producing incompressible transports for user-drawn source-target pairs in a real-time interactive system. We demonstrate VIOT on 2D and 3D density-transport benchmarks. Both 2D and 3D rollouts complete in seconds per pair, while per-instance baselines in our 2D comparisons optimize each new pair from scratch and require on the order of an hour, a roughly $10^4\\times$ online speedup.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202609/15/2609.15536v1-physics-guided-conditional-flow-matching-with-energy-regularization-for-robust-pde-inverse-problems",
+      "section": "quick",
+      "title_en": "Physics-Guided Conditional Flow Matching with Energy Regularization for Robust PDE Inverse Problems",
+      "authors": "Yongsheng Chen, Shuo Lu, Wei Guo, Xinghui Zhong",
+      "date": "2026-09-14",
+      "pdf": "https://arxiv.org/pdf/2609.15536v1",
+      "score": "7.0",
+      "evidence": "物理引导条件流匹配求解PDE反问题",
+      "tldr": "针对稀疏、含噪且受污染观测下的 PDE 反问题，现有物理信息与生成方法对所有样本一视同仁，难以在物理规律与脏数据间取得平衡。作者提出两阶段流匹配框架：第一阶段 PG-CFM 在生成轨迹上施加 PDE 残差正则并辅以间歇全局配点约束；第二阶段 ERFM 用冻结教师模型计算物理—数据能量分，重加权流匹配目标以降低高能量异常样本影响。在 Poisson 和 Navier–Stokes 等基准上，该方法比鲁棒 PINN 变体和生成基线更准确地恢复系数场。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "We consider partial differential equation (PDE) inverse problems from sparse, noisy, and corrupted observations, with the aim of recovering unknown coefficient fields and associated state variables in a mesh-free setting. Under such sparse and corrupted observations, standard physics-informed and generative approaches typically treat all samples indiscriminately and therefore lack a principled mechanism for reconciling physical laws with contaminated data. We address this difficulty with a two-stage flow-matching framework. In the first stage, we develop physics-guided conditional flow matching (PG-CFM), which incorporates strong-form PDE information through residual regularization along the generative trajectories together with intermittent global collocation constraints. In the second stage, we introduce energy-regularized flow matching (ERFM), which fine-tunes the Stage-1 model by assigning each observation a physics--data energy score from a frozen teacher and reweighting the flow-matching objective to reduce the influence of high-energy, PDE-inconsistent samples. We show that the resulting Stage-2 objective is equivalent to flow matching under a teacher-induced reweighted data distribution, which gives a population-level interpretation of the robustness mechanism. Numerical experiments on several inverse benchmarks, including Poisson and Navier--Stokes problems, show that the proposed framework yields more accurate coefficient recovery than robust PINN variants and competing generative baselines.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202609/15/2609.12953v1-fast-and-faithful-principled-conditional-flow-matching-for-inverse-problems",
+      "section": "quick",
+      "title_en": "Fast and Faithful: Principled Conditional Flow Matching for Inverse Problems",
+      "authors": "Shirin Shoushtari, Edward P. Chandler, Xiao Shi, Ulugbek S. Kamilov",
+      "date": "2026-09-11",
+      "pdf": "https://arxiv.org/pdf/2609.12953v1",
+      "score": "6.0",
+      "evidence": "面向逆问题的条件流匹配参数化",
+      "tldr": "扩散/流匹配求解成像逆问题常将测量作为条件输入，或另加数据一致性更新，导致前向模型未显式嵌入学习到的条件速度场。本文提出原则性参数化：在线性插值下将测量条件速度 v(x_t,t,y) 表示为后验均值 E[x1|x_t,y]，并证明其最小化含显式数据一致项的变分目标，且定义从源分布到测量条件后验的概率流。方法将目标拆分得到依赖算子的数据一致更新，并以流匹配目标端到端训练，推理无需额外引导。实验在逆问题上取得最优 PSNR，函数评估次数比最强流基线少 50 倍，还可通过调整采样步数在测试时控制失真-感知权衡。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Flow matching approaches to imaging inverse problems commonly incorporate measurements in two ways. Conditioning-based approaches supply measurement-derived information as a network input, often through concatenation, while inference-guided approaches combine an unconditional velocity field with a separate data-consistency update. In these common formulations, the forward model is not explicitly enforced within the learned conditional velocity field. We propose a principled parametrization of the measurement-conditional velocity field to solve inverse problems. Under linear interpolation, we express the conditional velocity $v(x_t,t,y)$ in terms of the posterior mean $E[x_1 | x_t,y]$, and characterize that mean as the unique minimizer of a variational objective whose data-consistency term is explicit. We further prove that the velocity field defines a probability flow from the source distribution to the measurement-conditioned posterior. Splitting the variational objective yields a conditional velocity parameterization with operator-dependent data-consistency updates, which we train end-to-end under the flow-matching objective, with no additional guidance at inference. Our method achieves state-of-the-art PSNR with $50\\times$ fewer function evaluations than the strongest flow baseline. Varying the sampling steps provides test-time control over the distortion-perception trade-off without retraining.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

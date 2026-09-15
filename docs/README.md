@@ -6,22 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-14
-- 运行时间：2026-09-14 22:32:10 UTC
+- 最新运行日期：2026-09-15
+- 运行时间：2026-09-15 22:12:40 UTC
 - 运行状态：成功
-- 本次总论文数：0
-- 精读区：0
-- 速读区：0
+- 本次总论文数：3
+- 精读区：1
+- 速读区：2
 
 ### 今日简报（AI）
-> 今日无新推荐，系统未产出可展示论文。
-- 详情：[/202609/14/README](/202609/14/README)
+今日精选3篇流动匹配与最优传输论文，精读1篇、速读2篇。最值得看的是《A Variational Optimal Transport Operator on Incompressible Flow》（8.0/10），以及两篇用流动匹配求解PDE反问题的速读工作。普通读者可优先了解最优传输如何统一描述不可压流动，再关注物理引导对反问题鲁棒性的提升。
+- 详情：[/202609/15/README](/202609/15/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [A Variational Optimal Transport Operator on Incompressible Flow](/202609/15/2609.13729v1-a-variational-optimal-transport-operator-on-incompressible-flow)  
+   标签：评分：8.0/10、query:genmod-fluid
+   evidence：面向不可压流密度输运的生成式神经算子
 
 ### 速读区论文标签
-- 本次无速读推荐。
+1. [Physics-Guided Conditional Flow Matching with Energy Regularization for Robust PDE Inverse Problems](/202609/15/2609.15536v1-physics-guided-conditional-flow-matching-with-energy-regularization-for-robust-pde-inverse-problems)  
+   标签：评分：7.0/10、query:genmod-fluid
+   evidence：物理引导条件流匹配求解PDE反问题
+2. [Fast and Faithful: Principled Conditional Flow Matching for Inverse Problems](/202609/15/2609.12953v1-fast-and-faithful-principled-conditional-flow-matching-for-inverse-problems)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：面向逆问题的条件流匹配参数化
 
 
 <div class="dpr-home-promo-card">
