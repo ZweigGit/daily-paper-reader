@@ -1,0 +1,24 @@
+{
+  "label": "2026-09-16",
+  "date": "2026-09-16",
+  "generated_at": "2026-09-16T21:41:20",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202609/16/2609.14078v1-ensemble-generative-filtering-for-sequential-data-assimilation-in-dynamical-systems",
+      "section": "quick",
+      "title_en": "Ensemble generative filtering for sequential data assimilation in dynamical systems",
+      "authors": "Xu-Hui Zhou, Jiequn Han",
+      "date": "2026-09-12",
+      "pdf": "https://arxiv.org/pdf/2609.14078v1",
+      "score": "7.0",
+      "evidence": "生成模型应用于动力系统数据同化",
+      "tldr": "顺序数据同化面临两难：粒子滤波能处理非高斯先验但需超大集合，EnKF高效却受高斯假设限制。本文提出集合生成滤波EnGF，在每个同化周期对预报集合拟合生成模型，并利用其廉价采样生成更大粒子群做贝叶斯分析。进一步引入温度化EnGF防止粒子退化，以及潜空间EnGF应对高维系统。在混沌系统与激波管问题中，EnGF显著优于EnKF，部分接近巨量集合粒子滤波精度且成本更低。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Sequential data assimilation (DA) faces a fundamental trade-off: particle filters capture non-Gaussian cycling priors but require prohibitively large ensembles, whereas the ensemble Kalman filter (EnKF) is computationally efficient but constrained by its Gaussian assumption. As machine learning enables rapid model forecasts, exploiting non-Gaussian prior features via moderately large ensembles has become increasingly viable. To exploit this opportunity, we propose the ensemble generative filter (EnGF), a simple yet effective method for non-Gaussian filtering. The key idea is to fit a generative model to the forecast ensemble at each DA cycle and harness its defining strength, inexpensive sampling, to draw a much larger particle population for Bayesian analysis without any additional model forecasts; we adopt a Gaussian mixture model as a lightweight instance that can be fit cheaply from a moderate ensemble. To address practical challenges, we further extend the EnGF by introducing (i) a tempered EnGF using likelihood tempering to prevent particle degeneracy under informative observations and (ii) a latent EnGF that performs prior modeling and Bayesian updates in a reduced latent space for high-dimensional systems. Across chaotic systems (doubling map, Lorenz-63, and Lorenz-96) and a challenging shock-tube problem, the EnGF delivers clear and often substantial improvements over the EnKF, in some cases even approaching the filtering accuracy of a massive-ensemble particle filter at a small fraction of its cost.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

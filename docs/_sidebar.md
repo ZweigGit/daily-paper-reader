@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-09-16 <!--dpr-date:20260916-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202609/16/2609.14078v1-ensemble-generative-filtering-for-sequential-data-assimilation-in-dynamical-systems" data-sidebar-item="{&quot;title&quot;: &quot;Ensemble generative filtering for sequential data assimilation in dynamical systems&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2609.14078v1-ensemble-generative-filtering-for-sequential-data-assimilation-in-dynamical-systems&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;生成模型应用于动力系统数据同化&quot;}">Ensemble generative filtering for sequential data assimilation in dynamical systems</a>
   * 2026-09-15 <!--dpr-date:20260915-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202609/15/2609.13729v1-a-variational-optimal-transport-operator-on-incompressible-flow" data-sidebar-item="{&quot;title&quot;: &quot;A Variational Optimal Transport Operator on Incompressible Flow&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2609.13729v1-a-variational-optimal-transport-operator-on-incompressible-flow&quot;, &quot;score&quot;: &quot;8.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;面向不可压流密度输运的生成式神经算子&quot;}">A Variational Optimal Transport Operator on Incompressible Flow</a>
