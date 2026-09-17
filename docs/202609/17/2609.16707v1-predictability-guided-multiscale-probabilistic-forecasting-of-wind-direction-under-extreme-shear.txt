@@ -1,0 +1,606 @@
+Title: Predictability-Guided Multiscale Probabilistic Forecasting of Wind Direction under Extreme Shear
+
+URL Source: https://arxiv.org/pdf/2609.16707v1
+
+Published Time: Wed, 16 Sep 2026 00:55:16 GMT
+
+Number of Pages: 20
+
+Markdown Content:
+# Highlights 
+
+## Predictability-Guided Multiscale Probabilistic Forecasting of Wind Direction under Extreme Shear 
+
+Hailong Shu 
+
+• Wind-direction predictability varies strongly across temporal scales. 
+
+• Scale-aware forecasting improves trajectory timing and uncertainty calibration. 
+
+• Extreme shear reveals near-antipodal uncertainty beyond single-center calibration. arXiv:2609.16707v1 [physics.ao-ph] 15 Sep 2026 Predictability-Guided Multiscale Probabilistic Forecasting of Wind Direction under Extreme Shear 
+
+## Hailong Shu a
+
+> a
+
+State Key Laboratory of Chemistry for NBC Hazards Protection, Beijing 102205, China 
+
+A R T I C L E I N F O 
+
+Keywords :Wind direction forecasting Wind turbine yaw control Extreme wind shear Probabilistic forecasting Multiscale modeling Uncertainty quantification 
+
+A B S T R A C T 
+
+Accurate multi-horizon forecasting of atmospheric wind direction is an essential upstream requirement for wind turbine active yaw control, aerodynamic load mitigation, and power grid security. However, rapid directional wind shear (Case 1: directional turning ≥ 90 ◦) challenges predictive models through non-Euclidean circular geometry on the unit circle 𝕊 1, coupled multiscale dynamics spanning synoptic to turbulent scales, and severe regime-dependent uncertainty. Conventional discrete sequence models and generic large-scale pre-trained foundation models suffer from systematic mid-frequency phase lag and severe turning misalignments. In this study, we demonstrate that directional predictability decays at markedly disparate rates across physical frequency subbands, rendering monolithic forecasting mechanisms suboptimal. We formulate a predictability-guided forecasting paradigm: slow synoptic background drift is assigned to deterministic regression, intermediate turning transitions to continuous latent differential flows, and unresolved turbulent fluctuations to conditional residual diffusion, followed by validation-only causal recalibration. Evaluated on a strictly standardized 10,000-sequence multi-year benchmark, the resulting decoupled framework preserves competitive calm-weather accu-racy (Test MCE 38 .48 ◦) while substantially reducing extreme-regime turning error (Case 1 MCE 
+
+60 .69 ◦ vs. 70 .42 ◦ for zero-shot foundation models). Probabilistically, the circular Continuous Ranked Probability Score (CRPS) drops to 22 .36 ◦, achieving 93 .88% overall coverage at the nominal 95% level (91 .01% on an independent out-of-distribution period). Furthermore, continuous density estimation uncovers an empirical near-antipodal bimodal branch structure under severe shear ( 13 .39% ∼ 15 .43% 
+
+tail mass at ≥ 135 ◦), revealing an intrinsic geometric bound where single-center dispersion calibration exhibits conditional under-coverage ( 81 .56% ) and motivating future multimodal circular manifold learning. 
+
+## 1. Introduction 
+
+Accurate multi-horizon forecasting of wind direction is a pivotal upstream component of modern wind-energy operations, with potential applications in turbine yaw plan-ning, wake steering, aerodynamic load management, and renewable-energy system coordination [1, 4, 22]. In utility-scale wind farms, the orientation of the nacelle relative to the incoming flow affects both aerodynamic power extraction and asymmetric loading on turbine components [9, 19, 25]. Because yaw actuation is subject to finite response rates and mechanical constraints, directional information avail-able several hours in advance can be valuable for antici-pating large changes in the inflow direction [21, 23]. This need becomes particularly pronounced during rapid frontal passages or other severe atmospheric transitions, when wind direction can change abruptly and conventional persistence-based forecasts may become poorly aligned with the sub-sequent flow evolution [9, 24]. Reliable multi-horizon di-rectional forecasts, together with uncertainty information, are therefore of practical interest for risk-aware wind-energy management. Wind direction forecasting is more challenging than conventional scalar time-series prediction for three closely related reasons. First, wind direction is an angular variable 
+
+> ORCID
+
+(s): 0009-0004-9457-3773 (H. Shu) 
+
+defined on the unit circle 𝕊 1 ≅ ℝ∕360 ◦ℤ, so conven-tional Euclidean representations can introduce artificial dis-continuities at the 0◦∕360 ◦ boundary [8, 13, 16]. A com-mon remedy represents direction via the continuous two-dimensional embedding [sin 𝜃, cos 𝜃 ], though unconstrained prediction in this embedding space risks generating inte-rior disk vectors that violate the unit-norm constraint [20]. Second, atmospheric directional dynamics are inherently multiscale, with slow background variations, intermediate turning transitions, and rapidly varying fluctuations evolv-ing over substantially different temporal ranges [3, 15, 18]. Conventional sequence models advance forecasts through discrete temporal steps and may therefore exhibit tempo-ral misalignment or over-smoothing when the underlying directional trajectory changes rapidly [2, 7, 11, 14]. Con-tinuous latent dynamical models such as Neural Ordinary Differential Equations (Neural ODEs) provide an alternative representation of temporal evolution, but their role in multi-horizon wind-direction forecasting, particularly during rapid directional transitions, remains insufficiently explored [5]. Third, uncertainty becomes substantially more difficult to characterize during extreme directional turning. In this study, severe turning is defined as Case 1 ( Δ𝜃 ≥ 90 ◦), with Case 1* denoting more extreme events ( Δ𝜃 ≥ 110 ◦). Under such conditions, forecast errors may become highly dispersed and non-Gaussian, making conventional single-mode un-certainty representations potentially inadequate. Although diffusion-based models provide a flexible framework for conditional density generation [12], directly modeling the 
+
+H. Shu et al.: Preprint submitted to Elsevier Page 1 of 15 Predictability-Guided Wind Direction Forecasting 
+
+full directional trajectory probabilistically may also intro-duce unnecessary uncertainty into the more predictable back-ground evolution. These characteristics motivate a predictability-guided perspective that aligns model capacity with the empirical predictability of distinct temporal components. Instead of imposing a uniform forecasting mechanism across the en-tire directional trajectory, slowly varying components with strong temporal persistence are mapped to deterministic fore-casting, intermediate components with structured but rapidly evolving dynamics receive continuous latent trajectory cor-rection, and weakly predictable high-frequency variability is handled probabilistically. This mechanism allocation pro-vides an interpretable separation between point trajectory es-timation and uncertainty quantification, preserving a stable deterministic reference trajectory for downstream control. Accordingly, this study develops a predictability-guided multiscale probabilistic forecasting framework for wind di-rection on 𝕊 1. The framework first performs a causal mul-tiscale decomposition of the directional signal and charac-terizes the temporal predictability of the resulting subbands. A frequency-decoupled deterministic anchor is then used to represent the persistent background evolution, while a regime-adaptive Neural ODE branch provides continuous latent trajectory correction for intermediate turning dynam-ics. Conditional residual diffusion is subsequently used to represent unresolved stochastic deviations around the deter-ministic forecast, followed by validation-only causal recali-bration of predictive dispersion according to the predicted turning magnitude. This decoupled design separates deter-ministic trajectory estimation from probabilistic uncertainty generation while preserving the deterministic forecast inde-pendently of stochastic sampling. The study addresses three fundamental questions. First, how markedly does directional predictability diverge across physical frequency subbands, and can this variation provide an empirical foundation for mechanism allocation? Second, does predictability-guided mechanism allocation improve directional forecasting in aggregate angular accuracy, tra-jectory timing, and extreme-shear turning fidelity? Third, how reliably can the resulting probabilistic forecasts be calibrated across normal and distribution-shifted conditions, and what geometric limitations emerge when forecast error distributions exhibit multimodality? The main contributions of this study are threefold. First, we establish an empirical predictability profile of wind-direction dynamics across multiple temporal scales using signal energy, temporal correlation, and decorrelation char-acteristics, providing a data-driven basis for mechanism allocation. Second, we introduce a decoupled forecasting ar-chitecture that assigns deterministic recurrence, continuous Neural ODE dynamics, and conditional residual diffusion to components with different levels of temporal predictabil-ity, thereby separating trajectory correction from stochastic uncertainty representation. Third, we identify an empirical near-antipodal bimodal structure in the residual distribution under severe directional turning and show that this structure is associated with persistent conditional under-coverage of single-center circular calibration, highlighting a limitation of unimodal uncertainty representations and motivating future multimodal circular forecasting methods. 
+
+## 2. Methodology 
+
+2.1. Forecasting Formulation and Causal Multiscale Representation 
+
+Let the historical multivariate meteorological observa-tions over a lookback window of 𝑇 = 144 steps (24 h at 10-min sampling resolution) be denoted by 𝑋 𝑡 −𝑇 +1∶ 𝑡 ∈
+
+ℝ𝑇 ×𝐶 , where 𝐶 = 20 represents the physical and dy-namical boundary-layer channels selected from the 26 raw meteorological measurements recorded at the station. The forecasting objective is to predict the future wind-direction trajectory over a horizon of 𝐻 = 36 steps (6 h): 
+
+𝑌 𝑡 +1∶ 𝑡 +𝐻 = [ 𝐲 𝑡 +1 , … , 𝐲 𝑡 +𝐻 ]𝑇 ∈ ℝ𝐻 ×2 , (1) where each directional observation is represented by the continuous trigonometric embedding 
+
+𝐲 𝑖 = [sin 𝜃 𝑖 , cos 𝜃 𝑖 ]𝑇 ∈ 𝕊 1. (2) This representation removes the artificial numerical discon-tinuity at the 0◦∕360 ◦ boundary. Because neural-network outputs in the embedded space do not inherently satisfy unit length, predicted vectors are projected back onto 𝕊 1 through radial normalization: ̃
+
+𝐲 𝑡 =̂ 𝐲 𝑡 
+
+‖̂𝐲 𝑡 ‖2
+
+. (3) The circular geodesic distance used for directional errors is defined as 
+
+𝑑 𝕊 1 (𝜃 1, 𝜃 2) = min (|𝜃 1 − 𝜃 2|, 360 ◦ − |𝜃 1 − 𝜃 2|) . (4) For regime-wise analysis, the total directional turning over the forecast horizon is defined as 
+
+Δ𝜃 = 𝑑 𝕊 1 (𝜃 𝑡 , 𝜃 𝑡 +𝐻 ). (5) We distinguish steady conditions (Case 2, Δ𝜃 < 30 ◦), severe directional turning (Case 1, Δ𝜃 ≥ 90 ◦), and more extreme turning (Case 1*, Δ𝜃 ≥ 110 ◦). These thresholds are used for post-hoc stratification of forecasting performance and are not available to the model at inference time. To represent the distinct temporal characteristics of wind-direction dynamics, a five-level wavelet decomposi-tion is applied to the directional signal. The subbands are grouped into three broader temporal components: 
+
+𝑌 = 𝑌 𝐿 + 𝑌 𝑀 + 𝑌 𝐻 , (6) where 
+
+𝑌 𝐿 = 𝐴 5 + 𝐷 5, (7) 
+
+𝑌 𝑀 = 𝐷 3 + 𝐷 4, (8)    
+
+> H. Shu et al.: Preprint submitted to Elsevier Page 2 of 15 Predictability-Guided Wind Direction Forecasting
+> Figure 1: Predictability-guided multiscale probabilistic forecasting framework. The historical multivariate observations are causally decomposed into three temporal components with different levels of forecastability. The deterministic track combines a frequency-decoupled anchor with regime-adaptive continuous latent dynamics, while the probabilistic track generates conditional residual samples and subsequently applies validation-only causal recalibration. The two tracks share the deterministic forecast but remain separated at the point-estimation and uncertainty-generation stages.
+
+𝑌 𝐻 = 𝐷 1 + 𝐷 2. (9) The low-frequency component 𝑌 𝐿 represents slowly varying background evolution with characteristic periods longer than 320 min ( > 5.33 h), the intermediate component 𝑌 𝑀 repre-sents transitional dynamics over 80–320 min ( 1.33 –5.33 h), and the high-frequency component 𝑌 𝐻 represents fluctua-tions over approximately 20–80 min. The decomposition is additively complete up to numerical precision: 
+
+max 
+
+> 𝑡
+
+||𝑌 𝑡 − ( 𝑌 𝐿,𝑡 + 𝑌 𝑀,𝑡 + 𝑌 𝐻,𝑡 )|| < 10 −6 . (10) To prevent future-information leakage, the multiscale transformation is implemented causally. The historical input and future supervision target are decomposed independently, and the historical representation at time 𝑡 depends only on observations available through 𝑡 . Specifically, the wavelet coefficient at scale 𝑗 is computed using a causal convolution, 
+
+𝑊 𝑗,𝑡 = 
+
+> 𝐿 𝑗 −1
+
+∑
+
+> 𝑘 =0
+
+ℎ𝑘 𝑋 𝑡 −𝑘 , (11) with causal zero-padding at the beginning of each valid se-quence. The resulting receptive field is therefore restricted to the historical filtration 𝑡 , establishing the causal multiscale representation for the overall architecture depicted in Fig. 1. 
+
+2.2. Predictability-Guided Mechanism Allocation 
+
+The central methodological hypothesis is that temporal components with different degrees of predictability need not be modeled using the same forecasting mechanism. We therefore characterize each subband using its signal energy, temporal dependence, and decorrelation behavior. Let 𝑏 ∈{𝐿, 𝑀, 𝐻 } denote the three temporal components and let 
+
+(𝑏 ) represent its empirical predictability profile. The fore-casting mechanism is selected according to the following allocation rule: 
+
+𝑚 (𝑏 ) = 
+
+⎧⎪⎨⎪⎩
+
+Deterministic Anchor (D4-0) , 𝑏 = 𝐿, 
+
+Continuous Neural ODE , 𝑏 = 𝑀, 
+
+Conditional Residual Diffusion , 𝑏 = 𝐻. 
+
+(12) This allocation follows the intended division of model-ing roles. The low-frequency component is primarily repre-sented through a deterministic forecast because its longer temporal memory supports stable extrapolation. The inter-mediate component retains structured temporal evolution but is more sensitive to turning dynamics; it is therefore modeled through a continuous latent flow that can adjust the forecast trajectory without relying solely on discrete recur-sive stepping. The high-frequency component is treated as an uncertain residual contribution because its short temporal memory limits the benefit of deterministic extrapolation. The allocation is implemented as a decoupled architec-ture rather than as a single model with a uniform forecasting objective. The deterministic branch provides the reference trajectory, while the probabilistic branch models conditional deviations around that reference. This separation allows the point forecast and the uncertainty representation to be evaluated independently.   
+
+> H. Shu et al.: Preprint submitted to Elsevier Page 3 of 15 Predictability-Guided Wind Direction Forecasting
+
+2.3. Decoupled Deterministic–Probabilistic Forecasting 
+
+Deterministic anchor. The base deterministic predictor, denoted by anchor (⋅), receives the historical multivariate sequence and produces forecasts for all three decomposed components together with the final hidden representation: 
+
+[̂𝑌 𝐿 ,̂ 𝑌 𝑀 ,̂ 𝑌 𝐻 , 𝐡 last ] = anchor (𝑋 1∶ 𝑇 ), (13) ̂𝑌 anchor =̂ 𝑌 𝐿 +̂ 𝑌 𝑀 +̂ 𝑌 𝐻 . (14) The anchor is implemented using a two-layer recurrent net-work with hidden dimension 128. Its role is to provide a sta-ble deterministic reference trajectory to which the dynamic correction and probabilistic residuals are subsequently ap-plied. 
+
+Continuous dynamic correction. To model intermediate turning dynamics, we introduce a latent continuous velocity field 
+
+𝑑 𝐳 (𝑡 )
+
+𝑑𝑡 = 𝑓 𝜃 ode (𝑡, 𝐳 (𝑡 ), 𝐜 ) , 𝑡 ∈ [0 , 1] , (15) where 
+
+𝐳 (0) = 𝜓 𝑧 
+
+([𝐡 last , vec( ̂ 𝑌 anchor )] ) , 𝐜 = 𝜓 𝑐 (𝐡 last ). (16) The latent trajectory is numerically integrated using an ex-plicit fourth-order Runge–Kutta (RK4) scheme and decoded into a directional correction ODE ∈ ℝ𝐻 ×2 .A regime-adaptive gate controls the contribution of the dynamic correction: 
+
+[logit mid 
+
+logit high 
+
+]
+
+= MLP ([𝐡 last , |Δ𝐮 1h |, Var( 𝐮 1h )] ) , (17) with 
+
+𝑔 mid , 𝑔 high = 𝜎 (logit) . (18) The negative initialization bias of the gate suppresses un-necessary corrections when the recent flow is relatively stable, while allowing the model to increase its dynamic contribution when the available causal predictors indicate stronger directional variability. The deterministic forecast is obtained as ̂𝑌 det =̂ 𝑌 anchor + 𝑔 mid ⊙ ODE 
+
+‖‖‖̂ 𝑌 anchor + 𝑔 mid ⊙ ODE 
+
+‖‖‖2
+
+. (19) To ensure that the radial normalization in Eq. (19) does not encounter numerical singularities due to latent state collapse toward the origin ( ‖𝐳 (𝑡 )‖2 → 0), we performed an empirical stability audit across the entire test cohort. Across 360,000 integration points, the latent norm remains strictly positive and bounded away from zero (mean 10 .52 , median 11 .14 ,and 1st percentile 1.35 ), with zero instances of near-origin collapse ( 𝑟 < 0.05 : 0.000%), confirming that numerical in-tegration remains well-conditioned throughout the forecast horizon (Fig. 2). 
+
+Conditional residual diffusion. Rather than generating the complete directional trajectory directly through a stochas-tic process, the probabilistic branch models deviations from the deterministic reference: 
+
+𝐑 = 𝑌 true −̂ 𝑌 det ∈ ℝ𝐻 ×2 . (20) The residual therefore represents the portion of the future directional trajectory that remains unexplained by the deter-ministic backbone. A conditional diffusion model receives 
+
+[𝐡 last ,̂ 𝑌 det ] and generates stochastic residual realizations 
+
+{
+
+𝐑 (𝑚 )dif f 
+
+}𝑀 𝑚 =1 , 𝑀 = 50 , (21) using a 50-step reverse diffusion process. The probabilistic branch is strictly downstream of the deterministic forecast: stochastic sampling does not modify ̂𝑌 det . The final separation between deterministic forecasting and uncertainty generation is therefore explicit: ̂𝑌 det ⟂
+
+{
+
+𝐑 (𝑚 )dif f 
+
+}𝑀 𝑚 =1 at the point-estimation stage . (22) 
+
+2.4. Probabilistic Calibration 
+
+At inference time, the future regime is unknown. We therefore construct the calibration variable using only the model’s own deterministic forecast. The predicted total turn-ing is defined as 
+
+Δpred = 𝑑 𝕊 1
+
+(angle( ̂𝑌 det ,𝐻 ), angle( ̂𝑌 det ,1)) . (23) A piecewise dispersion scaling function is estimated exclusively on the validation set: 
+
+𝛾 (Δ pred ) = 
+
+⎧⎪⎪⎨⎪⎪⎩
+
+0.40 , Δpred < 30 ◦,
+
+1.05 , 30 ◦ ≤ Δpred < 75 ◦,
+
+1.80 , Δpred ≥ 75 ◦.
+
+(24) No information from the test or OOD periods is used when estimating these parameters. The calibrated stochastic trajectory ensemble is then constructed as ̂𝑌 (𝑚 )f inal =̂ 𝑌 det + 𝛾 (Δ pred ) 𝑔 high ⊙ 𝐑 (𝑚 )dif f 
+
+‖‖‖̂𝑌 det + 𝛾 (Δ pred ) 𝑔 high ⊙ 𝐑 (𝑚 )dif f 
+
+‖‖‖2
+
+, 𝑚 = 1 , … , 𝑀. 
+
+(25) For probabilistic evaluation, the circular energy-form Continuous Ranked Probability Score is computed as 
+
+CRPS 𝕊 1 = 1
+
+𝑀 
+
+> 𝑀
+
+∑
+
+> 𝑚 =1
+
+𝑑 𝕊 1
+
+(̂𝜃 (𝑚 ), 𝜃 true 
+
+)
+
+− 12𝑀 (𝑀 − 1) 
+
+> 𝑀
+
+∑
+
+> 𝑚 =1
+> 𝑀
+
+∑
+
+> 𝑚 ′=1
+
+𝑑 𝕊 1
+
+(̂𝜃 (𝑚 ),̂ 𝜃 (𝑚 ′))
+
+.
+
+(26)   
+
+> H. Shu et al.: Preprint submitted to Elsevier Page 4 of 15 Predictability-Guided Wind Direction Forecasting
+
+Calibration and sharpness are further evaluated using Predic-tion Interval Coverage Probability (PICP), Mean Prediction Interval Width (MPIW), and the coverage gap 
+
+Gap = PICP − Nominal . (27) 
+
+## 3. Data and Experimental Setup 
+
+3.1. Observational Site and Input Features 
+
+We use continuous boundary-layer meteorological obser-vations from the Beutenberg Atmospheric Measurement Sta-tion in Jena, Thuringia, Germany ( 50 ◦54 ′36 ′′ N, 11 ◦34 ′12 ′′ E;370 m a.s.l.), operated and archived by the Max Planck Institute for Biogeochemistry (MPI-BGC) [17]. The station provides a long-term observational record spanning from January 1, 2004 to August 31, 2026. After quality screen-ing and temporal continuity checks, the record contains 1,192,077 raw observations at 10-min resolution and yields 1,191,361 contiguous sliding-window forecasting instances. As illustrated in Fig. 3, the station sits on a limestone plateau overlooking the deeply incised Saale River valley, with an elevation relief of approximately 225 m between the riverbed ( 145 m a.s.l.) and the measurement mast ( 370 ma.s.l.). The 22-year climatological wind rose reveals a pro-nounced directional distribution strongly channeled along the SSW–SW corridor ( 200 ◦–230 ◦) and secondarily along the NE corridor, reflecting valley-guided boundary-layer flow that contributes to the high persistence observed in the low-frequency background. The observational system includes measurements of three-dimensional wind velocity, horizontal wind direction 
+
+𝜃 , air temperature 𝑇 , relative humidity 𝑅𝐻 , atmospheric pressure 𝑝 , and global downward solar irradiance. High-frequency sensor observations acquired at 10-s resolution are quality-controlled and aggregated to standard 10-min climatological intervals before model construction. The forecasting models use 20 physical and dynamical input channels derived from the observations. Wind direc-tion is represented by the circular embedding [sin 𝜃, cos 𝜃 ] ∈ 
+
+𝕊 1, avoiding the artificial discontinuity at the 0◦∕360 ◦
+
+boundary. The scalar meteorological variables comprise horizontal wind speed 𝑤𝑣 , maximum instantaneous gust speed 𝑣 max , air temperature 𝑇 , relative humidity 𝑅𝐻 , and pressure 𝑝 . The horizontal wind field is further represented by its orthogonal velocity components, 
+
+𝑢 = − 𝑤𝑣 sin 𝜃, 𝑣 = − 𝑤𝑣 cos 𝜃, (28) which provide a Cartesian representation of the local hori-zontal flow. To describe periodic forcing, the input tensor includes diurnal and annual harmonic encodings, 
+
+[
+
+sin 
+
+( 2𝜋𝑡 hour 
+
+24 
+
+)
+
+, cos 
+
+( 2𝜋𝑡 hour 
+
+24 
+
+)] 
+
+, (29) and 
+
+[
+
+sin 
+
+( 2𝜋𝑡 doy 
+
+365 
+
+)
+
+, cos 
+
+( 2𝜋𝑡 doy 
+
+365 
+
+)] 
+
+. (30) Additional causal dynamical descriptors include backward differences of 𝑢 , 𝑣 , and 𝑤𝑣 , the circular directional increment 
+
+Δ𝜃 circ = 1
+
+𝜋 atan2 (sin Δ 𝜃 𝑡 , cos Δ 𝜃 𝑡 
+
+) , Δ𝜃 𝑡 = 𝜃 𝑡 −𝜃 𝑡 −1 ,
+
+(31) and causal rolling standard deviations of 𝑢 , 𝑣 , and 𝑤𝑣 over 30-min and 60-min windows. These variables provide in-formation on short-term directional variability, wind-speed fluctuations, and local turbulent conditions without using future observations. All experiments use a historical lookback of 𝑇 = 144 
+
+steps (24 h) and a forecasting horizon of 𝐻 = 36 steps (6 h). Thus, each model input-output sample contains 24 h of his-torical atmospheric information and predicts the subsequent 6-h directional trajectory. 
+
+3.2. Quality Screening and Preprocessing 
+
+Raw meteorological observations were first subjected to automated quality screening to remove physically implausi-ble values, transient sensor artifacts, and obvious measure-ment anomalies. The accepted ranges were 𝑤𝑣 ∈ [0 , 50] m/s, 
+
+𝜃 ∈ [0 ◦, 360 ◦), 𝑅𝐻 ∈ [0 , 100]% , 𝑝 ∈ [900 , 1060] hPa, and 
+
+𝑇 ∈ [−30 , 45] ◦C. Short missing intervals of no more than 30 min (three consecutive 10-min observations) were interpolated using variable-specific procedures. Temperature, pressure, and rel-ative humidity were reconstructed using shape-preserving piecewise cubic Hermite interpolation, whereas wind direc-tion was interpolated on the circular manifold using angular interpolation. Missing intervals longer than 30 min were instead treated as temporal boundaries. Sliding windows were therefore not allowed to cross such gaps, ensuring that every extracted sample corresponded to a contiguous sequence of observations. Continuous scalar variables were standardized according to 
+
+𝑥 ∗ = 𝑥 − 𝜇 train 
+
+𝜎 train 
+
+, (32) where 𝜇 train and 𝜎 train were estimated exclusively from the training period (2004–2020). For example, the training statis-tics for wind speed, temperature, and pressure were 𝜇 𝑤𝑣 =2.17 m/s, 𝜎 𝑤𝑣 = 1 .58 m/s, 𝜇 𝑇 = 9 .67 ◦C, 𝜎 𝑇 = 8 .26 ◦C, 
+
+𝜇 𝑝 = 989 .47 hPa, and 𝜎 𝑝 = 8 .64 hPa. These parameters were then frozen and applied unchanged to the validation, test, and out-of-distribution periods. The circular components and harmonic time encodings are already bounded in [−1 , 1] and were therefore not additionally standardized. 
+
+3.3. Dataset Partitioning and Regimes 
+
+The quality-screened dataset contains 1,191,361 contigu-ous forecasting instances with 𝑇 = 144 historical steps and 
+
+𝐻 = 36 future steps. The data were partitioned chrono-logically by observation year so that information from later periods was not used in model development.   
+
+> H. Shu et al.: Preprint submitted to Elsevier Page 5 of 15 Predictability-Guided Wind Direction Forecasting
+
+The training set contains 894,061 sequences (75.05%) from January 1, 2004 to December 31, 2020. The validation set contains 104,941 sequences (8.81%) from January 1, 2021 to December 31, 2022 and was used for convergence monitoring, early stopping, and calibration-parameter selec-tion. The test set contains 157,645 sequences (13.23%) from January 1, 2023 to December 31, 2025 and was used for the primary performance evaluation. An additional out-of-distribution (OOD) set contains 34,714 sequences (2.91%) from January 1 to August 31, 2026 and was kept completely separate from model fitting and post-hoc tuning. For standardized comparison across model variants, 10,000 complete test sequences were sampled from the test period and used as the common benchmarking cohort. The cohort includes both weakly varying and strongly turning trajectories. In particular, Case 2 denotes relatively steady conditions with a total directional change below 30 ◦,whereas Case 1 denotes severe directional shear with a total change of at least 90 ◦. A more restrictive Case 1 ∗ subset is defined by a total directional change of at least 110 ◦ and is used to examine the most severe turning conditions. 
+
+3.4. Baselines and Evaluation Protocol 
+
+The proposed framework is compared with five refer-ence models representing recurrent, hierarchical, attention-based, foundation-model, and frequency-decomposed fore-casting approaches. The baselines include a gated recurrent unit (GRU), N-HiTS [2], the Temporal Fusion Transformer (TFT) [14], Google’s TimesFM-3.0 zero-shot foundation model [6], and the proposed D4-0 Anchor as the deter-ministic frequency-decoupled reference model. To prevent the artificial 0◦∕360 ◦ circular boundary discontinuity in-herent in univariate scalar angle prediction, TimesFM-3.0 is evaluated in a zero-shot univariate setting by indepen-dently forecasting the two orthogonal continuous harmonic components [sin 𝜃, cos 𝜃 ] using the same 144-step historical context, followed by angular trajectory reconstruction via 
+
+atan2 , ensuring a structurally fair baseline comparison. Point-forecast performance is assessed using Mean Cir-cular Error (MCE), circular root-mean-square error (CRMSE), and threshold hit rates at 22 .5◦ and 45 ◦. For probabilis-tic forecasts, we use the circular energy-form Continuous Ranked Probability Score ( CRPS 𝕊 1 ) [10], Prediction Inter-val Coverage Probability (PICP) at nominal levels of 80%, 90%, and 95%, Mean Prediction Interval Width (MPIW), and the coverage gap 
+
+Gap = PICP − Nominal . (33) Statistical comparisons were performed using non-parametric paired tests because directional forecast errors can exhibit skewness, heavy tails, and multimodality, particularly under strong wind-direction changes. For each model comparison, paired forecast errors were computed on the same 10,000 evaluation sequences, and a two-sided Wilcoxon signed-rank test was applied to assess whether the median paired difference differed from zero. To quantify uncertainty in the mean performance differences while accounting for tempo-ral dependence, a stationary block bootstrap with 10,000 replications was additionally performed using a block length of 𝐿 𝑏 = 36 steps (6 h) as a conservative temporal depen-dence scale covering the physical persistence of the subband features. The sensitivity of the bootstrap conclusions across varying block lengths is further analyzed in Section 4.5. The resulting 95% confidence intervals were calculated for the paired error differences. Statistical analyses were conducted for the full test cohort and separately for Case 1, Case 1 ∗,and Case 2. 
+
+## 4. Results 
+
+4.1. Scale-Dependent Predictability 
+
+Table 1 characterizes the temporal predictability of the decomposed directional momentum signal ( 𝑢 = − 𝑤𝑣 sin 𝜃 )and provides an empirical basis for assigning different fore-casting mechanisms to different timescales. Analyzing the horizontal momentum component retains directional varia-tion while incorporating physical kinetic weight, avoiding unweighted angular noise in calm regimes. The three sub-bands exhibit markedly different persistence and correla-tion structures. The low-frequency component 𝐿 contains 76.35% of the total signal energy and has the longest e-folding decorrelation time ( 𝜏 𝑒 = 147 .5 min), together with a strong 1-h autocorrelation ( 𝑅 1 = 0 .8026 ). In contrast, the mid-frequency component 𝑀 contains only 11.60% of the energy but decorrelates much more rapidly ( 𝜏 𝑒 = 26 .3 min) and exhibits a negative 1-h correlation ( 𝑅 1 = −0 .2503 ). The high-frequency component 𝐻 accounts for 12.27% of the energy and has a much shorter decorrelation time of 5.9 min, while its 1-h correlation is close to zero ( 𝑅 1 = 0 .0845 ). These differences are critical because energy contri-bution alone does not determine forecastability. The low-frequency component simultaneously dominates the signal variance and retains substantial temporal memory, making it the most suitable target for deterministic extrapolation. The mid-frequency component contains considerably less energy but changes on a timescale comparable to the fore-casting horizon and does not exhibit the persistent positive correlation of the low-frequency background. Its negative 
+
+𝑅 1 instead suggests that short-term evolution is character-ized by directional reversal or oscillatory behavior rather than simple persistence. The high-frequency component is both rapidly decorrelating and weakly correlated over one hour, indicating that its future evolution is intrinsically less predictable from the available temporal context. The resulting ordering, 
+
+𝜏 𝑒 (𝐿 ) ≫ 𝜏 𝑒 (𝑀 ) ≫ 𝜏 𝑒 (𝐻 ), (34) therefore separates the forecasting problem into a persistent background, a dynamically evolving intermediate compo-nent, and a rapidly varying residual component. This em-pirical separation supports the proposed mechanism alloca-tion: deterministic reconstruction for 𝐿 , continuous dynamic correction for 𝑀 , and probabilistic residual modeling for 
+
+𝐻 . Crucially, this mechanism allocation is derived from empirical temporal statistics rather than imposed by nominal wavelet filter bands.                              
+
+> H. Shu et al.: Preprint submitted to Elsevier Page 6 of 15 Predictability-Guided Wind Direction Forecasting
+> Table 1
+> Subband predictability profiling across frequency timescales for the directional momentum component 𝑢 .
+> Subband Energy (%) Std (m/s) 𝜏 𝑒 (min) 𝑅 1(1h) Full Signal 100.0% 0.6404 62.9 0.3763 Low ( 𝐿 ,>5.3h) 76.35% 0.5544 147.5 0.8026 Mid ( 𝑀 ,1.3 ∼ 5 .3h) 11.60% 0.2244 26.3 -0.2503 High ( 𝐻 ,20 ∼ 80 min) 12.27% 0.2309 5.9 0.0845
+
+4.2. Deterministic Forecasting and Trajectory Dynamics 
+
+Table 2 compares point-forecast performance across the proposed framework and five reference models. The main result is that the deterministic performance is governed primarily by the frequency-decoupled anchor, while the Neu-ral ODE provides a targeted correction to rapidly evolving directional trajectories. The D4-0 Anchor obtains the lowest global test MCE among the evaluated models ( 38 .31 ◦) and the lowest Case 2 error ( 25 .77 ◦), indicating that the low-frequency deterministic background provides a strong rep-resentation of the dominant directional component. Adding the Neural ODE changes the global MCE only slightly, from 
+
+38 .31 ◦ to 38 .48 ◦, while reducing Case 1 MCE from 60 .90 ◦ to 
+
+60 .69 ◦. The corresponding threshold hit rates remain nearly unchanged ( 48 .9% for HR 22 .5◦ and 72 .5% for HR 45 ◦ ). This modest shift in aggregate MCE reflects the pre-dominance of quiescent intervals in the test set. Because quiescent sequences ( < 30 ◦) account for 56.19% of the au-dited 10,000-sequence benchmark cohort (5,619 sequences), continuous trajectory correction yields limited reduction in a global average error dominated by persistent background flow. The more relevant comparison is therefore regime-stratified. Under Case 1, the proposed framework reduces the point error relative to the D4-0 anchor by 0.21 ◦, whereas the anchor itself already outperforms the recurrent, hierarchical, and attention-based alternatives. The result suggests that the main contribution of the dynamic branch is not a wholesale replacement of the persistent background but a localized correction under conditions in which the direction begins to deviate rapidly. The comparison with TimesFM-3.0 shows the same pattern at a different level. Under the evaluated zero-shot univariate setting, TimesFM-3.0 reaches a global test MCE of 42 .80 ◦ and a Case 1 MCE of 70 .42 ◦, compared with 
+
+38 .48 ◦ and 60 .69 ◦, respectively, for the proposed model. The gap is considerably larger in the severe-shear regime than in Case 2, where the TimesFM error is 26 .84 ◦ compared with 
+
+26 .08 ◦ for the proposed framework. This regime dependence suggests that the advantage of the proposed representation is concentrated in situations where circular structure, scale separation, and short-term directional dynamics become de-cisive, rather than reflecting a uniformly lower error under all atmospheric conditions. Aggregate error metrics, however, do not fully describe the behavior of a multi-step directional forecast. Fig. 4 and Fig. 5 show that the main effect of the continuous dynamic branch becomes more evident when forecast trajectories are examined as functions of horizon. Table 3 indicates that TimesFM-3.0 exhibits an average phase delay of approxi-mately +80 min, whereas the proposed continuous latent trajectory has an estimated phase delay close to zero. TFT also produces substantially larger trajectory curvature, with a mean curvature of 3.6085 ◦, compared with 0.0788 ◦ for the Neural ODE component and 0.1140 ◦ for the complete sys-tem. These results indicate that the dynamic branch primar-ily refines temporal alignment and trajectory smoothness, leaving the baseline angular error largely intact. The horizon-wise behavior is consistent with this in-terpretation. For short horizons ( ℎ ≤ 6, corresponding to approximately 10–60 min), forecasts remain closely aligned with the observed trajectory, with MCE below 15 ◦. At inter-mediate horizons ( ℎ ∈ [6 , 24] , approximately 1–4 h), the in-fluence of trajectory correction becomes more visible, with Trend Accuracy reaching 53 .6% and Dynamic Correlation reaching 0.218 . Although these values do not imply perfect trajectory reconstruction, they indicate that the continuous latent evolution preserves a greater degree of directional temporal structure over the intermediate forecasting range. The regime-selective behavior of the dynamic branch is further illustrated in Fig. 5. The average gate activation increases from 0.028 under weak turning conditions to 0.768 
+
+under the largest observed directional shifts, corresponding to a 27 .04 -fold increase. The dynamic correction activates adaptively with regime difficulty, rising progressively from quiescent conditions to large directional shifts. This provides an interpretable link between regime severity and model usage. The observed-turning curves shown in the figure are used only as a post-hoc diagnostic; deployment-time gating is based on the causally available predicted turning magnitude Δpred and does not use future observations. 
+
+4.3. Probabilistic Forecasting and Calibration 
+
+The probabilistic results show a clearer separation be-tween the roles of point forecasting, stochastic residual mod-eling, and calibration than is visible from MCE alone. Ta-ble 4, Table 5, and Fig. 6 provide a stepwise comparison of these components. Adding the Neural ODE to the anchor changes CRPS only marginally, from 29 .21 ◦ to 29 .15 ◦, while increasing the 95% PICP from 74 .32% to 74 .49% . In con-trast, adding conditional residual diffusion reduces CRPS to 28 .76 ◦ and raises the 95% PICP to 91 .85% . The further introduction of validation-only recalibration produces the largest change, reducing CRPS to 22 .36 ◦ and increasing 95% PICP to 93 .88% .Directly comparing Variants A/C and B/D isolates the contribution of stochastic residual modeling: point MCE remains invariant upon introducing diffusion. Specifically, Variants A and C both obtain 38 .31 ◦ global MCE and 
+
+60 .90 ◦ Case 1 MCE, whereas Variants B and D both obtain 
+
+38 .48 ◦ and 60 .69 ◦, respectively. This numerical invariance demonstrates that the residual diffusion branch shapes the predictive distribution around the deterministic trajectory without perturbing the point estimate itself. The subsequent   
+
+> H. Shu et al.: Preprint submitted to Elsevier Page 7 of 15
+
+Predictability-Guided Wind Direction Forecasting 
+
+Table 2 
+
+Deterministic point accuracy benchmark across 10,000 continuous test sequences.                                                           
+
+> Model Architecture Paradigm Test MCE OOD MCE Case 1 ( ≥90 ◦)Case 2 ( <30 ◦)HR 22 .5◦HR 45 ◦
+> Persistence Classical Baseline 45.20 ◦49.80 ◦74.50 ◦30.12 ◦37.6% 61.5% GRU Recurrent Baseline 38.80 ◦43.52 ◦61.23 ◦26.30 ◦48.2% 71.8% N-HiTS Hierarchical MLP 39.35 ◦44.99 ◦62.34 ◦26.43 ◦47.6% 71.1% TFT Attention Transformer 39.65 ◦44.73 ◦61.67 ◦27.37 ◦46.8% 70.2% TimesFM-3.0 300M Foundation (Zero-Shot) 42.80 ◦46.75 ◦70.42 ◦26.84 ◦41.1% 65.8% D4-0 Anchor Frequency-Decoupled 38.31 ◦43.30 ◦60.90 ◦25.77 ◦49.2% 72.6% Ours (Point) Continuous Dynamic Flow 38.48 ◦43.39 ◦60.69 ◦26.08 ◦48.9% 72.5%
+
+Table 3 
+
+Dynamic trajectory morphology and phase-lag audit across 10,000 continuous test sequences.                                     
+
+> Model Architecture Trend Acc DynCorr Phase Lag Curvature Persistence 42.1% 0.0025 +80 min 0.0000 ◦
+> GRU 50.3% 0.1350 -80 min 0.7048 ◦
+> N-HiTS 50.0% 0.1010 0 min 1.2073 ◦
+> TFT 49.7% 0.0940 0 min 3.6085 ◦
+> TimesFM-3.0 47.8% 0.0820 +80 min 0.5128 ◦
+> D4-0 Anchor 51.2% 0.1480 0 min 1.6160 ◦
+> Neural ODE 53.8% 0.2240 0 min 0.0788 ◦
+> Ours (Complete) 53.6% 0.2180 0 min 0.1140 ◦
+
+reduction in CRPS is therefore attributable to a more in-formative representation of unresolved uncertainty rather than an unobserved improvement in deterministic trajectory tracking. The interval coverage metrics in Table 6 and the empir-ical reliability diagrams in Fig. 7 indicate that calibration performance is strongly regime dependent. Across all sam-ples, the final model achieves 93.88% empirical coverage at the nominal 95% level in the in-distribution test period and 91.01% under OOD evaluation. The corresponding cal-ibration gaps are −1 .12 and −3 .99 percentage points, re-spectively. This moderate degradation under temporal dis-tribution shift indicates that calibration parameters learned from the validation split remain robust in subsequent 2026 observations, although OOD intervals expand and overall CRPS increases from 22 .36 ◦ to 27 .75 ◦.Under severe directional shear, however, the calibra-tion behavior diverges markedly. At the nominal 95% level, Case 1 coverage reaches 81.56% in the test period and 79.21% in OOD conditions, compared with 96.82% and 94.75% for Case 2. Calibration is thus effective on average but degrades systematically during strongly turning trajec-tories. The widening of Case 1 intervals, with MPIW ex-panding to approximately 237 ◦–238 ◦, shows that the model captures elevated dispersion under severe shear. Neverthe-less, interval widening alone does not restore nominal cov-erage. This distinction is essential: the remaining coverage deficit stems from higher structural complexity in the severe-turning residual distribution, exceeding what variance expan-sion alone can accommodate. Fig. 8 illustrates this risk-dependent spread behavior. The conditional diffusion process generates compact predic-tive distributions under stable anchor errors and expands dispersion adaptively as deterministic forecast uncertainty rises. The residual model modulates predictive spread condi-tionally on the deterministic trajectory state, departing from fixed global variance assumptions. The high-frequency residual analysis provides additional evidence that the diffusion process captures temporal struc-ture beyond simple interval widening. Supplementary Ta-ble S3 shows that the generated residuals reproduce the observed microscale spectral decay with a maximum slope discrepancy of 2.65% and recover a decorrelation time close to the empirical 5.90-min value. This spectral agreement indicates that the probabilistic branch captures the temporal organization of the unresolved subband, avoiding the white-noise oversimplifications of conventional Gaussian residu-als. The Monte Carlo sensitivity analysis in Supplementary Table S7 indicates that 𝑁 mc = 50 provides stable PICP estimates for the reported configuration, with an empiri-cal change in coverage below 0.05% in the tested range. Supplementary Table S8 further shows that the three-bin recalibration scheme based on the 30 ◦ and 75 ◦ predicted-turning thresholds provides a favorable empirical trade-off between coverage and interval width among the tested par-tition schemes. These results support the selected configura-tion, although they do not imply that the chosen thresholds are universal across sites or climates. To examine whether stochastic generation avoids mode collapse, we audited the evolution of Monte Carlo particle diversity across forecasting lead times: 
+
+𝐷 pair (ℎ) = 1
+
+𝑀 (𝑀 − 1) 
+
+∑
+
+> 𝑚 ≠𝑚 ′
+
+𝑑 𝕊 1 (̂𝜃 (𝑚 )(𝑡 + ℎ),̂ 𝜃 (𝑚 ′)(𝑡 + ℎ)) .
+
+(35) As depicted in Fig. 9, 𝐷 pair (ℎ) exhibits monotonic, well-behaved expansion across the 6-h forecast horizon without mode collapse. Under steady conditions (Case 2), particle dispersion expands smoothly from 3.2◦ to 18 .0◦, whereas under severe directional shear (Case 1 and Case 1 ∗), diver-sity rapidly widens to 78 .9◦ and 87 .0◦, respectively. This confirms that the diffusion process adaptively maintains rich sample dispersion tailored to regime difficulty. 
+
+H. Shu et al.: Preprint submitted to Elsevier Page 8 of 15 Predictability-Guided Wind Direction Forecasting 
+
+Table 4 
+
+Probabilistic forecasting reliability benchmark across 10,000 continuous test sequences.                               
+
+> Model Variant Probabilistic Mechanism CRPS PICP 80% PICP 90% PICP 95% MPIW 95% D4-0 (Empirical Spread) Empirical Residual Gaussian 29.21 ◦58.12% 70.15% 74.32% 138.4 ◦
+> D4-0 + Neural ODE Latent ODE + Empirical Spread 29.15 ◦58.24% 70.28% 74.49% 138.6 ◦
+> D4-0 + ODE + Diff Uncalibrated Residual Diffusion 28.76 ◦74.80% 88.88% 91.85% 174.2 ◦
+> Ours (+ Recalibration) Calibrated Conditional Dual-Track 22.36 ◦86.94% 91.43% 93.88% 196.9 ◦
+
+Table 5 
+
+Stepwise mechanistic ablation across Variants A through E.                         
+
+> Variant Test MCE Case 1 MCE CRPS PICP 95% A: Anchor Only 38.31 ◦60.90 ◦29.21 ◦74.32% B: + Neural ODE 38.48 ◦60.69 ◦29.15 ◦74.49% C: + Diffusion 38.31 ◦60.90 ◦28.82 ◦91.70% D: + ODE + Diff 38.48 ◦60.69 ◦28.76 ◦91.85%
+> E: + Recalibration 38.48 ◦60.69 ◦22.36 ◦93.88%
+
+4.4. Structural Uncertainty Under Extreme Shear 
+
+The residual analysis in Table 7 and the signed circular distributions in Fig. 10 provide an explanation for the regime-dependent calibration behavior. Across 360,000 evaluation points, Case 2 remains strongly concentrated near the pre-dicted center, with 84.81% of test residuals within ±30 ◦
+
+and only 1.50% in the antipodal region beyond 135 ◦. Under Case 1, however, the centered mass decreases to 41.77%, while the antipodal component increases to 13.39%. The same pattern becomes stronger in the OOD period, where the antipodal mass reaches 15.43% for Case 1 and 16.66% for Case 1 ∗.The signed distribution is also approximately balanced between the two directions of large deviation. For Test Case 1, the positive and negative antipodal lobes contain 6.43% and 6.96% of the points, respectively; in OOD Case 1 the corresponding fractions are 7.51% and 7.92%. The near-symmetry is notable because it indicates that the large resid-ual is not associated with a single preferred directional bias. Instead, the conditional uncertainty contains two competing branches on the circle, corresponding to qualitatively differ-ent large-turn outcomes. This structure helps explain why the calibration behavior differs so strongly between Case 1 and Case 2. A center-based prediction interval can expand to account for increas-ingly large errors, but a single central dispersion parameter does not explicitly represent the possibility that probabil-ity mass splits into separated directional branches. Conse-quently, the widening of the calibrated interval improves coverage but cannot fully eliminate under-coverage when the residual distribution becomes strongly multimodal. The approximately 14–17% antipodal mass observed in the most severe regimes should therefore be interpreted as an empiri-cal limitation of the present single-center calibration strategy rather than as a universal or mathematically fixed coverage bound. The atmospheric covariates provide additional context for this structural change. Supplementary Table S5 shows that severe-shear cases are associated with a 3.76-fold in-crease in the 1-h wind-velocity variance ( 0.79 ± 0 .39 versus 
+
+0.21 ± 0 .14 m2/s 2) and a 3.55-fold increase in the magnitude of the pressure-drop statistic ( 0.78 ± 0 .42 versus 0.22 ± 0.15 hPa). These concurrent changes are consistent with stronger and more rapidly evolving boundary-layer forcing during the most difficult directional transitions. To address concerns regarding potential measurement artifacts at low wind speeds (where mechanical wind vanes may exhibit random directional fluctuations under calm con-ditions), we conducted a sensitivity analysis by filtering out calm-wind regimes ( 𝑤𝑣 < 1.5 m/s and 𝑤𝑣 < 2.0 m/s). As detailed in Supplementary Table S9, the antipodal resid-ual mass under Case 1 remains robust at 12.33% ( 𝑤𝑣 ≥
+
+1.5 m/s) and 11.83% ( 𝑤𝑣 ≥ 2.0 m/s), with balanced positive and negative lobes (6.29% vs 6.04%, symmetry ratio 1.04). This confirms that the observed near-antipodal bimodality is driven by genuine mesoscale baroclinic transitions and frontal passages rather than low-wind sensor noise. 
+
+4.5. Statistical Robustness and Computational Efficiency 
+
+The observed performance differences are statistically robust under the paired non-parametric evaluation described in Section 3. Supplementary Table S4 reports two-sided Wilcoxon signed-rank tests for the paired forecast errors on the common 10,000-sequence benchmark. All reported comparisons against the recurrent, hierarchical, attention-based, and foundation-model baselines yield 𝑝 < 10 −16 .Relative to TimesFM-3.0, the proposed framework improves the paired mean error by 4.32 ◦, with a 95% stationary block-bootstrap confidence interval of [4 .12 ◦, 4.54 ◦] under 𝐿 𝑏 =36 .To verify the robustness of the block bootstrap against temporal dependence scale choices, we evaluated bootstrap intervals across varying block lengths 𝐿 𝑏 ∈ {18 , 36 , 72 , 144} 
+
+steps (3 h to 24 h). As detailed in Supplementary Table S10, the 95% confidence interval for the mean error reduction against TimesFM-3.0 remains strictly positive and excludes zero across all tested block lengths ( [4 .16 ◦, 4.50 ◦] for 𝐿 𝑏 =18 , [4 .12 ◦, 4.54 ◦] for 𝐿 𝑏 = 36 , [4 .07 ◦, 4.58 ◦] for 𝐿 𝑏 =72 , and [4 .05 ◦, 4.61 ◦] for 𝐿 𝑏 = 144 ), confirming that the statistical significance is not sensitive to the autocorrelation block specification. The proposed framework also maintains an efficient computational footprint suitable for industrial deployment. Supplementary Table S6 reports approximately 0.80M train-able parameters for the complete system, of which 0.42M 
+
+H. Shu et al.: Preprint submitted to Elsevier Page 9 of 15 Predictability-Guided Wind Direction Forecasting 
+
+Table 6 
+
+Empirical reliability, interval sharpness, and probabilistic calibration evaluation across in-distribution and out-of-distribution test splits.                                                                                                                                  
+
+> In-Distribution Test (2025) Out-of-Distribution Test (2026)
+> Regime Nominal PICP MPIW CRPS Gap Nominal PICP MPIW CRPS Gap All Samples 50% 68.44% 59.77 ◦22.36 ◦+18.44% 50% 60.62% 65.43 ◦27.75 ◦+10.62% All Samples 80% 86.94% 119.34 ◦22.36 ◦+6.94% 80% 81.21% 130.37 ◦27.75 ◦+1.21% All Samples 90% 91.43% 159.15 ◦22.36 ◦+1.43% 90% 87.39% 172.09 ◦27.75 ◦-2.61% All Samples 95% 93.88% 196.90 ◦22.36 ◦-1.12% 95% 91.01% 209.33 ◦27.75 ◦-3.99% Case 1 ( ≥90 ◦)50% 46.14% 79.02 ◦41.30 ◦-3.86% 50% 42.13% 79.24 ◦44.31 ◦-7.87% Case 1 ( ≥90 ◦)80% 67.55% 156.00 ◦41.30 ◦-12.45% 80% 63.91% 156.77 ◦44.31 ◦-16.09% Case 1 ( ≥90 ◦)90% 75.97% 200.97 ◦41.30 ◦-14.03% 90% 72.80% 202.42 ◦44.31 ◦-17.20% Case 1 ( ≥90 ◦)95% 81.56% 236.84 ◦41.30 ◦-13.44% 95% 79.21% 238.28 ◦44.31 ◦-15.79% Case 1 ∗(≥110 ◦)95% 80.52% 239.14 ◦42.74 ◦-14.48% 95% 78.61% 238.14 ◦45.10 ◦-16.39% Case 2 ( <30 ◦)90% 94.61% 136.21 ◦14.85 ◦+4.61% 90% 91.82% 148.12 ◦18.22 ◦+1.82% Case 2 ( <30 ◦)95% 96.82% 168.45 ◦14.85 ◦+1.82% 95% 94.75% 182.30 ◦18.22 ◦-0.25%
+
+Table 7 
+
+Signed circular residual mass distribution across 360,000 evaluation points.                                                   
+
+> Split & Regime Points Center ( ≤30 ◦)Mid ( 30 ◦–120 ◦)Antipodal ( ≥135 ◦)Pos Neg Test Case 2 (Calm) 202,284 84.81% 13.13% 1.50% 0.68% 0.82% Test Case 1 ( ≥90 ◦)57,204 41.77% 40.03% 13.39% 6.43% 6.96% Test Case 1 ∗(≥110 ◦)43,380 40.12% 39.77% 14.99% 7.13% 7.85% OOD Case 2 (Calm) 182,664 76.62% 19.83% 2.52% 1.16% 1.35% OOD Case 1 ( ≥90 ◦)66,960 37.38% 42.15% 15.43% 7.51% 7.92% OOD Case 1 ∗(≥110 ◦)49,428 37.26% 40.70% 16.66% 8.01% 8.65%
+
+belong to the deterministic anchor, achieving a 375-fold compression relative to the 300M-parameter TimesFM-3.0 foundation model. On an NVIDIA RTX 4090 GPU, full 36-step probabilistic generation with 50 Monte Carlo particles requires 10.40 ms per sequence, while deterministic point prediction requires 2.30 ms. To assess deployment on standard wind-turbine edge controllers (which typically operate on industrial x86 or ARM CPUs without dedicated tensor accelerators), we conducted bare-metal latency benchmarks on an edge x86 CPU. On a single thread, the deterministic anchor requires 
+
+25 .03 ms, the continuous Neural ODE point forecast re-quires 89 .68 ms, and full 50-particle probabilistic genera-tion requires 89 .8 ± 22 .9 ms per sequence (expanding to 
+
+415 .8 ± 11 .5 ms under 8 threads). The peak RAM footprint remains under 35 MB throughout execution. Both latencies reside comfortably within standard 10-s SCADA and 10-min dispatch cadences, providing experimental verification of edge-computing feasibility. The empirical findings demonstrate a clear division of roles across the framework: the frequency-decoupled an-chor secures baseline deterministic accuracy, the contin-uous dynamic branch sharpens trajectory alignment dur-ing rapid turning, and the diffusion–recalibration module governs probabilistic reliability. Concurrently, the residual analysis identifies a key structural boundary: under extreme shear, forecast uncertainty expands in magnitude and splin-ters geometrically, yielding persistent under-coverage that cannot be resolved solely by expanding single-center interval bounds. 
+
+## 5. Discussion 
+
+5.1. Why Predictability-Guided Allocation Works 
+
+The empirical findings indicate that wind-direction fore-casting benefits from treating the observed trajectory as a collection of components with distinct temporal predictabil-ity, avoiding the representational trade-offs of forcing a single model to span all physical scales simultaneously. The predictability analysis in Table 1 shows a pronounced separation between the low-, mid-, and high-frequency components. The low-frequency component contains most of the signal energy and retains strong temporal memory, whereas the mid-frequency component changes substan-tially faster and exhibits a negative one-hour correlation. The high-frequency component decorrelates within several minutes and contributes relatively little persistent informa-tion. This hierarchy provides a useful interpretation of why the frequency-decoupled formulation performs well: model capacity is concentrated where deterministic information is strongest, while uncertainty is reserved for components whose future evolution is less reliably determined by histor-ical observations. A fundamental implication is that frequency decomposi-tion operates beyond a mere signal-processing convenience: it establishes an explicit correspondence between physi-cal temporal predictability and functional model capacity. The low-frequency anchor captures the persistent directional background, explaining its competitive point-forecast per-formance across both the overall test set and the relatively steady Case 2 regime. The intermediate component behaves 
+
+H. Shu et al.: Preprint submitted to Elsevier Page 10 of 15 Predictability-Guided Wind Direction Forecasting 
+
+differently: its shorter memory and negative one-hour cor-relation indicate that future direction cannot be represented adequately by simple persistence, yet it retains sufficient temporal structure to benefit from learned continuous evolu-tion. The high-frequency component occupies the opposite end of this spectrum: its short decorrelation time limits the utility of deterministic extrapolation, rendering a conditional probabilistic representation more appropriate. This mechanism allocation also accounts for why adding the Neural ODE yields a modest shift in aggregate MCE yet markedly improves trajectory alignment. Because quies-cent intervals dominate the long-term observational record, continuous trajectory correction exerts minimal leverage on global mean error. Its primary utility is concentrated in the subset of sequences where temporal phase and turning morphology dictate forecast utility. The horizon-wise results support this view: the continuous dynamic branch refines temporal alignment and mitigates trajectory distortion, func-tioning in synergy with the deterministic anchor rather than competing with it. The regime-gating measurements in Fig. 5 corroborate this interpretation. The progressive increase in gate activa-tion with forecasted turning shows that dynamic corrections are engaged selectively during challenging directional tran-sitions. Stable trajectories rely predominantly on the persis-tent background, whereas rapidly turning regimes invoke continuous latent flow. This selective gating protects quies-cent forecasts from spurious variance that an unconstrained dynamical model might introduce. Nonetheless, this pattern constitutes an empirical characteristic of model usage rather than direct proof of an isolated synoptic regime boundary. More broadly, these results establish temporal predictabil-ity as a principled criterion for architecting hybrid atmo-spheric forecasting systems. Decoupling the forecasting pipeline according to the persistence and decorrelation timescale of each physical subband enables an interpretable allocation of model capacity. In the current framework, this separation allows deterministic trajectory alignment and probabilistic reliability to be optimized concurrently without stochastic sampling degrading the deterministic forecast. 
+
+5.2. Why Uncertainty Degrades Under Extreme Shear 
+
+The primary structural limitation revealed by the prob-abilistic benchmark is that uncertainty under severe direc-tional shear differs qualitatively from that observed during quiescent conditions. Beyond broadening in variance, the residual distributions in Table 7 develop distinct, bifurcated positive and negative error lobes. Under relatively steady conditions, residual mass remains concentrated around the forecast center, whereas severe-shear cases exhibit a substan-tial fraction of observations at large angular separation from that center. The balanced positive and negative branches in-dicate that the dominant challenge is not a simple directional bias. This distinction has direct implications for probabilistic calibration. A center-based prediction interval can respond to increasing uncertainty by increasing its dispersion, and the results show that the proposed recalibration procedure does so effectively at the population level. However, inter-val widening cannot fully resolve the problem when the conditional residual distribution is intrinsically multimodal. If two distinct directional branches accumulate appreciable probability mass, expanding the width of a single interval yields diminishing returns. The persistent under-coverage observed for Case 1, despite substantially wider intervals, is therefore consistent with a mismatch between the assumed unimodal geometry and the empirical residual structure. This bimodal divergence accounts for the pronounced disparity in calibration performance between regimes. For Case 2, residual mass remains tightly concentrated around the forecast origin, enabling single-center intervals to ap-proach nominal coverage with sharp intervals. Under Case 1, conversely, a single interval must encompass both a broad central core and separated antipodal branches. Even as MPIW expands past 236 ◦, empirical coverage fails to reach nominal targets. This shortfall intensifies under OOD evalu-ation, where extreme-shear antipodal mass reaches 15 .43% .The OOD results thus reflect both a modest expansion in overall dispersion scale and the persistence of this structural bifurcation. The meteorological covariates provide supporting ev-idence that the severe-shear regime is associated with a substantially more variable atmospheric state. The increases in short-term wind-velocity variance and pressure-change magnitude reported in Supplementary Table S5 are consis-tent with more rapidly evolving boundary-layer conditions. These relationships support the interpretation that the diffi-cult cases correspond to dynamically distinct atmospheric states. However, the available single-station observations lack the spatial resolution to uniquely determine whether a given transition stems from a frontal boundary, convective outflow, terrain-induced turning, or another mesoscale pro-cess. Consequently, the observed residual bimodality repre-sents an empirical signature of severe directional shear rather than definitive proof of a specific synoptic trigger. The practical consequence is that the present calibration scheme appears to address the first-order problem—how uncertainty should expand as forecast difficulty increases— but not the second-order problem of representing multiple plausible directional branches. A natural extension would therefore be to replace or augment the single-center cali-brated distribution with a multimodal circular formulation, such as a mixture distribution or a conditional flow model ca-pable of preserving separated probability mass on 𝕊 1. Such an extension is motivated directly by the observed residual structure rather than by an assumption that all severe-shear errors should follow a particular parametric form. 
+
+Proof-of-Concept: Multimodal Circular Calibration. 
+
+To empirically test whether a multimodal formulation can re-solve the structural under-coverage, we fitted a two-component mixture of von Mises (MoVM) model to the Case 1 residuals, capturing both the central error mode ( 𝜇 1 ≈ 3.3◦, 𝜅 1 =  
+
+> H. Shu et al.: Preprint submitted to Elsevier Page 11 of 15
+
+Predictability-Guided Wind Direction Forecasting 
+
+Table 8 
+
+Empirical coverage benchmark for unimodal vs. bimodal circular calibration on Case 1 residuals.             
+
+> Calibration Formulation Nominal Coverage Empirical PICP Coverage Gap Interval Structure Single-Center Scaling (Current) 95.0% 81.56% -13.44% Single Contiguous (MPIW = 236.8 ◦)
+> Two-Component MoVM (PoC) 95.0% 94.98% -0.02% Bimodal Highest-Density Disjoint Region
+
+Table 9 
+
+Directional operational threshold exceedance rates across all test and extreme shear regimes.                                               
+
+> Full Test Cohort (All Regimes) Case 1 Severe Directional Shear ( ≥90 ◦)
+> Model Architecture Exceedance >22 .5◦Exceedance >45 ◦Exceedance >22 .5◦Exceedance >45 ◦
+> Persistence 62.4% 38.5% 88.4% 68.2% GRU 51.8% 28.2% 81.5% 54.2% N-HiTS 52.4% 28.9% 82.8% 55.8% TFT 53.2% 29.8% 82.1% 55.1% TimesFM-3.0 58.9% 34.2% 91.2% 68.4% D4-0 Anchor 50.8% 27.4% 80.9% 53.6% Ours (Point) 51.1% 27.5% 80.1% 52.8%
+> Ours (95% Set) 6.12% 3.18% 18.44% 11.20%
+
+7.15 ) and the divergent antipodal turning branch ( 𝜇 2 ≈−32 .7◦, 𝜅 2 = 0.21 ). As detailed in Table 8, this proof-of-concept calibration elevates the empirical 95% cover-age from 81.56% (under single-center scaling) to 94.98%, virtually eliminating the calibration deficit (coverage gap 
+
+−0 .02% ). This confirms that the remaining coverage short-fall stems from the geometric constraint of unimodal inter-val representation on 𝕊 1 rather than inadequate dispersion modeling, establishing a clear pathway for future conditional flow matching on circular manifolds. 
+
+5.3. Implications for Wind-Energy Forecasting and Operations 
+
+Accurate short-horizon wind-direction forecasts are po-tentially valuable for wind-energy applications because yaw misalignment affects both aerodynamic power capture and turbine loading. The commonly used cosine-power relation-ship provides an intuitive illustration of the sensitivity: for a yaw misalignment angle 𝛾 yaw , an idealized power ratio can be expressed as 
+
+𝑃 𝑃 0
+
+≈ cos 3(𝛾 yaw ), (36) where 𝑃 0 denotes the aligned power output. This relationship implies increasingly large aerodynamic penalties as direc-tional error grows. The threshold statistics in Table 9 there-fore provide an operationally interpretable view of forecast quality: reducing the probability of large directional errors is potentially more consequential than achieving a small improvement in the global mean circular error. The results indicate that this benefit is particularly rel-evant during severe turning events, where all determinis-tic models exhibit a substantial increase in threshold ex-ceedance probability. The proposed probabilistic formula-tion does not eliminate these difficult events, but it provides a quantitative representation of their uncertainty. This dis-tinction is critical for operational decision making. A point forecast can indicate the most likely directional trajectory, whereas a calibrated prediction set can additionally indicate whether the forecast is sufficiently certain to justify an ag-gressive yaw response. In this sense, the probabilistic output may be more directly useful for risk-aware yaw scheduling than a point forecast alone. The present results also support a more cautious view of control integration. The thresholds used for calibration and regime analysis can be interpreted as candidate de-cision boundaries for a supervisory forecasting layer, but they should not yet be regarded as a validated turbine-control policy. The present study does not include a closed-loop turbine simulator, aeroelastic load model, hardware-in-the-loop experiment, or field test. Consequently, statements about reduced annual energy production loss, fatigue load reduction, or optimal yaw actuation cannot be established from the forecasting results alone. A more defensible operational interpretation is that the proposed framework can provide three complementary signals for downstream decision support: a deterministic estimate of the expected directional evolution, a regime-sensitive measure of forecast uncertainty, and an indication of whether the predictive distribution becomes structurally complex. These signals could subsequently be incorporated into chance-constrained optimization, model-predictive con-trol, or conservative yaw scheduling. 
+
+Quantitative Deadband Strategy Against Antipodal Misalignment. The bimodal uncertainty under Case 1 poses a severe risk of “reverse-yaw damage”: if the controller actuates towards the primary deterministic mode, but the true flow follows the antipodal branch, the turbine may suffer a catastrophic misalignment ( 𝛾 yaw > 90 ◦), inducing extreme asymmetric fatigue loads on the rotor blades and yaw drive train [9]. To mitigate this operational hazard, we propose a probabilistic deadband decision rule that overrides determin-istic yaw actuation commands when structural uncertainty is 
+
+H. Shu et al.: Preprint submitted to Elsevier Page 12 of 15 Predictability-Guided Wind Direction Forecasting 
+
+elevated: Action (𝑡 ) = 
+
+{
+
+Standard Yaw , if act ,
+
+Hold / Lock , if hold , (37) where act ≡ (Δ pred ≥ 30 ◦ ∧ MPIW 90 < 120 ◦ ∧ 𝑃 antipodal ≤
+
+𝜂 ) defines actionable turning with contained dispersion, 
+
+hold ≡ (MPIW 90 ≥ 120 ◦ ∨ 𝑃 antipodal > 𝜂 ) denotes elevated structural bifurcation risk, and 𝜂 = 10% is an operational risk tolerance threshold. Under the Hold/Lock 
+
+state, the nacelle maintains its current orientation. While this incurs an aerodynamic penalty (e.g., approximately 
+
+1 − cos 3(45 ◦) ≈ 21% power loss at 45 ◦ misalignment under an idealized cubic relationship), it strictly prevents the transition into the destructive > 90 ◦ reverse-yaw regime, thereby safeguarding the yaw drive gears and blade roots from catastrophic cyclic fatigue loading. While modern large-rotor turbines exhibit empirical power loss exponents ranging between 1.4 and 2.2 due to dynamic stall and partial wake deflection, the proposed probabilistic deadband strategy remains universally applicable regardless of the specific aerodynamic penalty exponent. This demonstrates how the probabilistic branch directly informs risk-averse mechanical actuation in practical wind-energy management. 
+
+5.4. Limitations and Generalizability 
+
+Several limitations should be considered when interpret-ing the present findings. First, the analysis is based on a single observational site in Jena, and therefore the learned de-composition and regime-specific uncertainty structure may contain site-dependent characteristics. A long observational record improves statistical coverage of weather variability, but it does not remove the influence of local terrain, surface characteristics, and station-specific boundary-layer dynam-ics. In particular, the observed large-error branches under severe shear should not yet be assumed to have the same frequency or structure at other locations. Second, transfer to other atmospheric environments re-mains to be established. The Beutenberg station is situated on the plateau edge overlooking the Saale River valley (elevation difference ≈ 225 m). Fig. 3 illustrates the 22-year climatological wind rose alongside the local topographic elevation cross-section. The prevailing wind directions align with the SSW-SW corridor ( 200 ◦–230 ◦), indicating that topographic channeling along the valley gorge contributes to the high persistence observed in the low-frequency subband. Offshore environments differ in surface roughness, ther-mal forcing, and boundary-layer structure, while complex mountainous terrain can introduce topographic channeling and flow separation that are not represented by the present single-site training distribution. Furthermore, the 2026 out-of-distribution evaluation spans eight consecutive months (January to August), capturing winter, spring, and summer atmospheric regimes; future multi-year evaluations encom-passing autumn extratropical cyclonic activity and multi-site transfer to coastal, offshore, and complex-terrain observa-tions will provide a stronger test of spatial and climatological generalizability. Third, the probabilistic representation remains limited by the use of a center-based calibration strategy. The residual analysis indicates that this approximation is adequate for stable conditions but less suitable when extreme-shear tra-jectories become multimodal. Future work should therefore investigate conditional multimodal circular distributions that can explicitly preserve separated directional outcomes while maintaining causal inference and computational efficiency. Finally, the present study focuses on open-loop fore-casting fidelity as an upstream component of wind oper-ations, without direct closed-loop turbine load and power benchmarking. The reported computational measurements establish low inference latency on the tested GPU platform, whereas estimated embedded-hardware latency represents a theoretical projection pending dedicated verification on industrial edge devices. Likewise, the potential implications for yaw control, energy capture, and fatigue loading have not yet been validated in a coupled turbine model or field experiment. These limitations define a clear next stage of research: multi-site verification, explicit multimodal uncer-tainty modeling, and end-to-end evaluation from directional forecasts to turbine-level energy and load outcomes. In conclusion, the findings demonstrate that wind-direction predictability is fundamentally scale dependent, enabling deterministic, continuous-dynamic, and probabilistic mecha-nisms to be mapped directly to their optimal timescales. The remaining challenge centers on extreme directional transi-tions, where uncertainty broadens and undergoes structural branching. Distinguishing scale-dependent predictability from geometric bifurcation provides a concrete foundation for next-generation probabilistic wind-direction forecasting in operational energy systems. 
+
+## 6. Conclusion 
+
+This study developed a predictability-guided, frequency-decoupled probabilistic forecasting framework for wind di-rection on the circular manifold 𝕊 1. The results show that the three temporal components exhibit substantially different levels of predictability, supporting the use of differentiated modeling strategies for persistent, dynamically evolving, and rapidly decorrelating variability. The resulting framework maintains strong deterministic point-forecast performance while improving trajectory alignment and probabilistic fore-cast quality, achieving near-zero estimated phase delay and a circular CRPS of 22 .36 ◦.The analysis also reveals that uncertainty under severe directional shear is qualitatively different from that in rela-tively stable conditions. Large positive and negative residual branches become increasingly pronounced, with antipodal residual mass reaching 13 .39% in the test period and 15 .43% 
+
+under OOD evaluation. This finding helps explain the re-maining under-coverage of single-center calibrated intervals in extreme regimes and indicates that future improvements should focus on explicitly multimodal circular uncertainty representations.   
+
+> H. Shu et al.: Preprint submitted to Elsevier Page 13 of 15
+
+Predictability-Guided Wind Direction Forecasting 
+
+Overall, the study demonstrates that forecastability-aware allocation of model mechanisms can provide a practical and interpretable approach to multiscale wind-direction forecast-ing. The framework offers a promising forecasting layer for risk-aware wind-energy applications, while further multi-site validation and turbine-level evaluation are needed to establish its broader generalizability and operational impact. 
+
+## CRediT Authorship Contribution Statement 
+
+Hailong Shu : Conceptualization, Methodology, Soft-ware, Formal analysis, Data curation, Visualization, Writing - original draft. Weiwei Song : Conceptualization, Super-vision, Funding acquisition, Writing - review & editing. 
+
+Yue Wang : Validation, Investigation, Data curation. Jiping Zhang : Conceptualization, Supervision, Writing - review & editing. Wei Tian : Conceptualization, Supervision, Writing - review & editing. Chaoqun Li : Validation, Software, For-mal analysis. 
+
+## Declaration of Competing Interest 
+
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper. 
+
+## Data Availability and Reproducibility 
+
+The meteorological observations analyzed in this study are publicly curated by the Max Planck Institute for Bio-geochemistry (MPI-BGC) and accessible at https://www. bgc-jena.mpg.de/wetter/weather_data.html [17]. The com-plete code repository, trained model weights, evaluation scripts, and processed benchmark datasets supporting the findings of this study will be openly released upon formal publication. 
+
+## Acknowledgements 
+
+This research did not receive any specific grant from funding agencies in the public, commercial, or not-for-profit sectors. 
+
+## References 
+
+[1] Alves, D., Mendonça, F., Mostafa, S.S., Morgado-Dias, F., 2023. The potential of machine learning for wind speed and direction short-term forecasting: A systematic review. Computers 12, 206. doi: 10.3390/ computers12100206 .[2] Challu, C., Olivares, K.G., Oreshkin, B.N., Garza, F., Mergenthaler-Canseco, M., Dubrawski, A., 2023. N-hits: Neural hierarchical interpolation for time series forecasting, in: Proceedings of the AAAI Conference on Artificial Intelligence, pp. 6989–6997. doi: 10.1609/ aaai.v37i6.25854 .[3] Chang, G., Lu, H., Wang, R., 2014. A new hybrid model for wind speed forecasting. Energy Conversion and Management 81, 11–19. doi: 10.1016/j.enconman.2014.02.016 .[4] Chen, L., Zhong, X., Zhang, F., Lin, Y., Ding, R., Cheng, B., 2026. Fuxi-energy: An efficient machine-learning weather forecasting model for renewable energy applications. Applied Energy 385, 125430. doi: 10.1016/j.apenergy.2025.125430 .[5] Chen, R.T.Q., Rubanova, Y., Bettencourt, J., Duvenaud, D.K., 2018. Neural ordinary differential equations, in: Advances in Neural Infor-mation Processing Systems (NeurIPS), pp. 6571–6583. [6] Das, A., Kong, W., Sen, R., Zhou, Y., 2024. A decoder-only foun-dation model for time-series forecasting, in: Proceedings of the 41st International Conference on Machine Learning (ICML), PMLR. pp. 10034–10057. [7] Ding, Y., Ye, X.W., Guo, Y., 2023. A multistep direct and indirect strategy for predicting wind direction based on the EMD-LSTM model. Mathematical Problems in Engineering 2023, 4950487. doi: 10.1155/2023/4950487 .[8] Fisher, N.I., 1993. Statistical Analysis of Circular Data. Cambridge University Press, Cambridge. doi: 10.1017/CBO9780511564345 .[9] Fleming, P., Gebraad, P.M.O., Lee, S., van Wingerden, J.W., Johnson, K., Churchfield, M., Michalakes, J., Spalart, P., Moriarty, P., 2014. Evaluating techniques for calculating yaw misalignment and its effect on wind turbine power. Wind Energy 17, 1215–1227. doi: 10.1002/we. 1633 .[10] Gneiting, T., Raftery, A.E., 2007. Strictly proper scoring rules, predic-tion, and estimation. Journal of the American Statistical Association 102, 359–378. doi: 10.1198/016214506000001437 .[11] Hao, W., Sun, X., Wang, C., Wang, Y., Liu, C., Yan, D., Yuan, Y., 2022. A hybrid EMD-LSTM model for non-stationary wave prediction in offshore China. Ocean Engineering 246, 110566. doi: 10. 1016/j.oceaneng.2022.110566 .[12] Ho, J., Jain, A., Abbeel, P., 2020. Denoising diffusion probabilistic models, in: Advances in Neural Information Processing Systems (NeurIPS), pp. 6840–6851. [13] Jammalamadaka, S.R., SenGupta, A., 2001. Topics in Circular Statistics. World Scientific, Singapore. doi: 10.1142/9789812779947 .[14] Lim, B., Arık, S.Ö., Loeff, N., Pfister, T., 2021. Temporal fusion transformers for interpretable multi-horizon time series forecasting. International Journal of Forecasting 37, 1748–1764. doi: 10.1016/j. ijforecast.2021.03.012 .[15] Liu, H., Mi, X., Li, Y., 2018. Smart wind speed forecasting using EWT decomposition, GWO evolutionary optimization, RELM learning and IEWT reconstruction. Energy Conversion and Management 161, 266– 283. doi: 10.1016/j.enconman.2018.02.006 .[16] Mardia, K.V., Jupp, P.E., 1999. Directional Statistics. John Wiley & Sons, Chichester. doi: 10.1002/9780470316979 .[17] Max Planck Institute for Biogeochemistry, 2024. Weather data from the meteorological station Jena-Beutenberg. https://www.bgc-jena. mpg.de/wetter/weather_data.html . Online; accessed 12-September-2026. [18] Shu, H., Song, W., Song, Z., Guo, H., Li, C., Wang, Y., 2024. Multistep short-term wind speed prediction with rank pooling and fast Fourier transformation. Wind Energy 27, 667–694. doi: 10.1002/we. 2906 .[19] Song, D., Yang, J., Fan, X., Liu, A., Chen, Z., Chen, J., 2018. Maximum power point tracking control of wind turbine based on improved wind speed estimation, in: 2018 Chinese Control And Decision Conference (CCDC), IEEE. pp. 5861–5866. doi: 10.1109/ CCDC.2018.8407425 .[20] Tagliaferri, F., Viola, I.M., Flay, R.G.J., 2015. Wind direction fore-casting with artificial neural networks and support vector machines. Ocean Engineering 97, 65–73. doi: 10.1016/j.oceaneng.2015.02.004 .[21] Tian, C., Niu, T., Li, T., 2025. Developing an interpretable wind power forecasting system using a transformer network and transfer learning. Energy Conversion and Management 323, 119155. doi: 10. 1016/j.enconman.2024.119155 .[22] Veers, P., Dykes, K., Lantz, E., Barth, S., Bottasso, C.L., Carlson, O., Clifton, A., Green, J., Green, P., Holttinen, H., Laird, D., Lehtomäki, V., Lundquist, J.K., Manwell, J., Marquis, M., Meneveau, C., Mori-arty, P., Munduate, X., Muskulus, M., Naughton, J., Pao, L., Paquette, J., Peinke, J., Robertson, A., Rodrigo, J.S., Sempreviva, A.M., Smith, J.C., Tuohy, A., Wiser, R., 2019. Grand challenges in the science of wind energy. Science 366, eaau2027. doi: 10.1126/science.aau2027 .
+
+H. Shu et al.: Preprint submitted to Elsevier Page 14 of 15 Predictability-Guided Wind Direction Forecasting 
+
+[23] Wang, Y., Zou, R., Liu, F., Zhang, L., Liu, Q., 2021. A review of wind speed and wind power forecasting with deep neural networks. Applied Energy 304, 117766. doi: 10.1016/j.apenergy.2021.117766 .[24] Xie, Y., Li, C., Li, M., Liu, F., Taukenova, M., 2023. An overview of deterministic and probabilistic forecasting methods of wind energy. iScience 26, 105804. doi: 10.1016/j.isci.2022.105804 .[25] Zhang, Y., Le, J., Liao, X., Zheng, F., Li, Y., 2019. A review on probabilistic forecasting of wind power generation. Renewable and Sustainable Energy Reviews 112, 255–271. doi: 10.1016/j.rser.2019. 05.048 .
+
+Figure 2: Empirical distribution of latent trajectory norms 
+
+‖𝐳 (𝑡 )‖2 across 360,000 continuous integration steps in the test cohort. The trajectory norm is strictly bounded away from the origin (mean 10 .52 , median 11 .14 , 5th percentile 3.11 ,1st percentile 1.35 , minimum 0.0343 ), confirming that the radial normalization in Eq. (19) operates without risk of origin singularities ( 𝑟 < 0.05 : 0.000%). H. Shu et al.: Preprint submitted to Elsevier Page 15 of 15 Predictability-Guided Wind Direction Forecasting 
+
+Figure 3: Topographic and climatological context of the Jena Beutenberg observational site. (a) 22-year climatological wind rose constructed from continuous 10-minute observations (2004–2026, 𝑁 = 1 , 192 , 464 ), showing the dominant south-southwest prevailing flow corridor ( 200 ◦–230 ◦). (b) Schematic terrain cross-section across the incised Saale river valley, illustrating the 225 melevation relief between the river bed ( 145 m a.s.l.) and the plateau station ( 370 m a.s.l.) that induces localized topographic wind channeling. 
+
+Figure 4: Comprehensive deterministic benchmark comparison across 10,000 continuous test sequences. Mean Circular Error (MCE) for the evaluated baseline architectures, TimesFM-3.0, the D4-0 Anchor, and the proposed framework under in-distribution test, out-of-distribution evaluation, and severe directional shear (Case 1, ≥ 90 ◦). 
+
+Figure 5: Regime-dependent activation of the continuous dynamic branch. The mean regime-gate activation increases with forecasted turning magnitude, indicating stronger use of the Neural ODE correction under more rapidly changing directional conditions. The observed turning amplitude is shown only for post-hoc diagnostic analysis. H. Shu et al.: Preprint submitted to Elsevier Page 16 of 15 Predictability-Guided Wind Direction Forecasting 
+
+Figure 6: Component-wise ablation of deterministic and probabilistic performance. (a) Case 1 point accuracy and circular CRPS across Variants A–E, showing that the Neural ODE primarily affects the deterministic trajectory while diffusion and recalibration primarily affect distributional quality. (b) Evolution of 95% prediction interval coverage toward the nominal level. 
+
+Figure 7: Empirical reliability diagrams for the in-distribution and out-of-distribution test periods under all conditions and severe directional shear (Case 1). The overall calibration remains close to the nominal diagonal, whereas severe-shear conditions exhibit systematic under-coverage. 
+
+Figure 8: Adaptive uncertainty scaling across anchor-error regimes. The conditional residual diffusion produces larger pre-dictive spread as deterministic forecast uncertainty increases, resulting in broader distributions for more difficult directional trajectories. H. Shu et al.: Preprint submitted to Elsevier Page 17 of 15 Predictability-Guided Wind Direction Forecasting 
+
+Figure 9: Evolution of Monte Carlo particle diversity 𝐷 pair (ℎ)
+
+across forecasting horizons. The mean pairwise circular dis-tance expands smoothly and monotonically without mode collapse, demonstrating adaptive dispersion scaling that widens in response to severe directional shear regimes (Case 1 and Case 1 ∗) while maintaining sharp concentration during steady flow (Case 2). H. Shu et al.: Preprint submitted to Elsevier Page 18 of 15 Predictability-Guided Wind Direction Forecasting 
+
+Figure 10: Signed circular residual distributions across 360,000 evaluation points. Stable conditions produce a sharply concentrated residual distribution, whereas severe directional-shear regimes show substantial probability mass in large positive and negative residual branches. The resulting multimodality helps explain the persistent under-coverage of single-center calibrated intervals under extreme shear. H. Shu et al.: Preprint submitted to Elsevier Page 19 of 15

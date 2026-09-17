@@ -1,0 +1,39 @@
+{
+  "label": "2026-09-17",
+  "date": "2026-09-17",
+  "generated_at": "2026-09-17T22:25:14",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202609/17/2609.17768v1-spatio-temporal-latent-denoising-diffusion-probabilistic-models-for-reduced-order-modeling-of-parametrized-dynamical-systems",
+      "section": "deep",
+      "title_en": "Spatio-temporal Latent Denoising Diffusion Probabilistic Models for Reduced-order Modeling of Parametrized Dynamical Systems",
+      "authors": "Michiel Nikken, Nicolò Botteghi, Federico Califano, Silke Glas",
+      "date": "2026-09-15",
+      "pdf": "https://arxiv.org/pdf/2609.17768v1",
+      "score": "9.0",
+      "evidence": "用去噪扩散概率模型生成流体动力系统解并做降阶建模",
+      "tldr": "复杂物理模拟常因高维导致计算昂贵，降阶模型可在精度略降下大幅降本。本文提出非侵入式降阶建模方法，用时空隐空间DDPM生成参数化动力系统解。方法先用POD与自编码器压缩至隐空间，再扩散生成时空解，提升时间连贯性。在二维绕流实验中，模型对未见参数泛化良好，并能超出训练时间范围外推，输出准确且时序一致，为实时多查询场景提供途径。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Many scientific problems require accurate modeling of complex physical phenomena, such as fluid dynamics or climate modeling. These phenomena often result in high-dimensional and thus computationally expensive computational models that can limit their application to real-time and multi-query problems. Model-order reduction (MOR) is an approach that seeks to approximate full-order models (FOMs) using reduced-order models (ROMs), trading a minor reduction in accuracy for a major reduction in computational cost. In this work, we propose a non-intrusive MOR method using generative machine learning by means of denoising diffusion probabilistic models (DDPMs) for generating solutions of the dynamical systems under different instances of their parameters. Unlike conventional DDPMs, which often operate purely in the spatial domain, we aim to generate spatio-temporal solutions to improve quality and temporal coherence. In addition, we embed the DDPM in a latent space obtained by sequentially applying proper orthogonal decomposition and an autoencoder to reduce the data dimensionality and the computational cost of the DDPM. We test our approach on a parametrized 2D fluid flow around an obstacle. The numerical experiments demonstrate that our latent DDPM can (i) produce accurate and temporally coherent solutions, (ii) achieve strong generalization capabilities to scenarios involving unseen parameter values, and (iii) extrapolate in time beyond the training horizon.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202609/17/2609.16707v1-predictability-guided-multiscale-probabilistic-forecasting-of-wind-direction-under-extreme-shear",
+      "section": "quick",
+      "title_en": "Predictability-Guided Multiscale Probabilistic Forecasting of Wind Direction under Extreme Shear",
+      "authors": "Hailong Shu",
+      "date": "2026-09-15",
+      "pdf": "https://arxiv.org/pdf/2609.16707v1",
+      "score": "7.0",
+      "evidence": "用潜微分流与条件残差扩散预报风场流动",
+      "tldr": "极端切变下风向快速转向超过90°，给风机偏航与电网安全带来非欧几何、多尺度与状态依赖不确定性挑战。本文提出可预测性引导的多尺度概率框架：慢尺度天气漂移用确定性回归，中频转向用连续隐微分流，未解析湍流用条件残差扩散，并进行因果重校准。在多年一万序列基准上，极端转向误差由70.42°降至60.69°，圆形CRPS为22.36°，95%名义覆盖达93.88%。该工作揭示严重切变下近对跖双峰结构，为多模态圆流形学习提供依据。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Accurate multi-horizon wind direction forecasting is critical for turbine yaw control and grid security. Rapid directional shear (turning $\\ge 90^\\circ$) challenges models via non-Euclidean geometry on $S^1$, multiscale dynamics, and regime-dependent uncertainty. Conventional discrete models and foundation models suffer from mid-frequency phase lag and turning misalignments. We show that directional predictability decays at disparate rates across frequency subbands, rendering monolithic mechanisms suboptimal. We propose a predictability-guided paradigm: slow synoptic drift $\\to$ deterministic regression; intermediate turning $\\to$ continuous latent differential flows; unresolved turbulence $\\to$ conditional residual diffusion; followed by causal recalibration. On a 10,000-sequence multi-year benchmark, our framework maintains calm-weather accuracy (Test MCE $38.48^\\circ$) while reducing extreme-turning error (Case 1 MCE $60.69^\\circ$ vs $70.42^\\circ$ for zero-shot foundation models). The circular CRPS reaches $22.36^\\circ$, with 93.88\\% coverage at nominal 95\\% (91.01\\% out-of-distribution). Density estimation further reveals near-antipodal bimodal structure under severe shear (13.39\\%--15.43\\% tail mass $\\ge 135^\\circ$), exposing a geometric bound where single-center calibration under-covers (81.56\\%), motivating multimodal circular manifold learning.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
