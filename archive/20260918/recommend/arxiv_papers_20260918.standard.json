@@ -1,0 +1,96 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-09-18T21:40:23.907803+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2609.16317v1",
+      "source": "arxiv",
+      "title": "Generative models for simulation based filtering: Formulations and Empirical Comparisons",
+      "abstract": "This letter presents a unified formulation and a controlled numerical comparison of generative-model approaches to the nonlinear filtering problem. Under this formulation the analysis step is realized by a transport of the forecast distribution to the posterior, the approaches differing only in how that transport is selected and learned. We derive three new filters, based on stochastic interpolants, their deterministic flow-matching limit, and Schrödinger bridges realized through forward--backward SDEs. We develop a two-stage tuning procedure that separates the training of the generative model from its online refinement. The resulting methods are compared against the optimal transport filter (OTF), the Knothe--Rosenblatt filter (KRF), the sequential importance resampling (SIR) particle filter and the ensemble Kalman filter (EnKF), in terms of accuracy, computational time, and sensitivity to ensemble size and state dimension. The results indicate that every generative filter resolves multimodal posteriors that the EnKF and SIR do not, that no single generative framework dominates, the preferred method being set by the available online budget and ensemble size, and that the filters differ in the regularity of the particle trajectories they produce.",
+      "authors": [
+        "Mohammad Al-Jarrah",
+        "Wei Deng",
+        "Bamdad Hosseini",
+        "Amirhossein Taghvaei"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-09-14T20:31:29+00:00",
+      "link": "https://arxiv.org/pdf/2609.16317v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "generative models including flow matching and Schrodinger bridges for filtering",
+      "llm_evidence_cn": "含流匹配与薛定谔桥的生成模型用于滤波",
+      "llm_evidence": "含流匹配与薛定谔桥的生成模型用于滤波",
+      "canonical_evidence": "含流匹配与薛定谔桥的生成模型用于滤波",
+      "llm_tldr_en": "Presents a unified formulation and numerical comparison of generative-model filters based on stochastic interpolants, flow matching, and Schrodinger bridges for nonlinear filtering.",
+      "llm_tldr_cn": "本文针对非线性滤波问题，提出生成式模型方法的统一表述并进行受控数值比较。在该框架下，分析步被实现为将预报分布传输到后验分布，不同方法仅在于如何选择与学习该传输。作者基于随机插值、其确定性流匹配极限以及前向-后向随机微分方程实现的薛定谔桥，推导出三种新滤波器，并提出将训练与在线微调分离的两阶段调参流程。实验将上述方法与最优传输滤波等基线对比，为生成式滤波器的选择提供了实证依据。",
+      "llm_tldr": "本文针对非线性滤波问题，提出生成式模型方法的统一表述并进行受控数值比较。在该框架下，分析步被实现为将预报分布传输到后验分布，不同方法仅在于如何选择与学习该传输。作者基于随机插值、其确定性流匹配极限以及前向-后向随机微分方程实现的薛定谔桥，推导出三种新滤波器，并提出将训练与在线微调分离的两阶段调参流程。实验将上述方法与最优传输滤波等基线对比，为生成式滤波器的选择提供了实证依据。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "probabilistic flow models for fluid dynamics",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2609.17901v1",
+      "source": "arxiv",
+      "title": "Walking the Score Manifold: Continuous-time Generative Dynamics on Learned Data Manifolds",
+      "abstract": "Generative modeling of time-dependent data is typically formulated on a discrete temporal grid, restricting supervision to the observed timestamps in the training data. We instead frame generation as continuous-time evolution on a learned data manifold. To this end, we leverage pretrained score-based models as geometric priors and learn a vector field that evolves data along score-induced interpolation paths. Because these dynamics follow transitions that respect the geometry learned by the score model, they support generation at arbitrary timestamps and temporal super-resolution beyond the discretization of the training data. Moreover, this geometric formulation allows us to train the vector field simulation-free through a regression objective. To improve long-horizon rollout robustness, we introduce an objective that promotes path-relative transverse exponential stability. While motivated by stability theory, it admits a practical interpretation as denoising score matching transverse to the interpolation path. Further, we extend the framework to a probabilistic setting that models a distribution over plausible future trajectories. We demonstrate the method on natural video and scientific dynamical data, including temporal super-resolution, PDE-based spatiotemporal fields, and molecular dynamics. Our results show that score-based priors provide a strong foundation for learning stochastic continuous-time generative dynamics.",
+      "authors": [
+        "Jan Tauberschmidt",
+        "Brian B. Moser",
+        "Stanislav Frolov",
+        "Andreas Dengel",
+        "Andrew B. Duncan",
+        "Sebastian J. Vollmer"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-09-15T22:42:24+00:00",
+      "link": "https://arxiv.org/pdf/2609.17901v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "score-based generative model with continuous-time vector field on learned manifold",
+      "llm_evidence_cn": "基于分数模型的连续时间流形生成动力学",
+      "llm_evidence": "基于分数模型的连续时间流形生成动力学",
+      "canonical_evidence": "基于分数模型的连续时间流形生成动力学",
+      "llm_tldr_en": "Frames time-dependent generation as continuous-time evolution on a learned data manifold, using pretrained score-based models as geometric priors to enable arbitrary-timestamp generation and temporal super-resolution.",
+      "llm_tldr_cn": "论文指出时间依赖数据的生成建模通常建立在离散时间网格上，监督仅限训练数据的观测时刻。作者将生成重构为学习数据流形上的连续时间演化，利用预训练分数模型作为几何先验，学习沿分数诱导插值路径演化的向量场，并可免仿真训练。该方法支持任意时刻生成与时间超分辨率。该思路为流场等时空数据的生成建模提供了连续时间框架。",
+      "llm_tldr": "论文指出时间依赖数据的生成建模通常建立在离散时间网格上，监督仅限训练数据的观测时刻。作者将生成重构为学习数据流形上的连续时间演化，利用预训练分数模型作为几何先验，学习沿分数诱导插值路径演化的向量场，并可免仿真训练。该方法支持任意时刻生成与时间超分辨率。该思路为流场等时空数据的生成建模提供了连续时间框架。",
+      "llm_tags": [
+        "query:genmod-fluid"
+      ],
+      "matched_query_tag": "query:genmod-fluid",
+      "matched_query_text": "score-based generative models for fluid flow",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

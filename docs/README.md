@@ -6,26 +6,27 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-17
-- 运行时间：2026-09-17 22:25:11 UTC
+- 最新运行日期：2026-09-18
+- 运行时间：2026-09-18 21:42:52 UTC
 - 运行状态：成功
 - 本次总论文数：2
-- 精读区：1
-- 速读区：1
+- 精读区：0
+- 速读区：2
 
 ### 今日简报（AI）
-2026-09-17日报精选2篇，精读一篇9.0分论文，聚焦参数化动力系统的时空潜在去噪扩散降阶建模。最值得看的是用扩散概率模型做降阶建模的新思路，以及极端切变下风向多尺度概率预报的可预报性引导方法。普通读者可先读精读篇了解扩散模型如何服务科学计算，再按需跟进风向预报的工程应用。
-- 详情：[/202609/17/README](/202609/17/README)
+今日速读两篇生成模型论文，均获6.0分，聚焦模拟滤波与流形上的连续生成动态。两篇都值得一看：一篇比较生成模型用于模拟滤波的多种形式与实证效果，另一篇探索在学习到的数据流形上做连续时间生成。建议普通读者先挑与自身任务最接近的一篇泛读，重点看问题设定和实验对比结论。
+- 详情：[/202609/18/README](/202609/18/README)
 
 ### 精读区论文标签
-1. [Spatio-temporal Latent Denoising Diffusion Probabilistic Models for Reduced-order Modeling of Parametrized Dynamical Systems](/202609/17/2609.17768v1-spatio-temporal-latent-denoising-diffusion-probabilistic-models-for-reduced-order-modeling-of-parametrized-dynamical-systems)  
-   标签：评分：9.0/10、query:genmod-fluid
-   evidence：用去噪扩散概率模型生成流体动力系统解并做降阶建模
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Predictability-Guided Multiscale Probabilistic Forecasting of Wind Direction under Extreme Shear](/202609/17/2609.16707v1-predictability-guided-multiscale-probabilistic-forecasting-of-wind-direction-under-extreme-shear)  
-   标签：评分：7.0/10、query:genmod-fluid
-   evidence：用潜微分流与条件残差扩散预报风场流动
+1. [Generative models for simulation based filtering: Formulations and Empirical Comparisons](/202609/18/2609.16317v1-generative-models-for-simulation-based-filtering-formulations-and-empirical-comparisons)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：含流匹配与薛定谔桥的生成模型用于滤波
+2. [Walking the Score Manifold: Continuous-time Generative Dynamics on Learned Data Manifolds](/202609/18/2609.17901v1-walking-the-score-manifold-continuous-time-generative-dynamics-on-learned-data-manifolds)  
+   标签：评分：6.0/10、query:genmod-fluid
+   evidence：基于分数模型的连续时间流形生成动力学
 
 
 <div class="dpr-home-promo-card">
