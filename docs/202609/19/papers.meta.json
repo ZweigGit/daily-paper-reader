@@ -1,0 +1,24 @@
+{
+  "label": "2026-09-19",
+  "date": "2026-09-19",
+  "generated_at": "2026-09-19T21:31:36",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202609/19/2609.20794v1-posteriorbench-from-point-estimates-to-posterior-matching-in-evaluating-generative-inverse-solvers",
+      "section": "quick",
+      "title_en": "PosteriorBench: From Point Estimates to Posterior Matching in Evaluating Generative Inverse Solvers",
+      "authors": "Jiachen Yao, Zi-Siang Hsu, Xi Deng, Aditi Gupta, Xin Ju, Sally M Benson, Gege Wen, Anima Anandkumar",
+      "date": "2026-09-17",
+      "pdf": "https://arxiv.org/pdf/2609.20794v1",
+      "score": "6.0",
+      "evidence": "在达西流反演上评估生成式逆求解器",
+      "tldr": "现有生成式逆问题求解器评测多关注单点重建，难以衡量病态问题中的完整后验。本文提出 PosteriorBench，覆盖 Darcy 流反演、泊松源恢复、碳封存与光传输材料推断，并用拒绝采样和 MCMC 构建参考后验。它用五项指标评估点估计、不确定性、分布对齐与频谱保真，发现当前求解器存在明显分布匹配差距。该基准推动评测从点估计转向后验匹配，并强调神经算子、引导权重与生成噪声对方差校准的作用。",
+      "tags": "query:genmod-fluid",
+      "abstract_en": "Generative models are increasingly used to solve scientific inverse problems, but existing evaluations still focus primarily on whether a method can produce a single plausible reconstruction. This is insufficient for ill-posed problems, where multiple solutions may be consistent with the same sparse or noisy observations. In these settings, a method can achieve strong pointwise accuracy while still failing to capture the true posterior through mode collapse, overconfident uncertainty, or averaging incompatible solutions. We introduce PosteriorBench, a benchmark for evaluating the distributional accuracy of generative inverse solvers. PosteriorBench evaluates four physics-based inverse problems: Darcy flow inversion, Poisson source recovery, carbon capture and storage, and light transport material inference. For each task, we construct high-fidelity reference posteriors using computationally heavy but established procedures such as rejection sampling and Markov chain Monte Carlo, enabling direct assessment of whether solvers recover the full set of solutions rather than the single best sample. We pair these references with a five-metric posterior evaluation suite: posterior-mean error, posterior-standard-deviation error, maximum mean discrepancy, sliced Wasserstein distance, and radially averaged power-spectrum error. These metrics assess pointwise accuracy, marginal uncertainty, distributional alignment, and global frequency fidelity. The benchmark spans sparse sensing, low-resolution observations, nonlinear forward models, varying noise levels, and multimodal priors, with a unified pipeline for distribution matching and uncertainty quantification. Our experiments reveal substantial distribution-matching gaps across current solvers, while showing that neural operators improve resolution robustness, and guidance weights and generation noise are key to posterior-variance calibration.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

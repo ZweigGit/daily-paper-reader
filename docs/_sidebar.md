@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-09-19 <!--dpr-date:20260919-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202609/19/2609.20794v1-posteriorbench-from-point-estimates-to-posterior-matching-in-evaluating-generative-inverse-solvers" data-sidebar-item="{&quot;title&quot;: &quot;PosteriorBench: From Point Estimates to Posterior Matching in Evaluating Generative Inverse Solvers&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2609.20794v1-posteriorbench-from-point-estimates-to-posterior-matching-in-evaluating-generative-inverse-solvers&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;在达西流反演上评估生成式逆求解器&quot;}">PosteriorBench: From Point Estimates to Posterior Matching in Evaluating Generative Inverse Solvers</a>
   * 2026-09-18 <!--dpr-date:20260918-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202609/18/2609.16317v1-generative-models-for-simulation-based-filtering-formulations-and-empirical-comparisons" data-sidebar-item="{&quot;title&quot;: &quot;Generative models for simulation based filtering: Formulations and Empirical Comparisons&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2609.16317v1-generative-models-for-simulation-based-filtering-formulations-and-empirical-comparisons&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;genmod-fluid&quot;}], &quot;evidence&quot;: &quot;含流匹配与薛定谔桥的生成模型用于滤波&quot;}">Generative models for simulation based filtering: Formulations and Empirical Comparisons</a>

@@ -6,27 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-18
-- 运行时间：2026-09-18 21:42:52 UTC
+- 最新运行日期：2026-09-19
+- 运行时间：2026-09-19 21:31:30 UTC
 - 运行状态：成功
-- 本次总论文数：2
+- 本次总论文数：1
 - 精读区：0
-- 速读区：2
+- 速读区：1
 
 ### 今日简报（AI）
-今日速读两篇生成模型论文，均获6.0分，聚焦模拟滤波与流形上的连续生成动态。两篇都值得一看：一篇比较生成模型用于模拟滤波的多种形式与实证效果，另一篇探索在学习到的数据流形上做连续时间生成。建议普通读者先挑与自身任务最接近的一篇泛读，重点看问题设定和实验对比结论。
-- 详情：[/202609/18/README](/202609/18/README)
+2026-09-19日报：速读1篇、精读0篇，唯一焦点是生成逆求解器评估基准 PosteriorBench。  
+最值得看的是它主张从点估计转向后验匹配，为生成逆求解器提供更贴近分布层面的评估视角（6.0/10）。  
+普通读者可先记住“后验匹配”这个关键词，后续关注它能否成为衡量生成逆求解器可信度的通用尺子。
+- 详情：[/202609/19/README](/202609/19/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Generative models for simulation based filtering: Formulations and Empirical Comparisons](/202609/18/2609.16317v1-generative-models-for-simulation-based-filtering-formulations-and-empirical-comparisons)  
+1. [PosteriorBench: From Point Estimates to Posterior Matching in Evaluating Generative Inverse Solvers](/202609/19/2609.20794v1-posteriorbench-from-point-estimates-to-posterior-matching-in-evaluating-generative-inverse-solvers)  
    标签：评分：6.0/10、query:genmod-fluid
-   evidence：含流匹配与薛定谔桥的生成模型用于滤波
-2. [Walking the Score Manifold: Continuous-time Generative Dynamics on Learned Data Manifolds](/202609/18/2609.17901v1-walking-the-score-manifold-continuous-time-generative-dynamics-on-learned-data-manifolds)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：基于分数模型的连续时间流形生成动力学
+   evidence：在达西流反演上评估生成式逆求解器
 
 
 <div class="dpr-home-promo-card">

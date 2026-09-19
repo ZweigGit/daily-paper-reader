@@ -1,0 +1,60 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-09-19T21:30:10.622100+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2609.20794v1",
+      "source": "arxiv",
+      "title": "PosteriorBench: From Point Estimates to Posterior Matching in Evaluating Generative Inverse Solvers",
+      "abstract": "Generative models are increasingly used to solve scientific inverse problems, but existing evaluations still focus primarily on whether a method can produce a single plausible reconstruction. This is insufficient for ill-posed problems, where multiple solutions may be consistent with the same sparse or noisy observations. In these settings, a method can achieve strong pointwise accuracy while still failing to capture the true posterior through mode collapse, overconfident uncertainty, or averaging incompatible solutions. We introduce PosteriorBench, a benchmark for evaluating the distributional accuracy of generative inverse solvers. PosteriorBench evaluates four physics-based inverse problems: Darcy flow inversion, Poisson source recovery, carbon capture and storage, and light transport material inference. For each task, we construct high-fidelity reference posteriors using computationally heavy but established procedures such as rejection sampling and Markov chain Monte Carlo, enabling direct assessment of whether solvers recover the full set of solutions rather than the single best sample. We pair these references with a five-metric posterior evaluation suite: posterior-mean error, posterior-standard-deviation error, maximum mean discrepancy, sliced Wasserstein distance, and radially averaged power-spectrum error. These metrics assess pointwise accuracy, marginal uncertainty, distributional alignment, and global frequency fidelity. The benchmark spans sparse sensing, low-resolution observations, nonlinear forward models, varying noise levels, and multimodal priors, with a unified pipeline for distribution matching and uncertainty quantification. Our experiments reveal substantial distribution-matching gaps across current solvers, while showing that neural operators improve resolution robustness, and guidance weights and generation noise are key to posterior-variance calibration.",
+      "authors": [
+        "Jiachen Yao",
+        "Zi-Siang Hsu",
+        "Xi Deng",
+        "Aditi Gupta",
+        "Xin Ju",
+        "Sally M Benson",
+        "Gege Wen",
+        "Anima Anandkumar"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.CE"
+      ],
+      "published": "2026-09-17T17:54:12+00:00",
+      "link": "https://arxiv.org/pdf/2609.20794v1",
+      "tags": [
+        "keyword:genmod-fluid",
+        "query:genmod-fluid"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "benchmark for generative inverse solvers on Darcy flow inversion",
+      "llm_evidence_cn": "在达西流反演上评估生成式逆求解器",
+      "llm_evidence": "在达西流反演上评估生成式逆求解器",
+      "canonical_evidence": "在达西流反演上评估生成式逆求解器",
+      "llm_tldr_en": "The paper introduces PosteriorBench, a benchmark evaluating distributional accuracy of generative inverse solvers on physics inverse problems including Darcy flow inversion, addressing mode collapse and overconfident uncertainty in ill-posed settings.",
+      "llm_tldr_cn": "现有生成式逆问题评估只关注单点重建，无法反映病态问题中多样的后验分布质量。本文提出PosteriorBench基准，在达西流反演、泊松方程等四个物理逆问题上评估生成式求解器的分布精度。结果显示方法可能点精度高却存在模式崩塌、过度自信或平均不相容解。该工作为物理场生成式反演提供了更严格的分布级评估标准。",
+      "llm_tldr": "现有生成式逆问题评估只关注单点重建，无法反映病态问题中多样的后验分布质量。本文提出PosteriorBench基准，在达西流反演、泊松方程等四个物理逆问题上评估生成式求解器的分布精度。结果显示方法可能点精度高却存在模式崩塌、过度自信或平均不相容解。该工作为物理场生成式反演提供了更严格的分布级评估标准。",
+      "llm_tags": [
+        "query:genmod-fluid:composite"
+      ],
+      "matched_query_tag": "query:genmod-fluid:composite",
+      "matched_query_text": "Papers central to 生成式模型与流体力学交叉研究, especially work that connects or combines: generative models applied to fluid dynamics problems; diffusion models for fluid flow simulation; score-based generative models for fluid flow; flow matching methods in fluid dynamics; generative artificial intelligence in fluid mechanics; probabilistic flow models for fluid dynamics; generative models for fluid dynamics research papers; diffusion model applications in computational fluid dynamics; flow matching for fluid flow simulation; score based generative models for fluid mechanics.",
+      "matched_requirement_id": "req-composite-genmod-fluid",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
