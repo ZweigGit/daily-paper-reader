@@ -6,26 +6,22 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-19
-- 运行时间：2026-09-19 21:31:30 UTC
+- 最新运行日期：2026-09-20
+- 运行时间：2026-09-20 21:58:35 UTC
 - 运行状态：成功
-- 本次总论文数：1
+- 本次总论文数：0
 - 精读区：0
-- 速读区：1
+- 速读区：0
 
 ### 今日简报（AI）
-2026-09-19日报：速读1篇、精读0篇，唯一焦点是生成逆求解器评估基准 PosteriorBench。  
-最值得看的是它主张从点估计转向后验匹配，为生成逆求解器提供更贴近分布层面的评估视角（6.0/10）。  
-普通读者可先记住“后验匹配”这个关键词，后续关注它能否成为衡量生成逆求解器可信度的通用尺子。
-- 详情：[/202609/19/README](/202609/19/README)
+> 今日无新推荐，系统未产出可展示论文。
+- 详情：[/202609/20/README](/202609/20/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [PosteriorBench: From Point Estimates to Posterior Matching in Evaluating Generative Inverse Solvers](/202609/19/2609.20794v1-posteriorbench-from-point-estimates-to-posterior-matching-in-evaluating-generative-inverse-solvers)  
-   标签：评分：6.0/10、query:genmod-fluid
-   evidence：在达西流反演上评估生成式逆求解器
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">
